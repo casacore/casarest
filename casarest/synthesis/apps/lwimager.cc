@@ -191,7 +191,7 @@ int main (Int argc, char** argv)
 		   "TaQL selection string for MS",
 		   "string");
     inputs.create ("operation", "image",
-		   "Operation (image,clark,hogbom)",
+		   "Operation (image,clark,hogbom,csclean)",
 		   "string");
     inputs.create ("niter", "1000",
 		   "Number of clean iterations",
@@ -322,7 +322,7 @@ int main (Int argc, char** argv)
       phaseCenter = readDirection (phasectr);
     }
     operation.downcase();
-    AlwaysAssertExit (operation=="image" || operation=="hogbom" || operation=="clark");
+    AlwaysAssertExit (operation=="image" || operation=="hogbom" || operation=="clark" || operation=="csclean");
     IPosition maskBlc, maskTrc;
     Quantity  threshold;
     if (operation != "image") {
