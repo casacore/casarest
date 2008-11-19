@@ -103,12 +103,33 @@ MDirection readDirection (const String& in)
   return MDirection(v0, v1, tp);
 }
 
+void readFilter (const String& filter,
+                 Quantity& bmajor, Quantity& bminor, Quantity& bpa)
+{
+  if (filter.empty()) {
+    return;
+  }
+  Vector<String> strs = stringToVector(filter);
+  if (strs.size() != 3) {
+    throw AipsError("Specify gaussian tapering filter as bmajor,bminor,bpa");
+  }
+  if (! strs[0].empty()) {
+    bmajor = readQuantity (strs[0]);
+  }
+  if (! strs[1].empty()) {
+    bminor = readQuantity (strs[1]);
+  }
+  if (! strs[2].empty()) {
+    bpa = readQuantity (strs[2]);
+  }
+}
+
 int main (Int argc, char** argv)
 {
   try {
     Input inputs(1);
     // define the input structure
-    inputs.version("20080818-GvD");
+    inputs.version("20081119-GvD");
     inputs.create ("ms", "",
 		   "Name of input MeasurementSet",
 		   "string");
@@ -136,6 +157,9 @@ int main (Int argc, char** argv)
     inputs.create ("mode", "mfs",
 		   "Imaging mode (mfs, channel, or velocity)",
 		   "string");
+    inputs.create ("filter", "",
+                   "Apply gaussian tapering filter; specify as major,minor,pa",
+                   "string");
     inputs.create ("weight", "briggs",
 		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), or radial",
 		   "string");
@@ -241,6 +265,7 @@ int main (Int argc, char** argv)
     String mode      = inputs.getString("mode");
     String operation = inputs.getString("operation");
     String weight    = inputs.getString("weight");
+    String filter    = inputs.getString("filter");
     String stokes    = inputs.getString("stokes");
     String chanmode  = inputs.getString("chanmode");
     String cellsize  = inputs.getString("cellsize");
@@ -294,7 +319,7 @@ int main (Int argc, char** argv)
     if (hdf5Name == "no") {
       hdf5Name = String();
 #ifdef HAVE_HDF5
-    } else if hdf5Name.empty()) {
+    } else if (hdf5Name.empty()) {
       hdf5Name = imgName + ".hdf5";
 #else
     } else {
@@ -330,6 +355,9 @@ int main (Int argc, char** argv)
       maskTrc = readIPosition (mstrTrc);
       threshold = readQuantity (threshStr);
     }
+    // Get axis specification from filter.
+    Quantity bmajor, bminor, bpa;
+    readFilter (filter, bmajor, bminor, bpa);
 
     // Set the various imager variables.
     // The non-parameterized values used are the defaults in imager.g.
@@ -372,6 +400,9 @@ int main (Int argc, char** argv)
 		     0.0,                           // robust
 		     Quantity(0, "rad"),            // fieldofview
 		     0);                            // npixels
+    }
+    if (! filter.empty()) {
+      imager.filter ("gaussian", bmajor, bminor, bpa);
     }
     String ftmachine("ft");
     if (wplanes > 0) {
