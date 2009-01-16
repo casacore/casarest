@@ -40,6 +40,8 @@
 #include <casa/Arrays/MaskedArray.h>
 #include <casa/Arrays/ArrayMath.h>
 #include <casa/Arrays/ArrayLogical.h>
+#include <casa/Containers/SimOrdMap.h>
+#include <casa/Containers/Stack.h>
 #include <casa/Utilities/GenSort.h>
 #include <casa/Utilities/PtrHolder.h>
 #include <casa/Utilities/BinarySearch.h>
@@ -51,8 +53,10 @@
 #include <scimath/Mathematics/Convolver.h>
 #include <measures/Measures/MeasBase.h>
 #include <measures/Measures/MeasRef.h>
+#include <measures/Measures/MeasConvert.h>
 #include <measures/Measures/MEpoch.h>
 #include <measures/Measures/MCEpoch.h>
+#include <measures/Measures/MCDoppler.h>
 #include <measures/Measures/MRadialVelocity.h>
 #include <measures/TableMeasures/ArrayMeasColumn.h>
 #include <lattices/Lattices/Lattice.h>
@@ -62,9 +66,7 @@
 #include <lattices/Lattices/LatticeConvolver.h>
 #include <lattices/Lattices/LatticeCache.h>
 #include <images/Images/PagedImage.h>
-#ifdef HAVE_HDF5
 #include <images/Images/HDF5Image.h>
-#endif
 #include <images/Images/SubImage.h>
 #include <images/Images/TempImage.h>
 #include <images/Images/ImageRegrid.h>
@@ -137,11 +139,25 @@ namespace casa { //# NAMESPACE - BEGIN
   template class TempImage<Complex>;
   template class ImageRegrid<float>;
   template class PtrHolder<ImageInterface<float> >;
-#ifdef HAVE_HDF5
   template class HDF5Image<float>;
-#endif
 
   template class Flux<double>;
+
+  template class Matrix<bool>;
+  template class SimpleOrderedMap<int, DataType>;
+  template class Vector<MDirection>;
+  template class Vector<RigidVector<double, 3> >;
+  
+  template Array<Complex> operator+(Array<Complex> const&, Array<Complex> const&);
+  template double max(MaskedArray<double> const&);
+  template double min(casa::MaskedArray<double> const&);
+
+  template class Vector<int>;
+  template class MeasConvert<MDoppler>;
+  template class InterpolateArray1D<float, Complex>;
+  template class InterpolateArray1D<float, float>;
+  template class Link<void*>;
+  template class Stack<void*>;
 
 } //# NAMESPACE - END
 

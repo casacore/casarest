@@ -4,8 +4,9 @@ import sys
 import os
 import re
 
-deps = {'flagging' : None,
-	'calibration': None,
+deps = {'msvis' : None,
+        'flagging' : ['msvis'],
+	'calibration': ['msvis'],
 	'synthesis': ['calibration'],
 	'simulators': None
        }
@@ -81,11 +82,14 @@ if "-h" not in args:
 	    args.append("casarestroot=/usr/local")
 
 # build all by default
-tobuild = ['flagging', 'calibration', 'synthesis', 'simulators']
+tobuild = ['msvis', 'flagging', 'calibration', 'synthesis', 'simulators']
 
 for k in deps.keys():
     k = k.rstrip("/")
     if k in args:
 	tobuild = get_libs(k)
 	args.remove(k)
+if "-c" in args or "--clean" in args:
+    # clean up highest level package first
+    tobuild.reverse()
 run_scons(tobuild, args)

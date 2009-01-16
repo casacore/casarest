@@ -45,6 +45,7 @@
 #include <synthesis/MeasurementEquations/LinearEquation.cc>
 #include <synthesis/MeasurementEquations/LinearModel.cc>
 #include <synthesis/MeasurementEquations/ResidualEquation.cc>
+#include <msvis/MSVis/StokesVector.h>
 
 namespace casa { //# NAMESPACE - BEGIN
 
@@ -56,6 +57,7 @@ namespace casa { //# NAMESPACE - BEGIN
   template class LinearModel<Lattice<Float> >;
   template class ResidualEquation<Array<Float> >;
   template class ResidualEquation<Lattice<Float> >;
+  template class Matrix<CStokesVector>;
 
 } //# NAMESPACE - END
 
