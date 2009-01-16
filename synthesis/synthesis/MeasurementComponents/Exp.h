@@ -33,12 +33,12 @@
 
 namespace casa
 {
-template<class T> class Exp
+template<class T> class FExp
 {
 public:
-  Exp<T>() {EStep=0; ETable=NULL;Size=0;};
-  Exp<T>(int n, T Step) {EStep=Size=0;ETable=NULL;Build(n,Step);};
-  ~Exp<T>() {if (ETable) free(ETable);};
+  FExp<T>() {EStep=0; ETable=NULL;Size=0;};
+  FExp<T>(int n, T Step) {EStep=Size=0;ETable=NULL;Build(n,Step);};
+  ~FExp<T>() {if (ETable) free(ETable);};
 
   inline void build(int n, T Step)
   {

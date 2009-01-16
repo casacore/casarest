@@ -72,7 +72,7 @@ namespace casa{
 			     );
 		  
   private:
-    Exp<CF_TYPE> ExpTable;
+    FExp<CF_TYPE> ExpTable;
     CExp3<CF_TYPE> CExpTable;
     Double sigma, pa_p;
     Bool expTableReady,cexpTableReady,sigmaReady;
