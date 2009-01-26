@@ -36,6 +36,7 @@
 #include <synthesis/MeasurementComponents/BeamCalcAntenna.h>
 #include <images/Images/TempImage.h>
 #include <casa/Exceptions.h>
+#include <cstring>
 namespace casa{
   /* normalizes a "vector" of 3 Doubles in the vector sense */
   
