@@ -86,6 +86,7 @@ namespace casa { //# NAMESPACE - BEGIN
   template class Cube<DComplex>;
   template class MaskedArray<int>;
   template class MaskedArray<float>;
+  template class MaskedArray<double>;
   template class GenSortIndirect<int>;
   template void minMax(float&, float&, IPosition&, IPosition&, const Array<float>&);
   template Array<float> operator*(const float&, const Array<float>&);
