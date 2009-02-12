@@ -294,9 +294,6 @@ public:
   // Return sigma
   Vector<Float>& sigma(Vector<Float>& sig) const;
 
-  // Return sigma matrix (pol-dep)
-  Matrix<Float>& sigmaMat(Matrix<Float>& sigmat) const;
-
   // Return current SpectralWindow
   Int spectralWindow() const
   { return msIter_p.spectralWindowId(); }
@@ -304,10 +301,6 @@ public:
   // Return current Polarization Id
   Int polarizationId() const
   { return msIter_p.polarizationId(); }
-
-  // Return current DataDescription Id
-  Int dataDescriptionId() const
-  { return msIter_p.dataDescriptionId(); }
 
   // Return MJD 
   Vector<Double>& time(Vector<Double>& t) const;
@@ -335,15 +328,6 @@ public:
   // Return weight
   Vector<Float>& weight(Vector<Float>& wt) const;
 
-  // Return weight matrix
-  Matrix<Float>& weightMat(Matrix<Float>& wtmat) const;
-
-  // Determine whether WEIGHT_SPECTRUM exists
-  Bool existsWeightSpectrum() const;
-
-  // Return weightspectrum (a weight for each channel)
-  Cube<Float>& weightSpectrum(Cube<Float>& wtsp) const;
-
   // Return imaging weight (a weight for each channel)
   Matrix<Float>& imagingWeight(Matrix<Float>& wt) const;
 
@@ -367,17 +351,8 @@ public:
   // the number of channels returned by visibility() and frequency().
   Int channelGroupSize() const;
   
-  // Return the number of correlations in the current iteration
-  Int nCorr() const {return nPol_p; };
-
   // Return the number of rows in the current iteration
   Int nRow() const;
-
-  // Return the row ids as from the original root table. This is useful 
-  // to find correspondance between a given row in this iteration to the 
-  // original ms row
-
-  Vector<uInt>& rowIds(Vector<uInt>& rowids) const; 
 
   // Return the numbers of rows in the current chunk
   Int nRowChunk() const;
@@ -417,7 +392,7 @@ public:
   // nGroup groups of width output channels. Default is to return all channels
   // in a single group.
   ROVisibilityIterator& selectChannel(Int nGroup=1, Int start=0, Int width=0, 
-				      Int increment=1, Int spectralWindow=-1);
+				      Int increment=0, Int spectralWindow=-1);
 
   //Same as above except when multiple ms's are to be accessed
 
@@ -426,25 +401,6 @@ public:
 				      Block< Vector<Int> >& blockWidth,
 				      Block< Vector<Int> >& blockIncr,
 				      Block< Vector<Int> >& blockSpw);
-
-
-  //get the channel selection ...the block over the number of ms's associated
-  // with this iterator
-  void getChannelSelection(Block< Vector<Int> >& blockNGroup,
-			   Block< Vector<Int> >& blockStart,
-			   Block< Vector<Int> >& blockWidth,
-			   Block< Vector<Int> >& blockIncr,
-			   Block< Vector<Int> >& blockSpw);
-
-  // Get the spw, start  and nchan for all the ms's is this Visiter that 
-  // match the frequecy "freqstart-freqStep" and "freqEnd+freqStep" range
-  // Can help in doing channel selection above..
-
-  void getSpwInFreqRange(Block<Vector<Int> >& spw, 
-			 Block<Vector<Int> >& start, 
-			 Block<Vector<Int> >& nchan, 
-			 Double freqStart, Double freqEnd, 
-			 Double freqStep);
 
   // Attach a VisBuffer object.
   // Note that while more than one VisBuffer may be attached, only the
@@ -494,11 +450,6 @@ protected:
 
   //Re-Do the channel selection in multi ms case 
   void doChannelSelection();
-  //Set the tile cache size....when using slice access if tile cache size is 
-  // not set memory usuage can go wild
-  void setTileCache();
-
-
 
   ROVisibilityIterator* This;
   MSIter msIter_p;
@@ -560,7 +511,6 @@ protected:
   ROScalarColumn<Double> colTime;
   ROScalarColumn<Double> colTimeInterval;
   ROArrayColumn<Float> colWeight;
-  ROArrayColumn<Float> colWeightSpectrum;
   ROArrayColumn<Float> colImagingWeight;
   ROArrayColumn<Complex> colVis;
   ROArrayColumn<Float> colFloatVis;
@@ -719,12 +669,6 @@ public:
   // Set/modify the weights
   void setWeight(const Vector<Float>& wt);
 
-  // Set/modify the weightMat
-  void setWeightMat(const Matrix<Float>& wtmat);
-
-  // Set/modify the weightSpectrum
-  void setWeightSpectrum(const Cube<Float>& wtsp);
-
   // Set/modify the Sigma
   void setSigma(const Vector<Float>& sig);
 
@@ -748,7 +692,6 @@ protected:
   ArrayColumn<Complex> RWcolModelVis;
   ArrayColumn<Complex> RWcolCorrVis;
   ArrayColumn<Float> RWcolWeight;
-  ArrayColumn<Float> RWcolWeightSpectrum;
   ArrayColumn<Float> RWcolSigma;
   ArrayColumn<Float> RWcolImagingWeight;
   ArrayColumn<Bool> RWcolFlag;

@@ -96,12 +96,6 @@ public:
   static void Sensitivity(VisSet &vs, Quantity& pointsourcesens, Double& relativesens,
 			  Double& sumwt);
 
-  // Hanning smoothing of spectral channels
-  static void HanningSmooth(VisSet &vs);
-
-  // Subtract/add model from/to corrected visibility data
-  static void UVSub(VisSet &vs, Bool reverse=False);
-
 };
 
 } //# NAMESPACE CASA - END

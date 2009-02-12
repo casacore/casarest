@@ -68,12 +68,9 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     blockOfMS_p= new Block<MeasurementSet> ();
     blockOfMS_p->resize(1);
     (*blockOfMS_p)[0]=ms_p;
-    multims_p=False;
     // sort out the channel selection
     Int nSpw=ms_p.spectralWindow().nrow();
     MSSpWindowColumns msSpW(ms_p.spectralWindow());
-    if(nSpw==0)
-      throw(AipsError(String("There is no valid spectral windows in "+ms_p.tableName())));
     selection_p.resize(2,nSpw);
     // fill in default selection
     selection_p.row(0)=0; //start
@@ -136,7 +133,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 		 Bool compress)
   {
     
-    multims_p=True;
+    
     blockOfMS_p = &mss;
     Int numMS=mss.nelements();
     ms_p=mss[numMS-1];
@@ -153,8 +150,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     for (Int k=0; k < numMS; ++k){
       // sort out the channel selection
       Int nSpw=mss[k].spectralWindow().nrow();
-      if(nSpw==0)
-      throw(AipsError(String("There is no valid spectral windows in "+mss[k].tableName())));
       blockNGroup[k]=Vector<Int> (nSpw,1);
       blockIncr[k]=Vector<Int> (nSpw,1);
       // At this stage select all spw
@@ -206,7 +201,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 VisSet::VisSet(MeasurementSet& ms, const Matrix<Int>& chanSelection, 
 	       Double timeInterval)
-  :ms_p(ms)
+:ms_p(ms)
 {
     LogSink logSink;
     LogMessage message(LogOrigin("VisSet","VisSet"));
@@ -214,11 +209,9 @@ VisSet::VisSet(MeasurementSet& ms, const Matrix<Int>& chanSelection,
     blockOfMS_p= new Block<MeasurementSet> ();
     blockOfMS_p->resize(1);
     (*blockOfMS_p)[0]=ms_p;
-    multims_p=False;
+
     // sort out the channel selection
     Int nSpw=ms_p.spectralWindow().nrow();
-    if(nSpw==0)
-      throw(AipsError(String("There is no valid spectral windows in "+ms_p.tableName())));
     MSSpWindowColumns msSpW(ms_p.spectralWindow());
     selection_p.resize(2,nSpw);
     // fill in default selection
@@ -253,7 +246,6 @@ VisSet::VisSet(const VisSet& vs,const Block<Int>& columns,
     blockOfMS_p=new Block<MeasurementSet>();
     blockOfMS_p->resize(1);
     (*blockOfMS_p)[0]=ms_p;
-    multims_p=False;
     selection_p.resize(vs.selection_p.shape());
     selection_p=vs.selection_p;
 
@@ -281,13 +273,7 @@ VisSet& VisSet::operator=(const VisSet& other)
 
 VisSet::~VisSet() {
   ms_p.flush();
-  ms_p=MeasurementSet();// breaking reference
-
   delete iter_p; iter_p=0;
-  //Only one ms then most probably did not use the multi ms constructor
-  if(!multims_p){
-    (*blockOfMS_p)[0]=MeasurementSet();//breaking reference
-  }
 };
 
 void VisSet::resetVisIter(const Block<Int>& columns, Double timeInterval) 
@@ -356,19 +342,10 @@ VisIter& VisSet::iter() { return *iter_p; }
 
 // Set or reset the channel selection on all iterators
 void VisSet::selectChannel(Int nGroup,Int start, Int width, Int increment, 
-			   Int spectralWindow) {
-
-  // Delegate, with callOrigin=True:
-  VisSet::selectChannel(nGroup,start,width,increment,spectralWindow,True);
-
-}
-
-void VisSet::selectChannel(Int nGroup,Int start, Int width, Int increment, 
-			   Int spectralWindow,
-			   Bool callOrigin)
+			   Int spectralWindow)
 {
   iter_p->selectChannel(nGroup,start,width,increment,spectralWindow); 
-  if (callOrigin) iter_p->origin();
+  iter_p->origin();
 
   selection_p(0,spectralWindow) = start;
   selection_p(1,spectralWindow) = width;

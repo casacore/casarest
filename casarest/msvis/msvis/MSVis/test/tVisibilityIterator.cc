@@ -39,14 +39,14 @@
 #include <tables/Tables/ForwardCol.h>
 
 #include <casa/namespace.h>
-int main(int argc, const char* argv[])
+main(int argc, char **argv)
 {
 // register forward col engine
   ForwardColumnEngine::registerClass();
 
   if (argc<2) {
       cout <<"Usage: tVisibilityIterator ms-table-name"<<endl;
-      return 1;
+      exit(1);
   }
   // try to iterate over a pre-existing MS table 
 

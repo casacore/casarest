@@ -93,14 +93,14 @@ int main()
     doTest();
   } catch (AipsError x) {
     cout << "Unexpected exception: " << x.getMesg() << endl;
-    return 1;
+    exit(1);
   } catch (...) {
     cout << "Unexpected unknown exception" << endl;
-    return 1;
+    exit(1);
   }
   if (foundError) {
-    return 1;
+    exit(1);
   }
   cout << "OK" << endl;
-  return 0;
+  exit(0);
 }
