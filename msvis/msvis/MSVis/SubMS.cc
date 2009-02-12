@@ -1,5 +1,5 @@
 //# SubMS.cc 
-//# Copyright (C) 1996-2007
+//# Copyright (C) 1996-2006
 //# Associated Universities, Inc. Washington DC, USA.
 //#
 //# This program is free software; you can redistribute it and/or modify
@@ -78,9 +78,6 @@ namespace casa {
     antennaSel_p=False;
     sameShape_p=True;
     timeBin_p=-1.0;
-    scanString_p="";
-    uvrangeString_p="";
-    taqlString_p="";
   }
   
   SubMS::SubMS(MeasurementSet& ms){
@@ -92,21 +89,17 @@ namespace casa {
     antennaSel_p=False;
     sameShape_p=True;
     timeBin_p=-1.0;
-    scanString_p="";
-    uvrangeString_p="";
-    taqlString_p="";
-
   }
 
   SubMS::~SubMS(){
     if(!msOut_p.isNull())
       msOut_p.flush();
-    msOut_p=MeasurementSet();
+    
   }
 
 
   void SubMS::selectSpw(Vector<Int> spw, Vector<Int> nchan, Vector<Int> start, 
-			 Vector<Int> step, const Bool averchan) {
+			 Vector<Int> step, Bool averchan) {
 
     
     spw_p.resize();
@@ -150,15 +143,11 @@ namespace casa {
     chanStep_p=step;
     averageChannel_p=averchan;
     // check for defaults
-    if(nchan_p[0]<=0 || (nchan_p.nelements() != spw_p.nelements())){
+    if(nchan_p[0]<0 || (nchan_p.nelements() != spw_p.nelements())){
       nchan_p.resize(spw_p.nelements());
       ROMSSpWindowColumns mySpwTab(ms_p.spectralWindow());
-      for (uInt k =0; k < spw_p.nelements(); ++k){
-	if(nchan[0]<=0)
-	  nchan_p[k]=mySpwTab.numChan()(spw_p[k]);
-	else
-	  nchan_p[k]=nchan[0];
-      }
+      for (uInt k =0; k < spw_p.nelements(); ++k)
+	   nchan_p[k]=mySpwTab.numChan()(spw_p[k]);
       chanStart_p.resize(spw_p.nelements());
       chanStep_p.resize(spw_p.nelements());
       if(chanStart_p.nelements() == start.nelements()){
@@ -177,75 +166,6 @@ namespace casa {
 
     }
 
-
-  }
-
-  void SubMS::setmsselect(const String& spw, const String& field, 
-			  const String& baseline, 
-			  const String& scan, const String& uvrange, 
-			  const String& taql, const Vector<Int>& nchan, 
-			  const Vector<Int>& start, const Vector<Int>& step,
-			  const Bool averchan){
-    Vector<Int> inchan(1,-1);
-    Vector<Int> istart(1,0);
-    Vector<Int> istep(1,1);
-    Record selrec=ms_p.msseltoindex(spw, field);
-    Vector<Int>fldids=selrec.asArrayInt("field");
-    Vector<Int>spwids=selrec.asArrayInt("spw");
-    if(fldids.nelements() < 1){
-      fldids=Vector<Int>(1,-1);
-    }
-    selectSource(fldids);
-    if(spwids.nelements() < 1){
-      spwids=Vector<Int>(1,-1);
-    }
-    //use nchan f defined else use caret-column syntax of  msselection 
-    if((nchan.nelements()>0) && nchan[0] > 0){
-      inchan.resize(); inchan=nchan;
-      istep.resize(); istep=step;
-      istart.resize(); istart=start;
-    }
-    else{
-      Matrix<Int> chansel=selrec.asArrayInt("channel");
-      if(chansel.nelements() !=0){
-	inchan.resize(chansel.nrow());
-	istep.resize(chansel.nrow());
-	istart.resize(chansel.nrow());
-	// if the vector step is used ..for averaging ..let's use it
-	Bool stepused=False;
-	if( (step.nelements() >= 1) && (max(step) > 1))
-	    stepused=True;
-	for (uInt k =0 ; k < chansel.nrow(); ++k){
-	  if(stepused){
-	    if(step.nelements()==1)
-	      istep[k]=step[0];
-	    else if(step.nelements()==istep.nelements())
-	      istep[k]=step[k];
-	    else //confused at this stage
-	      istep[k]=1;
-	  }
-	  else{
-	    istep[k]=chansel.row(k)(3);
-	    if(istep[k] < 1)
-	      istep[k]=1;
-	  }
-	  istart[k]=chansel.row(k)(1);
-	  inchan[k]=(chansel.row(k)(2)-istart[k]+1)/istep[k];
-	  if(inchan[k]<1)
-	    inchan[k]=1;	  
-	}
-      } 
-    }
-    selectSpw(spwids, inchan, istart, istep, averchan);
-  
-    if(baseline != ""){
-      Vector<Int> antid(0);
-      Vector<String> antstr(1,baseline);
-      selectAntenna(antid, antstr);
-    }
-    scanString_p=scan;
-    uvrangeString_p=uvrange;
-    taqlString_p=taql;
 
   }
 
@@ -289,7 +209,7 @@ namespace casa {
 
   Bool SubMS::makeSubMS(String& msname, String& colname){
     
-    LogIO os(LogOrigin("SubMS", "makeSubMS()"));
+    LogIO os(LogOrigin("SubMS", "makeSubMS()", WHERE));
     
     if(max(fieldid_p) >= Int(ms_p.field().nrow())){
       os << LogIO::SEVERE 
@@ -347,7 +267,7 @@ namespace casa {
 
   MeasurementSet* SubMS::makeScratchSubMS(String& colname, Bool forceInMemory){
     
-    LogIO os(LogOrigin("SubMS", "makeSubMS()"));
+    LogIO os(LogOrigin("SubMS", "makeSubMS()", WHERE));
     
     if(max(fieldid_p) >= Int(ms_p.field().nrow())){
       os << LogIO::SEVERE 
@@ -416,7 +336,7 @@ namespace casa {
 
   Bool SubMS::fillAllTables(const String& colname){
 
-    LogIO os(LogOrigin("SubMS", "makeSubMS()"));
+    LogIO os(LogOrigin("SubMS", "makeSubMS()", WHERE));
 
     // fill or update
     if(!fillDDTables()){
@@ -459,7 +379,7 @@ namespace casa {
   
   Bool SubMS::makeSelection(){
     
-    LogIO os(LogOrigin("SubMS", "makeSelection()"));
+    LogIO os(LogOrigin("SubMS", "makeSelection()", WHERE));
     
     //VisSet/MSIter will check if the SORTED exists
     //and resort if necessary
@@ -476,7 +396,7 @@ namespace casa {
       thisSelection.setSpwExpr(MSSelection::indexExprStr(spw_p));
     if(antennaSel_p){
       if(antennaId_p.nelements() >0){
-	thisSelection.setAntennaExpr( MSSelection::indexExprStr( antennaId_p ));
+	thisSelection.setAntennaExpr( "'"+MSSelection::indexExprStr( antennaId_p )+"'" );
       }
       if(antennaSelStr_p[0] != ""){
         thisSelection.setAntennaExpr(MSSelection::nameExprStr( antennaSelStr_p));
@@ -489,9 +409,6 @@ namespace casa {
       thisSelection.setTimeExpr(timeRange_p);
     }
 
-    thisSelection.setUvDistExpr(uvrangeString_p);
-    thisSelection.setScanExpr(scanString_p);
-    thisSelection.setTaQLExpr(taqlString_p);
 
     TableExprNode exprNode=thisSelection.toTableExprNode(&sorted);
     
@@ -511,14 +428,8 @@ namespace casa {
     }
 
     // Now remake the selected ms
-    if(!(exprNode.isNull())){
-      mssel_p =  MeasurementSet(sorted(exprNode));
-    }
-    else{
-      // Null take all the ms ...setdata() blank means that
-      mssel_p = MeasurementSet(sorted);
-    }
-    //mssel_p.rename(ms_p.tableName()+"/SELECTED_TABLE", Table::Scratch);
+    mssel_p = MeasurementSet(sorted(exprNode));
+    mssel_p.rename(ms_p.tableName()+"/SELECTED_TABLE", Table::Scratch);
     if(mssel_p.nrow()==0){
       return False;
     }
@@ -608,7 +519,7 @@ namespace casa {
     newtab.bindColumn(MS::columnName(MS::SIGMA),tiledStMan5);
 
     // avoid lock overheads by locking the table permanently
-    TableLock lock(TableLock::AutoLocking);
+    TableLock lock(TableLock::PermanentLocking);
     MeasurementSet *ms = new MeasurementSet (newtab,lock);
 
     // Set up the subtables for the UVFITS MS
@@ -639,7 +550,7 @@ namespace casa {
 
   Bool SubMS::fillDDTables(){
     
-    LogIO os(LogOrigin("SubMS", "fillDDTables()"));
+    LogIO os(LogOrigin("SubMS", "fillDDTables()", WHERE));
     
     MSSpWindowColumns& msSpW(msc_p->spectralWindow());
     MSDataDescColumns& msDD(msc_p->dataDescription());
@@ -790,5 +701,7 @@ namespace casa {
   
   }
   
+  
+
 
 } //#End casa namespace
