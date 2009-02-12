@@ -54,6 +54,8 @@ curChanGroup_p(0),nChan_p(0),nRowBlocking_p(0),initialized_p(False),
 msIterAtOrigin_p(False),stateOk_p(False),freqCacheOK_p(False),
 floatDataFound_p(False),lastfeedpaUT_p(0),lastazelUT_p(0),velSelection_p(False)
 {
+
+  //  cout << "addDefaultSortColumns = False!" << endl;
   This = (ROVisibilityIterator*)this;
   isMultiMS_p=False;
 }
@@ -306,6 +308,7 @@ void ROVisibilityIterator::getTopoFreqs()
 
 void ROVisibilityIterator::setState()
 {
+  
   if (stateOk_p) return;
   curTableNumRow_p = msIter_p.table().nrow();
   // get the times for this (major) iteration, so we can do (minor) 
@@ -360,14 +363,18 @@ void ROVisibilityIterator::updateSlicer()
   }
   // set the Slicer to get the selected part of spectrum out of the table
   Int spw=msIter_p.spectralWindowId();
-  Int start=chanStart_p[spw]+curChanGroup_p*chanInc_p[spw];
+  //Fixed what i think was a confusion between chanWidth and chanInc
+  // 2007/11/12
+  Int start=chanStart_p[spw]+curChanGroup_p*chanWidth_p[spw];
   start-=msIter_p.startChan();
   AlwaysAssert(start>=0 && start+channelGroupSize_p<=nChan_p,AipsError);
   //  slicer_p=Slicer(Slice(),Slice(start,channelGroupSize_p));
   // above is slow, use IPositions instead..
   slicer_p=Slicer(IPosition(2,0,start),
-		  IPosition(2,nPol_p,channelGroupSize_p));
-  weightSlicer_p=Slicer(IPosition(1,start),IPosition(1,channelGroupSize_p));
+		  IPosition(2,nPol_p,channelGroupSize_p), 
+		  IPosition(2,1, (chanInc_p[spw]<=0)? 1 : chanInc_p[spw] ));
+  weightSlicer_p=Slicer(IPosition(1,start),IPosition(1,channelGroupSize_p), 
+			IPosition(1,(chanInc_p[spw]<=0)? 1 : chanInc_p[spw]));
   useSlicer_p=channelGroupSize_p<nChan_p;
 }
 
@@ -450,7 +457,7 @@ Vector<Int>& ROVisibilityIterator::channel(Vector<Int>& chan) const
   Int spw = msIter_p.spectralWindowId();
   chan.resize(channelGroupSize_p);
   for (Int i=0; i<channelGroupSize_p; i++) {
-    chan(i)=chanStart_p[spw]+curChanGroup_p*chanInc_p[spw]+i;
+    chan(i)=chanStart_p[spw]+curChanGroup_p*chanWidth_p[spw]+i*chanInc_p[spw];
   }
   return chan;
 }
@@ -537,7 +544,7 @@ Vector<Double>& ROVisibilityIterator::frequency(Vector<Double>& freq) const
       const Vector<Double>& chanFreq=msIter_p.frequency();
       Int start=chanStart_p[spw]-msIter_p.startChan();
       for (Int i=0; i<channelGroupSize_p; i++) {
-	This->frequency_p(i)=chanFreq(start+curChanGroup_p*chanInc_p[spw]+i);
+	This->frequency_p(i)=chanFreq(start+curChanGroup_p*chanWidth_p[spw]+i*chanInc_p[spw]);
       }
     }
     freq.resize(channelGroupSize_p);
@@ -886,6 +893,8 @@ Vector<Float>& ROVisibilityIterator::sigma(Vector<Float>& sig) const
   return sig;
 }
 
+
+
 Vector<Float>& ROVisibilityIterator::weight(Vector<Float>& wt) const
 {
   // Take average of parallel hand polarizations for now.
@@ -897,6 +906,9 @@ Vector<Float>& ROVisibilityIterator::weight(Vector<Float>& wt) const
   wt/=2.0f;
   return wt;
 }
+
+
+
 
 Matrix<Float>& ROVisibilityIterator::imagingWeight(Matrix<Float>& wt) const
 {
@@ -1081,6 +1093,9 @@ void  ROVisibilityIterator::doChannelSelection()
     numChanGroup_p[spw] = blockNumChanGroup_p[msCounter_p][k];
     curNumChanGroup_p = blockNumChanGroup_p[msCounter_p][k];
   }
+  Int spw=msIter_p.spectralWindowId();
+  //leave this at the stage where msiter is pointing
+  channelGroupSize_p = blockChanWidth_p[msCounter_p][spw];
 
 }
 
@@ -1146,12 +1161,12 @@ void ROVisibilityIterator::lsrFrequency(const Int& spw, Vector<Double>& freq,
   for (Int i=0; i<chanWidth_p[spw]; i++) {
     if(convert){
       freq[i]=tolsr(chanFreq(start+
-			     (numChanGroup_p[spw]-1)*chanInc_p[spw]+i)).
+			     (numChanGroup_p[spw]-1)*chanWidth_p[spw]+i*chanInc_p[spw])).
 	getValue().getValue();
     }
     else{
       freq[i]=chanFreq(start+
-		       (numChanGroup_p[spw]-1)*chanInc_p[spw]+i);
+		       (numChanGroup_p[spw]-1)*chanWidth_p[spw]+i*chanInc_p[spw]);
     }
   }
 
@@ -1366,6 +1381,7 @@ void VisibilityIterator::setWeight(const Vector<Float>& weight)
   };
   RWcolWeight.putColumn(polWeight);
 }
+
 
 void VisibilityIterator::setSigma(const Vector<Float>& sigma)
 {
