@@ -56,7 +56,7 @@ public:
 
     //    return (fabs(N)>=Size)?0:((ETable[N]-ETable[N+1])*arg + ETable[N]);
 
-    return (abs(N)>=Size)?0:ETable[N];
+    return (std::abs(N)>=Size)?0:ETable[N];
   }
 private:
   T EStep;
