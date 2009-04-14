@@ -893,19 +893,20 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 	  actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
 	}
 	actualOffset(2)=uvOffset(2);
-	IPosition s(flags.shape());
+	const IPosition& fs = flags.shape();
+        vector<Int> s(fs.begin(), fs.end());
 	// Now pass all the information down to a 
 	// FORTRAN routine to do the work
 	gwproj(uvw.getStorage(del),
 	       dphase.getStorage(del),
 	       datStorage,
-	       &s(0),
-	       &s(1),
+	       &s[0],
+	       &s[1],
 	       &idopsf,
 	       flags.getStorage(del),
 	       rowFlags.getStorage(del),
 	       vb.imagingWeight().getStorage(del),
-	       &s(2),
+	       &s[2],
 	       &rownr,
 	       uvScale.getStorage(del),
 	       actualOffset.getStorage(del),
@@ -929,17 +930,18 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
   }
   else {
     Bool del;
-    IPosition s(flags.shape());
+    const IPosition& fs = flags.shape();
+    vector<Int> s(fs.begin(), fs.end());
     gwproj(uvw.getStorage(del),
 	   dphase.getStorage(del),
 	   datStorage,
-	   &s(0),
-	   &s(1),
+	   &s[0],
+	   &s[1],
 	   &idopsf,
 	   flags.getStorage(del),
 	   rowFlags.getStorage(del),
 	   vb.imagingWeight().getStorage(del),
-	   &s(2),
+	   &s[2],
 	   &row,
 	   uvScale.getStorage(del),
 	   uvOffset.getStorage(del),
@@ -1062,15 +1064,16 @@ void WProjectFT::get(VisBuffer& vb, Int row)
 	  actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
 	}
 	actualOffset(2)=uvOffset(2);
-	IPosition s(vb.modelVisCube().shape());
+	const IPosition& fs = vb.modelVisCube().shape();
+        vector<Int> s(fs.begin(), fs.end());
 	dwproj(uvw.getStorage(del),
 	       dphase.getStorage(del),
 	       vb.modelVisCube().getStorage(del),
-	       &s(0),
-	       &s(1),
+	       &s[0],
+	       &s[1],
 	       flags.getStorage(del),
 	       rowFlags.getStorage(del),
-	       &s(2),
+	       &s[2],
 	       &rownr,
 	       uvScale.getStorage(del),
 	       actualOffset.getStorage(del),
@@ -1093,15 +1096,16 @@ void WProjectFT::get(VisBuffer& vb, Int row)
   }
   else {
     Bool del;
-    IPosition s(vb.modelVisCube().shape());
+    const IPosition& fs = vb.modelVisCube().shape();
+    vector<Int> s(fs.begin(), fs.end());
     dwproj(uvw.getStorage(del),
 	   dphase.getStorage(del),
 	   vb.modelVisCube().getStorage(del),
-	   &s(0),
-	   &s(1),
+	   &s[0],
+	   &s[1],
 	   flags.getStorage(del),
 	   rowFlags.getStorage(del),
-	   &s(2),
+	   &s[2],
 	   &row,
 	   uvScale.getStorage(del),
 	   uvOffset.getStorage(del),
@@ -1191,15 +1195,16 @@ void WProjectFT::get(VisBuffer& vb, Cube<Complex>& modelVis,
   }
   
   Bool del;
-  IPosition s(modelVis.shape());
+  const IPosition& fs = modelVis.shape();
+  vector<Int> s(fs.begin(), fs.end());
   dwproj(uvw.getStorage(del),
 	 dphase.getStorage(del),
 	 modelVis.getStorage(del),
-	 &s(0),
-	 &s(1),
+	 &s[0],
+	 &s[1],
 	 flags.getStorage(del),
 	 rowFlags.getStorage(del),
-	 &s(2),
+	 &s[2],
 	 &row,
 	 scale.getStorage(del),
 	 offset.getStorage(del),

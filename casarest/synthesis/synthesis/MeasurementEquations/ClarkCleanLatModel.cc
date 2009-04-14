@@ -984,16 +984,16 @@ Float ClarkCleanLatModel::getPsfPatch(Matrix<Float> & psfPatch,
   IPosition modelShape(itsModelPtr->shape());
   AlwaysAssert(modelShape.nelements() >= 2, AipsError);
   IPosition maxShape(2, 1);
-  maxShape(0) = min(2*modelShape(0), psfShape(0));
-  maxShape(1) = min(2*modelShape(1), psfShape(1));
+  maxShape(0) = std::min(2*modelShape(0), psfShape(0));
+  maxShape(1) = std::min(2*modelShape(1), psfShape(1));
 
 
   // See if the user has set a psfPatch size, and if it is less than the
   // maximum size use it.
   if (itsPsfPatchSize.nelements() != 0) {
     IPosition psfPatchSize(2, 1, 1);
-    psfPatchSize(0) = min(maxShape(0), itsPsfPatchSize(0));
-    psfPatchSize(1) = min(maxShape(1), itsPsfPatchSize(1));
+    psfPatchSize(0) = std::min(maxShape(0), itsPsfPatchSize(0));
+    psfPatchSize(1) = std::min(maxShape(1), itsPsfPatchSize(1));
     itsPsfPatchSize = psfPatchSize;
   } else {
     itsPsfPatchSize = maxShape;
