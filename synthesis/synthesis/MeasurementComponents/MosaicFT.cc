@@ -865,19 +865,20 @@ void MosaicFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 	for (Int i=0;i<2;i++) {
 	  actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
 	}
-	IPosition s(flags.shape());
+        const IPosition& fs = flags.shape(); 
+        vector<Int> s(fs.begin(), fs.end());
 	// Now pass all the information down to a 
 	// FORTRAN routine to do the work
 	/*	gmosft(uvw.getStorage(del),
 	       dphase.getStorage(del),
 	       datStorage,
-	       &s(0),
-	       &s(1),
+	       &s[0],
+	       &s[1],
 	       &idopsf,
 	       flags.getStorage(del),
 	       rowFlags.getStorage(del),
 	       vb.imagingWeight().getStorage(del),
-	       &s(2),
+	       &s[2],
 	       &rownr,
 	       uvScale.getStorage(del),
 	       actualOffset.getStorage(del),
@@ -902,17 +903,18 @@ void MosaicFT::put(const VisBuffer& vb, Int row, Bool dopsf,
   }
   else {
     Bool del;
-    IPosition s(flags.shape());
+    const IPosition& fs = flags.shape(); 
+    vector<Int> s(fs.begin(), fs.end());
     gmosft(uvw.getStorage(del),
 	   dphase.getStorage(del),
 	   datStorage,
-	   &s(0),
-	   &s(1),
+	   &s[0],
+	   &s[1],
 	   &idopsf,
 	   flags.getStorage(del),
 	   rowFlags.getStorage(del),
 	   vb.imagingWeight().getStorage(del),
-	   &s(2),
+	   &s[2],
 	   &row,
 	   uvScale.getStorage(del),
 	   uvOffset.getStorage(del),
@@ -1032,15 +1034,16 @@ void MosaicFT::get(VisBuffer& vb, Int row)
       for (Int i=0;i<2;i++) {
 	actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
       }
-      IPosition s(vb.modelVisCube().shape());
+      const IPosition& fs = vb.modelVisCube().shape(); 
+      vector<Int> s(fs.begin(), fs.end());
       dmosft(uvw.getStorage(del),
 	     dphase.getStorage(del),
 	     vb.modelVisCube().getStorage(del),
-	     &s(0),
-	     &s(1),
+	     &s[0],
+	     &s[1],
 	     flags.getStorage(del),
 	     rowFlags.getStorage(del),
-	     &s(2),
+	     &s[2],
 	     &rownr,
 	     uvScale.getStorage(del),
 	     actualOffset.getStorage(del),
@@ -1062,15 +1065,16 @@ void MosaicFT::get(VisBuffer& vb, Int row)
   }
   else {
     Bool del;
-    IPosition s(vb.modelVisCube().shape());
+    const IPosition& fs = vb.modelVisCube().shape(); 
+    vector<Int> s(fs.begin(), fs.end());
     dmosft(uvw.getStorage(del),
 	   dphase.getStorage(del),
 	   vb.modelVisCube().getStorage(del),
-	   &s(0),
-	   &s(1),
+	   &s[0],
+	   &s[1],
 	   flags.getStorage(del),
 	   rowFlags.getStorage(del),
-	   &s(2),
+	   &s[2],
 	   &row,
 	   uvScale.getStorage(del),
 	   uvOffset.getStorage(del),
@@ -1152,15 +1156,16 @@ void MosaicFT::get(VisBuffer& vb, Cube<Complex>& modelVis,
   }
   
   Bool del;
-  IPosition s(modelVis.shape());
+  const IPosition& fs = modelVis.shape(); 
+  vector<Int> s(fs.begin(), fs.end());
   dmosft(uvw.getStorage(del),
 	 dphase.getStorage(del),
 	 modelVis.getStorage(del),
-	 &s(0),
-	 &s(1),
+	 &s[0],
+	 &s[1],
 	 flags.getStorage(del),
 	 rowFlags.getStorage(del),
-	 &s(2),
+	 &s[2],
 	 &row,
 	 scale.getStorage(del),
 	 offset.getStorage(del),

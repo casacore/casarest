@@ -727,19 +727,20 @@ void WFGridFT::multiPut(const VisBuffer& vb, Int row, Bool dopsf, Int nmaps)
         for (Int i=0;i<2;i++) {
           actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
 	}
-	IPosition s(vb.visCube().shape());
+	const IPosition& fs = vb.visCube().shape();
+        vector<Int> s(fs.begin(), fs.end());
         // Now pass all the information down to a 
 	// FORTRAN routine to do the work
 	ggridft(uvw.getStorage(del),
 		dphase.getStorage(del),
 		vb.visCube().getStorage(del),
-                &s(0),
-		&s(1),
+                &s[0],
+		&s[1],
 		&idopsf,
 		flags.getStorage(del),
 		rowFlags.getStorage(del),
 		vb.imagingWeight().getStorage(del),
-		&s(2),
+		&s[2],
 		&rownr,
 		uvScale.getStorage(del),
 		actualOffset.getStorage(del),
@@ -764,17 +765,18 @@ void WFGridFT::multiPut(const VisBuffer& vb, Int row, Bool dopsf, Int nmaps)
     //   Matrix<Float> counter(npol, nchan);
    newSumWeight=*(sumWeightPtr[nth]);
    convertArray(sumWeight,newSumWeight);
-    IPosition s(vb.visCube().shape());
+    const IPosition& fs = vb.visCube().shape();
+    vector<Int> s(fs.begin(), fs.end());
     ggridft(uvw.getStorage(del),
 	    dphase.getStorage(del),
 	    vb.visCube().getStorage(del),
-	    &s(0),
-	    &s(1),
+	    &s[0],
+	    &s[1],
 	    &idopsf,
 	    flags.getStorage(del),
 	    rowFlags.getStorage(del),
 	    vb.imagingWeight().getStorage(del),
-	    &s(2),
+	    &s[2],
 	    &row,
 	    uvScale.getStorage(del),
 	    uvOffset.getStorage(del),
@@ -1002,15 +1004,16 @@ void WFGridFT::multiGet(VisBuffer& vb, Int row, Int nmaps)
         for (Int i=0;i<2;i++) {
           actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
 	}
-	IPosition s(vb.modelVisCube().shape());
+	const IPosition& fs = vb.modelVisCube().shape();
+        vector<Int> s(fs.begin(), fs.end());
 	dgridft(uvw.getStorage(del),
 		dphase.getStorage(del),
 		adder.getStorage(del),
-                &s(0),
-		&s(1),
+                &s[0],
+		&s[1],
 		flags.getStorage(del),
 		rowFlags.getStorage(del),
-		&s(2),
+		&s[2],
 		&rownr,
 		uvScale.getStorage(del),
 		actualOffset.getStorage(del),
@@ -1031,15 +1034,16 @@ void WFGridFT::multiGet(VisBuffer& vb, Int row, Int nmaps)
   }
   else {
     Bool del;
-    IPosition s(vb.modelVisCube().shape());
+    const IPosition& fs = vb.modelVisCube().shape();
+    vector<Int> s(fs.begin(), fs.end());
     dgridft(uvw.getStorage(del),
 	    dphase.getStorage(del),
 	    adder.getStorage(del),
-	    &s(0),
-	    &s(1),
+	    &s[0],
+	    &s[1],
 	    flags.getStorage(del),
 	    rowFlags.getStorage(del),
-	    &s(2),
+	    &s[2],
 	    &row,
 	    uvScale.getStorage(del),
 	    uvOffset.getStorage(del),

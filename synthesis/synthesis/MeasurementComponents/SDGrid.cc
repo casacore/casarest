@@ -681,16 +681,17 @@ void SDGrid::put(const VisBuffer& vb, Int row, Bool dopsf,
 	// accounted for.
 	{
 	  Bool del;
-	  IPosition s(data->shape());
+	  const IPosition& fs = data->shape();
+          vector<Int> s(fs.begin(), fs.end());
 	  ggridsd(actualPos.getStorage(del),
 		  datStorage,
-		  &s(0),
-		  &s(1),
+		  &s[0],
+		  &s[1],
 		  &idopsf,
 		  flags.getStorage(del),
 		  rowFlags.getStorage(del),
 		  vb.imagingWeight().getStorage(del),
-		  &s(2),
+		  &s[2],
 		  &rownr,
 		  dataPtr->getStorage(del),
 		  wDataPtr->getStorage(del),
@@ -719,16 +720,17 @@ void SDGrid::put(const VisBuffer& vb, Int row, Bool dopsf,
     }
     {
       Bool del;
-      IPosition s(data->shape());
+      const IPosition& fs = data->shape();
+      vector<Int> s(fs.begin(), fs.end());
       ggridsd(xyPositions.getStorage(del),
 	      datStorage,
-	      &s(0),
-	      &s(1),
+	      &s[0],
+	      &s[1],
 	      &idopsf,
 	      flags.getStorage(del),
 	      rowFlags.getStorage(del),
 	      vb.imagingWeight().getStorage(del),
-	      &s(2),
+	      &s[2],
 	      &row,
 	      griddedData.getStorage(del),
 	      wGriddedData.getStorage(del),
@@ -817,14 +819,15 @@ void SDGrid::get(VisBuffer& vb, Int row)
 	for (Int i=0;i<2;i++) {
 	  actualPos(i)=xyPos(i)-Double(offsetLoc(i));
 	}
-	IPosition s(vb.modelVisCube().shape());
+	const IPosition& fs = vb.modelVisCube().shape();
+        vector<Int> s(fs.begin(), fs.end());
 	dgridsd(actualPos.getStorage(del),
 		vb.modelVisCube().getStorage(del),
-		&s(0),
-		&s(1),
+		&s[0],
+		&s[1],
 		flags.getStorage(del),
 		rowFlags.getStorage(del),
-		&s(2),
+		&s[2],
 		&rownr,
 		dataPtr->getStorage(del),
 		&aNx,
@@ -850,14 +853,15 @@ void SDGrid::get(VisBuffer& vb, Int row)
     }
 
     Bool del;
-    IPosition s(vb.modelVisCube().shape());
+    const IPosition& fs = vb.modelVisCube().shape();
+    vector<Int> s(fs.begin(), fs.end());
     dgridsd(xyPositions.getStorage(del),
 	    vb.modelVisCube().getStorage(del),
-	    &s(0),
-	    &s(1),
+	    &s[0],
+	    &s[1],
 	    flags.getStorage(del),
 	    rowFlags.getStorage(del),
-	    &s(2),
+	    &s[2],
 	    &row,
 	    griddedData.getStorage(del),
 	    &nx,
