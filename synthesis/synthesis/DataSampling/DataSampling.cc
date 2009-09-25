@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: DataSampling.cc,v 19.4 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #include <synthesis/DataSampling/DataSampling.h>
 #include <images/Images/ImageInterface.h>

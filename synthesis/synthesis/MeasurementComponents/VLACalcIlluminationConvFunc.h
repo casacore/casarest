@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: VLACalcIlluminationConvFunc.h,v 1.5 2006/08/31 23:03:17 gvandiep Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_VLACALCILLUMINATIONCONVFUNC_H
 #define SYNTHESIS_VLACALCILLUMINATIONCONVFUNC_H
@@ -34,7 +34,7 @@
 #include <synthesis/MeasurementComponents/BeamCalc.h>
 #include <synthesis/MeasurementComponents/BeamCalcAntenna.h>
 #include <synthesis/MeasurementComponents/CExp.new3.h>
-#include <synthesis/MeasurementComponents/Exp.h>
+#include <synthesis/MeasurementComponents/ExpCache.h>
 #include <images/Images/TempImage.h>
 #include <casa/Exceptions.h>
 #include <msvis/MSVis/VisBuffer.h>
@@ -69,15 +69,27 @@ namespace casa{
 			TempImage<Complex>& uvGrid, 
 			const VisBuffer& vb,
 			Bool doSquint=True,Int bandID=-1);
+    void regridAperture(CoordinateSystem& skyCS,
+			IPosition& skyShape,
+			TempImage<Complex>& uvGrid,
+			const VisBuffer &vb,
+			const Vector<Float>& paList,
+			Bool doSquint, Int bandID);
+    void applyPB(ImageInterface<Float>& pbImage, const VisBuffer& vb, 
+		 const Vector<Float>& paList, Int bandID);
     void applyPB(ImageInterface<Float>& pbImage, const VisBuffer& vb, Int bandID=-1);
     void applyPB(ImageInterface<Complex>& pbImage, const VisBuffer& vb, Int bandID=-1);
+    void applyPBSq(ImageInterface<Float>& pbImage, const VisBuffer& vb, 
+		 const Vector<Float>& paList, Int bandID);
+    void applyPBSq(ImageInterface<Float>& pbImage, const VisBuffer& vb, Int bandID=-1);
+    void applyPBSq(ImageInterface<Complex>& pbImage, const VisBuffer& vb, Int bandID=-1);
     void skyMuller(ImageInterface<Complex>& skyJones);
 
 
   private:
     
-    void fillPB(ImageInterface<Complex>& inImg, ImageInterface<Float>& outImg);
-    void fillPB(ImageInterface<Complex>& inImg, ImageInterface<Complex>& outImg);
+    void fillPB(ImageInterface<Complex>& inImg, ImageInterface<Float>& outImg, Bool Square=False);
+    void fillPB(ImageInterface<Complex>& inImg, ImageInterface<Complex>& outImg, Bool Square=False);
 
     TempImage<Complex> convFunc_p;
     //    TempImage<Float> reAperture_p, imAperture_p;

@@ -21,24 +21,23 @@ for f in yys:
     myenv.AppendUnique(CPPPATH=[Dir(path)])
 
 # get all the sourcefiles recursively
-cpps = myenv.SGlob("*.cc", excludedirs=["test"], recursive=True )
+srcs = myenv.SGlob("*.cc", excludedirs=["test"], recursive=True )
+srcs += myenv.SGlob("*.f", excludedirs=["test"], recursive=True )
 # need this to go to the root dir, as SConscript assumes to be in the
 # build dir
 rootdir = myenv.Dir("#").abspath
 libname = "casa_" + myenv["PACKAGE"]
 
-slib =  myenv.StaticLibrary(target = libname, source = [cpps])
+slib =  myenv.StaticLibrary(target = libname, source = [srcs])
 myenv.Alias(os.path.basename(os.path.normpath(str(slib[0]))), slib)
 myenv.Alias("static", slib)
 myenv.Default("static")
 
-dlib =  myenv.SharedLibrary(target = libname, source = cpps)
+dlib =  myenv.SharedLibrary(target = libname, source = srcs)
 myenv.Alias(os.path.basename(os.path.normpath(str(dlib[0]))), dlib)
 myenv.Alias("shared", dlib)
 
 if "shared" in BUILD_TARGETS:
-    myenv.Prepend(LIBS=[libname+"_f"])
-    myenv.PrependUnique(LIBPATH=[myenv["BUILDDIR_FORT"]])
     installer.AddLibrary(dlib)
 
 if "static" in BUILD_TARGETS or "shared" not in BUILD_TARGETS:
@@ -50,10 +49,8 @@ testenv = myenv.Clone()
 tests = testenv.SGlob("test/*.cc")
 tests += testenv.SGlob("*/test/*.cc")
 # point to tests local includes
-#testenv.PrependUnique(LIBPATH=[testenv["BUILDDIR_FORT"]])
 testenv.PrependUnique(LIBPATH=[testenv["BUILDDIR"]])
-sflib = myenv.File("fortran/"+myenv["LIBPREFIX"]+libname+"_f"+myenv["LIBSUFFIX"])
-testenv.PrependUnique(LIBS=[slib, sflib])
+testenv.PrependUnique(LIBS=[slib])
 for t in tests:
     testenv.addAssayTest(t)
 

@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SkyJones.cc,v 19.3 2004/11/30 17:50:56 ddebonis Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <synthesis/MeasurementComponents/SkyJones.h>

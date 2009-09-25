@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: GJonesTable.cc,v 19.3 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/GJonesTable.h>
@@ -109,6 +109,7 @@ GJonesSplineTable::GJonesSplineTable (const String& tableName,
   if (access == Table::New || access == Table::NewNoReplace ||
       access == Table::Scratch) {
     createCalTable (tableName, itsGJonesSplineDesc, access);
+    calMainAsTable().tableInfo().setSubType("GSPLINE");
   } else {
     openCalTable (tableName, access);
   };

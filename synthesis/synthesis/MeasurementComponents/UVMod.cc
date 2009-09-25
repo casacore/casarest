@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: UVMod.cc,v 1.12 2006/05/23 00:15:49 gmoellen Exp $
+//# $Id$
 
 #include <synthesis/MeasurementComponents/UVMod.h>
 

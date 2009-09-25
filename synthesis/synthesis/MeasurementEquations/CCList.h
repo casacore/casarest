@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: CCList.h,v 19.4 2004/11/30 17:50:58 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_CCLIST_H
 #define SYNTHESIS_CCLIST_H

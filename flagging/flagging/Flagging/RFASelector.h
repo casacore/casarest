@@ -1,3 +1,4 @@
+
 //# RFASelector.h: this defines RFASelector
 //# Copyright (C) 2000,2001
 //# Associated Universities, Inc. Washington DC, USA.
@@ -23,12 +24,13 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFASelector.h,v 19.5 2005/06/18 21:19:15 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFASELECTOR_H
 #define FLAGGING_RFASELECTOR_H
 
 #include <flagging/Flagging/RFAFlagCubeBase.h> 
 #include <flagging/Flagging/RFDataMapper.h>
+#include <ms/MeasurementSets/MSColumns.h>
 #include <casa/Arrays/LogiVector.h>
     
 namespace casa { //# NAMESPACE CASA - BEGIN
@@ -74,9 +76,13 @@ public:
   virtual Bool newChunk ( Int &maxmem );
   virtual IterMode iterTime ( uInt it );
   virtual IterMode iterRow  ( uInt ir );
+  virtual void startData ();
 
   virtual String getDesc ();
   static const RecordInterface & getDefaults ();
+
+  Bool fortestingonly_parseMinMax( Float &vmin,Float &vmax,const RecordInterface &spec,uInt f0 );
+  void fortestingonly_parseClipField( const RecordInterface &spec,Bool clip );
 
 protected:
   typedef struct ClipInfo {
@@ -92,33 +98,56 @@ protected:
   
   Bool parseTimes  ( Array<Double> &times,const RecordInterface &parm,const String &id,Bool secs=False );
   void addString   ( String &str,const String &s1,const char *sep=" " );
-  void processRow  ( uInt ifr,uInt it );
+  virtual void processRow  ( uInt ifr,uInt it );
   Bool parseMinMax ( Float &vmin,Float &vmax,const RecordInterface &spec,uInt f0 );
   void addClipInfo ( const Vector<String> &expr,Float vmin,Float vmax,Bool clip );
   void parseClipField  ( const RecordInterface &spec,Bool clip );
   void addClipInfoDesc ( const Block<ClipInfo> &clip );
 
+  // shadow mode
+  Double diameter;   /* diameter to use. If negative use 
+                        the diameters array (true antenna diameters)
+                     */
+  Vector< Double > diameters;
+  ROMSAntennaColumns *ac;
+
 // description of agent
   String desc_str;
 // selection arguments
-  Matrix<Double> sel_freq,sel_time,sel_timerng;
+  Matrix<Double> sel_freq,sel_time,sel_timerng,sel_uvrange;
   Matrix<Int>    sel_chan;
   Vector<Int>    sel_corr,sel_spwid,sel_fieldid;
   Vector<String>  sel_fieldnames;
-  LogicalVector  sel_ifr,flagchan;
+  LogicalVector  sel_ifr,flagchan,sel_feed;
   Bool          sel_autocorr,unflag;
   Block<ClipInfo> sel_clip,sel_clip_row;
   LogicalVector  sel_clip_active;
   Bool            sum_sel_clip_active;
-  Double        quack_si,quack_dt,scan_start,scan_end;
-  
-  Bool select_fullrow,flag_everything;
-  
+  Double        quack_si, quack_dt;
+  String        quack_mode;
+  Bool          quack_increment;
+  Vector<Int>   sel_scannumber,sel_arrayid;
+  String        sel_column;
+
+  Bool select_fullrow,flag_everything, shadow;
+
 };
+
+
+  template<class T> Array<T> fieldToArray( const RecordInterface &parm,const String &id );
+  template<> inline Array<Int> fieldToArray<Int>( const RecordInterface &parm,const String &id )
+    { return parm.toArrayInt(id); }
+  template<> inline Array<Double> fieldToArray<Double>( const RecordInterface &parm,const String &id )
+    { return parm.toArrayDouble(id); }
+  template<> inline Array<String> fieldToArray<String>( const RecordInterface &parm,const String &id )
+    { return parm.toArrayString(id); }
 
     
     
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <flagging/Flagging/RFASelector.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

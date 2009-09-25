@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: TimeVarVJMBuf.h,v 19.4 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_TIMEVARVJMBUF_H
 #define CALIBRATION_TIMEVARVJMBUF_H

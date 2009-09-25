@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: tIncCEMemModel.cc,v 19.4 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
  
 #include <casa/iostream.h>
 #include <casa/aips.h>

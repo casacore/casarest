@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: MFCEMemImageSkyModel.cc,v 19.14 2005/04/02 01:51:20 kgolap Exp $
+//# $Id$
 
 #include <casa/Arrays/ArrayMath.h>
 #include <casa/Arrays/Matrix.h>
@@ -382,7 +382,11 @@ Bool MFCEMemImageSkyModel::solve(SkyEquation& se) {
 	  }
 	}
       }
+      // For now if it has converged withing 20% of maxiter we'll stop
 
+      if((maxIterations+Int(numberIterations()/20)) >=numberIterations())
+	 stop=True;
+      //===
       if(maxIterations<numberIterations()&&ask) {
 	Vector<String> choices(3);
 	choices(0)="Continue";

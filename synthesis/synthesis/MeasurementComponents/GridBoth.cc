@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: GridBoth.cc,v 19.10 2006/05/27 18:04:19 kgolap Exp $
+//# $Id$
 
 #include <synthesis/MeasurementComponents/GridBoth.h>
 #include <synthesis/MeasurementComponents/SimpCompGridMachine.h>
@@ -53,7 +53,7 @@
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
-GridBoth::GridBoth(MeasurementSet &ms, SkyJones& sj, Long icachesize,
+GridBoth::GridBoth(SkyJones& sj, Long icachesize,
 		   Int itilesize, 
 		   String sdConvType,
 		   String synConvType,
@@ -65,11 +65,11 @@ GridBoth::GridBoth(MeasurementSet &ms, SkyJones& sj, Long icachesize,
 {
   synMachine_p = new GridFT(icachesize, itilesize, synConvType,
 			    padding, False);
-  sdMachine_p  = new SDGrid(ms, sj, icachesize, itilesize, sdConvType, -1);
+  sdMachine_p  = new SDGrid(sj, icachesize, itilesize, sdConvType, -1);
   ok();
 }
 
-GridBoth::GridBoth(MeasurementSet &ms, SkyJones& sj, Long icachesize,
+GridBoth::GridBoth(SkyJones& sj, Long icachesize,
 		   Int itilesize, 
 		   MPosition mLocation,
 		   String sdConvType,
@@ -82,11 +82,11 @@ GridBoth::GridBoth(MeasurementSet &ms, SkyJones& sj, Long icachesize,
 {
   synMachine_p = new GridFT(icachesize, itilesize, synConvType, mLocation,
 			    padding, False);
-  sdMachine_p  = new SDGrid(ms, mLocation, sj, icachesize, itilesize, sdConvType, -1);
+  sdMachine_p  = new SDGrid(mLocation, sj, icachesize, itilesize, sdConvType, -1);
   ok();
 }
 
-GridBoth::GridBoth(MeasurementSet &ms, SkyJones& sj, Long icachesize,
+GridBoth::GridBoth(SkyJones& sj, Long icachesize,
 		   Int itilesize, 
 		   MPosition mLocation,
 		   MDirection mDirection,
@@ -101,7 +101,7 @@ GridBoth::GridBoth(MeasurementSet &ms, SkyJones& sj, Long icachesize,
 {
   synMachine_p = new GridFT(icachesize, itilesize, synConvType, mLocation,
 			    mDirection, padding, False);
-  sdMachine_p  = new SDGrid(ms, mLocation, sj, icachesize, itilesize, 
+  sdMachine_p  = new SDGrid(mLocation, sj, icachesize, itilesize, 
 			    sdConvType, -1);
   ok();
 }
@@ -225,10 +225,11 @@ void GridBoth::finalizeToSky()
   sdMachine_p->finalizeToSky();
 }
 
-void GridBoth::put(const VisBuffer& vb, Int row, Bool dopsf, FTMachine::Type type)
+void GridBoth::put(const VisBuffer& vb, Int row, Bool dopsf, 
+		   FTMachine::Type type, const Matrix<Float>& wgt)
 {
-  synMachine_p->put(vb, row, dopsf, type);
-  sdMachine_p->put(vb, row, dopsf, type);
+  synMachine_p->put(vb, row, dopsf, type, wgt);
+  sdMachine_p->put(vb, row, dopsf, type, wgt);
 }
 
 void GridBoth::get(VisBuffer& vb, Int row)

@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ClarkCleanModel.cc,v 19.7 2004/11/30 17:50:59 ddebonis Exp $
+//# $Id$
 
 #include <synthesis/MeasurementEquations/ClarkCleanModel.h>
 #include <synthesis/MeasurementEquations/ClarkCleanProgress.h>
@@ -378,12 +378,13 @@ Bool ClarkCleanModel::solve(ConvolutionEquation & eqn){
       // Count the number of major cycles
       numMajorCycles++;
     }
-    else
+    else{
       theLog << LogIO::WARN 
-	     << "Zero Pixels selected with a Fluxlimit of " << fluxLimit
-	     << " and a maximum Residual of " << maxRes << endl;
-    
-    userHalt = stopnow();
+      	     << "Zero Pixels selected with a Fluxlimit of " << fluxLimit
+      	     << " and a maximum Residual of " << maxRes << LogIO::POST;
+      userHalt=True;
+    }
+    userHalt = userHalt || stopnow();
   }
   setThreshold(maxRes);
   setNumberIterations(numIterations);
@@ -483,7 +484,7 @@ Bool ClarkCleanModel::singleSolve(ConvolutionEquation & eqn,
   else
     theLog << LogIO::WARN 
 	   << "Zero Pixels selected with a Fluxlimit of " << fluxLimit
-	   << " and a maximum Residual of " << maxRes << endl;
+	   << " and a maximum Residual of " << maxRes << LogIO::POST;
 
   setNumberIterations(numIterations);
   theMaxNumPix = maxNumPix;

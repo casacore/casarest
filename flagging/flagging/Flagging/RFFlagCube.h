@@ -1,3 +1,4 @@
+
 //# RFFlagCube.h: this defines RFFlagCube
 //# Copyright (C) 2000,2001,2002
 //# Associated Universities, Inc. Washington DC, USA.
@@ -23,11 +24,11 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFFlagCube.h,v 19.5 2005/06/18 21:19:15 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFFLAGCUBE_H
 #define FLAGGING_RFFLAGCUBE_H
     
-#include <flagging/Flagging/RedFlagger.h>
+//#include <flagging/Flagging/RedFlagger.h>
 #include <flagging/Flagging/RFCubeLattice.h>
 #include <flagging/Flagging/RFChunkStats.h>
 #include <casa/Arrays/ArrayLogical.h>
@@ -122,7 +123,7 @@ public:
 // fills global flag lattice with apriori flags from a VisBuffer (if required)
   void getMSFlags  ();
 // transfers all flags from lattice into VisBuffer
-  void setMSFlags  ();
+  void setMSFlags  (uInt itime);
 
 // creates a custom iterator
   FlagCubeIterator newCustomIter ();
@@ -346,4 +347,7 @@ inline LogIO & RFFlagCube::logSink ()
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <flagging/Flagging/RFFlagCube.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

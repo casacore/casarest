@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: TJonesMCol.h,v 19.4 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_TJONESMCOL_H
 #define CALIBRATION_TJONESMCOL_H

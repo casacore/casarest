@@ -23,12 +23,14 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SkyEquation.cc,v 19.27 2006/09/09 00:51:39 kgolap Exp $
+//# $Id$
 #include <casa/BasicSL/Complex.h>
 #include <casa/Arrays/Matrix.h>
 #include <measures/Measures/MeasConvert.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
 #include <images/Images/ImageInterface.h>
+#include <images/Images/SubImage.h>
+#include <images/Regions/ImageRegion.h>
 #include <synthesis/MeasurementComponents/SkyJones.h>
 #include <synthesis/MeasurementComponents/FTMachine.h>
 
@@ -53,10 +55,13 @@
 #include <casa/BasicSL/String.h>
 #include <lattices/Lattices/Lattice.h>
 #include <measures/Measures/UVWMachine.h>
+#include <lattices/Lattices/ArrayLattice.h>
 #include <lattices/Lattices/LatticeFFT.h>
 #include <lattices/Lattices/LatticeExpr.h>
 #include <lattices/Lattices/TiledLineStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>
+#include <lattices/Lattices/LatticeStepper.h>
+#include <lattices/Lattices/LCRegion.h>
 #include <casa/Containers/Block.h>
 
 #include <casa/Exceptions/Error.h>
@@ -79,13 +84,20 @@ SkyEquation::SkyEquation(SkyModel& sm, VisSet& vs, FTMachine& ft,
 			 FTMachine& ift)
   : sm_(&sm), vs_(&vs), ft_(&ft), ift_(&ift), cft_(0), ej_(0), dj_(0), 
     tj_(0), fj_(0), iDebug_p(0), isPSFWork_p(False), noModelCol_p(False), isBeginingOfSkyJonesCache_p(True)
-{};
+{
+  rvi_p=&(vs_->iter());
+  wvi_p=&(vs_->iter());
+};
 
 //----------------------------------------------------------------------
 SkyEquation::SkyEquation(SkyModel& sm, VisSet& vs, FTMachine& ft)
   : sm_(&sm), vs_(&vs), ft_(&ft), ift_(&ft), cft_(0), ej_(0), dj_(0), 
     tj_(0), fj_(0), iDebug_p(0), isPSFWork_p(False),noModelCol_p(False), isBeginingOfSkyJonesCache_p(True)
-{};
+{
+  rvi_p=&(vs_->iter());
+  wvi_p=&(vs_->iter());
+
+};
 
 //----------------------------------------------------------------------
 SkyEquation::SkyEquation(SkyModel& sm, VisSet& vs, FTMachine& ft,
@@ -93,6 +105,9 @@ SkyEquation::SkyEquation(SkyModel& sm, VisSet& vs, FTMachine& ft,
   : sm_(&sm), vs_(&vs), ft_(&ft), ift_(&ift), cft_(&cft), ej_(0),
     dj_(0), tj_(0), fj_(0), iDebug_p(0), isPSFWork_p(False),noModelCol_p(False),isBeginingOfSkyJonesCache_p(True)
 {
+  rvi_p=&(vs_->iter());
+  wvi_p=&(vs_->iter());
+
  };
 
 //----------------------------------------------------------------------
@@ -102,7 +117,28 @@ SkyEquation::SkyEquation(SkyModel& sm, VisSet& vs, FTMachine& ft,
     dj_(0), tj_(0), fj_(0), iDebug_p(0), isPSFWork_p(False), 
     noModelCol_p(noModelCol),isBeginingOfSkyJonesCache_p(True)
 {
+
+  rvi_p=&(vs_->iter());
+  wvi_p=&(vs_->iter());
+  
+
 };
+
+SkyEquation::SkyEquation(SkyModel& sm, ROVisibilityIterator& vi, FTMachine& ft,
+			 ComponentFTMachine& cft, Bool noModelCol)
+  : sm_(&sm), ft_(&ft), ift_(&ft), cft_(&cft), ej_(0),
+    dj_(0), tj_(0), fj_(0), iDebug_p(0), isPSFWork_p(False), 
+    noModelCol_p(noModelCol),isBeginingOfSkyJonesCache_p(True){
+
+
+  //visiter is read only
+  rvi_p=&vi;
+  if(!noModelCol)
+    wvi_p=static_cast<VisibilityIterator *>(&vi);
+  else
+    wvi_p=NULL;
+
+}
 
 //----------------------------------------------------------------------
 SkyEquation::~SkyEquation() {
@@ -121,6 +157,8 @@ SkyEquation& SkyEquation::operator=(const SkyEquation& other)
     dj_=other.dj_;
     tj_=other.tj_;
     fj_=other.fj_;
+    rvi_p=other.rvi_p;
+    wvi_p=other.wvi_p;
   };
   return *this;
 };
@@ -152,24 +190,17 @@ void SkyEquation::setSkyJones(SkyJones& j) {
 
 //----------------------------------------------------------------------
 // Predict the Sky coherence
-void SkyEquation::predict(Bool incremental) {
-
-  AlwaysAssert(cft_, AipsError);
-  AlwaysAssert(sm_, AipsError);
-  AlwaysAssert(vs_, AipsError);
-  if(sm_->numberOfModels()!= 0)  AlwaysAssert(ok(),AipsError);
+void SkyEquation::predictComponents(Bool& incremental, Bool& initialized){
   // Initialize 
-  VisIter& vi=vs_->iter();
-  checkVisIterNumRows(vi);
-  VisBuffer vb(vi);
   
-
-  // Reset the visibilities only if this is not an incremental
-  // change to the model
-  Bool initialized=False;
-
-  // Do the component model only if this is not an incremental update;
+  
+   // Do the component model only if this is not an incremental update;
   if(sm_->hasComponentList() &&  !incremental ) {
+    if(noModelCol_p)
+        throw(AipsError("Cannot deal with componentlists without using scratch columns yet"));
+    VisIter& vi=*wvi_p;
+    checkVisIterNumRows(vi);
+    VisBuffer vb(vi);
 
     // Reset the various SkyJones
     resetSkyJones();
@@ -177,7 +208,7 @@ void SkyEquation::predict(Bool incremental) {
     // Loop over all visibilities
 
     Int cohDone=0;
-    ProgressMeter pm(1.0, Double(vs_->numberCoh()),
+    ProgressMeter pm(1.0, Double(vi.numberCoh()),
 		     "Predicting component coherences",
 		     "", "", "", True);
 
@@ -198,6 +229,30 @@ void SkyEquation::predict(Bool incremental) {
     }
     if(!incremental&&!initialized) initialized=True;
   }
+
+
+}
+
+void SkyEquation::predict(Bool incremental) {
+
+
+
+  if(noModelCol_p)
+        throw(AipsError("Cannot predict model vis without using scratch columns yet"));
+  AlwaysAssert(cft_, AipsError);
+  AlwaysAssert(sm_, AipsError);
+  //AlwaysAssert(vs_, AipsError);
+  if(sm_->numberOfModels()!= 0)  AlwaysAssert(ok(),AipsError);
+  // Initialize 
+  VisIter& vi= *wvi_p;
+  checkVisIterNumRows(vi);
+  VisBuffer vb(vi);
+
+  // Reset the visibilities only if this is not an incremental
+  // change to the model
+  Bool initialized=False;
+  predictComponents(incremental, initialized);
+ 
   // Now do the images
   for (Int model=0;model<sm_->numberOfModels();model++) {      
     
@@ -239,7 +294,7 @@ void SkyEquation::predict(Bool incremental) {
       
       ostringstream modelName;modelName<<"Model "<<model+1
 				    <<" : predicting coherences";
-      ProgressMeter pm(1.0, Double(vs_->numberCoh()),
+      ProgressMeter pm(1.0, Double(vi.numberCoh()),
 		       modelName, "", "", "", True);
       // Loop over all visibilities
       for (vi.originChunks();vi.moreChunks();vi.nextChunk()) {
@@ -258,6 +313,9 @@ void SkyEquation::predict(Bool incremental) {
       finalizeGet();
       unScaleImage(model, incremental);
       if(!incremental&&!initialized) initialized=True;
+    
+    } else {
+      cout << "WARN: model is empty." << endl;
     }
   }
 }
@@ -276,28 +334,34 @@ void SkyEquation::gradientsChiSquared(const Matrix<Bool>& required,
 void SkyEquation::gradientsChiSquared(Bool incremental, Bool commitModel) {
   AlwaysAssert(ok(),AipsError);
 
-  Bool forceFull=False;
+  if ((ft_->name() == "PBWProjectFT"))
+    {
+      ft_->setNoPadding(False);
+      fullGradientsChiSquared(incremental);
+    }
+  else
+    {
+  Bool forceFull=True;
   // for these 2 gridders force incremental
-  if((ft_->name() == "MosaicFT") || (ft_->name() == "WProjectFT") )
-     forceFull=True;
-  if(ej_)
+  if((ft_->name() == "MosaicFT") || (ft_->name() == "WProjectFT"))
     forceFull=True;
 
-   if( (sm_->numberOfModels() != 1) || !ft_->isFourier() || !incremental 
-       || forceFull){
-     if(commitModel || !noModelCol_p){
-       ft_->setNoPadding(False);
-       fullGradientsChiSquared(incremental);
-     }
-     else{
-       // For now use corrected_data...
-       ft_->setNoPadding(True);
-       fullGradientsChiSquared(incremental, True);
-     }
-   }
-   else {
-     incrementGradientsChiSquared();
-   }
+  if( (sm_->numberOfModels() != 1) || !ft_->isFourier() || !incremental 
+      || forceFull){
+    if(commitModel || !noModelCol_p){
+      ft_->setNoPadding(False);
+      fullGradientsChiSquared(incremental);
+    }
+    else{
+      // For now use corrected_data...
+      ft_->setNoPadding(True);
+      cout << "This mode is gone...we should not be coming here" << endl;
+    }
+  }
+  else {
+    incrementGradientsChiSquared();
+  }
+    }
 }
 //----------------------------------------------------------------------
 void SkyEquation::fullGradientsChiSquared(Bool incremental) {
@@ -313,7 +377,7 @@ void SkyEquation::fullGradientsChiSquared(Bool incremental) {
   // Initialize the gradients
   sm_->initializeGradients();
 
-  ROVisIter& vi(vs_->iter());
+  ROVisIter& vi(*rvi_p);
 
   // Loop over all models in SkyModel
   for (Int model=0;model<sm_->numberOfModels();model++) {
@@ -348,7 +412,7 @@ void SkyEquation::fullGradientsChiSquared(Bool incremental) {
       
       ostringstream modelName;modelName<<"Model "<<model+1
 				    <<" : transforming residuals";
-      ProgressMeter pm(1.0, Double(vs_->numberCoh()),
+      ProgressMeter pm(1.0, Double(vi.numberCoh()),
 		       modelName, "", "", "", True);
       // Loop over the visibilities, putting VisBuffers
       
@@ -377,122 +441,6 @@ void SkyEquation::fullGradientsChiSquared(Bool incremental) {
 
 //----------------------------------------------------------------------
 
-//----------------------------------------------------------------------
-void SkyEquation::fullGradientsChiSquared(Bool incremental, 
-					  Bool useCorrectedData) {
-
-  AlwaysAssert(ok(),AipsError);
-
-
-  PtrBlock<Array<Complex>* > griddedVis;
-  PtrBlock<UVWMachine *> uvwMachines;
-  griddedVis.resize(sm_->numberOfModels());
-  uvwMachines.resize(sm_->numberOfModels());
-  Block<Vector<Double> > uvscale;
-  uvscale.resize(sm_->numberOfModels());
-  // initialize to get all the models
-
-  modelIsEmpty_p.resize(sm_->numberOfModels());
-  
-
-
-  ROVisIter& vi(vs_->iter());
-  checkVisIterNumRows(vi);
-  VisBuffer vb(vi);
-  vi.originChunks();
-  vi.origin();
-
-  for (Int model=0;model<sm_->numberOfModels(); ++model){
-    modelIsEmpty_p(model)=sm_->isEmpty(model);
-    griddedVis[model]=new Array<Complex> ();
-    uvwMachines[model]=NULL;
-    if(!modelIsEmpty_p(model)){
-      initializeGet(vb, 0, model, *(griddedVis[model]), 
-		  uvscale[model], uvwMachines[model], incremental); 
-    }
-  }
-  sumwt = 0.0;
-  chisq = 0.0;
-
-  // Initialize the gradients
-  sm_->initializeGradients();
-
-
-    // Reset the various SkyJones
-  resetSkyJones();
-  
-  Bool isCopy=False;
-    // Loop over all models in SkyModel
-  for (Int model=0;model<sm_->numberOfModels();model++) {
-
-    if(sm_->isSolveable(model)) {
-
-      
-      // Initialize 
-      scaleImage(model, incremental);
-
-      vi.originChunks();
-      vi.origin();
-
-      // Change the model polarization frame
-      if(vb.polFrame()==MSIter::Linear) {
-	StokesImageUtil::changeCStokesRep(sm_->cImage(model),
-					  SkyModel::LINEAR);
-      }
-      else {
-	StokesImageUtil::changeCStokesRep(sm_->cImage(model),
-					  SkyModel::CIRCULAR);
-      }
-      initializePut(vb, model,  
-		    uvscale[model],uvwMachines[model]);
-    }
-  }   
-  Int cohDone=0;
-      
-  ostringstream modelName;modelName    <<"Making Residual-Vis";
-  ProgressMeter pm(1.0, Double(vs_->numberCoh()),
-		       modelName, "", "", "", True);
-  // Loop over the visibilities, putting VisBuffers
-  
-  for (vi.originChunks();vi.moreChunks();vi.nextChunk()) {
-    for (vi.origin(); vi.more(); vi++) {
-      Cube<Complex> modelVis(vb.visCube().shape());
-      modelVis.set(Complex(0,0));
-      get(vb, griddedVis, modelVis, uvscale, uvwMachines, incremental);
-      Cube<Complex> origVis;
-      if(useCorrectedData){
-	modelVis-=vb.correctedVisCube();
-      }
-      else{
-	modelVis-=vb.visCube();
-      }
-      vb.setVisCube(modelVis);
-      for (Int model=0; model<sm_->numberOfModels();model++) {
-	put(vb, model, uvscale[model], uvwMachines[model]);
-      }
-      cohDone+=vb.nRow();
-      pm.update(Double(cohDone));
-    }
-  }
-  // Do the transform, apply the SkyJones transformation
-  // and sum the statistics for this model
-  for (Int model=0; model<sm_->numberOfModels();model++) {
-	 finalizePut(vb_p, model, isCopy);
-	 unScaleImage(model, incremental);
-  }
-  
-  fixImageScale();
-  
-  // Finish off any calculations needed internal to SkyModel
-  sm_->finalizeGradients();
- 
-  for (Int model=0;model<sm_->numberOfModels();model++){
-    delete griddedVis[model];
-    delete uvwMachines[model];
-  }
-    
-      
-}
 
 //----------------------------------------------------------------------
 
@@ -504,7 +452,7 @@ void SkyEquation::incrementGradientsChiSquared() {
   // Check to see if we need to make the XFRs
   if(!sm_->hasXFR(0)) makeComplexXFRs();
 
-  ROVisIter& vi(vs_->iter());
+  ROVisIter& vi(*rvi_p);
 
   // Reset the various SkyJones
   resetSkyJones();
@@ -557,7 +505,7 @@ void SkyEquation::makeComplexXFRs()
 
   AlwaysAssert(ok(),AipsError);
 
-  ROVisIter& vi(vs_->iter());
+  ROVisIter& vi(*rvi_p);
 
   // Loop over all models in SkyModel
   for (Int model=0;model<sm_->numberOfModels();model++) {
@@ -588,7 +536,7 @@ void SkyEquation::makeComplexXFRs()
       
       ostringstream modelName;modelName<<"Model "<<model+1
 				    <<" : transforming to PSF";
-      ProgressMeter pm(1.0, Double(vs_->numberCoh()),
+      ProgressMeter pm(1.0, Double(vi.numberCoh()),
 		       modelName, "", "", "", True);
       // Loop over the visibilities, putting VisBuffers
       
@@ -626,7 +574,7 @@ void SkyEquation::makeApproxPSF(Int model, ImageInterface<Float>& psf) {
   AlwaysAssert(ok(), AipsError);
   AlwaysAssert(cft_, AipsError);
   AlwaysAssert(sm_, AipsError);
-  AlwaysAssert(vs_, AipsError);
+  //AlwaysAssert(vs_, AipsError);
   
   ft_->setNoPadding(noModelCol_p);
 
@@ -637,7 +585,7 @@ void SkyEquation::makeApproxPSF(Int model, ImageInterface<Float>& psf) {
     doPSF=False;
     resetSkyJones();
     
-    VisIter& vi(vs_->iter());
+    VisIter& vi(*wvi_p);
     checkVisIterNumRows(vi);
     // Loop over all visibilities and pixels
     VisBuffer vb(vi);
@@ -686,7 +634,7 @@ void SkyEquation::makeApproxPSF(Int model, ImageInterface<Float>& psf) {
   sm_->initializeGradients();
   
 
-  ROVisIter& vi(vs_->iter());
+  ROVisIter& vi(*rvi_p);
   
   // Reset the various SkyJones
   resetSkyJones();
@@ -727,16 +675,23 @@ void SkyEquation::makeApproxPSF(Int model, ImageInterface<Float>& psf) {
   LatticeExpr<Float> le(iif(sm_->ggS(model)>(0.0),
   			    (sm_->gS(model)/sm_->ggS(model)), 0.0));
   psf.copyData(le);
-  
   LatticeExprNode maxPSF=max(psf);
   Float maxpsf=maxPSF.getFloat();
   if(abs(maxpsf-1.0) > 1e-3) {
-    os << "Maximum of approximate PSF for field " << model+1 << " = "
+    os << "Maximum of approximate PSF for field " << model << " = "
        << maxpsf << " : renormalizing to unity" <<  LogIO::POST;
   }
-  LatticeExpr<Float> len(psf/maxpsf);
-  psf.copyData(len);
+  if(maxpsf > 0.0 ){
+    LatticeExpr<Float> len(psf/maxpsf);
+    psf.copyData(len);
  
+  }
+  else{
+     throw(AipsError("SkyEquation:: PSF calculation resulted in a PSF lesser than 0 !"));
+
+  }
+ 
+
 
   isPSFWork_p=False; // resseting this flag so that subsequent calculation uses
   // the right SkyJones correction;
@@ -744,6 +699,16 @@ void SkyEquation::makeApproxPSF(Int model, ImageInterface<Float>& psf) {
   
 }
 
+void SkyEquation::makeApproxPSF(PtrBlock<TempImage<Float> *>& PSFs) {
+
+  Int nmodels=PSFs.nelements();
+  for (Int model=0; model < nmodels; ++model){
+    makeApproxPSF(model, *(PSFs[model]));
+    
+  }
+
+
+}
 //----------------------------------------------------------------------
 // Solve for a SkyModel
 Bool SkyEquation::solveSkyModel() {
@@ -768,22 +733,7 @@ void SkyEquation::initializeGet(const VisBuffer& vb, Int row, Int model,
   ft_->initializeToVis(sm_->cImage(model),vb);
 }
 //
-void SkyEquation::initializeGet(const VisBuffer& vb, Int row, Int model, 
-				Array<Complex>& griddedVis, 
-				Vector<Double>& uvscale,
-				UVWMachine* & uvwmachine,
-				Bool incremental) {
 
-  AlwaysAssert(ok(),AipsError);
-  if(incremental) {
-    applySkyJones(vb, row, sm_->deltaImage(model), sm_->cImage(model));
-  }
-  else {
-    applySkyJones(vb, row, sm_->image(model), sm_->cImage(model));
-  }
-  ft_->initializeToVis(sm_->cImage(model),vb, griddedVis, uvscale, uvwmachine);
-
-}
 // Add the sky visibility for this coherence sample
 VisBuffer& SkyEquation::get(VisBuffer& result, Int model,
 			    Bool incremental) {
@@ -932,68 +882,6 @@ VisBuffer& SkyEquation::get(VisBuffer& result,
   return result;
 }
 
-Bool SkyEquation::get(VisBuffer& vb, 
-		      PtrBlock< Array<Complex> *>& griddedVis, 
-		      Cube<Complex>& modelVis, 
-		      Block< Vector<Double> >& uvscale,
-		      PtrBlock<UVWMachine *>& uvwMachines,
-		      Bool& incremental){
-
-
-
-  AlwaysAssert(ok(),AipsError);
-  
-  Int nRow=vb.nRow();
-  
-  Bool FTChanged=changedFTMachine(vb);
-
-  Cube<Complex> currVis(modelVis.shape());
-
-  // we might need to recompute the "sky" for every single row, but we
-  // avoid this if possible.
-  Bool internalChanges=False;  // Does this VB change inside itself?
-  Bool firstOneChanges=False;  // Has this VB changed from the previous one?
-  changedSkyJonesLogic(vb, firstOneChanges, internalChanges);
-  for (Int model=0; model < sm_->numberOfModels(); ++model){
-    if(!modelIsEmpty_p(model)){
-      if(internalChanges) {
-	// Yes there are changes within this buffer: go row by row.
-	// This will automatically catch a change in the FTMachine so
-	// we don't have to check for that.
-	for (Int row=0; row<nRow; row++) {
-	  finalizeGet();
-	  // Need to implement these 'gets' especially for 
-	  // FTMosaic machines
-	  initializeGet(vb, row, model, *(griddedVis[model]), 
-			uvscale[model], uvwMachines[model], incremental);
-	  ft_->get(vb, currVis, *(griddedVis[model]), uvscale[model], 
-		   uvwMachines[model], row);
-	}
-      }
-      else if (FTChanged||firstOneChanges) {
-	// This buffer has changed wrt the previous buffer, but
-	// this buffer has no changes within it. Again we don't need to
-      // check for the FTMachine changing.
-	finalizeGet();
-	initializeGet(vb, 0, model, *(griddedVis[model]), 
-		       uvscale[model], uvwMachines[model], incremental);
-	ft_->get(vb, currVis, *(griddedVis[model]), uvscale[model], 
-		 uvwMachines[model]);
-      }
-      else {
-	ft_->get(vb, currVis, *(griddedVis[model]), uvscale[model], 
-		 uvwMachines[model]);
-      }
-      
-      modelVis+=currVis;
-
-    }
-  }
-
-  return True;
-
-}
-
 
 // Corrupt a SkyComponent
 SkyComponent& SkyEquation::applySkyJones(SkyComponent& corruptedComponent,
@@ -1012,15 +900,6 @@ SkyComponent& SkyEquation::applySkyJones(SkyComponent& corruptedComponent,
 void SkyEquation::initializePut(const VisBuffer& vb, Int model) {
   AlwaysAssert(ok(),AipsError);
   ift_->initializeToSky(sm_->cImage(model),sm_->weight(model),vb);
-  assertSkyJones(vb, -1);
-  vb_p.assign(vb, False);
-  vb_p.updateCoordInfo();
-}
-void SkyEquation::initializePut(const VisBuffer& vb, Int model, 
-				Vector<Double>& uvscale, UVWMachine* & uvwmachine) {
-  AlwaysAssert(ok(),AipsError);
-  ift_->initializeToSky(sm_->cImage(model),sm_->weight(model),vb, uvscale, 
-			uvwmachine);
   assertSkyJones(vb, -1);
   vb_p.assign(vb, False);
   vb_p.updateCoordInfo();
@@ -1068,47 +947,10 @@ void SkyEquation::put(const VisBuffer & vb, Int model, Bool dopsf, FTMachine::Ty
     ift_->put(vb, -1, dopsf, col);
   }
 
-
+  isBeginingOfSkyJonesCache_p=False;
 }
 
 
-void SkyEquation::put(const VisBuffer & vb, Int model, Vector<Double>& scale, 
-		      UVWMachine *uvwMachine, Bool dopsf) {
-
-  AlwaysAssert(ok(),AipsError);
-
-  Bool IFTChanged=changedIFTMachine(vb);
-
-  TempImage<Complex> * imageGrid;
-  imageGrid = (TempImage<Complex> *) &(sm_->cImage(model));
-
-  // we might need to recompute the "sky" for every single row, but we
-  // avoid this if possible.
-  Int nRow=vb.nRow();
-  Bool internalChanges=False;  // Does this VB change inside itself?
-  Bool firstOneChanges=False;  // Has this VB changed from the previous one?
-  changedSkyJonesLogic(vb, firstOneChanges, internalChanges);
-  if(internalChanges) {
-    // Yes there are changes: go row by row. 
-    for (Int row=0; row<nRow; row++) {
-      if(IFTChanged||changedSkyJones(vb,row)) {
-	// Need to apply the SkyJones from the previous row
-	// and finish off before starting with this row
-	finalizePut(vb_p, model);  
-	initializePut(vb, model);
-      }
-      ift_->put(vb, *imageGrid, scale, row, uvwMachine, dopsf);
-    }
-  }
-  else if (IFTChanged||firstOneChanges) {
-    finalizePut(vb_p, model);      
-    initializePut(vb, model);
-    ift_->put(vb, *imageGrid, scale, -1, uvwMachine, dopsf);
-  }
-  else {
-    ift_->put(vb, *imageGrid, scale, -1, uvwMachine, dopsf);
-  }
-}
 
 
 void SkyEquation::finalizePut(const VisBuffer& vb, Int model) {
@@ -1116,7 +958,7 @@ void SkyEquation::finalizePut(const VisBuffer& vb, Int model) {
   // Actually do the transform. Update weights as we do so.
   ift_->finalizeToSky();
   // 1. Now get the (unnormalized) image and add the 
-  // weight to the summed weight
+  // weight to the summed weights
   Matrix<Float> delta;
   sm_->cImage(model).copyData(ift_->getImage(delta, False));
   sm_->weight(model)+=delta;
@@ -1128,31 +970,12 @@ void SkyEquation::finalizePut(const VisBuffer& vb, Int model) {
   applySkyJonesSquare(vb, -1, sm_->weight(model), sm_->work(model),
 		      sm_->ggS(model));
 
+  
   // 4. Finally, we add the statistics
   sm_->addStatistics(sumwt, chisq);
 }
 
 
-void SkyEquation::finalizePut(const VisBuffer& vb, Int model, Bool& isCopy) {
-
-  // Actually do the transform. Update weights as we do so.
-  ift_->finalizeToSky(sm_->cImage(model));
-  // 1. Now get the (unnormalized) image and add the 
-  // weight to the summed weight
-  Matrix<Float> delta;
-  sm_->cImage(model).copyData(ift_->getImage(delta, False));
-  sm_->weight(model)+=delta;
-  // 2. Apply the SkyJones and add to grad chisquared
-  applySkyJonesInv(vb, -1, sm_->cImage(model), sm_->work(model),
-		   sm_->gS(model));
-
-  // 3. Apply the square of the SkyJones and add this to gradgrad chisquared
-  applySkyJonesSquare(vb, -1, sm_->weight(model), sm_->work(model),
-		      sm_->ggS(model));
-
-  // 4. Finally, we add the statistics
-  sm_->addStatistics(sumwt, chisq);
-}
 
 
 void SkyEquation::initializePutXFR(const VisBuffer& vb, Int model,
@@ -1364,8 +1187,10 @@ ImageInterface<Complex>& SkyEquation::applySkyJones(const VisBuffer& vb,
 						    ImageInterface<Float>& in,
 						    ImageInterface<Complex>& out) {
 
-  AlwaysAssert(in.shape()==out.shape(), AipsError);
-
+  //Pol axis need not be same
+  AlwaysAssert(in.shape()[0]==out.shape()[0], AipsError);
+  AlwaysAssert(in.shape()[1]==out.shape()[1], AipsError);
+  AlwaysAssert(in.shape()[3]==out.shape()[3], AipsError);
   // Convert from Stokes to Complex
   StokesImageUtil::From(out, in);
 
@@ -1387,7 +1212,9 @@ void SkyEquation::applySkyJonesInv(const VisBuffer& vb, Int row,
                                    ImageInterface<Float>& work,
 				   ImageInterface<Float>& gS) {
 
-  AlwaysAssert(in.shape()==work.shape(), AipsError);
+  AlwaysAssert(in.shape()[0]==work.shape()[0], AipsError);
+  AlwaysAssert(in.shape()[1]==work.shape()[1], AipsError);
+  AlwaysAssert(in.shape()[3]==work.shape()[3], AipsError);
   AlwaysAssert(gS.shape()==work.shape(), AipsError);
 
   // Apply the various SkyJones to the current image
@@ -1422,9 +1249,9 @@ void SkyEquation::applySkyJonesSquare(const VisBuffer& vb, Int row,
 
   // First fill the work image with the appropriate value
   // of the weight.
-  ft_->getWeightImage(work, weights);
+  ift_->getWeightImage(work, weights);
    // Apply SkyJones as needed
-  if(!isPSFWork_p && (ft_->name() != "MosaicFT") ){
+  if((ft_->name() != "MosaicFT") ){
     if(ej_) ej_->applySquare(work,work,vb,row);
     if(dj_) dj_->applySquare(work,work,vb,row);
     if(tj_) tj_->applySquare(work,work,vb,row);
@@ -1438,16 +1265,17 @@ void SkyEquation::applySkyJonesSquare(const VisBuffer& vb, Int row,
   else{
     ggS.copyData(work);
   }
-
+ 
 };
 
 
 Bool SkyEquation::ok() {
 
   AlwaysAssert(sm_,AipsError);
-  AlwaysAssert(vs_,AipsError);
+  //AlwaysAssert(vs_,AipsError);
   AlwaysAssert(ft_,AipsError);
   AlwaysAssert(ift_,AipsError);
+  AlwaysAssert(rvi_p, AipsError);
 
   return(True);
 }
@@ -1455,18 +1283,23 @@ Bool SkyEquation::ok() {
 
 void SkyEquation::scaleImage(Int model)
 {
-  if (scaleType_p != "NONE" && sm_->doFluxScale(model) ) {
-    LatticeExpr<Float> latticeExpr( sm_->image(model) * sm_->fluxScale(model) );
+  
+  if (sm_->doFluxScale(model)){  
+
+    LatticeExpr<Float> latticeExpr( iif(sm_->fluxScale(model) <= (0.0), 0.0, (sm_->image(model))/(sm_->fluxScale(model))) );
     sm_->image(model).copyData(latticeExpr);
+    
   }
 };
 
 void SkyEquation::unScaleImage(Int model)
 {
-  if (scaleType_p != "NONE" && sm_->doFluxScale(model) ) {
-    sm_->image(model).copyData( (LatticeExpr<Float>)
-				(iif(sm_->fluxScale(model) <= (0.0), 0.0,
-				     ((sm_->image(model))/(sm_->fluxScale(model))) )) );
+
+  if ( sm_->doFluxScale(model)){
+
+    LatticeExpr<Float> latticeExpr( sm_->image(model) * (sm_->fluxScale(model)) );
+    sm_->image(model).copyData(latticeExpr);
+        
   }
 };
 
@@ -1490,19 +1323,28 @@ void SkyEquation::unScaleImage(Int model, Bool incremental)
 
 void SkyEquation::scaleDeltaImage(Int model)
 {
-  if (scaleType_p != "NONE" && sm_->doFluxScale(model) ) {
-    LatticeExpr<Float> latticeExpr( sm_->deltaImage(model) * sm_->fluxScale(model) );
-    sm_->deltaImage(model).copyData(latticeExpr);
+  if ((sm_->doFluxScale(model))){
+    sm_->deltaImage(model).copyData( (LatticeExpr<Float>)
+				     (iif(sm_->fluxScale(model) <= (0.0), 0.0,
+					  ((sm_->deltaImage(model))/(sm_->fluxScale(model))) )) );
   }
+  
 };
+
+void SkyEquation::getCoverageImage(Int model, ImageInterface<Float>& im){
+  if ((sm_->doFluxScale(model))){
+    ft_->getFluxImage(im);
+  }
+
+}
+
 
 void SkyEquation::unScaleDeltaImage(Int model)
 {
-  if (scaleType_p != "NONE" && sm_->doFluxScale(model) ) {
-    sm_->deltaImage(model).copyData( (LatticeExpr<Float>)
-				     (iif(sm_->fluxScale(model) <= (0.0), 0.0,
-				      ((sm_->deltaImage(model))/(sm_->fluxScale(model))) )) );
-  }
+  if ( (sm_->doFluxScale(model))){
+    LatticeExpr<Float> latticeExpr( sm_->deltaImage(model) * (sm_->fluxScale(model)) );
+    sm_->deltaImage(model).copyData(latticeExpr);
+  } 
 };
 
 void SkyEquation::fixImageScale()
@@ -1515,7 +1357,7 @@ void SkyEquation::fixImageScale()
   // We also keep the fluxScale(mod) images around to
   // undo the weighting.
   
-  if(ej_) {
+  if(ej_ || (ft_->name() == "MosaicFT") ) {
     Float ggSMax=0.0;
     for (Int model=0;model<sm_->numberOfModels();model++) {
     
@@ -1523,61 +1365,141 @@ void SkyEquation::fixImageScale()
       ggSMax =  max(ggSMax,LEN.getFloat());
     }
 
-    Float ggSMin1 = ggSMax * constPB_p * constPB_p;
-    Float ggSMin2 = ggSMax * minPB_p * minPB_p;
+    ggSMax_p=ggSMax;
+    Float ggSMin1;
+    Float ggSMin2;
+    
+    ggSMin1 = ggSMax * constPB_p * constPB_p;
+    ggSMin2 = ggSMax * minPB_p * minPB_p;
+    
 
-   
+    /*Don't print this for now
     if (scaleType_p == "SAULT") {
 	os << "Using SAULT image plane weighting" << LogIO::POST;
     }
     else {
 	os << "Using No image plane weighting" << LogIO::POST;
     }
+    */
 	
     for (Int model=0;model<sm_->numberOfModels();model++) {
-      
-      if (scaleType_p == "SAULT") {
-	// Adjust flux scale to account for ggS being truncated at ggSMin1
-	// Below ggSMin2, set flux scale to 0.0
-	// FluxScale * image => true brightness distribution, but
-	// noise increases at edge.
-	// if ggS < ggSMin2, set to Zero;
-	// if ggS > ggSMin2 && < ggSMin1, set to ggSMin1/ggS
-	// if ggS > ggSMin1, set to 1.0
-	sm_->fluxScale(model).copyData( (LatticeExpr<Float>) 
-					(iif(sm_->ggS(model) < (ggSMin2), 0.0,
-					     ggSMin1/(sm_->ggS(model)) )) );
-	sm_->fluxScale(model).copyData( (LatticeExpr<Float>) 
-					(iif(sm_->ggS(model) > (ggSMin1), 1.0,
-					     (sm_->fluxScale(model)) )) );
-	// truncate ggS at ggSMin1
-	sm_->ggS(model).copyData( (LatticeExpr<Float>) 
-				  (iif(sm_->ggS(model) < (ggSMin1), ggSMin1, 
-				       sm_->ggS(model)) )
-				  );
-      } else {
+      sm_->fluxScale(model).removeRegion ("mask0", RegionHandler::Any, False);
+      if ((ft_->name()!="MosaicFT")) {
+	if(scaleType_p=="SAULT"){
+	  
+	  // Adjust flux scale to account for ggS being truncated at ggSMin1
+	  // Below ggSMin2, set flux scale to 0.0
+	  // FluxScale * image => true brightness distribution, but
+	  // noise increases at edge.
+	  // if ggS < ggSMin2, set to Zero;
+	  // if ggS > ggSMin2 && < ggSMin1, set to ggSMin1/ggS
+	  // if ggS > ggSMin1, set to 1.0
+	  sm_->fluxScale(model).copyData( (LatticeExpr<Float>) 
+					  (iif(sm_->ggS(model) < (ggSMin2), 0.0,
+					       sqrt((sm_->ggS(model))/ggSMin1) )) );
+	  sm_->fluxScale(model).copyData( (LatticeExpr<Float>) 
+					  (iif(sm_->ggS(model) > (ggSMin1), 1.0,
+					       (sm_->fluxScale(model)) )) );
+	  // truncate ggS at ggSMin1
+	  sm_->ggS(model).copyData( (LatticeExpr<Float>) 
+				    (iif(sm_->ggS(model) < (ggSMin1), ggSMin1*(sm_->fluxScale(model)), 
+					 sm_->ggS(model)) )
+				    );
+	}
 
+	else{
+
+	  sm_->fluxScale(model).copyData( (LatticeExpr<Float>) 
+					  (iif(sm_->ggS(model) < (ggSMin2), 0.0,
+					       sqrt((sm_->ggS(model))/ggSMax) )) );
+	  sm_->ggS(model).copyData( (LatticeExpr<Float>) 
+					  (iif(sm_->ggS(model) < (ggSMin2), 0.0,
+					       sqrt((sm_->ggS(model))*ggSMax) )) );
+
+	}
+
+      } else {
+	/*
 	if(ft_->name() != "MosaicFT"){
 	  sm_->fluxScale(model).copyData( (LatticeExpr<Float>) 1.0 );
 	  sm_->ggS(model).copyData( (LatticeExpr<Float>) 
-				    (iif(sm_->ggS(model) < (ggSMin2), 0.0, 
-					 sm_->ggS(model)) ));
+	  			    (iif(sm_->ggS(model) < (ggSMin2), 0.0, 
+	  				 sm_->ggS(model)) ));
+	 
+
 	}
 	else{
-	  sm_->fluxScale(model).copyData( (LatticeExpr<Float>) (iif(sm_->ggS(model) < (ggSMin2), 1.0, (sm_->ggS(model)/ggSMax))));
-	  sm_->ggS(model).copyData( (LatticeExpr<Float>) 
-				    (iif(sm_->ggS(model) < (ggSMin2), 0.0, 
-					 ggSMax) ) );
 
-	}		
+	*/
+	 
+	
+	  Int nXX=sm_->ggS(model).shape()(0);
+	  Int nYY=sm_->ggS(model).shape()(1);
+	  Int npola= sm_->ggS(model).shape()(2);
+	  Int nchana= sm_->ggS(model).shape()(3);
+	  IPosition blc(4,nXX, nYY, npola, nchana);
+	  IPosition trc(4, nXX, nYY, npola, nchana);
+	  blc(0)=0; blc(1)=0; trc(0)=nXX-1; trc(1)=nYY-1; 
+
+
+	  //Those damn weights per plane can be wildly different so 
+	  //deal with it properly here
+	  for (Int j=0; j < npola; ++j){
+	    for (Int k=0; k < nchana ; ++k){
+	      
+	      blc(2)=j; trc(2)=j;
+	      blc(3)=k; trc(3)=k;
+	      Slicer sl(blc, trc, Slicer::endIsLast);
+	      SubImage<Float> fscalesub(sm_->fluxScale(model), sl, True);
+	      SubImage<Float> ggSSub(sm_->ggS(model), sl, True);
+	      Float planeMax;
+	      LatticeExprNode LEN = max( ggSSub );
+	      planeMax =  LEN.getFloat();
+	      if(planeMax !=0){
+		fscalesub.copyData( (LatticeExpr<Float>) 
+				    (iif(ggSSub < (ggSMin2), 
+					 0.0, (ggSSub/planeMax))));
+		ggSSub.copyData( (LatticeExpr<Float>) 
+				 (iif(ggSSub < (ggSMin2), 0.0, 
+				      planeMax) ));
+	
+	
+
+	      }
+	    }
+
+	  }
+	
+	  /*
+	    ft_->getFluxImage(sm_->fluxScale(model));
+	
+	    sm_->ggS(model).copyData( (LatticeExpr<Float>) 
+	    (iif(sm_->ggS(model) < (ggSMin2), 0.0,
+					       (sm_->ggS(model)) )) );
+	  */
+	  //}	
       }
+    
+      //because for usual ft machines a applySJoneInv is done on the gS
+      //in the finalizeput stage...need to understand if its necessary
+      /*need to understand that square business
+      if( (ft_->name() != "MosaicFT") && (!isPSFWork_p)){
+	sm_->gS(model).copyData( (LatticeExpr<Float>) 
+				 (iif(sm_->fluxScale(model) > 0.0, 
+				      ((sm_->gS(model))/(sm_->fluxScale(model))), 0.0 )) );
+
+
+      }
+      */
+      ///
     }
+
   }
 }
 
 void SkyEquation::checkVisIterNumRows(ROVisibilityIterator& vi){
 
-  Int nAnt=vs_->numberAnt();
+  Int nAnt=vi.numberAnt();
   VisBuffer vb(vi);
   vi.originChunks();
   vi.origin();
@@ -1588,21 +1510,22 @@ void SkyEquation::checkVisIterNumRows(ROVisibilityIterator& vi){
       vi.origin();
     }
   }
+}
+
+String SkyEquation::associatedMSName(){
+  return String("");
 };
 
+void SkyEquation::lock(){
 
+  //Do nothing for now
 
+}
 
+void SkyEquation::unlock(){
+  // Do nothing for now
 
-
-
-
-
-
-
-
-
-
+}
 
 } //# NAMESPACE CASA - END
 

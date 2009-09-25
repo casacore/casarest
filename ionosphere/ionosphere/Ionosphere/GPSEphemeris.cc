@@ -23,21 +23,23 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: GPSEphemeris.cc,v 19.3 2004/11/30 17:50:28 ddebonis Exp $
+//# $Id$
 
 #include <errno.h>
 #include <casa/string.h>
-#include <ionosphere/Ionosphere/GPSEphemeris.h>
 #include <casa/Exceptions.h>
 #include <casa/Arrays/ArrayMath.h>
 #include <casa/Quanta/MVTime.h>
 #include <casa/Quanta/MVEpoch.h>
+#include <measures/Measures/MCEpoch.h>
+#include <measures/Measures/MCDirection.h>
 #include <measures/Measures.h>
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MEpoch.h>
 #include <measures/Measures/MPosition.h>
 #include <scimath/Functionals/Interpolate1D.h>
 #include <casa/iostream.h>
+#include <ionosphere/Ionosphere/GPSEphemeris.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFAFlagCubeBase.h,v 19.4 2004/11/30 17:50:24 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFAFLAGCUBEBASE_H
 #define FLAGGING_RFAFLAGCUBEBASE_H
 
@@ -81,6 +81,7 @@ public:
   static const RecordInterface & getDefaults ();
 
   virtual void plotFlaggingReport ( PGPlotterInterface &pgp );
+  virtual String getID() {return String("");};
   
 protected:
 // mask of active correlations. Must be setup somewhere before calling

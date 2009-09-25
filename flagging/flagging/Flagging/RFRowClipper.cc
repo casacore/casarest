@@ -23,7 +23,8 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFRowClipper.cc,v 19.6 2005/12/07 15:59:27 wyoung Exp $
+//# $Id$
+#include <flagging/Flagging/Flagger.h>
 #include <flagging/Flagging/RFFlagCube.h>
 #include <flagging/Flagging/RFChunkStats.h>
 #include <flagging/Flagging/RFRowClipper.h>
@@ -151,7 +152,11 @@ Float RFRowClipper::updateSigma (uInt &ifrmax,uInt &itmax,Bool flag_rows )
             {
               Bool res = False;
               if( flag_rows ) // clear row flag
+              {
                 recalc |= ( res = flag.clearRowFlag(ifr,it) );
+                for( uInt ich=0; ich<chunk.num(CHAN); ich++ )
+                        flag.clearFlag(ich,ifr);
+              }
               if( debug_plot )
                 plotsym(it) = res?CIRCLE:PLUS;
               Float s0 = sig0(it,ifr),
@@ -167,6 +172,8 @@ Float RFRowClipper::updateSigma (uInt &ifrmax,uInt &itmax,Bool flag_rows )
             {
               Bool res = flag.setRowFlag(ifr,it);
               recalc |= res;
+              for( uInt ich=0; ich<chunk.num(CHAN); ich++ )
+                        flag.setFlag(ich,ifr);
               if( debug_plot )
                 plotsym(it) = res?FSTAR5:STAR5;
               nbad++;

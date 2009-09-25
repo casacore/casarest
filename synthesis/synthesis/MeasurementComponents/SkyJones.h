@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SkyJones.h,v 19.6 2004/11/30 17:50:56 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_SKYJONES_H
 #define SYNTHESIS_SKYJONES_H
@@ -43,6 +43,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 //#forward
 class SkyModel;
 class ImageRegion;
+class CoordinateSystem;
 
 //# Need forward declaration for Solve in the Jones Matrices
 class SkyEquation;
@@ -183,6 +184,11 @@ public:
 					 ImageInterface<Complex>& out,
 					 const VisBuffer& vb, Int row,
 					 Bool forward=True) = 0;
+
+  virtual ImageInterface<Float>& apply(const ImageInterface<Float>& in,
+					 ImageInterface<Float>& out,
+					 const VisBuffer& vb, Int row) = 0;
+
   virtual ImageInterface<Float>& applySquare(const ImageInterface<Float>& in,
 					     ImageInterface<Float>& out,
 					     const VisBuffer& vb, Int row) = 0;
@@ -273,7 +279,8 @@ public:
 				const Int iChan=0, 
 				const SkyJones::SizeType sizeType=COMPOSITE)=0;
   
- 
+  virtual Int support(const VisBuffer& vb, const CoordinateSystem& cs)=0;
+
 protected:
 
   // Could be over-ridden if necessary

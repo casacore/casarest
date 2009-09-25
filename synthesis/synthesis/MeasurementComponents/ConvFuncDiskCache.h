@@ -24,7 +24,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ConvFuncDiskCache.h,v 1.6 2006/12/22 05:29:33 gvandiep Exp $
+//# $Id$
 #ifndef SYNTHESIS_CONVFUNCDISKCACHE_H
 #define SYNTHESIS_CONVFUNCDISKCACHE_H
 
@@ -38,7 +38,8 @@
 #include <lattices/Lattices/ArrayLattice.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #include <synthesis/MeasurementComponents/VPSkyJones.h>
-#include <synthesis/MeasurementComponents/EPTimeVarVisJones.h>
+// Apparently not required here? (gmoellen 06Nov20)
+//#include <synthesis/MeasurementComponents/EPTimeVarVisJones.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 namespace casa { //# NAMESPACE CASA - BEGIN
   // <summary> 
@@ -107,16 +108,21 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   {
   public:
     ConvFuncDiskCache():paList(),XSup(),YSup(), cfPrefix("CF"), aux("aux.dat") {};
+    ConvFuncDiskCache& operator=(const ConvFuncDiskCache& other);
     ~ConvFuncDiskCache() {};
     void setCacheDir(const char *dir) {Dir = dir;}
     void initCache();
     void cacheConvFunction(Int which, Float pa, Array<Complex>& cf, CoordinateSystem& coords,
-			   Int& convSize, Cube<Int>& convSupport, Float convSampling);
+			   CoordinateSystem& ftcoords, Int& convSize, Cube<Int>& convSupport, 
+			   Float convSampling, String nameQualifier="");
+    void cacheWeightsFunction(Int which, Float pa, Array<Complex>& cfWt, CoordinateSystem& coords,
+			      Int& convSize, Cube<Int>& convSupport, Float convSampling);
     Bool searchConvFunction(const VisBuffer& vb, VPSkyJones& vpSJ, Int& which, Float &pa);
     Bool searchConvFunction(const VisBuffer& vb, ParAngleChangeDetector& vpSJ, 
 			    Int& which, Float &pa);
     Bool loadConvFunction(Int where, Int Nx, PtrBlock < Array<Complex> *> & convFuncCache,
-			  Cube<Int> &convSupport, Vector<Float>& convSampling);
+			  Cube<Int> &convSupport, Vector<Float>& convSampling,
+			  Double& cfRefFreq,CoordinateSystem& coordys, String prefix="/CF");
     void finalize();
     void finalize(ImageInterface<Float>& avgPB);
     void loadAvgPB(ImageInterface<Float>& avgPB);

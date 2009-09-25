@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ClarkCleanProgress.h,v 19.4 2004/11/30 17:50:59 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_CLARKCLEANPROGRESS_H
 #define SYNTHESIS_CLARKCLEANPROGRESS_H

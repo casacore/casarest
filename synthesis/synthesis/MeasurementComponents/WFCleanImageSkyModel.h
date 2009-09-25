@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: WFCleanImageSkyModel.h,v 19.4 2004/11/30 17:50:58 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_WFCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_WFCLEANIMAGESKYMODEL_H
@@ -34,7 +34,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 //forward
 class SkyEquation;
-class WFSkyEquation;
 template <class T> class SubImage;
 
 // <summary> 
@@ -101,7 +100,7 @@ public:
   // Solve for this SkyModel
   virtual Bool solve (SkyEquation& me);
 
-  void makeApproxPSFs(SkyEquation& se);
+  //void makeApproxPSFs(SkyEquation& se);
   
 
   PtrBlock<TempImage<Complex> *>& cimageBlkPtr() { return cimage_p;};

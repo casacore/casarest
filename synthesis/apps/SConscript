@@ -12,7 +12,7 @@ rootdir = myenv.Dir("#").abspath
 libname = "casa_" + myenv["PACKAGE"]
 
 if "static" in BUILD_TARGETS or "shared" not in BUILD_TARGETS:
-    libname = [myenv["LIBPREFIX"]+libname+myenv["LIBSUFFIX"], myenv["LIBPREFIX"]+libname+'_f'+myenv["LIBSUFFIX"]]
+    libname = [myenv["LIBPREFIX"]+libname+myenv["LIBSUFFIX"]]
 
 # point to tests local includes
 myenv.AppendUnique(LIBPATH=[myenv["BUILDDIR_APPS"]])

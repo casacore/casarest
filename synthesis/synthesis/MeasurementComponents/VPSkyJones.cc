@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: VPSkyJones.cc,v 19.12 2006/04/20 03:19:29 mvoronko Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <casa/BasicSL/Complex.h>
@@ -95,8 +95,8 @@ VPSkyJones::VPSkyJones(MeasurementSet& ms, Table& tab,
 	String band;
 	PBMath::CommonPB whichPB;
 	String commonPBName;
-	MSColumns msc(ms);
-	ScalarColumn<String> telescopesCol(msc.observation().telescopeName());
+	ROMSColumns msc(ms);
+	ROScalarColumn<String> telescopesCol(msc.observation().telescopeName());
 	Quantity freq( msc.spectralWindow().refFrequency()(0), "Hz");	
 	String tele =  telCol(i);
 	if(tele=="") {
@@ -129,8 +129,8 @@ VPSkyJones::VPSkyJones(MeasurementSet& ms,
   LogIO os(LogOrigin("VPSkyJones", "VPSkyJones"));
 
   if (makePBs) {
-    MSColumns msc(ms);
-    ScalarColumn<String> telescopesCol(msc.observation().telescopeName());
+    ROMSColumns msc(ms);
+    ROScalarColumn<String> telescopesCol(msc.observation().telescopeName());
     
 
     for (uInt i=0; i < telescopesCol.nrow(); ++i) {
@@ -146,18 +146,29 @@ VPSkyJones::VPSkyJones(MeasurementSet& ms,
 	// The VLA, the ATNF, and WSRT have frequency - dependent PB models
 	Quantity freq( msc.spectralWindow().refFrequency()(0), "Hz");
       
-	if(telescope_p==" ") {
-	  os  << "Telescope name is blank : cannot find correct primary beam model" << LogIO::EXCEPTION;
+	if((telescope_p==" ") || (telescope_p=="")) {
+	  whichPB=PBMath::UNKNOWN;
 	}
 	else {
 	  PBMath::whichCommonPBtoUse( telescope_p, freq, band, whichPB, commonPBName );
 	}
-     
-	{
-	  
-	  PBMath  myPBMath(telescope_p, False, freq );
-	  setPBMath (telescope_p, myPBMath);
+	
+	if(whichPB != PBMath::UNKNOWN){
+	  os << "PB used " << commonPBName << LogIO::POST;
+	    PBMath  myPBMath(telescope_p, False, freq );
+	    setPBMath (telescope_p, myPBMath);
 	}
+	else{
+	  //lets do it by diameter
+	  os << "PB used determined from dish-diameter" << LogIO::POST;
+	  Double diam=msc.antenna().dishDiameter()(0);
+	  PBMath myPBMath(diam, False, freq);
+	  setPBMath(telescope_p, myPBMath);
+
+	}
+
+
+
       }
     }
   }
@@ -173,8 +184,8 @@ VPSkyJones::VPSkyJones(MeasurementSet& ms,
 {
   LogIO os(LogOrigin("VPSkyJones", "VPSkyJones"));
    
-  MSColumns msc(ms);
-  ScalarColumn<String> telescopesCol(msc.observation().telescopeName());
+  ROMSColumns msc(ms);
+  ROScalarColumn<String> telescopesCol(msc.observation().telescopeName());
 
   // we need a way to do this for multiple telescope cases
   String telescope_p = telescopesCol(0);
@@ -195,8 +206,8 @@ VPSkyJones::VPSkyJones(MeasurementSet& ms,
 { 
   LogIO os(LogOrigin("VPSkyJones", "VPSkyJones"));
    
-  MSColumns msc(ms);
-  ScalarColumn<String> telescopesCol(msc.observation().telescopeName());
+  ROMSColumns msc(ms);
+  ROScalarColumn<String> telescopesCol(msc.observation().telescopeName());
 
   // we need a way to do this for multiple telescope cases
   String telescope_p = telescopesCol(0);

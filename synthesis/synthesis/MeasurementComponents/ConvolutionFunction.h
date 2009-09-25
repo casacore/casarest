@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: ConvolutionFunction.h,v 1.1 2005/05/29 04:54:06 sbhatnag Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_CONVOLUTIONFUNCTION_H
 #define SYNTHESIS_CONVOLUTIONFUNCTION_H

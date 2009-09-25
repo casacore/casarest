@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SimpleComponentFTMachine.cc,v 19.8 2005/02/28 15:55:09 tcornwel Exp $
+//# $Id$
 
 #include <synthesis/MeasurementComponents/SimpleComponentFTMachine.h>
 #include <scimath/Mathematics/RigidVector.h>

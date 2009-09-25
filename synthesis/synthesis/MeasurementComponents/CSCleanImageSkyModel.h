@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: CSCleanImageSkyModel.h,v 19.5 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_CSCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_CSCLEANIMAGESKYMODEL_H
@@ -95,7 +95,7 @@ public:
 
 protected:
   // Return the maximum absolute value per field
-  Float maxField(Vector<Float>& imagemax, Vector<Float>& imagemin);
+  Float maxField(Block<Vector<Float> >& imagemax, Block<Vector<Float> >& imagemin);
   // Return maximum abs outer sidelobe, more than nCenter pixels from the center
   Float maxOuter(Lattice<Float> & lat, const uInt nCenter );
   // Pointer to the progress display object

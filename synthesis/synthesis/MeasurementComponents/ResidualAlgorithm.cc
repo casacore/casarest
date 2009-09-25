@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//#  $Id: ResidualAlgorithm.cc,v 19.5 2005/06/17 16:55:37 ddebonis Exp $
+//#  $Id$
 
 #include <casa/Utilities/Assert.h>
 #include <msvis/MSVis/VisSet.h>

@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SynthesisError.cc,v 1.2 2006/04/17 17:13:42 sbhatnag Exp $
+//# $Id$
 
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 

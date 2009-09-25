@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: tClarkCleanLatModel.cc,v 19.6 2005/01/20 22:53:38 kgolap Exp $
+//# $Id$
 
 #include <casa/iostream.h>
 #include <casa/aips.h>

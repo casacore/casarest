@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: EPointMCol.h,v 1.1 2005/05/29 04:20:42 sbhatnag Exp $
+//# $Id$
 
 #ifndef CALIBRATION_EPOINTMCOL_H
 #define CALIBRATION_EPOINTMCOL_H

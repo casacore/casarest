@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PixelatedConvFunc.cc,v 1.1 2005/05/29 04:54:58 sbhatnag Exp $
+//# $Id$
 
 #include <synthesis/MeasurementComponents/PixelatedConvFunc.h>
 

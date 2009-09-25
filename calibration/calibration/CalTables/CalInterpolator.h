@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: CalInterpolator.h,v 19.6 2004/11/30 17:50:11 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_CALINTERPOLATOR_H
 #define CALIBRATION_CALINTERPOLATOR_H

@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFADiffBase.h,v 19.5 2004/11/30 17:50:24 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFADIFFBASE_H
 #define FLAGGING_RFADIFFBASE_H
 

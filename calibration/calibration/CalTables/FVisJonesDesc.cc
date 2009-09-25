@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: FVisJonesDesc.cc,v 19.4 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/FVisJonesDesc.h>

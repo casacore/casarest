@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath2D.h,v 19.4 2004/11/30 17:50:50 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PBMATH2D_H
 #define SYNTHESIS_PBMATH2D_H
@@ -38,7 +38,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 class Table;
 class SkyComponent;
 class ImageRegion;
-
+class CoordinateSystem;
 
 // <summary> base class for 1D PBMath objects </summary>
 
@@ -157,7 +157,7 @@ public:
 
   PBMath2D();
 
-  virtual ~PBMath2D() = 0;
+  virtual ~PBMath2D();
 
   // Summarize the Voltage Pattern;
   // For PBMath2D, list nValues worth of the VP array
@@ -187,6 +187,8 @@ public:
 		       const Float fPad,  
 		       const Int iChan,  
 		       const SkyJones::SizeType sizeType);
+
+  virtual Int support(const CoordinateSystem& cs);
 
 protected:
 

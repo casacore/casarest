@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: StokesImageUtil.h,v 19.5 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_STOKESIMAGEUTIL_H
 #define SYNTHESIS_STOKESIMAGEUTIL_H
@@ -83,7 +83,12 @@ public:
   static Bool FitGaussianPSF(ImageInterface<Float>& psf,
 			     Quantity& bmaj, Quantity& bmin, Quantity& bpa);
   //</group>
+  // Locat peak of PSF return pos, peak and first plane that satisfies 
+  // peak >0.9
   
+  static void locatePeakPSF(ImageInterface<Float>& psf, Int& xpos, Int& ypos, 
+			    Float& amp, Matrix<Float>& psfplane);
+
   // Convolve a Stokes Image in place
   //<group>
   static void Convolve(ImageInterface<Float>& image,
@@ -119,6 +124,14 @@ public:
   
   // Convert to Stokes Image
   static void To(ImageInterface<Float>& out, ImageInterface<Complex>& in);
+
+  // Direct copy from Float to Complex with 
+  static void directCFromR(ImageInterface<Complex>& out,
+		   ImageInterface<Float>& in);
+  
+  // Direct copy To Float...
+  static void directCToR(ImageInterface<Float>& out, ImageInterface<Complex>& in);
+
   
   // Convert to Stokes PSF
   static void ToStokesPSF(ImageInterface<Float>& out, ImageInterface<Complex>& in);

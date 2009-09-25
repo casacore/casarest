@@ -23,11 +23,12 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: CSCleanImageSkyModel.cc,v 19.15 2005/09/07 15:07:59 sbhatnag Exp $
+//# $Id$
 
 #include <casa/Arrays/ArrayMath.h>
 #include <casa/Arrays/Matrix.h>
 #include <synthesis/MeasurementComponents/CSCleanImageSkyModel.h>
+#include <coordinates/Coordinates/DirectionCoordinate.h>
 #include <images/Images/PagedImage.h>
 #include <casa/OS/File.h>
 #include <lattices/Lattices/LatticeExpr.h>
@@ -79,14 +80,29 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
   //Make the PSFs, one per field
 
   os << "Making approximate Point Spread Functions" << LogIO::POST;
-  makeApproxPSFs(se);
+  if(!donePSF_p)
+    makeApproxPSFs(se);
+  //
+  // Quite a few lines of code required to pull out co-ordinate info.
+  // from an image, one would think.
+  //
+  CoordinateSystem psfCoord=PSF(0).coordinates();
+  Int dirIndex = psfCoord.findCoordinate(Coordinate::DIRECTION);
+  DirectionCoordinate dc=psfCoord.directionCoordinate(dirIndex);
+  Vector<Double> incr=dc.increment();
+  //
+  // The fitted beam params. are in arcsec.  Increments returned
+  // by the coordinate system are in radians.
+  //
+  incr *= 3600.0*180.0/M_PI;
+  incr = abs(incr);
 
   // Validate PSFs for each field
   Vector<Float> psfmax(numberOfModels()); psfmax=0.0;
   Vector<Float> psfmaxouter(numberOfModels()); psfmaxouter=0.0;
   Vector<Float> psfmin(numberOfModels()); psfmin=1.0;
-  Vector<Float> resmax(numberOfModels());
-  Vector<Float> resmin(numberOfModels());
+  Block<Vector<Float> > resmax(numberOfModels());
+  Block<Vector<Float> > resmin(numberOfModels());
 
   Float maxSidelobe=0.0;
   Int model;
@@ -119,9 +135,15 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
       }
       // 4 pixels:  pretty arbitrary, but only look for sidelobes
       // outside the inner (2n+1) * (2n+1) square
-      psfmaxouter(model) = maxOuter(subPSF, 4);  
+      // Changed the algorithm now..so that 4 is not used
+      Int mainLobeSizeInPixels = (Int)(max(beam(0)[0]/incr[0],beam(0)[1]/incr[1]));
+      //      psfmaxouter(model) = maxOuter(subPSF, 4);  
+      psfmaxouter(model) = maxOuter(subPSF, mainLobeSizeInPixels);  
 
-      os << "Model " << model+1 << ": max, min, maxOuter PSF = "
+      os << "Model " << model+1 << ": Estimated size of the PSF mainlobe = " 
+	 << (Int)(beam(0)[0]/incr[0]+0.5) << " X " << (Int)(beam(0)[1]/incr[1] + 0.5) << " pixels" 
+	 << endl;
+      os << "Model " << model+1 << ": PSF Peak, min, max sidelobe = "
 	 << psfmax(model) << ", " << psfmin(model) << ", " <<
 	psfmaxouter(model) << endl;
       if(abs(psfmin(model))>maxSidelobe) maxSidelobe=abs(psfmin(model));
@@ -131,10 +153,11 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
   os << LogIO::POST;
 	
   Float absmax=threshold();
+  Float oldmax=absmax;
   Float cycleThreshold=0.0;
   Block< Vector<Int> > iterations(numberOfModels());
   Int maxIterations=0;
-
+  Int oldMaxIterations=0;
     
   // Loop over major cycles
   Int cycle=0;
@@ -146,7 +169,7 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
     progress_p = 0;
   }
 
-  while(absmax>=threshold()&&maxIterations<numberIterations()&&!stop) {
+  while((absmax>=threshold())&& (maxIterations<numberIterations()) &&!stop) {
 
     os << "*** Starting major cycle " << cycle+1 << LogIO::POST;
     cycle++;
@@ -161,7 +184,7 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
       if (incremental&&(itsSubAlgorithm == "fast")) {
 	os << "Using XFR-based shortcut for residual calculation"
 	   << LogIO::POST;
-	makeNewtonRaphsonStep(se, True);
+	makeNewtonRaphsonStep(se, False);
       }
       else {
 	os << "Using visibility-subtraction for residual calculation"
@@ -172,11 +195,13 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
 	 << LogIO::POST;
     }
 
+    oldmax=absmax;
     absmax=maxField(resmax, resmin);
+    if(cycle==1) oldmax=absmax;
 
     for (model=0;model<numberOfModels();model++) {
       os << "Model " << model+1 << ": max, min residuals = "
-	 << resmax(model) << ", " << resmin(model) << endl;
+	 << max(resmax[model]) << ", " << min(resmin[model]) << endl;
     }
     os << LogIO::POST;
 
@@ -186,7 +211,11 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
       stop=True;
     }
     else {
-    
+      if(oldmax < absmax){
+	//Diverging ? lets increase the cyclefactor 
+	cycleFactor_p=1.5*cycleFactor_p;
+	oldmax=absmax;
+      }
       // Calculate the threshold for this cycle. Add a safety factor
       // This will be fixed someday by an option for an increasing threshold
       Float fudge = cycleFactor_p * maxSidelobe;
@@ -216,8 +245,8 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
 	// Only process solveable models
 	if(isSolveable(model)&&psfmax(model)>0.0) {
 	  
-          if((abs(resmax(model))>cycleThreshold)||
-	     (abs(resmin(model))>cycleThreshold)) {
+          if((max(abs(resmax[model]))>cycleThreshold)||
+	     (max(abs(resmin[model]))>cycleThreshold)) {
 	    
 	    os << "Processing model " << model+1 << LogIO::POST;
 	    
@@ -231,104 +260,131 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
 	    // Now clean each channel
 	    for (Int chan=0;chan<nchan;++chan) {
 	      if(nchan>1) {
-		os<<"Processing channel "<<chan+1<<" of "<<nchan<<LogIO::POST;
+		os<<"Processing channel number "<<chan<<" of "<<nchan 
+		  << " channels" <<LogIO::POST;
 	      }
-	      LCBox psfbox(IPosition(4, 0, 0, 0, chan), 
-			   IPosition(4, nx-1, ny-1, 0, chan),
-			   PSF(model).shape());
-	      SubLattice<Float>  psf_sl (PSF(model), psfbox, False);
+	      if((abs(resmax[model][chan])>cycleThreshold) ||
+		 (abs(resmin[model][chan])>cycleThreshold)) {
+		LCBox psfbox(IPosition(4, 0, 0, 0, chan), 
+			     IPosition(4, nx-1, ny-1, 0, chan),
+			     PSF(model).shape());
+		SubLattice<Float>  psf_sl (PSF(model), psfbox, False);
+		
+		LCBox imagebox(IPosition(4, 0, 0, 0, chan), 
+			       IPosition(4, nx-1, ny-1, npol-1, chan), 
+			       residual(model).shape());
+		
+		
+		SubLattice<Float>  residual_sl (residual(model), imagebox, True);
+		SubLattice<Float>  image_sl (image(model), imagebox, True);
+		SubLattice<Float>  deltaimage_sl (deltaImage(model), imagebox, True);
+		// Now make a convolution equation for this
+		// residual image and psf and then clean it
+		{
+		  LatConvEquation eqn(psf_sl, residual_sl);
+		  ClarkCleanLatModel cleaner(deltaimage_sl);
+		  cleaner.setResidual(residual_sl);
+		  cleaner.setGain(gain());
+		  cleaner.setNumberIterations(numberIterations());
+		  cleaner.setInitialNumberIterations(iterations[model](chan));
+		  cleaner.setThreshold(cycleThreshold);
+		  cleaner.setPsfPatchSize(IPosition(2,51)); 
+		  cleaner.setMaxNumberMajorCycles(1);
+		  cleaner.setMaxNumberMinorIterations(100000);
+		  cleaner.setHistLength(1024);
+		  cleaner.setCycleFactor(cycleFactor_p);
+		  cleaner.setMaxNumPix(32*1024);
+		  cleaner.setChoose(False);
+		  if(cycleSpeedup_p >1)
+		    cleaner.setSpeedup(cycleSpeedup_p);
+		  //Be a bit more conservative with pathologically bad PSFs
+		  if(maxSidelobe > 0.5)
+		    cleaner.setMaxNumberMinorIterations(5);
+		  else if(maxSidelobe > 0.35)
+		    cleaner.setMaxNumberMinorIterations(50);
+		  
+		  //cleaner.setSpeedup(0.0);
+		  if ( displayProgress_p ) {
+		    cleaner.setProgress( *progress_p );
+		  }
+		  os << "Starting minor cycle of Clean" << LogIO::POST;
+		  SubLattice<Float> mask_sl;
+		  if(hasMask(model)) {
+		    mask_sl=SubLattice<Float>  (mask(model), psfbox, True);
+		    cleaner.setMask(mask_sl);
+		  }
+		
+		  modified_p= cleaner.singleSolve(eqn, residual_sl) || modified_p;
+		  
 
-	      LCBox imagebox(IPosition(4, 0, 0, 0, chan), 
-			     IPosition(4, nx-1, ny-1, npol-1, chan), 
-			     residual(model).shape());
+		  if(modified_p){
+		    os << "Finished minor cycle of Clean"
+		       << LogIO::POST;
+		    
+		    os << "Clean used " << cleaner.numberIterations()
+		       << " iterations to approach a threshold of "
+		       << cycleThreshold << LogIO::POST;
+		  }
+		  
+		  iterations[model](chan)=cleaner.numberIterations();
+		  maxIterations=(iterations[model](chan)>maxIterations) ?
+		    iterations[model](chan) : maxIterations;
+		  
+		  os << "Adding increment to existing model" << LogIO::POST;
+		  LatticeExpr<Float> expr=image_sl+deltaimage_sl;
+		  image_sl.copyData(expr);
+		}
+	      }
+	    }// channel loop
+	    if(!modified_p){
+	      os << LogIO::WARN 
+		 << "No clean component found below threshold of "
+		 << cycleThreshold 
+		 << "\n in region selected to clean in model " << model << LogIO::POST;
 	      
-
-	      SubLattice<Float>  residual_sl (residual(model), imagebox, True);
-	      SubLattice<Float>  image_sl (image(model), imagebox, True);
-	      SubLattice<Float>  deltaimage_sl (deltaImage(model), imagebox, True);
-	      // Now make a convolution equation for this
-	      // residual image and psf and then clean it
-	      {
-		LatConvEquation eqn(psf_sl, residual_sl);
-		ClarkCleanLatModel cleaner(deltaimage_sl);
-		cleaner.setResidual(residual_sl);
-		cleaner.setGain(gain());
-		cleaner.setNumberIterations(numberIterations());
-		cleaner.setInitialNumberIterations(iterations[model](chan));
-		// Actually go 10% deeper for safety
-		cleaner.setThreshold(cycleThreshold*0.90);
-		cleaner.setPsfPatchSize(IPosition(2,51)); 
-		cleaner.setMaxNumberMajorCycles(1);
-		cleaner.setMaxNumberMinorIterations(100000);
-		cleaner.setHistLength(1024);
-		cleaner.setMaxNumPix(32*1024);
-		cleaner.setChoose(False);
-		//		  cleaner.setCycleSpeedup(cycleSpeedup_p);
-		//Be a bit more conservative with pathologically bad PSFs
-		if(maxSidelobe > 0.5)
-		  cleaner.setMaxNumberMinorIterations(5);
-		else if(maxSidelobe > 0.35)
-		  cleaner.setMaxNumberMinorIterations(50);
-		
-		cleaner.setSpeedup(0.0);
-		if ( displayProgress_p ) {
-		  cleaner.setProgress( *progress_p );
-		}
-		
-		os << "Starting minor cycle of Clean" << LogIO::POST;
-		if(hasMask(model)) {
-		  SubLattice<Float>  mask_sl (mask(model), psfbox, True);
-		  cleaner.setMask(mask_sl);
-		  cleaner.singleSolve(eqn, residual_sl);
-		}
-		else {
-		  cleaner.singleSolve(eqn, residual_sl);
-		}
-		
-		os << "Finished minor cycle of Clean"
-		   << LogIO::POST;
-		
-		os << "Clean used " << cleaner.numberIterations()
-		   << " iterations to approach a threshold of "
-		   << cycleThreshold << LogIO::POST;
-		modified_p=True;
-		
-		iterations[model](chan)=cleaner.numberIterations();
-		maxIterations=(iterations[model](chan)>maxIterations) ?
-		  iterations[model](chan) : maxIterations;
-		
-		os << "Adding increment to existing model" << LogIO::POST;
-		LatticeExpr<Float> expr=image_sl+deltaimage_sl;
-		image_sl.copyData(expr);
-	      }
 	    }
+
 	    if(maxIterations==0) {
 	      stop=True;
 	    }
 	    else{
 	      stop=False;
 	    }
+	    os << LatticeExprNode(sum(image(model))).getFloat() 
+	       << " Jy is the sum of clean components of model " 
+	       << model << LogIO::POST; 
 	  }
 	  else {
-	    os<<"Skipping model "<<model+1<<" :peak residual below threshold"
+	    os<<"Skipping model "<<model<<" :peak residual below threshold"
 	      <<LogIO::POST;
 	  }
 	}
+      }
+      if(maxIterations != oldMaxIterations)
+	oldMaxIterations=maxIterations;
+      else {
+	os << "No more clean occured in this major cycle - stopping now" << LogIO::POST;
+	stop=True;
+	converged=True;
       }
     }
   }
   if (progress_p) delete progress_p;
   
+  
   if(modified_p) {
+
+    os << LatticeExprNode(sum(image(0))).getFloat() 
+       << " Jy is the sum of clean components " << LogIO::POST;
     os << "Finalizing residual images for all fields" << LogIO::POST;
-    makeNewtonRaphsonStep(se, False);
+    makeNewtonRaphsonStep(se, False, True);
     Float finalabsmax=maxField(resmax, resmin);
 
     os << "Final maximum residual = " << finalabsmax << LogIO::POST;
-    converged=converged && (finalabsmax < threshold());
+    converged=(finalabsmax < threshold());
     for (model=0;model<numberOfModels();model++) {
       os << "Model " << model+1 << ": max, min residuals = "
-	 << resmax(model) << ", " << resmin(model) << endl;
+	 << max(resmax[model]) << ", " << min(resmin[model]) << endl;
     }
   }
   else {
@@ -342,18 +398,18 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
   
   
 // Find maximum residual
-Float CSCleanImageSkyModel::maxField(Vector<Float>& imagemax,
-				     Vector<Float>& imagemin) {
+Float CSCleanImageSkyModel::maxField(Block<Vector<Float> >& imagemax,
+				     Block<Vector<Float> >& imagemin) {
 
   LogIO os(LogOrigin("ImageSkyModel","maxField"));
   
   Float absmax=0.0;
-  imagemax=-1e20;
-  imagemin=1e20;
 
   // Loop over all models
   for (Int model=0;model<numberOfModels();model++) {
 
+    imagemax[model].resize(image(model).shape()(3));
+    imagemin[model].resize(image(model).shape()(3));
     // Remember that the residual image can be either as specified
     // or created specially.
     ImageInterface<Float>* imagePtr=0;
@@ -379,30 +435,35 @@ Float CSCleanImageSkyModel::maxField(Vector<Float>& imagemax,
     // If we are using a mask then reset the region to be
     // cleaned
     Array<Float> maskArray;
-    
+    RO_LatticeIterator<Float> maskli;
     if(hasMask(model)) {
       Int mx=mask(model).shape()(0);
       Int my=mask(model).shape()(1);
       Int mpol=mask(model).shape()(2);
-      AlwaysAssert(mx==nx, AipsError);
-      AlwaysAssert(my==ny, AipsError);
-      AlwaysAssert(mpol==npol, AipsError);
+      //AlwaysAssert(mx==nx, AipsError);
+      //AlwaysAssert(my==ny, AipsError);
+      //AlwaysAssert(mpol==npol, AipsError);
+      if((mx != nx) || (my != ny) || (mpol != npol)){
+	throw(AipsError("Mask image shape is not the same as dirty image"));
+      }
       LatticeStepper mls(mask(model).shape(), onePlane,
 			 IPosition(4, 0, 1, 2, 3));
       
-      RO_LatticeIterator<Float> maskli(mask(model), mls);
+      maskli=RO_LatticeIterator<Float> (mask(model), mls);
       maskli.reset();
       if (maskli.cursor().shape().nelements() > 1) maskArray=maskli.cursor();
     }
     
     Int chan=0;
+    Int polpl=0;
     Float imax, imin;
-    imax=-1E20; imagemax(model)=imax;
-    imin=+1E20; imagemin(model)=imin;
+    imax=-1E20; imagemax[model]=imax;
+    imin=+1E20; imagemin[model]=imin;
     imageli.reset();
 
-    for (imageli.reset();!imageli.atEnd();imageli++,chan++) {
-      
+    for (imageli.reset();!imageli.atEnd();imageli++) {
+      imax=-1E20;
+      imin=+1E20;
       IPosition imageposmax(imageli.cursor().ndim());
       IPosition imageposmin(imageli.cursor().ndim());
       
@@ -411,14 +472,23 @@ Float CSCleanImageSkyModel::maxField(Vector<Float>& imagemax,
 	Array<Float> limage=imageli.cursor();
 	limage*=maskArray;
 	minMax(imin, imax, imageposmin, imageposmax, limage);
+	maskli++;
+	if (maskli.cursor().shape().nelements() > 1) maskArray=maskli.cursor();
+      
       }
+      
       else {
 	minMax(imin, imax, imageposmin, imageposmax, imageli.cursor());
       }
       if(abs(imax)>absmax) absmax=abs(imax);
       if(abs(imin)>absmax) absmax=abs(imin);
-      if(imin<imagemin(model)) imagemin(model)=imin;
-      if(imax>imagemax(model)) imagemax(model)=imax;
+      if(imin<imagemin[model][chan]) imagemin[model][chan]=imin;
+      if(imax>imagemax[model][chan]) imagemax[model][chan]=imax;
+      ++polpl;
+      if(polpl==npol){
+	++chan;
+	polpl=0;	  
+      }
     }
   }
   return absmax;
@@ -427,9 +497,6 @@ Float CSCleanImageSkyModel::maxField(Vector<Float>& imagemax,
 
 Float CSCleanImageSkyModel::maxOuter(Lattice<Float> & lat, const uInt nCenter ) 
 {
-  Float myMax=0.0;
-  Float myMin=0.0;
-
   /*
   TempLattice<Float>  mask(lat.shape());
   mask.set(1.0);
@@ -464,6 +531,44 @@ Float CSCleanImageSkyModel::maxOuter(Lattice<Float> & lat, const uInt nCenter )
   uInt nxc = 0;
   uInt nyc = 0;
   Float amax = 0.0;
+  Vector<Float> amax2;
+  /*
+  Int kounter=0;
+  Float amin=1e9;
+  Float amin2=1e9;
+  Bool toggle=False;
+  for (uInt ix = 0; ix < nx; ix++) {
+    for (uInt iy = 0; iy < ny; iy++) {
+      if(arr(IPosition(4, ix, iy, 0, 0)) < amin){
+	amin2=amin;
+	amin=arr(IPosition(4, ix, iy, 0, 0));
+	if(!toggle){
+	  ++kounter;
+	  amax2.resize(kounter, True);
+	  amax2[kounter-1]=fabs(amin);
+	  toggle=True;
+	}
+      }
+      if (arr(IPosition(4, ix, iy, 0, 0)) > amax) {
+	nxc = ix;
+	nyc = iy;
+	if(toggle){
+	  ++kounter;
+	  amax2.resize(kounter, True);
+	  amax2[kounter-1]=amax;
+	  toggle=False;
+	}
+	amax = arr(IPosition(4, ix, iy, 0, 0));
+      }
+    }
+  }
+  Float absMax=max(median(amax2), abs(amin));
+  return absMax;
+  */
+
+  //
+  // First locate the location of the peak
+  //
   for (uInt ix = 0; ix < nx; ix++) {
     for (uInt iy = 0; iy < ny; iy++) {
       if (arr(IPosition(4, ix, iy, 0, 0)) > amax) {
@@ -473,6 +578,12 @@ Float CSCleanImageSkyModel::maxOuter(Lattice<Float> & lat, const uInt nCenter )
       }
     }
   }
+  //
+  // Now exclude the mainlobe center on the location of the peak to
+  // get the max. outer sidelobe.
+  //
+  Float myMax=0.0;
+  Float myMin=0.0;
 
   uInt nxL = nxc - nCenter;
   uInt nxH = nxc + nCenter;
@@ -492,6 +603,8 @@ Float CSCleanImageSkyModel::maxOuter(Lattice<Float> & lat, const uInt nCenter )
 
   Float absMax = max( abs(myMin), myMax );
   return absMax;
+
+
 };
 
 } //#End casa namespace

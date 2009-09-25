@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#! ========================================================================
-//# $Id: CalTables.h,v 1.2 2004/11/09 21:06:58 wyoung Exp $
+//# $Id$
 
 
 #if !defined (AIPS_MODULE_CALTABLES_H)

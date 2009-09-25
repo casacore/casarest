@@ -1,5 +1,5 @@
-//# EPJones.h: Definition for EPJones matrices
-//# Copyright (C) 1996,1997,1998,1999,2000,2001,2002,2003
+//# EPJones.h: Declaration of EPJones (Solvable)VisCal type
+//# Copyright (C) 1996,1997,2000,2001,2002,2003
 //# Associated Universities, Inc. Washington DC, USA.
 //#
 //# This library is free software; you can redistribute it and/or modify it
@@ -24,114 +24,168 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: EPJones.h,v 1.3 2006/03/30 23:48:08 sbhatnag Exp $
 
 #ifndef SYNTHESIS_EPJONES_H
 #define SYNTHESIS_EPJONES_H
 
-#include <synthesis/MeasurementComponents/PBWProjectFT.h>
-#include <casa/BasicSL/Constants.h>
-#include <scimath/Mathematics/SquareMatrix.h>
-#include <synthesis/MeasurementComponents/EPTimeVarVisJones.h>
-#include <casa/OS/File.h>
+#include <casa/aips.h>
+#include <casa/Containers/Record.h>
+#include <casa/BasicSL/Complex.h>
+#include <synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <synthesis/MeasurementComponents/nPBWProjectFT.h>
+#include <ms/MeasurementSets/MeasurementSet.h>
+#include <images/Images/PagedImage.h>
+#include <images/Images/ImageInterface.h>
+#include <images/Images/ImageInfo.h>
+#include <synthesis/MeasurementEquations/StokesImageUtil.h>
+#include <msvis/MSVis/VisSet.h>
+#include <casa/OS/Timer.h>
+namespace casa { //# NAMESPACE CASA - BEGIN
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogIO.h>
+// Forward declaration
+class VisEquation;
+class nPBWProjectFT;
 
-namespace casa {
+// **********************************************************
+//  EPJones (pointing errors)
+//
 
-//# forward
-  class VisEquation;
-  class PBWProjectFT;
-class EPJones : public EPTimeVarVisJones {
+class EPJones : public SolvableVisJones {
 public:
 
-  EPJones();
-  EPJones(VisSet& vs, PBWProjectFT& ftmachine);
+  // Constructor
   EPJones(VisSet& vs);
-  EPJones(const EPJones& other);
-  ~EPJones();
-  virtual Bool isSolveable() {return True;};
-  virtual Double preavg() {return preavg_;};
-  virtual Int refant() {return refant_;};
-  void store(const String& file, const Bool& append);
-  virtual void load(const String& file, const String& select="", 
-		    const String& type="general");
-  virtual VisBuffer& apply(VisBuffer& vb,Int Conj=0);
-  virtual VisBuffer& apply(VisBuffer& vb,
-			   VisBuffer& gradAzVB, 
-			   VisBuffer& gradElVB,
-			   Int Conj=0);
-  virtual VisBuffer& applyInv(VisBuffer& vb) {return vb;};
-  virtual void addGradients(const VisBuffer& vb, Int row, const Antenna& a,
-			    const Vector<Float>& sumwt, 
-			    const Vector<Float>& chisq,
-			    const Vector<SquareMatrix<Complex,2> >& c, 
-			    const Vector<SquareMatrix<Float,2> >& f);
+	 //  {throw(AipsError("Use the constructor EPJones(VisSet&, MeasurementSet&) instead"));};
+  EPJones(VisSet& vs, MeasurementSet& ms);
+  //   EPJones(const Int& nAnt);  // NYI
 
-  virtual Type type() {return EP;};
-  virtual Bool freqDep(){return False;};
-  virtual Bool solve(class VisEquation &);
-  virtual void updateAntGain();
-  virtual void setAntPar(Int whichSlot,Array<Float>& Par, Bool solOK=False);
-  void setSolverParam(const String& tableName,
-		      const Double& integTime,
-		      const Double& preAvgTime);
+  virtual ~EPJones();
 
+  // Return the type enum
+  virtual Type type() { return VisCal::E; };
 
-  void setFTMachine(PBWProjectFT* ftmac) {ftmac_p = ftmac;}
-  void keep(const Int& slot) ;
-  void initializeGradients();
+  // Return type name as string
+  virtual String typeName()     { return "EP Jones"; };
+  virtual String longTypeName() { return "EP Jones (pointing errors)"; };
 
-  void initSolveCache();
-  void deleteSolveCache();
-  void reset();
+  // Type of Jones matrix according to nPar()
+  Jones::JonesType jonesType() { return Jones::Diagonal; };
+  
+  virtual VisCalEnum::VCParType parType() { return setParType(VisCalEnum::REAL);};
 
-  Cube<Float>& getPar(const VisBuffer& vb);
-  Vector<Bool>& getFlags(const VisBuffer& vb);
+  // Specialized access to pointing parameters (no chan axis)
+  Cube<Float>& loadPar();
+
+  virtual void setModel(const String& modelImage);
+  // Set the solving parameters
+  virtual void setSolve();
+  virtual void setSolve(const Record& solve);
+  virtual void setNiter(const Int& niter) {niter_p=niter;}
+  virtual void setTolerance(const Float& tol) {tolerance_p = tol;}
+  virtual void setGain(const Float& gain) {gain_p = gain;}
+
+  // Arrange to apply (corrupt only)
+  using SolvableVisCal::setApply;
+  virtual void setApply(const Record& applypar);
+
+  // Apply calibration to a VisBuffer 
+  virtual void applyCal(VisBuffer& vb, 
+			Cube<Complex>& Mout);
+
+  // Differentiate a VisBuffer w.r.t. pointng parameters
+  //
+  // These effectively compute residuals and derivatives for
+  // a time-averaged VisBuffer
+  //
+  virtual void differentiate(VisBuffer& vb,
+			     Cube<Complex>& Mout,
+			     Array<Complex>& dMout,
+			     Matrix<Bool>& Mflg);
+  // Differentiate a VisBuffer w.r.t. pointng parameters
+  virtual void differentiate(VisBuffer& vb,
+			     VisBuffer& dvb0,
+			     VisBuffer& dvb1,
+			     Matrix<Bool>& Mflg);
+  //
+  // This one averages the residuals and the derivatives in time.
+  //
+  virtual void diffResiduals(VisIter& vi, VisEquation& ve,
+			    VisBuffer& residuals, 
+			    VisBuffer& dVr1, 
+			    VisBuffer& dVr2, 
+			    Matrix<Bool>& flags);  
+  // Guess (throws error because we don't yet solve for this)
+  virtual void guessPar(VisBuffer& vb);
+  virtual void guessPar() {pointPar_=0;}
+  
+  virtual Cube<Float>& solveRPar() {return pointPar_;}
+  virtual void setRPar(Cube<Float>& val) {pointPar_.resize(val.shape());pointPar_=val;}
+  virtual void setRPar(Double val) {pointPar_=val;}
+  
+  //  virtual void keep(const Int& slot);
+
+  virtual Bool normalizable() { return False; };
+
+  //  virtual BaseCalSet& cs() {return *rcs_;};
+  virtual void keep(const Int& slot);
+  
+  inline virtual CalSet<Float>& rcs() {return *rcs_;};
+
+  virtual void inflate(const Vector<Int>& nChan,
+		       const Vector<Int>& startChan,
+		       const Vector<Int>& nSlot);
+  void initSolve(VisSet& vs);
+  void initSolvePar();
+  void store();
+  void store(const String& table,const Bool& append);
+  Bool verifyForSolve(VisBuffer& vb);
+  virtual void postSolveMassage(const VisBuffer&);
+  virtual void selfSolve(VisSet& vs,VisEquation& ve);
+  virtual Bool standardSolve() {return False;};
+  virtual Float printFraction(const Int& nSlots) {return 0.1;};
+  Array<Float> getOffsets(const Int& spw) {return rcs().par(spw);}
+  Array<Double> getTime(const Int& spw) {return rcs().time(spw);}
+  Array<Float> nearest(const Double time);
+  void printRPar();  
 
 protected:
-  // Cal table filename
-  String calTableName_;
 
-  // Selecttion on cal table
-  String calSelect_;
+  // EP has a pair of real parameters per feed
+  virtual Int nPar() { return 4; };
 
-  // Pre-averaging interval for solution
-  Double preavg_;
+  // Jones matrix elements are NOT trivial
+  virtual Bool trivialJonesElem() { return False; };
 
-  // Reference antenna for solution
-  Int refant_;
-  // Indicates which elements of Jones matrix are required
-  Matrix<Bool> required_;
+  // Fill-in a complex grid with the image values in prepration for 
+  // computing it's FT
+  virtual void makeComplexGrid(TempImage<Complex>& Grid, 
+					PagedImage<Float>& ModelImage,
+					VisBuffer& vb);
+  void printActivity(const Int slotNo, const Int fieldId, const Int spw, const Int nSolutions);
+  //  inline virtual CalSet<Float> rcs() {return *cs_;}
 
-  // Fit status
-  Float sumwt_;
-  Float chisq_;
+private:
 
-  // New PB versions
-  PtrBlock<Matrix<Bool>*> iSolutionOK_;  // [numberSpw_](numberAnt_,numberSlots_)
-  PtrBlock<Matrix<Float>*> iFit_;        // [numberSpw_](numberAnt_,numberSlots_)
-  PtrBlock<Matrix<Float>*> iFitwt_;      // [numberSpw_](numberAnt_,numberSlots_)
-  
-  PtrBlock<Vector<Bool>*> solutionOK_;   // [numberSpw_](numberSlots_)
-  PtrBlock<Vector<Float>*> fit_;         // [numberSpw_](numberSlots_)
-  PtrBlock<Vector<Float>*> fitwt_;       // [numberSpw_](numberSlots_)
-
-  Matrix< mjJones2 > gS_;     // (nSolnChan,numberAnt_)
-  Matrix< mjJones2F > ggS_;   // (nSolnChan,numberAnt_)
-
-
-  LogSink logSink_p;
-  virtual LogSink& logSink() {return logSink_p;};
-
-  LogIO logSink2_p;
-  LogIO& logSink2() {return logSink2_p;};
-
-  //  PBFTMachine &ftmac_p;
-  PBWProjectFT *ftmac_p;
+  // Local Matrix for referencing pointing pars in a convenient way
+  Cube<Float>  pointPar_;
+  nPBWProjectFT *pbwp_p;
+  MeasurementSet *ms_p;
+  VisSet *vs_p;
+  //  Array<Float> azOff, elOff;
+  TempImage<Complex> targetVisModel_;
+  CalSet<Float> *rcs_;
+  Double maxTimePerSolution, minTimePerSolution, avgTimePerSolution;
+  Timer timer;
+  Vector<Int> polMap_p;
+  Float tolerance_p, gain_p;
+  Int niter_p;
 };
-}
+
+
+
+
+
+} //# NAMESPACE CASA - END
 
 #endif
+

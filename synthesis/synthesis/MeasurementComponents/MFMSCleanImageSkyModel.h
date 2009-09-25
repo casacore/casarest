@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: MFMSCleanImageSkyModel.h,v 19.4 2004/11/30 17:50:48 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_MFMSCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_MFMSCLEANIMAGESKYMODEL_H
@@ -93,14 +93,16 @@ public:
   // hit consecutively before we stop that cycle (-1 ==> don't stop)
   MFMSCleanImageSkyModel(const Int nscales,
 			 const Int stoplargenegatives=2,
-			 const Int stoppointmode=-1);
+			 const Int stoppointmode=-1,
+                         const Float smallScaleBias=0.6);
 
   // Create a MFMSCleanImageSkyModel, you provide the scale sizes, IN PIXELS
   // for example:  Vector<Float> scales(4); scales(0) = 0.0;  scales(1) = 3.0;  
   // scales(2) = 10.0;  scales(3) = 30.0; 
   MFMSCleanImageSkyModel(const Vector<Float>& useScaleSize,
 			 const Int stoplargenegatives=2,
-			 const Int stoppointmode=-1);
+			 const Int stoppointmode=-1,
+                         const Float smallScaleBias=0.6);
 
   // destructor
   ~MFMSCleanImageSkyModel();
@@ -129,6 +131,8 @@ private:
   // parameter which stops the cycle if you hit the smallest scale this many
   // consecutive times; if < 0, don't stop for this
   Int stopPointMode_p;
+
+  Float smallScaleBias_p;
 
 };
 

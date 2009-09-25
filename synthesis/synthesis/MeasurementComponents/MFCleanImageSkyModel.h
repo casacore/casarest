@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: MFCleanImageSkyModel.h,v 19.4 2004/11/30 17:50:48 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_MFCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_MFCLEANIMAGESKYMODEL_H
@@ -112,6 +112,8 @@ protected:
   Float maxOuter(Lattice<Float> & lat, const uInt nCenter );
   // Pointer to the progress display object
   ClarkCleanProgress *progress_p;
+  //Allow only one model to be valid in overlapping regions
+  void blankOverlappingModels();
 
 };
 

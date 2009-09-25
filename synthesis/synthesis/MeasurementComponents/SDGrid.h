@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SDGrid.h,v 19.8 2004/11/30 17:50:51 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_SDGRID_H
 #define SYNTHESIS_SDGRID_H
@@ -130,13 +130,13 @@ public:
   // larger support for the convolution if the user wants it ..-1 will 
   // use the default  i.e 1 for BOX and 3 for others
   // <group>
-  SDGrid(MeasurementSet& ms, SkyJones& sj, Int cachesize, Int tilesize,
+  SDGrid(SkyJones& sj, Int cachesize, Int tilesize,
 	 String convType="BOX", Int userSupport=-1);
-  SDGrid(MeasurementSet& ms, MPosition& ml, SkyJones& sj, Int cachesize,
+  SDGrid(MPosition& ml, SkyJones& sj, Int cachesize,
 	 Int tilesize, String convType="BOX", Int userSupport=-1);
-  SDGrid(MeasurementSet& ms, Int cachesize, Int tilesize,
+  SDGrid(Int cachesize, Int tilesize,
 	 String convType="BOX", Int userSupport=-1);
-  SDGrid(MeasurementSet& ms, MPosition& ml, Int cachesize, Int tilesize,
+  SDGrid(MPosition& ml, Int cachesize, Int tilesize,
 	 String convType="BOX", Int userSupport=-1);
   // </group>
 
@@ -171,7 +171,8 @@ public:
 
   // Put coherence to grid by gridding.
   void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False,
-	   FTMachine::Type type=FTMachine::OBSERVED);
+	   FTMachine::Type type=FTMachine::OBSERVED, 
+	   const Matrix<Float>& imweight=Matrix<Float>(0,0));
 
   // Get the final image: do the Fourier transform and
   // grid-correct, then optionally normalize by the summed weights
@@ -188,8 +189,6 @@ private:
   // Find the Primary beam and convert it into a convolution buffer
   void findPBAsConvFunction(const ImageInterface<Complex>& image,
 			    const VisBuffer& vb);
-
-  MeasurementSet* ms_p;
 
   SkyJones* sj_p;
 
@@ -232,14 +231,14 @@ private:
   Array<Complex> griddedData;
   Array<Float> wGriddedData;
 
-  // Pointing columns
-  MSPointingColumns* mspc;
 
   DirectionCoordinate directionCoord;
 
   MDirection::Convert* pointingToImage;
 
   Vector<Double> xyPos;
+  //Original xypos of moving source
+  Vector<Double> xyPosMovingOrig_p;
 
   MDirection worldPosMeas;
 
@@ -258,6 +257,14 @@ private:
 
   Bool getXYPos(const VisBuffer& vb, Int row);
 
+  //get the MDirection from a chosen column of pointing table
+  MDirection directionMeas(const ROMSPointingColumns& mspc, const Int& index);
+  MDirection directionMeas(const ROMSPointingColumns& mspc, const Int& index, const Double& time);
+  MDirection interpolateDirectionMeas(const ROMSPointingColumns& mspc, const Double& time,
+                                  const Int& index, const Int& index1, const Int& index2);
+
+  //for debugging
+  //FILE *pfile;
 };
 
 } //# NAMESPACE CASA - END

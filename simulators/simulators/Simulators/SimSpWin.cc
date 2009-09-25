@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SimSpWin.cc,v 19.3 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 #include <simulators/Simulators/SimSpWin.h>
 
 #include <casa/Arrays/ArrayMath.h>

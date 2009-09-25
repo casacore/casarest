@@ -41,10 +41,14 @@
 #include <casa/Arrays/Array.h>
 #include <lattices/Lattices/Lattice.h>
 #include <synthesis/MeasurementComponents/PBMathInterface.h>
-#include <synthesis/MeasurementEquations/ArrayModel.cc>
-#include <synthesis/MeasurementEquations/LinearEquation.cc>
-#include <synthesis/MeasurementEquations/LinearModel.cc>
-#include <synthesis/MeasurementEquations/ResidualEquation.cc>
+#include <synthesis/MeasurementEquations/ArrayModel.tcc>
+#include <synthesis/MeasurementEquations/LinearEquation.tcc>
+#include <synthesis/MeasurementEquations/LinearModel.tcc>
+#include <synthesis/MeasurementEquations/ResidualEquation.tcc>
+#include <calibration/CalTables/CalSet.tcc>
+#include <calibration/CalTables/SolvableCalSetMCol.tcc>
+#include <calibration/CalTables/ROCalMainColumns2.tcc>
+#include <calibration/CalTables/CalMainColumns2.tcc>
 #include <msvis/MSVis/StokesVector.h>
 
 namespace casa { //# NAMESPACE - BEGIN
@@ -58,6 +62,14 @@ namespace casa { //# NAMESPACE - BEGIN
   template class ResidualEquation<Array<Float> >;
   template class ResidualEquation<Lattice<Float> >;
   template class Matrix<CStokesVector>;
+  template class CalSet<Float>;
+  template class CalSet<Complex>;
+  template class ROSolvableCalSetMCol<Complex>;
+  template class SolvableCalSetMCol<Complex>;
+  template class ROCalMainColumns2<float>;
+  template class ROCalMainColumns2<Complex>;
+  template class CalMainColumns2<float>;
+  template class CalMainColumns2<Complex>;
 
 } //# NAMESPACE - END
 

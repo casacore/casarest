@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: PSkyEquation.h,v 19.4 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PSKYEQUATION_H
 #define SYNTHESIS_PSKYEQUATION_H

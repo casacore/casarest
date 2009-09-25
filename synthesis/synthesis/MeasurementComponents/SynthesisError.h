@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SynthesisError.h,v 1.1 2006/04/17 16:38:08 sbhatnag Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_SYNTHESISERROR_H
 #define SYNTHESIS_SYNTHESISERROR_H

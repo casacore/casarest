@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PClarkCleanImageSkyModel.h,v 19.4 2004/11/30 17:50:50 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PCLARKCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_PCLARKCLEANIMAGESKYMODEL_H

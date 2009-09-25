@@ -115,6 +115,9 @@ public:
   // <group>
   // Access functions
   //
+  Int& nCorr() { return nCorrOK_p ? nCorr_p : fillnCorr(); }
+  Int nCorr() const { return This->nCorr(); }
+
   Int& nChannel() { return nChannelOK_p ? nChannel_p : fillnChannel();}
   Int nChannel() const { return This->nChannel();}
 
@@ -168,6 +171,7 @@ public:
 
   // Note that azel is a function instead of a cached value
   const Vector<MDirection>& azel(Double time) const; 
+  Matrix<Double>& azelMat(Double time,Matrix<Double>& azelMat) const; 
 
   Int fieldId() const {return fieldIdOK_p ? fieldId_p : This->fillFieldId();}
 
@@ -219,9 +223,12 @@ public:
   Vector<Float>& sigma() {return sigmaOK_p ? sigma_p : fillSigma();}
   const Vector<Float>& sigma() const {return This->sigma();}
 
+  Matrix<Float>& sigmaMat() {return sigmaMatOK_p ? sigmaMat_p : fillSigmaMat();}
+  const Matrix<Float>& sigmaMat() const {return This->sigmaMat();}
+
   Int& spectralWindow() {return spwOK_p ? spectralWindow_p : This->fillSpW();}
   Int spectralWindow() const {return spwOK_p ? spectralWindow_p : This->fillSpW();}
-
+  Int dataDescriptionId() const {return visIter_p->dataDescriptionId();}
   Vector<Double>& time() {return timeOK_p ? time_p : fillTime();}
   const Vector<Double>& time() const {return This->time();}
 
@@ -231,6 +238,9 @@ public:
 
   Vector<RigidVector<Double,3> >& uvw() {return uvwOK_p ? uvw_p : filluvw();}
   const Vector<RigidVector<Double,3> >& uvw() const {return This->uvw();}
+
+  Matrix<Double>& uvwMat() {return uvwMatOK_p ? uvwMat_p : filluvwMat();}
+  const Matrix<Double>& uvwMat() const {return This->uvwMat();}
 
   Matrix<CStokesVector>& visibility() 
   { return visOK_p ? visibility_p : fillVis(VisibilityIterator::Observed);}
@@ -254,11 +264,23 @@ public:
   { return visCubeOK_p ? visCube_p : fillVisCube(VisibilityIterator::Observed);}
   const Cube<Complex>& visCube() const {return This->visCube();}
 
-  Cube<Complex>& modelVisCube() 
-  { 
+  Cube<Complex>& modelVisCube() {
     return modelVisCubeOK_p ? modelVisCube_p : 
       fillVisCube(VisibilityIterator::Model);
   }
+
+  Cube<Complex>& modelVisCube(const Bool& matchVisCubeShape) {
+    // Avoids call to fillVisCube(VisIter::Model)
+    modelVisCubeOK_p=True;
+    if (matchVisCubeShape) {
+      // shape it in memory like data
+      modelVisCube_p.resize(visCube().shape());
+      modelVisCube_p=Complex(0.0);
+    }
+    // ... and return it in the usual way
+    return modelVisCube();
+  }
+
   const Cube<Complex>& modelVisCube() const {return This->modelVisCube();}
 
   Cube<Complex>& correctedVisCube() 
@@ -272,10 +294,18 @@ public:
   Vector<Float>& weight() {return weightOK_p ? weight_p : fillWeight();}
   const Vector<Float>& weight() const {return This->weight();}
 
+  Matrix<Float>& weightMat() {return weightMatOK_p ? weightMat_p : fillWeightMat();}
+  const Matrix<Float>& weightMat() const {return This->weightMat();}
+
+  Cube<Float>& weightSpectrum()
+    {return weightSpectrumOK_p ? weightSpectrum_p : fillWeightSpectrum();}
+  const Cube<Float>& weightSpectrum() const {return This->weightSpectrum();}
+
   Matrix<Float>& imagingWeight() 
-  {return weightMatOK_p ? weightMat_p : fillImagingWeight();}
+  {return imagingWeightOK_p ? imagingWeight_p : fillImagingWeight();}
   const Matrix<Float>& imagingWeight() const {return This->imagingWeight();}
  
+  Cube<Float>& weightCube() {return weightCube_p;}
   //</group>
 
   //<group>
@@ -293,10 +323,39 @@ public:
   // Time range 
   Bool timeRange(MEpoch& rTime, MVEpoch& rTimeEP, MVEpoch& rInterval) const;
 
+
+  // Return the row Ids from the original ms. If the ms used is a subset of 
+  // another ms then rowIds() return the row ids of the original ms.
+  
+  Vector<uInt>& rowIds();
+
+  const Vector<uInt>& rowIds()const {return This->rowIds();};
+
+
   //</group>
 
-  // Frequency average the buffer
+  // Frequency average the buffer (visibility() column only)
   void freqAverage();
+
+  // Frequency average the buffer (visCube and [if present] modelVisCube)
+  void freqAveCubes();
+
+  // Average channel axis by factor
+  void channelAve(Float factor);
+  void chanAveVisCube(Cube<Complex>& data,Int width,Int nChanOut);
+  void chanAveFlagCube(Cube<Bool>& flagcube,Int width,Int nChanOut);
+
+  // Sort/unsort the correlations, if necessary
+  //  (Rudimentary handling of non-canonically sorted correlations--use with care!)
+  void sortCorr();
+  void unSortCorr();
+    
+  // Normalize the visCube by the modelVisCube 
+  //   (and optionally also divide visCube_p by its normalized amp)
+  void normalize(const Bool& phaseOnly=False);
+
+  // Fill weightMat according to sigma column
+  void resetWeightMat();
 
   // Update coordinate info - useful for copied VisBuffers that need
   // to retain some state for later reference.
@@ -350,6 +409,7 @@ private:
   void validate();
 
   // functions to fill cache from iterator
+  Int & fillnCorr();
   Int & fillnChannel();
   Vector<Int>& fillChannel();
   Int & fillnRow();
@@ -380,13 +440,17 @@ private:
   Int& fillPolFrame();
   Vector<Int>& fillCorrType();
   Vector<Float>& fillSigma();
+  Matrix<Float>& fillSigmaMat();
   Int& fillSpW();
   Vector<Double>& fillTime();
   Vector<Double>& fillTimeInterval();
   Vector<RigidVector<Double,3> >& filluvw();
+  Matrix<Double>& filluvwMat();
   Matrix<CStokesVector>& fillVis(VisibilityIterator::DataColumn whichOne);
   Cube<Complex>& fillVisCube(VisibilityIterator::DataColumn whichOne);
   Vector<Float>& fillWeight();
+  Matrix<Float>& fillWeightMat();
+  Cube<Float>& fillWeightSpectrum();
   Matrix<Float>& fillImagingWeight();
   Bool checkMSId();
 
@@ -396,20 +460,28 @@ private:
   ROVisibilityIterator* visIter_p;
   Bool twoWayConnection_p;
 
+  // Are correlations in non-canonical order?
+  Bool nonCanonCorr();
+
+  // Have correlations been sorted by sortCorr?
+  Bool corrSorted_p;
+
   VisBuffer* This;
   // variables to track validity of cache
-  Bool nChannelOK_p, channelOK_p, nRowOK_p, ant1OK_p, ant2OK_p,
+  Bool nCorrOK_p, nChannelOK_p, channelOK_p, nRowOK_p, ant1OK_p, ant2OK_p,
     feed1OK_p, feed2OK_p, cjonesOK_p,
     fieldIdOK_p, arrayIdOK_p, flagOK_p, flagRowOK_p, scanOK_p, freqOK_p,
-    lsrFreqOK_p, phaseCenterOK_p, polFrameOK_p, sigmaOK_p, spwOK_p,
-    timeOK_p, timeIntervalOK_p, uvwOK_p, visOK_p, weightOK_p;
-  Bool corrTypeOK_p, flagCubeOK_p, visCubeOK_p, weightMatOK_p,
+    lsrFreqOK_p, phaseCenterOK_p, polFrameOK_p, sigmaOK_p, sigmaMatOK_p,spwOK_p,
+    timeOK_p, timeIntervalOK_p, uvwOK_p, uvwMatOK_p,visOK_p, weightOK_p, 
+    weightMatOK_p, weightSpectrumOK_p;
+  Bool corrTypeOK_p, flagCubeOK_p, visCubeOK_p, imagingWeightOK_p,
     modelVisOK_p, correctedVisOK_p, modelVisCubeOK_p, correctedVisCubeOK_p;
   Bool msOK_p, newMS_p;
   Bool feed1_paOK_p,feed2_paOK_p,direction1OK_p,direction2OK_p;
+  Bool rowIdsOK_p;
 
   // cached variables
-  Int nChannel_p, nRow_p;
+  Int nCorr_p, nChannel_p, nRow_p;
   Vector<Int> channel_p, antenna1_p, antenna2_p, feed1_p, feed2_p;
   Vector<Float> feed1_pa_p, feed2_pa_p; 
   Vector<SquareMatrix<Complex,2> > cjones_p;
@@ -425,16 +497,23 @@ private:
   Int polFrame_p;
   Vector<Int> corrType_p;
   Vector<Float> sigma_p;
+  Matrix<Float> sigmaMat_p;
   Int spectralWindow_p;
   Vector<Double> time_p;
   Vector<Double> timeInterval_p;
   Vector<RigidVector<Double,3> > uvw_p;
+  Matrix<Double> uvwMat_p;
   Matrix<CStokesVector> visibility_p, modelVisibility_p, correctedVisibility_p;
   Vector<Float> weight_p;
+  Matrix<Float> weightMat_p;
+  Cube<Float> weightSpectrum_p;
   Cube<Bool> flagCube_p;
   Cube<Complex> visCube_p, modelVisCube_p, correctedVisCube_p;
-  Matrix<Float> weightMat_p;
+  Vector<uInt> rowIds_p;
+  Matrix<Float> imagingWeight_p;
   Int oldMSId_p;
+
+  Cube<Float> weightCube_p;
 
 };
 

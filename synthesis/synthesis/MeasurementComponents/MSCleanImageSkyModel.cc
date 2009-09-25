@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: MSCleanImageSkyModel.cc,v 19.8 2006/01/16 01:59:51 tcornwel Exp $
+//# $Id$
 
 
 #include <casa/Arrays/ArrayMath.h>
@@ -49,16 +49,16 @@
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
-MSCleanImageSkyModel::MSCleanImageSkyModel(const Int nscales)
-: method_p(NSCALES), nscales_p(nscales), progress_p(0)
+MSCleanImageSkyModel::MSCleanImageSkyModel(const Int nscales, const Float& smallScaleBias)
+: method_p(NSCALES), nscales_p(nscales), smallScaleBias_p(smallScaleBias), progress_p(0)
 {
   modified_p=True;
   donePSF_p=False;
 
 };
 
-MSCleanImageSkyModel::MSCleanImageSkyModel(const Vector<Float>& userScaleSizes)
-: method_p(USERVECTOR), userScaleSizes_p(userScaleSizes), progress_p(0)
+MSCleanImageSkyModel::MSCleanImageSkyModel(const Vector<Float>& userScaleSizes, const Float& smallScaleBias)
+: method_p(USERVECTOR), userScaleSizes_p(userScaleSizes), smallScaleBias_p(smallScaleBias), progress_p(0)
 {
   modified_p=True;
   donePSF_p=False;
@@ -93,6 +93,11 @@ Bool MSCleanImageSkyModel::solve(SkyEquation& se) {
   //Make the PSF
   if(!donePSF_p)
     makeApproxPSFs(se);
+
+  if(numberIterations() <1){
+    return True;
+  }
+  
   
   if(!isSolveable(0)) {
     os << "Model 1 is not solveable!" << LogIO::EXCEPTION;
@@ -154,7 +159,7 @@ Bool MSCleanImageSkyModel::solve(SkyEquation& se) {
     }
   }
   
-
+  Int converged=0;
   // Loop over all channels and polarizations
   for (Int chan=0; chan<nchan; chan++) {
 
@@ -223,6 +228,8 @@ Bool MSCleanImageSkyModel::solve(SkyEquation& se) {
 	  }
 	}
 
+	
+
 	if(doClean) {
 	  SubLattice<Float> subImage(image(0), onePlane, True);
 	  
@@ -231,10 +238,11 @@ Bool MSCleanImageSkyModel::solve(SkyEquation& se) {
 	  } else {
 	    cleaner.setscales(scaleSizes);   
 	  }
+          cleaner.setSmallScaleBias(smallScaleBias_p);
 	  cleaner.setcontrol(CleanEnums::MULTISCALE, numberIterations(), gain(), 
 			     Quantity(threshold(), "Jy"), True);
 	  
-	  cleaner.clean(subImage, progress_p);
+	  converged=cleaner.clean(subImage, progress_p);
 	
 	  // calculate residuals 
 	  
@@ -249,7 +257,7 @@ Bool MSCleanImageSkyModel::solve(SkyEquation& se) {
   }
   modified_p=True;
 
-  return(True);
+  return(converged);
 };
 
 } //# NAMESPACE CASA - END

@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SimPol.cc,v 19.4 2006/05/31 14:12:47 gvandiep Exp $
+//# $Id$
 
 #include <simulators/Simulators/SimPol.h>
 

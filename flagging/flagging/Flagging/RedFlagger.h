@@ -23,11 +23,10 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RedFlagger.h,v 19.13 2005/12/06 20:18:50 wyoung Exp $
+//# $Id$
 #ifndef FLAGGING_REDFLAGGER_H
 #define FLAGGING_REDFLAGGER_H
 
-#include <flagging/Flagging/RFChunkStats.h>
 #include <casa/System/PGPlotter.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Containers/Record.h>
@@ -40,6 +39,8 @@
 #include <measures/Measures/MRadialVelocity.h>
 #include <ms/MeasurementSets/MSHistory.h>
 #include <ms/MeasurementSets/MSHistoryHandler.h>
+#include <flagging/Flagging/RFChunkStats.h>
+#include <flagging/Flagging/RFCommon.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -220,12 +221,6 @@ public:
 			 Vector<Int>& dataStart, Vector<Int>& dataStep,
 			 MRadialVelocity& mDataStart, 
 			 MRadialVelocity& mDataStep);
-			 
-  // Methods to write to the history table of Measurement Set.
-  // Write an entry to the history table
-  void writeHistory(LogIO& os);
-  // write command line command
-  void writeCommand(LogIO& os);
 
   
 private:
@@ -243,9 +238,6 @@ private:
   Table historytab_p;
   MSHistoryHandler *hist_p;
   Int histLockCounter_p;
-
-  // Method to update MS History Table
-  void writeHistory(LogIO& os, Bool cliCommand);
 };
 
 

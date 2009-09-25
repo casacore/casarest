@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ResidualAlgorithm.h,v 19.5 2004/11/30 17:50:51 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_RESIDUALALGORITHM_H
 #define SYNTHESIS_RESIDUALALGORITHM_H

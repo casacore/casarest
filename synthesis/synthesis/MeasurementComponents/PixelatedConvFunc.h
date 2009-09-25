@@ -24,13 +24,13 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PixelatedConvFunc.h,v 1.2 2005/06/21 20:49:04 wyoung Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PIXELATEDCONVFUNC_H
 #define SYNTHESIS_PIXELATEDCONVFUNC_H
 
 #include <casa/Arrays/Vector.h>
-#include <synthesis/MeasurementComponents/Exp.h>
+//#include <synthesis/MeasurementComponents/Exp.h>
 #include <synthesis/MeasurementComponents/CExp.h>
 #include <synthesis/MeasurementComponents/ConvolutionFunction.h>
 
@@ -51,7 +51,7 @@ namespace casa{
       cache.resize(shape);
     };
 
-    virtual T getValue(Vector<T>& coord, Vector<T>& offset) {};
+    virtual T getValue(Vector<T>& coord, Vector<T>& offset) { return (T)(1.0);};
   private:
     Int nDim;
     IPosition shape;

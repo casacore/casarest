@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: CalDescColumns.h,v 19.5 2004/11/30 17:50:11 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_CALDESCCOLUMNS_H
 #define CALIBRATION_CALDESCCOLUMNS_H

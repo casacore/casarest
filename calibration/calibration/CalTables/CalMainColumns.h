@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: CalMainColumns.h,v 19.5 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_CALMAINCOLUMNS_H
 #define CALIBRATION_CALMAINCOLUMNS_H
@@ -33,9 +33,6 @@
 #include <measures/Measures/MEpoch.h>
 #include <measures/Measures/MFrequency.h>
 #include <measures/Measures/MDirection.h>
-#include <measures/Measures/MCEpoch.h>
-#include <measures/Measures/MCFrequency.h>
-#include <measures/Measures/MCDirection.h>
 #include <tables/Tables/TableColumn.h>
 #include <tables/Tables/ScalarColumn.h>
 #include <tables/Tables/ArrayColumn.h>

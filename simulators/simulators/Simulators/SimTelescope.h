@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SimTelescope.h,v 19.4 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #ifndef SIMULATORS_SIMTELESCOPE_H
 #define SIMULATORS_SIMTELESCOPE_H

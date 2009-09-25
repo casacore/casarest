@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMathInterface.cc,v 19.7 2004/11/30 17:50:50 ddebonis Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <casa/BasicSL/Complex.h>
@@ -179,6 +179,16 @@ PBMathInterface::applyPB(const ImageInterface<Complex>& in,
   return apply(in, out, sp, parAngle, doSquint, inverse, False, 2, cutoff, forward);
 };
 
+ImageInterface<Float>&  
+PBMathInterface::applyPB(const ImageInterface<Float>& in,
+			  ImageInterface<Float>& out,
+			  const MDirection& sp,
+			  const Quantity parAngle,
+			  const BeamSquint::SquintType doSquint,
+			  Float cutoff)
+{
+  return apply(in, out, sp, parAngle, doSquint, cutoff, 2);
+};
 
 ImageInterface<Float>&  
 PBMathInterface::applyPB2(const ImageInterface<Float>& in,

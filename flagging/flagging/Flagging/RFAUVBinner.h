@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFAUVBinner.h,v 19.7 2005/12/06 20:18:50 wyoung Exp $
+//# $Id$
 #ifndef FLAGGING_RFAUVBINNER_H
 #define FLAGGING_RFAUVBINNER_H
 

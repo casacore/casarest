@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SimACoh.cc,v 19.4 2004/11/30 17:50:56 ddebonis Exp $
+//# $Id$
 
 #include <casa/BasicMath/Math.h>
 #include <synthesis/MeasurementComponents/SimACoh.h>
@@ -39,7 +39,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 // called from a separate object in the exact same sequence as apply.
 
 SimACoh::SimACoh(Int seed, Double rms):rndGen_p(seed),
-noiseDist_p(&rndGen_p, 0.0, square(rms/2.0))
+				       //noiseDist_p(&rndGen_p, 0.0, square(rms/2.0))
+noiseDist_p(&rndGen_p, 0.0, square(rms))
 {
 }
 VisBuffer& SimACoh::apply(VisBuffer& vb)

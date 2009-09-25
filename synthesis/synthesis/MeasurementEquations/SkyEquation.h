@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SkyEquation.h,v 19.11 2006/06/13 00:39:15 kgolap Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_SKYEQUATION_H
 #define SYNTHESIS_SKYEQUATION_H
@@ -125,6 +125,7 @@ class ComponentList;
 class ComponentFTMachine;
 class UVWMachine;
 class ROVisibilityIterator;
+class VisibilityIterator;
 
 template <class T> class ImageInterface;
 template <class T> class TempImage;
@@ -141,6 +142,11 @@ public:
   // a ComponentFTMachine for the component lists
   SkyEquation(SkyModel& sm, VisSet& vs, FTMachine& ft,
 	      ComponentFTMachine& cft,  Bool noModelcol=False);
+
+
+  //SkyEquation with ROVisIter
+  SkyEquation(SkyModel& sm, ROVisibilityIterator& vi, FTMachine& ft,
+	      ComponentFTMachine& cft, Bool noModelCol);
 
   // Define a SkyEquation linking a VisSet vs with a SkyModel sm
   // using an FTMachine ft for Sky->Vis and ift for Vis->Sky
@@ -186,6 +192,9 @@ public:
   // in the sense that it is a shift-invariant approximation
   virtual void makeApproxPSF(Int model, ImageInterface<Float>& PSF);
 
+  // make all the approx psfs in one go
+  virtual void makeApproxPSF(PtrBlock<TempImage<Float> *>& PSFs);
+
   // Make complex XFRs needed for incrementGradientChiSquared
   virtual void makeComplexXFRs();
 
@@ -214,11 +223,16 @@ public:
     {scaleType_p = type; minPB_p = minPB; constPB_p = constPB;}
 
   // Lock and unlock the underlying MeasurementSet
-  virtual void lock() {};
-  virtual void unlock() {};
+  virtual void lock();
+  virtual void unlock();
   
   // Return the name of the underlying MeasurementSet
-  virtual String associatedMSName() {return String();};
+  virtual String associatedMSName();
+
+
+  //assign  the flux scale that the ftmachines have if they have
+  virtual void getCoverageImage(Int model, ImageInterface<Float>& im);
+    
   
  protected:
 
@@ -233,9 +247,6 @@ public:
 
   virtual void fullGradientsChiSquared(Bool incremental=False);
 
-  virtual void fullGradientsChiSquared(Bool incremental, 
-				       Bool useCorrectedData);
-
   SkyEquation() {};
   
   // Check for validity
@@ -245,23 +256,16 @@ public:
   // <group>
   virtual void initializeGet(const VisBuffer& vb, Int row, Int model,
 			     Bool incremental);
-  virtual void initializeGet(const VisBuffer& vb, Int row, Int model, 
-			     Array<Complex>& griddedVis, 
-			     Vector<Double>& uvscale,
-			     UVWMachine* & uvwMachine,
-			     Bool incremental);
+  
 
   virtual VisBuffer& get(VisBuffer& vb, Int model, Bool incremental);
   virtual void finalizeGet();
   virtual void initializePut(const VisBuffer &vb, Int model);
-  virtual void initializePut(const VisBuffer &vb, Int model, 
-			     Vector<Double>& uvscale,
-			     UVWMachine* & uvwMachine);
+  
   virtual void put(const VisBuffer& vb, Int model, Bool dopsf=False, FTMachine::Type col=FTMachine::OBSERVED);
-  virtual void put(const VisBuffer& vb, Int model, Vector<Double>& scale, 
-		   UVWMachine *uvwMachine, Bool dopsf=False);
+  
   virtual void finalizePut(const VisBuffer& vb, Int Model);
-  virtual void finalizePut(const VisBuffer& vb, Int Model, Bool& isCopy);
+ 
   // This encapsulates all of the change logic we should have to deal
   // with (short of returning a range of rows that has the same
   // SkyJones).  First we look to see if the first row of the VB
@@ -320,10 +324,7 @@ public:
   virtual VisBuffer& get(VisBuffer& vb, const SkyComponent& component);
   virtual VisBuffer& get(VisBuffer& vb, const ComponentList& components);
   // Do the sum of the gets for all the models for this visbuffer
-  virtual Bool get(VisBuffer& vb, PtrBlock< Array<Complex> *>& griddedVis, 
-		   Cube<Complex>& modelVis, 
-		   Block< Vector<Double> >& uvscale,  
-		   PtrBlock<UVWMachine *>& uvwMachines, Bool& incremental);
+  
   SkyComponent& applySkyJones(SkyComponent& corruptedComponent,
 			      const VisBuffer& vb,
 			      Int row);
@@ -347,11 +348,17 @@ public:
 
   virtual void checkVisIterNumRows(ROVisibilityIterator& vi);
 
+  virtual void predictComponents(Bool& incremental, Bool& initialized);
+
   // SkyModel
   SkyModel* sm_;
 
   // VisSet
   VisSet* vs_;
+  //Visibilityiterators
+  VisibilityIterator* wvi_p;
+  ROVisibilityIterator* rvi_p;
+
 
   // FTMachine objects
   // <group>
@@ -371,7 +378,7 @@ public:
   // Workspace
   // <group>
   Float chisq, sumwt;
-  Matrix<Float> sggS;
+  Float ggSMax_p;
   // </group>
 
   LogSink logSink_p;

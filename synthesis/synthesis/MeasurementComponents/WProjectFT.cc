@@ -23,12 +23,13 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: WProjectFT.cc,v 1.21 2006/03/24 18:23:17 kgolap Exp $
+//# $Id$
 
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <casa/Quanta/UnitMap.h>
 #include <casa/Quanta/MVTime.h>
 #include <casa/Quanta/UnitVal.h>
+#include <casa/Utilities/CountedPtr.h>
 #include <measures/Measures/Stokes.h>
 #include <coordinates/Coordinates/CoordinateSystem.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>
@@ -39,6 +40,7 @@
 #include <casa/BasicSL/Constants.h>
 #include <scimath/Mathematics/FFTServer.h>
 #include <synthesis/MeasurementComponents/WProjectFT.h>
+#include <synthesis/MeasurementComponents/WPConvFunc.h>
 #include <scimath/Mathematics/RigidVector.h>
 #include <msvis/MSVis/StokesVector.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
@@ -78,85 +80,134 @@
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
-WProjectFT::WProjectFT(MeasurementSet& ms, 
-		   Int nWPlanes, Long icachesize, Int itilesize, 
+WProjectFT::WProjectFT( Int nWPlanes, Long icachesize, Int itilesize, 
 		   Bool usezero)
-  : FTMachine(), padding_p(1.0), ms_p(&ms), nWPlanes_p(nWPlanes),
+  : FTMachine(), padding_p(1.0), nWPlanes_p(nWPlanes),
     imageCache(0), cachesize(icachesize), tilesize(itilesize),
-    gridder(0), isTiled(False), arrayLattice(0), lattice(0), 
+    gridder(0), isTiled(False), 
     maxAbsData(0.0), centerLoc(IPosition(4,0)), offsetLoc(IPosition(4,0)),
-    mspc(0), msac(0), pointingToImage(0), usezero_p(usezero),
-    convFunctionMap_p(-1),actualConvIndex_p(-1), machineName_p("WProjectFT")
+    pointingToImage(0), usezero_p(usezero),machineName_p("WProjectFT")
 {
   convSize=0;
   tangentSpecified_p=False;
-  mspc=new MSPointingColumns(ms_p->pointing());
-  msac=new MSAntennaColumns(ms_p->antenna());
   lastIndex_p=0;
-}
 
-WProjectFT::WProjectFT(MeasurementSet& ms, 
+  wpConvFunc_p=new WPConvFunc();
+
+}
+WProjectFT::WProjectFT(Int nWPlanes, 
+		       MPosition mLocation, 
+		       Long icachesize, Int itilesize, 
+		       Bool usezero, Float padding)
+  : FTMachine(), padding_p(padding), nWPlanes_p(nWPlanes),
+    imageCache(0), cachesize(icachesize), tilesize(itilesize),
+    gridder(0), isTiled(False),  
+    maxAbsData(0.0), centerLoc(IPosition(4,0)), offsetLoc(IPosition(4,0)),
+    pointingToImage(0), usezero_p(usezero), machineName_p("WProjectFT")
+{
+  convSize=0;
+  savedWScale_p=0.0;
+  tangentSpecified_p=False;
+  mLocation_p=mLocation;
+  lastIndex_p=0;
+  wpConvFunc_p=new WPConvFunc();
+  
+}
+WProjectFT::WProjectFT(
 		       Int nWPlanes, MDirection mTangent, 
 		       MPosition mLocation, 
 		       Long icachesize, Int itilesize, 
 		       Bool usezero, Float padding)
-  : FTMachine(), padding_p(padding), ms_p(&ms), nWPlanes_p(nWPlanes),
+  : FTMachine(), padding_p(padding), nWPlanes_p(nWPlanes),
     imageCache(0), cachesize(icachesize), tilesize(itilesize),
-    gridder(0), isTiled(False), arrayLattice(0), lattice(0), 
+    gridder(0), isTiled(False),  
     maxAbsData(0.0), centerLoc(IPosition(4,0)), offsetLoc(IPosition(4,0)),
-    mspc(0), msac(0), pointingToImage(0), usezero_p(usezero),
-    convFunctionMap_p(-1),actualConvIndex_p(-1), machineName_p("WProjectFT")
+    pointingToImage(0), usezero_p(usezero),machineName_p("WProjectFT")
 {
   convSize=0;
   savedWScale_p=0.0;
   mTangent_p=mTangent;
   tangentSpecified_p=True;
   mLocation_p=mLocation;
-  mspc=new MSPointingColumns(ms_p->pointing());
-  msac=new MSAntennaColumns(ms_p->antenna());
   lastIndex_p=0;
-  
+  wpConvFunc_p=new WPConvFunc();
 }
 
 WProjectFT::WProjectFT(const RecordInterface& stateRec)
-  : FTMachine(), convFunctionMap_p(-1), machineName_p("WProjectFT")
+  : FTMachine(),machineName_p("WProjectFT")
 {
   // Construct from the input state record
   String error;
   if (!fromRecord(error, stateRec)) {
     throw (AipsError("Failed to create WProjectFT: " + error));
   };
-  mspc=new MSPointingColumns(ms_p->pointing());
-  msac=new MSAntennaColumns(ms_p->antenna());
 }
 //---------------------------------------------------------------------- 
 WProjectFT& WProjectFT::operator=(const WProjectFT& other)
 {
   if(this!=&other) {
+    nAntenna_p=other.nAntenna_p;
+    mLocation_p=other.mLocation_p;
+    distance_p=other.distance_p;
+    lastFieldId_p=other.lastFieldId_p;
+    lastMSId_p=other.lastMSId_p;
+    nx=other.nx;
+    ny=other.ny;
+    npol=other.npol;
+    nchan=other.nchan;
+    nvischan=other.nvischan;
+    nvispol=other.nvispol;
+    chanMap.resize();
+    chanMap=other.chanMap;
+    polMap.resize();
+    polMap=other.polMap;
+    doUVWRotation_p=other.doUVWRotation_p;
+    freqFrameValid_p=other.freqFrameValid_p;
+    selectedSpw_p.resize();
+    selectedSpw_p=other.selectedSpw_p;
+    multiChanMap_p=other.multiChanMap_p;
     padding_p=other.padding_p;
-    ms_p=other.ms_p;
+    nVisChan_p.resize();
+    nVisChan_p=other.nVisChan_p;
+    spectralCoord_p=other.spectralCoord_p;
+    doConversion_p.resize();
+    doConversion_p=other.doConversion_p;
     nWPlanes_p=other.nWPlanes_p;
     imageCache=other.imageCache;
     cachesize=other.cachesize;
     tilesize=other.tilesize;
-    gridder=other.gridder;
+    if(other.gridder==0)
+      gridder=0;
+    else{
+      uvScale.resize();
+      uvOffset.resize();
+      uvScale=other.uvScale;
+      uvOffset=other.uvOffset;
+      gridder = new ConvolveGridder<Double, Complex>(IPosition(2, nx, ny),
+						     uvScale, uvOffset,
+						     "SF");
+    }
+
     isTiled=other.isTiled;
-    lattice=other.lattice;
-    arrayLattice=other.arrayLattice;
+    //lattice=other.lattice;
+    //arrayLattice=other.arrayLattice;
+    lattice=0;
+    arrayLattice=0;
+
     maxAbsData=other.maxAbsData;
     centerLoc=other.centerLoc;
     offsetLoc=other.offsetLoc;
-    mspc=other.mspc;
-    msac=other.msac;
     pointingToImage=other.pointingToImage;
     usezero_p=other.usezero_p;
     machineName_p=other.machineName_p;
+    wpConvFunc_p=other.wpConvFunc_p;
+    freqInterpMethod_p=other.freqInterpMethod_p;
   };
   return *this;
 };
 
 //----------------------------------------------------------------------
-WProjectFT::WProjectFT(const WProjectFT& other) : convFunctionMap_p(-1)
+WProjectFT::WProjectFT(const WProjectFT& other) :machineName_p("WProjectFT")
 {
   operator=(other);
 }
@@ -211,6 +262,8 @@ void WProjectFT::init() {
   uvOffset(1)=ny/2;
   uvOffset(2)=0;
   
+  
+
   if(gridder) delete gridder; gridder=0;
   gridder = new ConvolveGridder<Double, Complex>(IPosition(2, nx, ny),
 						 uvScale, uvOffset,
@@ -240,274 +293,49 @@ void WProjectFT::init() {
 // This is nasty, we should use CountedPointers here.
 WProjectFT::~WProjectFT() {
   if(imageCache) delete imageCache; imageCache=0;
-  if(arrayLattice) delete arrayLattice; arrayLattice=0;
   if(gridder) delete gridder; gridder=0;
+  /*
+  if(arrayLattice) delete arrayLattice; arrayLattice=0;
+  
   Int numofmodels=convFunctions_p.nelements();
   for (Int k=0; k< numofmodels; ++k){
     delete convFunctions_p[k];
     delete convSupportBlock_p[k];
 
   }
+  */
   // convFuctions_p.resize();
   //  convSupportBlock_p.resize();
 
 }
 
+
+void WProjectFT::setConvFunc(CountedPtr<WPConvFunc>& pbconvFunc){
+
+  wpConvFunc_p=pbconvFunc;
+}
+CountedPtr<WPConvFunc>& WProjectFT::getConvFunc(){
+
+  return wpConvFunc_p;
+}
+
 void WProjectFT::findConvFunction(const ImageInterface<Complex>& image,
 				const VisBuffer& vb) {
   
-  //  if(convSize>0) return;
 
-  if(checkCenterPix(image)) return;
 
-  logIO() << LogOrigin("WProjectFT", "init")  << LogIO::NORMAL;
+
+
+  wpConvFunc_p->findConvFunction(image, vb, wConvSize, uvScale, uvOffset,
+				 padding_p,
+				 convSampling, 
+				 convFunc, convSize, convSupport, 
+				 savedWScale_p); 
+
+  uvScale(2)=savedWScale_p;
+
   
-  ok();
   
-  if(wConvSize>1) {
-    logIO() << "W projection using " << wConvSize << " planes" << LogIO::POST;
-    Double maxUVW;
-    maxUVW=0.25/abs(image.coordinates().increment()(0));
-    logIO() << "Estimating maximum possible W = " << maxUVW
-	    << " (wavelengths)" << LogIO::POST;
-    
-    Double invLambdaC=vb.frequency()(0)/C::c;
-    logIO() << "Typical wavelength = " << 1.0/invLambdaC
-	    << " (m)" << LogIO::POST;
-    
-    //    uvScale(2)=sqrt(Float(wConvSize-1))/maxUVW;
-    //    uvScale(2)=(Float(wConvSize-1))/maxUVW;
-    uvScale(2)=Float((wConvSize-1)*(wConvSize-1))/maxUVW;
-    savedWScale_p=uvScale(2);
-    logIO() << "Scaling in W (at maximum W) = " << 1.0/uvScale(2)
-	    << " wavelengths per pixel" << LogIO::POST;
-  }
-  
-  // Get the coordinate system
-  CoordinateSystem coords(image.coordinates());
-  
-  // Set up the convolution function. 
-  if(wConvSize>1) {
-    if(wConvSize>256) {
-      convSampling=4;
-      convSize=min(nx,ny); 
-      Int maxMemoryMB=HostInfo::memoryTotal()/1024; 
-      if(maxMemoryMB > 4000){
-	convSize=min(convSize,1024);
-      }
-      else{
-	convSize=min(convSize,512);
-      }
-
-    }
-    else {
-      convSampling=4;
-      convSize=min(nx,ny);
-      convSize=min(convSize,1024);
-    }
-    
-  }
-  else {
-    convSampling=1;
-    convSize=min(nx,ny);
-  }
-  Int maxConvSize=convSize;
-  
-  // Make a two dimensional image to calculate the
-  // primary beam. We want this on a fine grid in the
-  // UV plane 
-  Int directionIndex=coords.findCoordinate(Coordinate::DIRECTION);
-  AlwaysAssert(directionIndex>=0, AipsError);
-  DirectionCoordinate dc=coords.directionCoordinate(directionIndex);
-  directionCoord=coords.directionCoordinate(directionIndex);
-  Vector<Double> sampling;
-  sampling = dc.increment();
-  sampling*=Double(convSampling);
-  sampling*=Double(min(nx,ny))/Double(convSize);
-  dc.setIncrement(sampling);
-  
-  Vector<Double> unitVec(2);
-  unitVec=convSize/2;
-  dc.setReferencePixel(unitVec);
-  
-  // Set the reference value to that of the image
-  dc.setReferenceValue(mTangent_p.getAngle().getValue());
-  
-  coords.replaceCoordinate(dc, directionIndex);
-  //  coords.list(logIO(), MDoppler::RADIO, IPosition(), IPosition());
-  
-  IPosition pbShape(4, convSize, convSize, 1, 1);
-  TempImage<Complex> twoDPB(pbShape, coords);
-
-  Int inner=convSize/convSampling;
-  ConvolveGridder<Double, Complex>
-    ggridder(IPosition(2, inner, inner), uvScale, uvOffset, "SF");
-
-  convFunc.resize(); // break any reference 
-  convFunc.resize(convSize/2-1, convSize/2-1, wConvSize);
-  convFunc.set(0.0);
-
-  IPosition start(4, 0, 0, 0, 0);
-  IPosition pbSlice(4, convSize, convSize, 1, 1);
-  
-  Bool writeResults=False;
-  Int warner=0;
-
-  // Accumulate terms 
-  Matrix<Complex> screen(convSize, convSize);
-  for (Int iw=0;iw<wConvSize;iw++) {
-    // First the w term
-    screen=0.0;
-    if(wConvSize>1) {
-      //      Double twoPiW=2.0*C::pi*sqrt(Double(iw))/uvScale(2);
-      //      Double twoPiW=2.0*C::pi*Double(iw)/uvScale(2);
-      Double twoPiW=2.0*C::pi*Double(iw*iw)/uvScale(2);
-      for (Int iy=-inner/2;iy<inner/2;iy++) {
-	Double m=sampling(1)*Double(iy);
-	Double msq=m*m;
-	for (Int ix=-inner/2;ix<inner/2;ix++) {
-	  Double l=sampling(0)*Double(ix);
-	  Double rsq=l*l+msq;
-	  if(rsq<1.0) {
-	    Double phase=twoPiW*(sqrt(1.0-rsq)-1.0);
-	    screen(ix+convSize/2,iy+convSize/2)=Complex(cos(phase),sin(phase));
-	  }
-	}
-      }
-    }
-    else {
-      screen=1.0;
-    }
-    // spheroidal function
-    Vector<Complex> correction(inner);
-    for (Int iy=-inner/2;iy<inner/2;iy++) {
-      ggridder.correctX1D(correction, iy+inner/2);
-      for (Int ix=-inner/2;ix<inner/2;ix++) {
-	screen(ix+convSize/2,iy+convSize/2)*=correction(ix+inner/2);
-      }
-    }
-    twoDPB.putSlice(screen, IPosition(4, 0));
-    // Write out screen as an image
-    if(writeResults) {
-      ostringstream name;
-      name << "Screen" << iw+1;
-      if(Table::canDeleteTable(name)) Table::deleteTable(name);
-      PagedImage<Float> thisScreen(pbShape, coords, name);
-      LatticeExpr<Float> le(real(twoDPB));
-      thisScreen.copyData(le);
-    }
-
-    // Now FFT and get the result back
-    LatticeFFT::cfft2d(twoDPB);
-
-    // Write out FT of screen as an image
-    if(writeResults) {
-      CoordinateSystem ftCoords(coords);
-      directionIndex=ftCoords.findCoordinate(Coordinate::DIRECTION);
-      AlwaysAssert(directionIndex>=0, AipsError);
-      dc=coords.directionCoordinate(directionIndex);
-      Vector<Bool> axes(2); axes(0)=True;axes(1)=True;
-      Vector<Int> shape(2); shape(0)=convSize;shape(1)=convSize;
-      Coordinate* ftdc=dc.makeFourierCoordinate(axes,shape);
-      ftCoords.replaceCoordinate(*ftdc, directionIndex);
-      delete ftdc; ftdc=0;
-      ostringstream name;
-      name << "FTScreen" << iw+1;
-      if(Table::canDeleteTable(name)) Table::deleteTable(name);
-      PagedImage<Float> thisScreen(pbShape, ftCoords, name);
-      LatticeExpr<Float> le(real(twoDPB));
-      thisScreen.copyData(le);
-    }
-    IPosition start(4, convSize/2, convSize/2, 0, 0);
-    IPosition pbSlice(4, convSize/2-1, convSize/2-1, 1, 1);
-    convFunc.xyPlane(iw)=twoDPB.getSlice(start, pbSlice, True);
-  }
-  convFunc/=max(abs(convFunc));
-
-  // Find the edge of the function by stepping in from the
-  // uv plane edge. We do this for each plane to save time on the
-  // gridding (about a factor of two)
-  convSupport=-1;
-  for (Int iw=0;iw<wConvSize;iw++) {
-    Bool found=False;
-    Int trial=0;
-    for (trial=convSize/2-2;trial>0;trial--) {
-      if(abs(convFunc(0,trial,iw))>1e-3) {
-	found=True;
-	break;
-      }
-    }
-    if(found) {
-      convSupport(iw)=Int(0.5+Float(trial)/Float(convSampling))+1;
-      if(convSupport(iw)*convSampling*2 >= maxConvSize){
-	convSupport(iw)=convSize/2/convSampling-1;
-	++warner;
-      }
-    }
-  }
-  
-  if(convSupport(0)<1) {
-    logIO() << "Convolution function is misbehaved - support seems to be zero"
-	    << LogIO::EXCEPTION;
-  }
-
-  if(warner > 5) {
-    logIO() << LogIO::WARN 
-	    <<"Many of the Convolution functions go beyond " << maxConvSize 
-	    <<" pixels allocated" << LogIO::POST;
-    logIO() << LogIO::WARN
-	    << "You may consider reducing the size of your image or use facets"
-	    << LogIO::POST;
-  }
-  // Normalize such that plane 0 sums to 1 (when jumping in
-  // steps of convSampling)
-  Double pbSum=0.0;
-  for (Int iy=-convSupport(0);iy<=convSupport(0);iy++) {
-    for (Int ix=-convSupport(0);ix<=convSupport(0);ix++) {
-      pbSum+=real(convFunc(abs(ix)*convSampling,abs(iy)*convSampling,0));
-    }
-  }
-  if(pbSum>0.0) {
-    convFunc*=Complex(1.0/pbSum,0.0);
-  }
-  else {
-    logIO() << "Convolution function integral is not positive"
-	    << LogIO::EXCEPTION;
-  }
-  logIO() << "Convolution support = " << convSupport
-	  << " pixels in Fourier plane"
-	  << LogIO::POST;
-
-
-  convSupportBlock_p.resize(actualConvIndex_p+1);
-  convSupportBlock_p[actualConvIndex_p]= new Vector<Int>();
-  *convSupportBlock_p[actualConvIndex_p]=convSupport;
-  convFunctions_p.resize(actualConvIndex_p+1);
-  convFunctions_p[actualConvIndex_p]= new Cube<Complex>();
-  Int newConvSize=2*(max(convSupport)+2)*convSampling;
-  
-  if(newConvSize < convSize){
-    IPosition blc(3, 0,0,0);
-    IPosition trc(3, (newConvSize/2-2),
-		  (newConvSize/2-2),
-		  convSupport.shape()(0)-1);
-    *convFunctions_p[actualConvIndex_p]=convFunc(blc,trc);
-    convSize=newConvSize;
-  }
-  else{
-    *convFunctions_p[actualConvIndex_p]=convFunc;
-  }
-  Int maxMemoryMB=HostInfo::memoryTotal()/1024;
-  Int memoryMB;
-  memoryMB = Int(Double(convSize/2-1)*Double(convSize/2-1)*
-		 Double(wConvSize)*8.0/1024.0/1024.0);
-  logIO() << "Memory used in gridding function = "
-	  << memoryMB << " MB from maximum "
-	  << maxMemoryMB << " MB" << LogIO::POST;
-  convFunc.resize();
-  convFunc.reference(*convFunctions_p[actualConvIndex_p]);
-  convSizes_p.resize(actualConvIndex_p+1, True);
-  convSizes_p(actualConvIndex_p)=convSize;
 }
 
 void WProjectFT::initializeToVis(ImageInterface<Complex>& iimage,
@@ -539,10 +367,11 @@ void WProjectFT::initializeToVis(ImageInterface<Complex>& iimage,
     isTiled=False;
   }
 
+  isTiled=False;
   // If we are memory-based then read the image in and create an
   // ArrayLattice otherwise just use the PagedImage
   if(isTiled) {
-    lattice=image;
+    lattice=CountedPtr<Lattice<Complex> > (image, False);
   }
   else {
     IPosition gridShape(4, nx, ny, npol, nchan);
@@ -550,19 +379,19 @@ void WProjectFT::initializeToVis(ImageInterface<Complex>& iimage,
     griddedData=Complex(0.0);
     
     IPosition stride(4, 1);
-    IPosition blc(4, (nx-image->shape()(0))/2,
-		  (ny-image->shape()(1))/2, 0, 0);
+    IPosition blc(4, (nx-image->shape()(0)+(nx%2==0))/2,
+		  (ny-image->shape()(1)+(ny%2==0))/2, 0, 0);
     IPosition trc(blc+image->shape()-stride);
     
     IPosition start(4, 0);
     griddedData(blc, trc) = image->getSlice(start, image->shape());
     
-    if(arrayLattice) delete arrayLattice; arrayLattice=0;
+    //if(arrayLattice) delete arrayLattice; arrayLattice=0;
     arrayLattice = new ArrayLattice<Complex>(griddedData);
     lattice=arrayLattice;
   }
   
-  AlwaysAssert(lattice, AipsError);
+  //AlwaysAssert(lattice, AipsError);
   
   logIO() << LogIO::DEBUGGING << "Starting FFT of image" << LogIO::POST;
   
@@ -603,16 +432,6 @@ void WProjectFT::initializeToVis(ImageInterface<Complex>& iimage,
 }
 
 
-void WProjectFT::initializeToVis(ImageInterface<Complex>& iimage,
-			       const VisBuffer& vb,
-			       Array<Complex>& griddedVis,
-			       Vector<Double>& uvscale){
-  
-  initializeToVis(iimage, vb);
-  griddedVis.assign(griddedData); //using the copy for storage
-  uvscale.assign(uvScale);
-  
-}
 
 void WProjectFT::finalizeToVis()
 {
@@ -672,17 +491,17 @@ void WProjectFT::initializeToSky(ImageInterface<Complex>& iimage,
   if(isTiled) {
     imageCache->flush();
     image->set(Complex(0.0));
-    lattice=image;
+    lattice=CountedPtr<Lattice<Complex> > (image, False);
   }
   else {
     IPosition gridShape(4, nx, ny, npol, nchan);
     griddedData.resize(gridShape);
     griddedData=Complex(0.0);
-    if(arrayLattice) delete arrayLattice; arrayLattice=0;
+    //if(arrayLattice) delete arrayLattice; arrayLattice=0;
     arrayLattice = new ArrayLattice<Complex>(griddedData);
     lattice=arrayLattice;
   }
-  AlwaysAssert(lattice, AipsError);
+  //AlwaysAssert(lattice, AipsError);
   
 }
 
@@ -722,7 +541,7 @@ Array<Complex>* WProjectFT::getDataPointer(const IPosition& centerLoc2D,
 #endif
 
 extern "C" { 
-  void gwproj(Double*,
+  void gwproj(const Double*,
 	      Double*,
 	      const Complex*,
 	      Int*,
@@ -746,11 +565,11 @@ extern "C" {
 	      Int*,
 	      Int*,
 	      Int*,
-	      Complex*,
+	      const Complex*,
 	      Int*,
 	      Int*,
 	      Double*);
-  void dwproj(Double*,
+  void dwproj(const Double*,
 	      Double*,
 	      Complex*,
 	      Int*,
@@ -772,27 +591,60 @@ extern "C" {
 	      Int*,
 	      Int*,
 	      Int*,
-	      Complex*,
+	      const Complex*,
 	      Int*,
 	      Int*);
 }
 void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
-		     FTMachine::Type type)
+		     FTMachine::Type type, const Matrix<Float>& imwght )
 {
   
-  const Cube<Complex> *data;
-  if(type==FTMachine::MODEL){
-    data=&(vb.modelVisCube());
-  }
-  else if(type==FTMachine::CORRECTED){
-    data=&(vb.correctedVisCube());
+
+   //Check if ms has changed then cache new spw and chan selection
+  if(vb.newMS())
+    matchAllSpwChans(vb);
+  
+  //Here we redo the match or use previous match
+  
+  //Channel matching for the actual spectral window of buffer
+  if(doConversion_p[vb.spectralWindow()]){
+    matchChannel(vb.spectralWindow(), vb);
   }
   else{
-    data=&(vb.visCube());
+    chanMap.resize();
+    chanMap=multiChanMap_p[vb.spectralWindow()];
   }
+  
+  //No point in reading data if its not matching in frequency
+  if(max(chanMap)==-1)
+    return;
+
+
+  const Matrix<Float> *imagingweight;
+  if(imwght.nelements()>0)
+    imagingweight=&imwght;
+  else
+    imagingweight=&(vb.imagingWeight());
+
+  if(dopsf) type=FTMachine::PSF;
+
+  Cube<Complex> data;
+  //Fortran gridder need the flag as ints 
+  Cube<Int> flags;
+  Matrix<Float> elWeight;
+  interpolateFrequencyTogrid(vb, *imagingweight,data, flags, elWeight, type);
+  
+  
+  Bool iswgtCopy;
+  const Float *wgtStorage;
+  wgtStorage=elWeight.getStorage(iswgtCopy);
+
 
   Bool isCopy;
-  const Complex *datStorage=data->getStorage(isCopy);
+  const Complex *datStorage=0;
+
+  if(!dopsf)
+    datStorage=data.getStorage(isCopy);
 
 
   // If row is -1 then we pass through all rows
@@ -833,10 +685,6 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
   Int idopsf=0;
   if(dopsf) idopsf=1;
   
-  Cube<Int> flags(vb.flagCube().shape());
-  flags=0;
-  flags(vb.flagCube())=True;
-  
   Vector<Int> rowFlags(vb.nRow());
   rowFlags=0;
   rowFlags(vb.flagRow())=True;
@@ -846,21 +694,7 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
     }
   }
   
-  //Check if ms has changed then cache new spw and chan selection
-  if(vb.newMS())
-    matchAllSpwChans(vb);
-  
-  //Here we redo the match or use previous match
-  
-  //Channel matching for the actual spectral window of buffer
-  if(doConversion_p[vb.spectralWindow()]){
-    matchChannel(vb.spectralWindow(), vb);
-  }
-  else{
-    chanMap.resize();
-    chanMap=multiChanMap_p[vb.spectralWindow()];
-  }
-  
+ 
   if(isTiled) {
     
     Double invLambdaC=vb.frequency()(0)/C::c;
@@ -893,8 +727,9 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 	  actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
 	}
 	actualOffset(2)=uvOffset(2);
-	const IPosition& fs = flags.shape();
-        vector<Int> s(fs.begin(), fs.end());
+	//	IPosition s(flags.shape());
+	const IPosition& fs=flags.shape();
+	std::vector<Int> s(fs.begin(), fs.end());
 	// Now pass all the information down to a 
 	// FORTRAN routine to do the work
 	gwproj(uvw.getStorage(del),
@@ -905,7 +740,7 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 	       &idopsf,
 	       flags.getStorage(del),
 	       rowFlags.getStorage(del),
-	       vb.imagingWeight().getStorage(del),
+	       wgtStorage,
 	       &s[2],
 	       &rownr,
 	       uvScale.getStorage(del),
@@ -930,9 +765,16 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
   }
   else {
     Bool del;
-    const IPosition& fs = flags.shape();
-    vector<Int> s(fs.begin(), fs.end());
-    gwproj(uvw.getStorage(del),
+    Bool uvwcopy; 
+    const Double *uvwstor=uvw.getStorage(uvwcopy);
+    Bool gridcopy;
+    Complex *gridstor=griddedData.getStorage(gridcopy);
+    Bool convcopy;
+    const Complex *convstor=convFunc.getStorage(convcopy);
+    //    IPosition s(flags.shape());
+    const IPosition& fs=flags.shape();
+    std::vector<Int> s(fs.begin(), fs.end());
+    gwproj(uvwstor,
 	   dphase.getStorage(del),
 	   datStorage,
 	   &s[0],
@@ -940,30 +782,34 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 	   &idopsf,
 	   flags.getStorage(del),
 	   rowFlags.getStorage(del),
-	   vb.imagingWeight().getStorage(del),
+	   wgtStorage,
 	   &s[2],
 	   &row,
 	   uvScale.getStorage(del),
 	   uvOffset.getStorage(del),
-	   griddedData.getStorage(del),
+	   gridstor,
 	   &nx,
 	   &ny,
 	   &npol,
 	   &nchan,
-	   vb.frequency().getStorage(del),
+	   interpVisFreq_p.getStorage(del),
 	   &C::c,
 	   convSupport.getStorage(del),
 	   &convSize,
 	   &convSampling,
 	   &wConvSize,
-	   convFunc.getStorage(del),
+	   convstor,
 	   chanMap.getStorage(del),
 	   polMap.getStorage(del),
 	   sumWeight.getStorage(del));
+    uvw.freeStorage(uvwstor, uvwcopy);
+    griddedData.putStorage(gridstor, gridcopy);
+    convFunc.freeStorage(convstor, convcopy);
   }
   
-
-  data->freeStorage(datStorage, isCopy);
+  if(!dopsf)
+    data.freeStorage(datStorage, isCopy);
+  elWeight.freeStorage(wgtStorage,iswgtCopy);
 }
 
 void WProjectFT::get(VisBuffer& vb, Int row)
@@ -976,12 +822,12 @@ void WProjectFT::get(VisBuffer& vb, Int row)
     nRow=vb.nRow();
     startRow=0;
     endRow=nRow-1;
-    vb.modelVisCube()=Complex(0.0,0.0);
+    //vb.modelVisCube()=Complex(0.0,0.0);
   } else {
     nRow=1;
     startRow=row;
     endRow=row;
-    vb.modelVisCube().xyPlane(row)=Complex(0.0,0.0);
+    //vb.modelVisCube().xyPlane(row)=Complex(0.0,0.0);
   }
   
   // Get the uvws in a form that Fortran can use
@@ -1000,12 +846,7 @@ void WProjectFT::get(VisBuffer& vb, Int row)
 
   // This is the convention for dphase
   // dphase*=-1.0;
-
-  
-  Cube<Int> flags(vb.flagCube().shape());
-  flags=0;
-  flags(vb.flagCube())=True;
-  
+ 
   
   //Check if ms has changed then cache new spw and chan selection
   if(vb.newMS())
@@ -1021,6 +862,18 @@ void WProjectFT::get(VisBuffer& vb, Int row)
     chanMap=multiChanMap_p[vb.spectralWindow()];
   }
   
+  //No point in reading data if its not matching in frequency
+  if(max(chanMap)==-1)
+    return;
+
+  Cube<Complex> data;
+  Cube<Int> flags;
+  getInterpolateArrays(vb, data, flags);
+
+  Complex *datStorage;
+  Bool isCopy;
+  datStorage=data.getStorage(isCopy);
+
   Vector<Int> rowFlags(vb.nRow());
   rowFlags=0;
   rowFlags(vb.flagRow())=True;
@@ -1064,11 +917,13 @@ void WProjectFT::get(VisBuffer& vb, Int row)
 	  actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
 	}
 	actualOffset(2)=uvOffset(2);
-	const IPosition& fs = vb.modelVisCube().shape();
-        vector<Int> s(fs.begin(), fs.end());
+	//	IPosition s(data.shape());
+	const IPosition& fs=data.shape();
+	std::vector<Int> s(fs.begin(), fs.end());
+
 	dwproj(uvw.getStorage(del),
 	       dphase.getStorage(del),
-	       vb.modelVisCube().getStorage(del),
+	       datStorage,
 	       &s[0],
 	       &s[1],
 	       flags.getStorage(del),
@@ -1080,6 +935,7 @@ void WProjectFT::get(VisBuffer& vb, Int row)
 	       dataPtr->getStorage(del),
 	       &aNx,
 	       &aNy,
+
 	       &npol,
 	       &nchan,
 	       vb.frequency().getStorage(del),
@@ -1096,11 +952,18 @@ void WProjectFT::get(VisBuffer& vb, Int row)
   }
   else {
     Bool del;
-    const IPosition& fs = vb.modelVisCube().shape();
-    vector<Int> s(fs.begin(), fs.end());
-    dwproj(uvw.getStorage(del),
+    Bool uvwcopy; 
+    const Double *uvwstor=uvw.getStorage(uvwcopy);
+    Bool gridcopy;
+    const Complex *gridstor=griddedData.getStorage(gridcopy);
+    Bool convcopy;
+    const Complex *convstor=convFunc.getStorage(convcopy);
+    //    IPosition s(vb.modelVisCube().shape());
+    const IPosition& fs=vb.modelVisCube().shape();
+    std::vector<Int> s(fs.begin(), fs.end());
+    dwproj(uvwstor,
 	   dphase.getStorage(del),
-	   vb.modelVisCube().getStorage(del),
+	   datStorage,
 	   &s[0],
 	   &s[1],
 	   flags.getStorage(del),
@@ -1109,121 +972,30 @@ void WProjectFT::get(VisBuffer& vb, Int row)
 	   &row,
 	   uvScale.getStorage(del),
 	   uvOffset.getStorage(del),
-	   griddedData.getStorage(del),
+	   gridstor,
 	   &nx,
 	   &ny,
 	   &npol,
 	   &nchan,
-	   vb.frequency().getStorage(del),
+	   interpVisFreq_p.getStorage(del),
 	   &C::c,
 	   convSupport.getStorage(del),
 	   &convSize,
 	   &convSampling,
 	   &wConvSize,
-	   convFunc.getStorage(del),
+	   convstor,
 	   chanMap.getStorage(del),
 	   polMap.getStorage(del));
+    data.putStorage(datStorage, isCopy);
+    uvw.freeStorage(uvwstor, uvwcopy);
+    griddedData.freeStorage(gridstor, gridcopy);
+    convFunc.freeStorage(convstor, convcopy);
   }
 
+  interpolateFrequencyFromgrid(vb, data, FTMachine::MODEL);
  
 }
 
-void WProjectFT::get(VisBuffer& vb, Cube<Complex>& modelVis, 
-		   Array<Complex>& griddedVis, Vector<Double>& scale,
-		   Int row)
-{
-  
-  Int nX=griddedVis.shape()(0);
-  Int nY=griddedVis.shape()(1);
-  Vector<Double> offset(2);
-  offset(0)=Double(nX)/2.0;
-  offset(1)=Double(nY)/2.0;
-  // If row is -1 then we pass through all rows
-  Int startRow, endRow, nRow;
-  if (row==-1) {
-    nRow=vb.nRow();
-    startRow=0;
-    endRow=nRow-1;
-    modelVis.set(Complex(0.0,0.0));
-  } else {
-    nRow=1;
-    startRow=row;
-    endRow=row;
-    modelVis.xyPlane(row)=Complex(0.0,0.0);
-  }
-  
-  // Get the uvws in a form that Fortran can use
-  Matrix<Double> uvw(3, vb.uvw().nelements());
-  uvw=0.0;
-  Vector<Double> dphase(vb.uvw().nelements());
-  dphase=0.0;
-  //NEGATING to correct for an image inversion problem
-  for (Int i=startRow;i<=endRow;i++) {
-    for (Int idim=0;idim<2;idim++) uvw(idim,i)=-vb.uvw()(i)(idim);
-    uvw(2,i)=vb.uvw()(i)(2);
-  }
-  
-  rotateUVW(uvw, dphase, vb);
-  refocus(uvw, vb.antenna1(), vb.antenna2(), dphase, vb);
-  
-  // This is the convention for dphase
-  dphase*=-1.0;
-
-  Cube<Int> flags(vb.flagCube().shape());
-  flags=0;
-  flags(vb.flagCube())=True;
-  
-  //Check if ms has changed then cache new spw and chan selection
-  if(vb.newMS())
-    matchAllSpwChans(vb);
-  //Channel matching for the actual spectral window of buffer
-  if(doConversion_p[vb.spectralWindow()]){
-    matchChannel(vb.spectralWindow(), vb);
-  }
-  else{
-    chanMap.resize();
-    chanMap=multiChanMap_p[vb.spectralWindow()];
-  }
-  
-  Vector<Int> rowFlags(vb.nRow());
-  rowFlags=0;
-  rowFlags(vb.flagRow())=True;
-  if(!usezero_p) {
-    for (Int rownr=startRow; rownr<=endRow; rownr++) {
-      if(vb.antenna1()(rownr)==vb.antenna2()(rownr)) rowFlags(rownr)=1;
-    }
-  }
-  
-  Bool del;
-  const IPosition& fs = modelVis.shape();
-  vector<Int> s(fs.begin(), fs.end());
-  dwproj(uvw.getStorage(del),
-	 dphase.getStorage(del),
-	 modelVis.getStorage(del),
-	 &s[0],
-	 &s[1],
-	 flags.getStorage(del),
-	 rowFlags.getStorage(del),
-	 &s[2],
-	 &row,
-	 scale.getStorage(del),
-	 offset.getStorage(del),
-	 griddedVis.getStorage(del),
-	 &nX,
-	 &nY,
-	 &npol,
-	 &nchan,
-	 vb.frequency().getStorage(del),
-	 &C::c,
-	 convSupport.getStorage(del),
-	 &convSize,
-	 &convSampling,
-	 &wConvSize,
-	 convFunc.getStorage(del),
-	 chanMap.getStorage(del),
-	 polMap.getStorage(del));
-  
-}
 
 
 // Finalize the FFT to the Sky. Here we actually do the FFT and
@@ -1231,7 +1003,7 @@ void WProjectFT::get(VisBuffer& vb, Cube<Complex>& modelVis,
 ImageInterface<Complex>& WProjectFT::getImage(Matrix<Float>& weights,
 					      Bool normalize) 
 {
-  AlwaysAssert(lattice, AipsError);
+  //AlwaysAssert(lattice, AipsError);
   AlwaysAssert(image, AipsError);
   
   logIO() << LogOrigin("WProjectFT", "getImage") << LogIO::NORMAL;
@@ -1313,14 +1085,14 @@ ImageInterface<Complex>& WProjectFT::getImage(Matrix<Float>& weights,
 
     if(!isTiled) {
       // Check the section from the image BEFORE converting to a lattice 
-      IPosition blc(4, (nx-image->shape()(0))/2,
-		    (ny-image->shape()(1))/2, 0, 0);
+      IPosition blc(4, (nx-image->shape()(0)+(nx%2==0))/2,
+		    (ny-image->shape()(1)+(ny%2==0))/2, 0, 0);
       IPosition stride(4, 1);
       IPosition trc(blc+image->shape()-stride);
       
       // Do the copy
       image->put(griddedData(blc, trc));
-      if(arrayLattice) delete arrayLattice; arrayLattice=0;
+      //if(arrayLattice) delete arrayLattice; arrayLattice=0;
       griddedData.resize(IPosition(1,0));
     }
   }
@@ -1452,7 +1224,7 @@ Bool WProjectFT::fromRecord(String& error, const RecordInterface& inRec)
     init(); 
     
     if(isTiled) {
-      lattice=image;
+      lattice=CountedPtr<Lattice<Complex> > (image, False);
     }
     else {
       // Make the grid the correct shape and turn it into an array lattice
@@ -1460,19 +1232,19 @@ Bool WProjectFT::fromRecord(String& error, const RecordInterface& inRec)
       IPosition gridShape(4, nx, ny, npol, nchan);
       griddedData.resize(gridShape);
       griddedData=Complex(0.0);
-      IPosition blc(4, (nx-image->shape()(0))/2,
-		    (ny-image->shape()(1))/2, 0, 0);
+      IPosition blc(4, (nx-image->shape()(0)+(nx%2==0))/2,
+		    (ny-image->shape()(1)+(ny%2==0))/2, 0, 0);
       IPosition start(4, 0);
       IPosition stride(4, 1);
       IPosition trc(blc+image->shape()-stride);
       griddedData(blc, trc) = image->getSlice(start, image->shape());
       
-      if(arrayLattice) delete arrayLattice; arrayLattice=0;
+      //if(arrayLattice) delete arrayLattice; arrayLattice=0;
       arrayLattice = new ArrayLattice<Complex>(griddedData);
       lattice=arrayLattice;
     }
     
-    AlwaysAssert(lattice, AipsError);
+    //AlwaysAssert(lattice, AipsError);
     AlwaysAssert(image, AipsError);
   };
   return retval;
@@ -1552,48 +1324,6 @@ void WProjectFT::makeImage(FTMachine::Type type,
   getImage(weight, True);
 }
 
-Bool WProjectFT::checkCenterPix(const ImageInterface<Complex>& image){
-
-  CoordinateSystem imageCoord=image.coordinates();
-  MDirection wcenter;  
-  Int directionIndex=imageCoord.findCoordinate(Coordinate::DIRECTION);
-  DirectionCoordinate
-    directionCoord=imageCoord.directionCoordinate(directionIndex);
-  Vector<Double> pcenter(2);
-  pcenter(0) = nx/2;
-  pcenter(1) = ny/2;    
-  directionCoord.toWorld( wcenter, pcenter );
-
-  ostringstream oos;
-  oos << setprecision(10);
-
-  oos << wcenter.getAngle("deg").getValue()(0);
-  oos << wcenter.getAngle("deg").getValue()(1);
-  String imageKey(oos);
-
-  if(convFunctionMap_p.ndefined() == 0){
-    convFunctionMap_p.define(imageKey, 0);    
-    actualConvIndex_p=0;
-    return False;
-  }
-   
-  if(!convFunctionMap_p.isDefined(imageKey)){
-    actualConvIndex_p=convFunctionMap_p.ndefined();
-    convFunctionMap_p.define(imageKey,actualConvIndex_p);
-    return False;
-  }
-  else{
-    actualConvIndex_p=convFunctionMap_p(imageKey);
-    convFunc.resize(); // break any reference
-    convFunc.reference(*convFunctions_p[actualConvIndex_p]);
-    convSupport.resize();
-    convSupport=*convSupportBlock_p[actualConvIndex_p];
-    convSize=convSizes_p[actualConvIndex_p];
-
-  }
-
-  return True;
-}
 
 String WProjectFT::name(){
 

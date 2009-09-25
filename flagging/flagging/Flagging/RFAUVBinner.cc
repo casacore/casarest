@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFAUVBinner.cc,v 19.6 2005/12/07 15:59:27 wyoung Exp $
+//# $Id$
 #include <flagging/Flagging/RFAUVBinner.h> 
 #include <casa/BasicMath/Math.h>
 #include <casa/BasicSL/Constants.h>
@@ -377,7 +377,7 @@ RFA::IterMode RFAUVBinner::endDry ()
         thr_count++; 
     }
     // if the explicit bin cut-off is higher, use it instead
-    if( thr_count < min_population )
+    if( (Int)thr_count < (Int)min_population )
       thr_count = min_population;
     // thr_count is now the first population value exceeding the threshold
     // Bins with populations up to thr_count should be flagged

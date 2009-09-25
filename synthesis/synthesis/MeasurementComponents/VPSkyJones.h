@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: VPSkyJones.h,v 19.5 2006/04/04 02:03:33 mvoronko Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_VPSKYJONES_H
 #define SYNTHESIS_VPSKYJONES_H

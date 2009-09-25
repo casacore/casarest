@@ -9,18 +9,18 @@
 #-----------------------------------------------------------------------------
 
   # This script has problems, because it uses glish. So exit immediately.
-  echo "UNTESTED: tAutoflag.run (AIPSPATH not defined)"
+  echo "UNTESTED: tAutoflag.run (CASAPATH not defined)"
   exit 3
 
-  if [ "$AIPSPATH" = "" ]
+  if [ "$CASAPATH" = "" ]
   then
-     echo "UNTESTED: tAutoflag.run (AIPSPATH not defined)"
+     echo "UNTESTED: tAutoflag.run (CASAPATH not defined)"
      exit 3
   fi
 
   # establish location of test MS
   MS='WSRT-test.MS2'
-  AIPSDEMO=`echo $AIPSPATH | awk '{printf("%s/data/demo/autoflag",$1)}'`
+  AIPSDEMO=`echo $CASAPATH | awk '{printf("%s/data/demo/autoflag",$1)}'`
   MSPATH="$AIPSDEMO/$MS"
   if [ ! -d "$MSPATH" -o ! -w "$MSPATH" ]; then
     MSPATH="$HOME/aips++/data/demo/autoflag/$MS"

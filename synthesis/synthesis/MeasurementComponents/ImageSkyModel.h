@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: ImageSkyModel.h,v 19.8 2005/12/06 20:18:51 wyoung Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_IMAGESKYMODEL_H
 #define SYNTHESIS_IMAGESKYMODEL_H
@@ -120,6 +120,16 @@ public:
   // Number of models contained
   virtual Int numberOfModels() {return nmodels_p;};
 
+  // MFS : Number of taylor terms per model
+  virtual Int numberOfTaylorTerms() {return 1;};
+
+  // MFS : Reference Frequency
+  virtual Double getReferenceFrequency(){return 0.0;}
+
+  // MFS : Index of Taylor term in array of nmodels x ntaylorterms
+  //virtual Int getTaylorIndex(Int index){return 0;}
+  virtual Int getTaylorIndex(Int index){return (Int)(index/nfields_p);}
+
   // Is this model solveable?
   Bool isSolveable(Int model=0);
 
@@ -177,7 +187,8 @@ public:
 
   // Solve explicitly for the residuals: same as solve for
   // this class
-  Bool solveResiduals (SkyEquation& me);
+  // modelToMs determines if predicted vis is put in the MODEL_DATA column
+  Bool solveResiduals (SkyEquation& me, Bool modelToMS=False);
 
   // Make the approximate PSFs needed for each model
   virtual void makeApproxPSFs(SkyEquation& se);
@@ -220,6 +231,8 @@ protected:
 
   Int maxnmodels_p;
   Int nmodels_p;
+  //MFS
+  Int nfields_p;
 
   Int maxNumXFR_p;
 

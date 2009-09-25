@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath.h,v 19.10 2006/12/22 05:29:33 gvandiep Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PBMATH_H
 #define SYNTHESIS_PBMATH_H
@@ -49,7 +49,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 class Table;
 class ImageRegion;
 class RecordInterface;
-
+class CoordinateSystem;
 // <summary> Primary beam envelope class, derived from PBMathInterface </summary>
 
 // <use visibility=export>
@@ -137,11 +137,12 @@ public:
 		 OVRO,
 		 VLA, VLA_INVERSE, VLA_NVSS, VLA_2NULL, 
 		 VLA_4, VLA_P, VLA_L, VLA_C, VLA_X, VLA_U, VLA_K, VLA_Q, 
-		 WSRT, WSRT_LOW, ALMA, ALMASD, ACA, NONE, IRAMPDB, IRAM30M
+		 WSRT, WSRT_LOW, ALMA, ALMASD, ACA, IRAMPDB, IRAM30M, SMA, 
+		 ATA, NONE
   };
 
   enum {
-    NumberOfCommonPB=34
+    NumberOfCommonPB=35
   };
 
   // Default constructor, required for Block<PBMath>
@@ -154,6 +155,9 @@ public:
 
   PBMath(String& telescopeName, Bool useSymmetricBeam=False, 
 	 Quantity freq=Quantity(0.0, "Hz"));
+
+  //Make a PB by dish diameter
+  PBMath(Double dishDiam, Bool useSymmetricBeam, Quantity freq);
 
   // Make a PB from a RecordInterface
   explicit PBMath(const RecordInterface& myrec);
@@ -270,6 +274,14 @@ public:
 				   Float cutoff = 0.01,
 				   Bool forward = True);
 
+  ImageInterface<Float>& applyPB(const ImageInterface<Float>& in,
+				   ImageInterface<Float>& out,
+				   const MDirection& sp,
+				   const Quantity parAngle = Quantity(0.0,"deg"),
+				   const BeamSquint::SquintType doSquint = BeamSquint::NONE,
+				   Float cutoff = 0.01);
+
+
   ImageInterface<Float>& applyPB2(const ImageInterface<Float>& in,
 				  ImageInterface<Float>& out,
 				  const MDirection& sp,
@@ -349,6 +361,8 @@ public:
 		       const Int iChan,  
 		       const SkyJones::SizeType);
 
+  Int support (const CoordinateSystem& cs);
+
   // given the Telescope name and the frequency, guess the most approrpiate
   // CommonPB primary beam type and the band
   static void whichCommonPBtoUse (String &telescope, Quantity &freq, 
@@ -423,6 +437,9 @@ private:
   //Function to initialize the state of the tool
   void initByTelescope(PBMath::CommonPB myPBType, Bool useSymmetricBeam=False, 
 		       Double frequency=0.0);
+
+  //Function to initialize the by dish diameter 
+  void initByDiameter(Double diam, Bool useSymmetricBeam, Double freq); 
 
   // </group>
 

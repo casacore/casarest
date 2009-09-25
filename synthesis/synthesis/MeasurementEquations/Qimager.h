@@ -22,7 +22,7 @@
 //#                        National Radio Astronomy Observatory
 //#                        520 Edgemont Road
 //#
-//# $Id: Qimager.h,v 1.5 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_QIMAGER_H
 #define SYNTHESIS_QIMAGER_H

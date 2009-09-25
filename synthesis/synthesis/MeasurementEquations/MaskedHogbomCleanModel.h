@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: MaskedHogbomCleanModel.h,v 19.6 2005/06/18 21:19:17 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_MASKEDHOGBOMCLEANMODEL_H
 #define SYNTHESIS_MASKEDHOGBOMCLEANMODEL_H
@@ -138,4 +138,7 @@ protected:
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <synthesis/MeasurementEquations/MaskedHogbomCleanModel.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

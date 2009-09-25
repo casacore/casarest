@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: MeasurementComponents.h,v 19.4 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_MEASUREMENTCOMPONENTS_H
 #define SYNTHESIS_MEASUREMENTCOMPONENTS_H

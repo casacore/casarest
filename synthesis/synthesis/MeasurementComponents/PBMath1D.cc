@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath1D.cc,v 19.10 2004/11/30 17:50:49 ddebonis Exp $
+//# $Id$
  
 #include <casa/aips.h>
 #include <casa/BasicSL/Complex.h>
@@ -32,7 +32,7 @@
 #include <casa/Arrays/Vector.h>
 #include <synthesis/MeasurementComponents/PBMath1D.h>
 
-#include <images/Images/ImageRegion.h>
+#include <images/Regions/ImageRegion.h>
 #include <images/Images/ImageInterface.h>
 
 #include <components/ComponentModels/SkyComponent.h>
@@ -147,7 +147,47 @@ PBMath1D::extent (const ImageInterface<Float>& in, const MDirection& pointDir,
 
 
 
+Int PBMath1D::support(const CoordinateSystem& cs){
+Int directionIndex=cs.findCoordinate(Coordinate::DIRECTION);
+ AlwaysAssert(directionIndex>=0, AipsError);
+ DirectionCoordinate
+   directionCoord=cs.directionCoordinate(directionIndex);
+ 
+ Vector<String> dirunit=directionCoord.worldAxisUnits();
 
+ Double freq;
+ {
+   Int spectralIndex=cs.findCoordinate(Coordinate::SPECTRAL);
+   AlwaysAssert(spectralIndex>=0, AipsError);
+   SpectralCoordinate
+     spectralCoord=cs.spectralCoordinate(spectralIndex);
+
+   
+   Vector<String> units(1);
+   units = "Hz";
+   spectralCoord.setWorldAxisUnits(units);
+
+   Vector<Double> spectralWorld(1);
+   Vector<Double> spectralPixel(1);
+   spectralPixel(0) = 0;
+   spectralCoord.toWorld(spectralWorld, spectralPixel);  
+   freq  = spectralWorld(0);
+  }
+
+
+
+  // maximumRadius_p: maximum radius at 1 GHz frequency
+  //Double delta = maximumRadius_p.getValue("rad") *  1.0e+9 / freq;
+
+
+  //Number of pix at freq
+  Double numpix=maximumRadius_p.getValue(dirunit(0))/fabs(directionCoord.increment()(0))*2.0*1.0e9/freq ;
+  
+ 
+  return Int(floor(numpix));
+
+
+}
 void  PBMath1D::refineSize(Vector<Float>& blc, Vector<Float>& trc, const IPosition& shape, 
 			    SkyJones::SizeType sizeType)
 {
@@ -574,7 +614,7 @@ PBMath1D::apply(const ImageInterface<Float>& in,
 		const MDirection& pointDir,
 		const Quantity parAngle,
 		const BeamSquint::SquintType doSquint,
-		Float cutoff)
+		Float cutoff, const Int ipower)
 {
   LogIO os(LogOrigin("PBMath1D", "apply"));
  
@@ -759,7 +799,8 @@ PBMath1D::apply(const ImageInterface<Float>& in,
 	  indx = Int(r*inverseIncrementRadius_p);
 	  if (norm(vp_p(indx)) > 0.0) {
 	    taper = real(vp_p(indx) * conj(vp_p(indx)));
-	    taper *= taper;
+	    if(ipower==4)
+	      taper *= taper;
 	  } else {
 	    taper = 0.0;
 	  }
@@ -853,7 +894,16 @@ PBMath1D::apply(SkyComponent& in,
       compFlux(pol) = 0.0;
     } else {
       if (norm(vp_p(Int(r*inverseIncrementRadius_p))) > 0.0) {
-	taper = pow( vp_p(Int(r*inverseIncrementRadius_p)), (Float)iPower);
+	if(iPower>1){
+	  taper=vp_p(Int(r*inverseIncrementRadius_p))*conj(vp_p(Int(r*inverseIncrementRadius_p)));
+	  if(iPower==4)
+	    taper*=taper;
+	  
+	}  
+	else{
+	  taper =  vp_p(Int(r*inverseIncrementRadius_p));
+	  //taper = pow( vp_p(Int(r*inverseIncrementRadius_p)), (Float)iPower);
+	}
       } else {
 	taper = 0.0;
       }

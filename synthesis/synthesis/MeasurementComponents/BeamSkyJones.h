@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: BeamSkyJones.h,v 19.11 2006/04/07 21:17:25 wyoung Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_BEAMSKYJONES_H
 #define SYNTHESIS_BEAMSKYJONES_H
@@ -116,6 +116,10 @@ public:
 				 ImageInterface<Complex>& out,
 				 const VisBuffer& vb, Int row,
 				 Bool forward=True);
+  ImageInterface<Float>& apply(const ImageInterface<Float>& in,
+				     ImageInterface<Float>& out,
+				     const VisBuffer& vb, Int row);
+
   ImageInterface<Float>& applySquare(const ImageInterface<Float>& in,
 				     ImageInterface<Float>& out,
 				     const VisBuffer& vb, Int row);
@@ -254,6 +258,9 @@ public:
   // n =  0 => table plus constructor values
   // n =  m => plot m samples of the PB profile
   virtual void summary(Int n=0);
+
+  //Get an idea of the support of the PB in number of pixels
+  virtual Int support(const VisBuffer& vb, const CoordinateSystem& cs);
 
 private:  
 

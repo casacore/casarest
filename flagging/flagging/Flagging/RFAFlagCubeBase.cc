@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFAFlagCubeBase.cc,v 19.3 2004/11/30 17:50:24 ddebonis Exp $
+//# $Id$
 #include <flagging/Flagging/RFAFlagCubeBase.h>
 #include <casa/iostream.h>
 #include <casa/stdio.h>
@@ -38,7 +38,7 @@ uInt RFABase::indexing_base = 0;
 RFABase::RFABase ( RFChunkStats &ch,const RecordInterface &parm )
   : chunk(ch),params(parm),
     myname(parm.isDefined(RF_NAME)?parm.asString(RF_NAME):String("RFABase")),
-    os(LogOrigin("RedFlagger",myname))
+    os(LogOrigin("Flagger",myname))
 {
 }
 
@@ -191,7 +191,7 @@ RFA::IterMode RFAFlagCubeBase::iterDry ( uInt it )
 void RFAFlagCubeBase::iterFlag (uInt it)
 {
   flag.advance(it);
-  flag.setMSFlags();
+  flag.setMSFlags(it);
 }
 
 

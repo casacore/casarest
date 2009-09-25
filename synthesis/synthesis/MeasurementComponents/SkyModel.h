@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SkyModel.h,v 19.5 2004/11/30 17:50:56 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_SKYMODEL_H
 #define SYNTHESIS_SKYMODEL_H
@@ -141,6 +141,15 @@ public:
 
   // Number of models contained
   virtual Int numberOfModels() = 0;
+
+  // MFS : Number of taylor terms per model
+  virtual Int numberOfTaylorTerms() = 0;
+
+  // MFS : Reference Frequency
+  virtual Double getReferenceFrequency() = 0;
+
+  // MFS : Index of Taylor term in array of nmodels x ntaylorterms
+  virtual Int getTaylorIndex(Int index=0) = 0;
 
   // Is this SkyModel solveable?
   virtual Bool isSolveable(Int model=0) = 0;

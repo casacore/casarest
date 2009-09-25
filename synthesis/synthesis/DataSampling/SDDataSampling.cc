@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SDDataSampling.cc,v 19.4 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #include <synthesis/DataSampling/SDDataSampling.h>
 #include <coordinates/Coordinates/CoordinateSystem.h>
@@ -104,11 +104,11 @@ SDDataSampling::SDDataSampling(MeasurementSet& ms,
   Int pointIndex=getIndex(mspc, vb.time()(0));
   // If no valid POINTING entry, then use FIELD phase center
   ROMSColumns msc(ms);
-  if((pointIndex>=0)||(pointIndex<mspc.time().nrow())) {
-    worldPosMeas=mspc.directionMeas(pointIndex);
-  } else {
-    worldPosMeas=msc.field().phaseDirMeas(vb.fieldId());
-  };
+  if(pointIndex >= 0 || pointIndex < static_cast<Int>(mspc.time().nrow()))
+    worldPosMeas = mspc.directionMeas(pointIndex);
+  else
+    worldPosMeas = msc.field().phaseDirMeas(vb.fieldId());
+
   MDirection::Convert pointingToImage(worldPosMeas,
 				      directionCoord.directionType());
   imagePosMeas = pointingToImage(worldPosMeas);
@@ -151,8 +151,8 @@ SDDataSampling::SDDataSampling(MeasurementSet& ms,
     for (vi.origin(); vi.more(); vi++) {
       for (Int row=0;row<vb.nRow();row++) {
 	Int pointIndex=getIndex(mspc, vb.time()(row));
-	if((pointIndex>=0)||(pointIndex<mspc.time().nrow())) {
-	  imagePosMeas=
+	if(pointIndex >= 0 || pointIndex < static_cast<Int>(mspc.time().nrow())){
+	  imagePosMeas =
 	    pointingToImage(mspc.directionMeas(pointIndex));
 	  if(directionCoord.toPixel(xyPos, imagePosMeas)) {
 	    if((!vb.flagRow()(row))&&

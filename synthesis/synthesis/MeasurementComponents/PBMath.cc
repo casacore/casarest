@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath.cc,v 19.13 2006/04/20 03:19:29 mvoronko Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <casa/BasicSL/Complex.h>
@@ -46,7 +46,7 @@
 #include <images/Images/PagedImage.h>
 #include <images/Images/TempImage.h>
 #include <images/Images/ImageInterface.h>
-#include <images/Images/ImageRegion.h>
+#include <images/Regions/ImageRegion.h>
 
 #include <lattices/Lattices/LatticeStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>
@@ -63,6 +63,8 @@
 #include <casa/Containers/RecordInterface.h>
 #include <casa/Quanta/QuantumHolder.h>
 #include <measures/Measures/MeasureHolder.h>
+
+#include <scimath/Mathematics/MathFunc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -272,6 +274,11 @@ PBMath::PBMath(String& telescopeName, Bool useSymmetricBeam, Quantity freq){
 
 }
 
+PBMath::PBMath(Double dishDiam, Bool useSymmetricBeam, Quantity freq){
+
+  initByDiameter(dishDiam, useSymmetricBeam, freq.getValue("Hz"));
+
+}
 
 // Explicitly call each letter class's constructor
 // PBClass is for cases where we cannot distinquish the
@@ -425,7 +432,11 @@ PBMath::extent(const ImageInterface<Float> & im, const MDirection& pointing,
  return (pb_pointer_p->extent(im, pointing, row, fPad, iChan, sizeType));
 };
 
-
+Int
+PBMath::support(const CoordinateSystem& cs)
+{
+ return (pb_pointer_p->support(cs));
+};
 
 
 //Bool PBMath::flushToTable(Table& beamSubTable, Int iRow)
@@ -475,6 +486,18 @@ PBMath::applyPB(const ImageInterface<Complex>& in,
 		Bool forward)
 {
   return pb_pointer_p->applyPB(in, out, sp, parAngle, doSquint, inverse, cutoff, forward);
+};
+
+
+ImageInterface<Float>& 
+PBMath::applyPB(const ImageInterface<Float>& in,
+		ImageInterface<Float>& out,
+		const MDirection& sp,
+		const Quantity parAngle,
+		const BeamSquint::SquintType doSquint,
+		Float cutoff)
+{
+  return pb_pointer_p->applyPB(in, out, sp, parAngle, doSquint, cutoff);
 };
 
 ImageInterface<Float>& 
@@ -669,7 +692,7 @@ PBMath::whichCommonPBtoUse(String &telescope, Quantity &freq,
   } else if (telescope(0,7)=="NRAO12M") {
     whichPB = PBMath::NRAO12M;
     band = "UNKNOWN";
-  } else if (telescope(0,7)=="IRAMPDB") {
+  } else if (telescope(0,7)=="IRAMPDB" || (telescope.contains("IRAM") && telescope.contains("PDB"))) {
     whichPB = PBMath::IRAMPDB;
     band = "UNKNOWN";
   } else if (telescope(0,7)=="IRAM30M") {
@@ -687,6 +710,15 @@ PBMath::whichCommonPBtoUse(String &telescope, Quantity &freq,
   } else if (telescope(0,3)=="ACA") {
     whichPB = PBMath::ACA;
     band = "UNKNOWN";
+  } else if (telescope(0,3)=="SMA"){
+    whichPB = PBMath::SMA;
+    band= "UNKNOWN";
+  } else if (telescope(0,3)=="ATA") {
+    whichPB = PBMath::ATA;
+    band = "UNKNOWN"; 
+  } else if (telescope(0,3)=="ATF") {
+    whichPB = PBMath::ALMA;
+    band = "UNKNOWN"; 
   } else if (telescope(0,4)=="NONE") {
     whichPB = PBMath::NONE;
     band = "UNKNOWN";
@@ -699,7 +731,7 @@ PBMath::whichCommonPBtoUse(String &telescope, Quantity &freq,
 };
 
 
-// converts the enumrated type into a string
+// converts the enumerated type into a string
 void PBMath::nameCommonPB(const PBMath::CommonPB iPB, String & str)
 {
 
@@ -800,6 +832,12 @@ void PBMath::nameCommonPB(const PBMath::CommonPB iPB, String & str)
   case PBMath::ACA:
     str = "ACA";
     break;
+  case PBMath::SMA:
+    str = "SMA";
+    break;
+  case PBMath::ATA:
+    str = "ATA";
+    break;
   case PBMath::NONE:
     str = "NONE";
     break;
@@ -880,6 +918,12 @@ void PBMath::enumerateCommonPB(const String & str, PBMath::CommonPB& ipb)
     ipb = PBMath::ALMASD;
   } else if (str == "ACA") {
     ipb = PBMath::ACA;
+  } else if (str == "SMA"){
+    ipb = PBMath::SMA;
+  } else if (str == "ATA"){
+    ipb = PBMath::ATA;
+  } else if (str == "ATF") {
+    ipb = PBMath::ALMA;
   } else if (str == "NONE") {
     ipb = PBMath::NONE;
   } else {
@@ -924,6 +968,40 @@ PBMath::getMDirection(const RecordInterface& rec, const String& item,
   returnedMDirection = h.asMDirection();
   return True;
 };
+
+
+void PBMath::initByDiameter(Double diameter, Bool useSymmetricBeam, 
+			    Double frequency){
+
+  // This attempts to reproduce the AIRY pattern VLA PB
+  Vector<Float> vlanum(19);
+  vlanum(0) = 1.000000;
+  vlanum(1) = 0.997634;
+  vlanum(2) = 0.972516;
+  vlanum(3) = 0.913722;
+  vlanum(4) = 0.837871;
+  vlanum(5) = 0.750356;
+  vlanum(6) = 0.651549;
+  vlanum(7) = 0.549903;
+  vlanum(8) = 0.449083;
+  vlanum(9) = 0.352819;
+  vlanum(10) = 0.266025;
+  vlanum(11) = 0.190533;
+  vlanum(12) = 0.128047;
+  vlanum(13) = 0.0794855;
+  vlanum(14) = 0.0438381;
+  vlanum(15) = 0.0201386;
+  vlanum(16) = 0.0065117;
+  vlanum(17) = 0.000690041;
+  vlanum(18) = 8.87288e-05;
+
+  Double scalesize = 1.1998662 * 25.0/diameter;
+  pb_pointer_p = new PBMath1DNumeric(vlanum, Quantity(scalesize,"'"), 
+				     Quantity(43.0,"GHz"), False);
+
+
+
+}
 
 void PBMath::initByTelescope(PBMath::CommonPB myPBType, 
 			     Bool useSymmetricBeam, 
@@ -1340,6 +1418,44 @@ void PBMath::initByTelescope(PBMath::CommonPB myPBType,
       pb_pointer_p = new PBMath1DAiry( Quantity(6.0,"m"), Quantity(0.5,"m"),
 				       Quantity(3.568,"deg"), Quantity(1.0,"GHz") );
     break;
+  case SMA:
+    {
+    //Value provided by Crystal Brogan as of  Dec-12-2007
+    //needs updating when proper values are given
+    /*
+    pb_pointer_p = new PBMath1DGauss( Quantity((52.3/2.0),"arcsec"),  // half width==> /2
+				      Quantity(35.0, "arcsec"),
+				      Quantity(224.0, "GHz"),
+				      False,
+				      BeamSquint(MDirection(Quantity(0.0, "'"),
+							    Quantity(0.0, "'"),
+							    MDirection::Ref(MDirection::AZEL)),
+						 Quantity(224.0, "GHz")),
+				      False);
+
+     //Crap beam no finite support in FFT
+   
+    */
+    //Using a spheroidal beam
+
+    MathFunc<Float> dd(SPHEROIDAL);
+    Vector<Float> valsph(31);
+    for(Int k=0; k <31; ++k){
+        valsph(k)=dd.value((Float)(k)/10.0);
+    }
+    //
+    Quantity fulrad((52.3/2.0*3.0/1.1117),"arcsec");
+    Quantity lefreq(224.0, "GHz");
+    
+    pb_pointer_p = new PBMath1DNumeric(valsph,fulrad,lefreq);
+    }
+    break;
+
+  case ATA:
+    pb_pointer_p = new PBMath1DAiry( Quantity(6.0,"m"), Quantity(0.5,"m"),
+				     Quantity(3.568,"deg"), Quantity(1.0,"GHz") );
+    break;
+    
   case NONE:
     {
       Vector<Double> coef(1);

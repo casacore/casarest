@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath1DGauss.h,v 19.5 2004/11/30 17:50:50 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PBMATH1DGAUSS_H
 #define SYNTHESIS_PBMATH1DGAUSS_H

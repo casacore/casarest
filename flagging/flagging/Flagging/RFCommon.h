@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFCommon.h,v 19.6 2004/11/30 17:50:24 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFCOMMON_H
 #define FLAGGING_RFCOMMON_H
     
@@ -60,6 +60,7 @@ const char
     RF_RESET[]   = "reset",
     RF_FIGNORE[] = "fignore",
     RF_UNFLAG[]  = "unflag",
+    RF_SHADOW[]  = "shadow",
     
     RF_THR[]     = "thr",
     RF_ROW_THR[] = "rowthr",
@@ -91,12 +92,20 @@ const char
     RF_FIELD[]   = "field",
     RF_BASELINE[] = "baseline",
     RF_AUTOCORR[] = "autocorr",
+
+    RF_SCAN[]    = "scan",
+    RF_ARRAY[]   = "array",
+    RF_FEED[]    = "feed",
+    RF_UVRANGE[] = "uvrange",
+    RF_DIAMETER[] = "diameter",
     
     RF_TIMERANGE[] = "timerng",
     RF_CENTERTIME[] = "timeslot",
     RF_TIMEDELTA[] = "dtime",
     
-    RF_QUACK[] = "quack",
+    RF_QUACK[]     = "quack",
+    RF_QUACKMODE[] = "quackmode",
+    RF_QUACKINC[]  = "quackinc",
 
     RF_NCHAN[] = "nchan",
     RF_START[] = "start",
@@ -122,8 +131,10 @@ public:
       TIME  = 3,
       ROW   = 4,
       ANT   = 5,
+      FEED  = 6,
+      FEEDCORR  = 7,
       NONE  = -1,
-      Num_StatEnums=6 
+      Num_StatEnums=8 
     } StatEnums;
 
   typedef enum 

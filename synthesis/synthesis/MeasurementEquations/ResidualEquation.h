@@ -25,7 +25,7 @@
 //#
 //#
 //#
-//# $Id: ResidualEquation.h,v 19.5 2005/06/18 21:19:17 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_RESIDUALEQUATION_H
 #define SYNTHESIS_RESIDUALEQUATION_H
@@ -150,4 +150,7 @@ public:
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <synthesis/MeasurementEquations/ResidualEquation.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

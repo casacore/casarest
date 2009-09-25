@@ -92,19 +92,21 @@ public:
 // Destructor
   ~MSContinuumSubtractor();
 
-// Set the required spws (ddids)
-   void setSpw(const String& spw);
-   void setDataDescriptionIds(const Vector<Int>& ddIds);
- 
 // Set the required field Ids
    void setField(const String& field);
    void setFields(const Vector<Int>& fieldIds);
 
 // Set the channels to use in the fit
-   void setChannels(const Vector<Int>& channels);
+   void setFitSpw(const String& fitspw);
+   void setSubSpw(const String& subspw);
+// Set the required spws (ddids)
+   void setDataDescriptionIds(const Vector<Int>& ddIds);
 
 // Set the solution interval in seconds, the value zero implies scan averaging
    void setSolutionInterval(Float solInt);
+
+// Set the solution interval in seconds, the value zero implies scan averaging
+   void setSolutionInterval(String solInt);
 
 // Set the order of the fit (1=linear)
    void setOrder(Int order);
@@ -123,7 +125,9 @@ private:
 // Field Ids to process
    Vector<Int> itsFieldIds;
 // Channels to use in fit
-   Vector<Int> itsChannels;
+   Matrix<Int> itsFitChans;
+// Channels to subtract from
+   Matrix<Int> itsSubChans;
 // Solution interval for fit
    Float itsSolInt;
 // Order of the fit

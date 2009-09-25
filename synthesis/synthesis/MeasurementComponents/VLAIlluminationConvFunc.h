@@ -24,14 +24,14 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: VLAIlluminationConvFunc.h,v 1.2 2005/10/17 00:53:06 sbhatnag Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_VLAILLUMINATIONCONVFUNC_H
 #define SYNTHESIS_VLAILLUMINATIONCONVFUNC_H
 
 #include <synthesis/MeasurementComponents/IlluminationConvFunc.h>
 #include <synthesis/MeasurementComponents/CExp.new3.h>
-#include <synthesis/MeasurementComponents/Exp.h>
+#include <synthesis/MeasurementComponents/ExpCache.h>
 #include <images/Images/TempImage.h>
 #include <casa/Exceptions.h>
 #include <msvis/MSVis/VisBuffer.h>

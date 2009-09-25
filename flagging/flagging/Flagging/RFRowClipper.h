@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFRowClipper.h,v 19.4 2004/11/30 17:50:25 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFROWCLIPPER_H
 #define FLAGGING_RFROWCLIPPER_H
 

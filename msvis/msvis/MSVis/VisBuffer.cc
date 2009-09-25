@@ -39,7 +39,7 @@
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 VisBuffer::VisBuffer():visIter_p(static_cast<ROVisibilityIterator*>(0)),
-twoWayConnection_p(False),This(this),nChannel_p(0),nRow_p(0)
+twoWayConnection_p(False),corrSorted_p(False),This(this),nChannel_p(0),nRow_p(0)
 {validate(); oldMSId_p=-1;}
 
 VisBuffer::VisBuffer(ROVisibilityIterator& iter):visIter_p(&iter),This(this)
@@ -47,11 +47,13 @@ VisBuffer::VisBuffer(ROVisibilityIterator& iter):visIter_p(&iter),This(this)
   iter.attachVisBuffer(*this); 
   twoWayConnection_p=True;
   oldMSId_p=-1;
+  corrSorted_p=False;
 }
 
 VisBuffer::VisBuffer(const VisBuffer& vb):visIter_p(static_cast<ROVisibilityIterator*>(0)),
 This(this)
 {
+  corrSorted_p=False;
   operator=(vb);
 }
 
@@ -66,6 +68,9 @@ VisBuffer& VisBuffer::operator=(const VisBuffer& other)
 
 VisBuffer& VisBuffer::assign(const VisBuffer& other, Bool copy)
 {
+  if (other.corrSorted_p)
+    throw(AipsError("Cannot assign a VisBuffer that has had correlations sorted!"));
+  
   if (this!=&other) {
     if (visIter_p!=static_cast<ROVisibilityIterator*>(0) && twoWayConnection_p) 
       visIter_p->detachVisBuffer(*this);
@@ -75,6 +80,7 @@ VisBuffer& VisBuffer::assign(const VisBuffer& other, Bool copy)
     if (visIter_p == static_cast<ROVisibilityIterator*>(0)) {
       validate();
     } else if (copy) {
+      nCorrOK_p=other.nCorrOK_p;
       nChannelOK_p=other.nChannelOK_p;
       nRowOK_p=other.nRowOK_p;
       channelOK_p=other.channelOK_p;
@@ -99,10 +105,12 @@ VisBuffer& VisBuffer::assign(const VisBuffer& other, Bool copy)
       phaseCenterOK_p=other.phaseCenterOK_p;
       polFrameOK_p=other.polFrameOK_p;
       sigmaOK_p=other.sigmaOK_p;
+      sigmaMatOK_p=other.sigmaMatOK_p;
       spwOK_p=other.spwOK_p;
       timeOK_p=other.timeOK_p;
       timeIntervalOK_p=other.timeIntervalOK_p;
       uvwOK_p=other.uvwOK_p;
+      uvwMatOK_p=other.uvwMatOK_p;
       visOK_p=other.visOK_p;
       modelVisOK_p=other.modelVisOK_p;
       correctedVisOK_p=other.correctedVisOK_p;
@@ -111,11 +119,15 @@ VisBuffer& VisBuffer::assign(const VisBuffer& other, Bool copy)
       correctedVisCubeOK_p=other.correctedVisCubeOK_p;
       weightOK_p=other.weightOK_p;
       weightMatOK_p=other.weightMatOK_p;
+      weightSpectrumOK_p=other.weightSpectrumOK_p;
+      imagingWeightOK_p=other.imagingWeightOK_p;
       msOK_p=other.msOK_p;
+      rowIdsOK_p=other.rowIdsOK_p;
     } else {
       invalidate();
     }
     if (copy) {
+      if (nCorrOK_p) nCorr_p=other.nCorr_p;
       if (nChannelOK_p) nChannel_p=other.nChannel_p;
       if (nRowOK_p) nRow_p=other.nRow_p;
       if (channelOK_p) {
@@ -194,6 +206,10 @@ VisBuffer& VisBuffer::assign(const VisBuffer& other, Bool copy)
 	sigma_p.resize(other.sigma_p.shape()); 
 	sigma_p=other.sigma_p;
       }
+      if (sigmaMatOK_p) {
+	sigmaMat_p.resize(other.sigmaMat_p.shape()); 
+	sigmaMat_p=other.sigmaMat_p;
+      }
       if (spwOK_p) spectralWindow_p=other.spectralWindow_p;
       if (timeOK_p) {
 	time_p.resize(other.time_p.nelements()); 
@@ -206,6 +222,10 @@ VisBuffer& VisBuffer::assign(const VisBuffer& other, Bool copy)
       if (uvwOK_p) {
 	uvw_p.resize(other.uvw_p.nelements()); 
 	uvw_p=other.uvw_p;
+      }
+      if (uvwMatOK_p) {
+	uvwMat_p.resize(other.uvwMat_p.shape()); 
+	uvwMat_p=other.uvwMat_p;
       }
       if (visOK_p) {
 	visibility_p.resize(other.visibility_p.shape());
@@ -239,6 +259,18 @@ VisBuffer& VisBuffer::assign(const VisBuffer& other, Bool copy)
 	weightMat_p.resize(other.weightMat_p.shape()); 
 	weightMat_p=other.weightMat_p;
       }
+      if (weightSpectrumOK_p) {
+	weightSpectrum_p.resize(other.weightSpectrum_p.shape()); 
+	weightSpectrum_p=other.weightSpectrum_p;
+      }
+      if (imagingWeightOK_p) {
+	imagingWeight_p.resize(other.imagingWeight_p.shape()); 
+	imagingWeight_p=other.imagingWeight_p;
+      }
+      if (rowIdsOK_p){
+	rowIds_p.resize(other.rowIds_p.shape());
+	rowIds_p=other.rowIds_p;
+      }
     }
   }
   return *this;
@@ -255,6 +287,7 @@ VisBuffer& VisBuffer::operator-=(const VisBuffer& vb)
   // check the shapes
   AlwaysAssert(nRow_p==vb.nRow(),AipsError);
   AlwaysAssert(nChannel_p==vb.nChannel(),AipsError);
+  AlwaysAssert(nCorr_p==vb.nCorr(),AipsError);
   // make sure flag and flagRow are current
   flag(); flagRow();
 
@@ -286,22 +319,24 @@ void VisBuffer::invalidate()
 {
   nChannelOK_p=channelOK_p=nRowOK_p=ant1OK_p=ant2OK_p=feed1OK_p=feed2OK_p=
     arrayIdOK_p=cjonesOK_p=fieldIdOK_p=flagOK_p=flagRowOK_p=scanOK_p=freqOK_p=
-    lsrFreqOK_p=phaseCenterOK_p=polFrameOK_p=sigmaOK_p=spwOK_p=timeOK_p=
-    timeIntervalOK_p=uvwOK_p=visOK_p=weightOK_p=corrTypeOK_p=    False;
-  flagCubeOK_p=visCubeOK_p=weightMatOK_p=msOK_p=False;
+    lsrFreqOK_p=phaseCenterOK_p=polFrameOK_p=sigmaOK_p=sigmaMatOK_p=spwOK_p=
+    timeOK_p=timeIntervalOK_p=uvwOK_p=uvwMatOK_p=visOK_p=weightOK_p=
+    weightMatOK_p=weightSpectrumOK_p=corrTypeOK_p=nCorrOK_p=    False;
+  flagCubeOK_p=visCubeOK_p=imagingWeightOK_p=msOK_p=False;
   modelVisOK_p=correctedVisOK_p=modelVisCubeOK_p=correctedVisCubeOK_p=False;
-  feed1_paOK_p=feed2_paOK_p=direction1OK_p=direction2OK_p=False;
+  feed1_paOK_p=feed2_paOK_p=direction1OK_p=direction2OK_p=rowIdsOK_p=False;
 }
 
 void VisBuffer::validate()
 {
   nChannelOK_p=channelOK_p=nRowOK_p=ant1OK_p=ant2OK_p=feed1OK_p=feed2OK_p=
     arrayIdOK_p=cjonesOK_p=fieldIdOK_p=flagOK_p=flagRowOK_p=scanOK_p=freqOK_p=
-    lsrFreqOK_p=phaseCenterOK_p=polFrameOK_p=sigmaOK_p=spwOK_p=timeOK_p=
-    timeIntervalOK_p=uvwOK_p=visOK_p=weightOK_p=corrTypeOK_p=    True;
-  flagCubeOK_p=visCubeOK_p=weightMatOK_p=msOK_p=True;  
+    lsrFreqOK_p=phaseCenterOK_p=polFrameOK_p=sigmaOK_p=sigmaMatOK_p=spwOK_p=
+    timeOK_p=timeIntervalOK_p=uvwOK_p=uvwMatOK_p=visOK_p=weightOK_p=
+    weightMatOK_p=weightSpectrumOK_p=corrTypeOK_p=nCorrOK_p=    True;
+  flagCubeOK_p=visCubeOK_p=imagingWeightOK_p=msOK_p=True;  
   modelVisOK_p=correctedVisOK_p=modelVisCubeOK_p=correctedVisCubeOK_p=True;
-  feed1_paOK_p=feed2_paOK_p=direction1OK_p=direction2OK_p=True;
+  feed1_paOK_p=feed2_paOK_p=direction1OK_p=direction2OK_p=rowIdsOK_p=True;
 }
 
 void VisBuffer::freqAverage() 
@@ -332,6 +367,518 @@ void VisBuffer::freqAverage()
   flag_p.reference(newFlag);
   visibility_p.reference(newVisibility);
   frequency_p.resize(1); frequency_p(0)=newFrequency;
+}
+
+void VisBuffer::freqAveCubes() 
+{
+  // TBD: Use weightSpec, if present, and update weightMat accordingly
+  // TBD: Provide partial decimation option
+
+  // Ensure visCube filled, at least
+  visCube();
+
+  // Freq-averaged shape
+  IPosition csh=visCube().shape();
+  csh(1)=1;   // One channel in output
+
+  Cube<Complex> newVisCube(csh); newVisCube=Complex(0.0);
+  Matrix<Bool> newFlag(1,nRow()); newFlag=True;
+  Double newFrequency; newFrequency=0;
+  Int nfreq=0;
+  Int nChan=nChannel();
+  Int nCor=nCorr();
+  for (Int row=0; row<nRow(); row++) {
+    if (!flagRow()(row)) {
+      Int n=0;
+      for (Int chn=0; chn<nChan; chn++) {
+	if (!flag()(chn,row)) {
+	  newFlag(0,row)=False;
+	  newFrequency+=frequency()(chn);
+	  for (Int cor=0;cor<nCor;cor++) 
+	    newVisCube(cor,0,row)+=visCube()(cor,chn,row);
+	  n++; nfreq++;
+
+	  if (row==-1)
+	    cout << "V: " 
+		 << chn << " " << n << " "
+		 << visCube()(0,chn,row) << " "
+		 << newVisCube(0,0,row) << " "
+		 << endl;
+
+
+	}
+      }
+      if (n==0) flagRow()(row)=True;
+      if (n>0) {
+	Matrix<Complex> nVC;
+	nVC.reference(newVisCube.xyPlane(row));
+	nVC*=Complex(1.0f/n);
+
+	if (row==-1)
+	  cout << "V:-----> " << n << " " << newVisCube(0,0,row) << endl;
+	
+
+      }
+    }
+  }
+  visCube_p.reference(newVisCube);
+  
+  // Now do model, if present
+  if (modelVisCubeOK_p) {
+
+    Cube<Complex> newModelVisCube(csh); newModelVisCube=Complex(0.0);
+    for (Int row=0; row<nRow(); row++) {
+      if (!flagRow()(row)) {
+	Int n=0;
+	for (Int chn=0; chn<nChan; chn++) {
+	  if (!flag()(chn,row)) {
+
+	    n++; 
+	    for (Int cor=0;cor<nCor;cor++) 
+	      newModelVisCube(cor,0,row)+=modelVisCube()(cor,chn,row);
+
+	    if (row==-1)
+	      cout << "M: " 
+		   << chn << " " << n << " "
+		   << modelVisCube()(0,chn,row) << " "
+		   << newModelVisCube(0,0,row) << " "
+		   << endl;
+
+	  }
+	}
+	if (n==0) flagRow()(row)=True;
+	if (n>0) {
+	  Matrix<Complex> nMVC;
+	  nMVC.reference(newModelVisCube.xyPlane(row));
+	  nMVC*=Complex(1.0f/n);
+
+	  if (row==-1)
+	    cout << "M:-----> " << n << " " << newModelVisCube(0,0,row) << endl;
+	}
+      }
+    }
+    modelVisCube_p.reference(newModelVisCube);
+  }    
+
+  // Use averaged flags
+  flag_p.reference(newFlag);
+
+  // Average frequency for this buffer 
+  //  (Strictly, this should really be row based, but doing this
+  //   average here suggests frequency precision isn't so important)
+  if (nfreq>0) newFrequency/=Double(nfreq);
+  nChannel_p=1;
+  frequency_p.resize(1); frequency_p(0)=newFrequency;
+
+}
+
+
+void VisBuffer::channelAve(Float factor) 
+{
+  // TBD: Use weightSpec, if present, and update weightMat accordingly
+
+  if (factor<=0.0) return;
+
+  // Discern # of input channels per output channel from factor
+  Int width(1);
+  if (factor>1.0) width=Int(factor);        // factor supplied in channel units
+  else width=Int(factor*Float(nChannel())); // factor supplied in fractional units
+
+  // The number of output channels
+  Int nChanOut((nChannel()+width-1)/width);
+
+  // Apply averaging to whatever data is present
+  if (visCubeOK_p)          chanAveVisCube(visCube(),width,nChanOut);
+  if (modelVisCubeOK_p)     chanAveVisCube(modelVisCube(),width,nChanOut);
+  if (correctedVisCubeOK_p) chanAveVisCube(correctedVisCube(),width,nChanOut);
+  if (flagCubeOK_p)             chanAveFlagCube(flagCube(),width,nChanOut);
+
+  // Finally, collapse the frequency values themselves
+  Vector<Double> newFreq(nChanOut,0.0);
+  Vector<Int> newChan(nChanOut,0);
+  frequency(); // Ensure frequencies pre-filled
+  channel();
+  Int ichan=0;
+  for (Int ochan=0;ochan<nChanOut;++ochan) {
+    Int n=0;
+    while (n<width && ichan<nChannel()) {
+      newFreq(ochan)+=frequency()(ichan);
+      newChan(ochan)+=channel()(ichan);
+      ichan++;
+      n++;
+    }
+    if (n>0) {
+      newFreq(ochan)/=Double(n);
+      newChan(ochan)/=n;
+    }
+  }
+  // Install the new values
+  frequency().reference(newFreq);
+  channel().reference(newChan);
+  nChannel()=nChanOut;
+}
+
+void VisBuffer::chanAveVisCube(Cube<Complex>& data,Int width,Int nChanOut) {
+
+  IPosition csh(data.shape());
+  Int nChan0=csh(1);
+  csh(1)=nChanOut;
+
+  Cube<Complex> newCube(csh); newCube=Complex(0.0);
+  Int nCor=nCorr();
+  Int ichan(0),n(0);
+  Vector<Int> ngood(nCor,0);
+  for (Int row=0; row<nRow(); row++) {
+    if (!flagRow()(row)) {
+      ichan=0;
+      for (Int ochan=0;ochan<nChanOut;++ochan) {
+	n=0;
+	ngood=0;
+	while (n<width && ichan<nChan0) {
+	  for (Int icor=0;icor<nCor;++icor) 
+	    if (!flagCube()(icor,ichan,row)) {
+	      newCube(icor,ochan,row)+=data(icor,ichan,row);
+	      ngood(icor)++;
+	    }
+	  ichan++;
+	  n++;
+	}
+	for (Int icor=0;icor<nCor;++icor) {
+	  if (ngood(icor)>0) {
+	    newCube(icor,ochan,row)*=Complex(1.0f/ngood(icor));
+	  }
+	}
+      }
+    }
+  }
+
+  // Install averaged info
+  data.reference(newCube);
+
+}
+
+void VisBuffer::chanAveFlagCube(Cube<Bool>& flagcube,Int width,Int nChanOut) {
+
+  IPosition csh(flagcube.shape());
+  Int nChan0=csh(1);
+  csh(1)=nChanOut;
+
+  Cube<Bool> newFlag(csh); newFlag=True;
+  Int nCor=nCorr();
+  Int ichan(0),n(0);
+  for (Int row=0; row<nRow(); row++) {
+    if (!flagRow()(row)) {
+      ichan=0;
+      for (Int ochan=0;ochan<nChanOut;++ochan) {
+	n=0;
+	while (n<width && ichan<nChan0) {
+	  for (Int icor=0;icor<nCor;++icor) 
+	    if (!flagcube(icor,ichan,row)) 
+	      newFlag(icor,ochan,row)=False;
+	  ichan++;
+	  n++;
+	}
+      }
+    }
+  }
+  // Use averaged flags
+  flagcube.reference(newFlag);
+
+}
+
+
+
+
+// Sort correlations: (PP,QQ,PQ,QP) -> (PP,PQ,QP,QQ)
+void VisBuffer::sortCorr() {
+ 
+  // This method is for temporarily sorting the correlations
+  //  into canonical order if the MS data is out-of-order
+  // NB: Always sorts the weightMat()
+  // NB: Only works on the visCube-style data
+  // NB: It only sorts the data columns which are already present
+  //     (so make sure the ones you need are already read!)
+  // NB: It is the user's responsibility to run unSortCorr
+  //     after using the sorted data to put it back in order
+  // NB: corrType_p is NOT changed to match the sorted
+  //     correlations (it is expected that this sort is
+  //     temporary, and that we will run unSortCorr
+  // NB: This method does nothing if no sort required
+
+  // If nominal order is non-canonical (only for nCorr=4)
+  //   and data not yet sorted
+  if (nonCanonCorr() && !corrSorted_p) {
+
+
+    // First, do weightMat
+    {
+      weightMat();    // (ensures it is filled)
+      
+      Vector<Float> wtmp(nRow());
+      Vector<Float> w1,w2,w3;
+      IPosition wblc(1,0,0), wtrc(3,0,nRow()-1), vec(1,nRow());
+      
+      wblc(0)=wtrc(0)=1;
+      w1.reference(weightMat_p(wblc,wtrc).reform(vec));
+      wblc(0)=wtrc(0)=2;
+      w2.reference(weightMat_p(wblc,wtrc).reform(vec));
+      wblc(0)=wtrc(0)=3;
+      w3.reference(weightMat_p(wblc,wtrc).reform(vec));
+      wtmp=w1;
+      w1=w2;
+      w2=w3;
+      w3=wtmp;
+    }
+
+    // Now do data:
+    
+    // Work space, references, coords
+    Matrix<Complex> tmp(nChannel(),nRow());
+    Matrix<Complex> p1,p2,p3;
+    IPosition blc(3,0,0,0), trc(3,0,nChannel()-1,nRow()-1), mat(2,nChannel(),nRow());
+
+    // Do visCube if present
+    if (visCubeOK_p && visCube_p.nelements()>0) {
+      blc(0)=trc(0)=1;
+      p1.reference(visCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=2;
+      p2.reference(visCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=3;
+      p3.reference(visCube_p(blc,trc).reform(mat));
+      tmp=p1;
+      p1=p2;
+      p2=p3;
+      p3=tmp;
+    }
+    // Do modelVisCube if present
+    if (modelVisCubeOK_p && modelVisCube_p.nelements()>0) {
+      blc(0)=trc(0)=1;
+      p1.reference(modelVisCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=2;
+      p2.reference(modelVisCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=3;
+      p3.reference(modelVisCube_p(blc,trc).reform(mat));
+      tmp=p1;
+      p1=p2;
+      p2=p3;
+      p3=tmp;
+    }
+    // Do correctedVisCube if present
+    if (correctedVisCubeOK_p && correctedVisCube_p.nelements()>0) {
+      blc(0)=trc(0)=1;
+      p1.reference(correctedVisCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=2;
+      p2.reference(correctedVisCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=3;
+      p3.reference(correctedVisCube_p(blc,trc).reform(mat));
+      tmp=p1;
+      p1=p2;
+      p2=p3;
+      p3=tmp;
+    }
+
+    // Data is now sorted into canonical order
+    corrSorted_p=True;
+  }
+
+}
+
+// Unsort correlations: (PP,PQ,QP,QQ) -> (PP,QQ,PQ,QP) 
+void VisBuffer::unSortCorr() {
+  // This method is for restoring the non-canonical correlation
+  //  sort order so that the data matches the order indicated
+  //  by corrType()
+  // NB: Always unsorts the weightMat()
+  // NB: Only works on the visCube-style data
+  // NB: It only unsorts the data columns which are already present
+  //     (so make sure sortCorr sorted the ones you needed!)
+  // NB: This method is a no-op if no sort required, or if
+  //     sortCorr hadn't been run since the last unSortCorr
+
+  // If nominal order is non-canonical (only for nCorr=4)
+  //   and if data has been sorted
+  if (nonCanonCorr() && corrSorted_p) {
+    
+    // First, do weights
+    {
+      Vector<Float> wtmp(nRow());
+      Vector<Float> w1,w2,w3;
+      IPosition wblc(1,0,0), wtrc(3,0,nRow()-1), vec(1,nRow());
+      
+      wblc(0)=wtrc(0)=1;
+      w1.reference(weightMat_p(wblc,wtrc).reform(vec));
+      wblc(0)=wtrc(0)=2;
+      w2.reference(weightMat_p(wblc,wtrc).reform(vec));
+      wblc(0)=wtrc(0)=3;
+      w3.reference(weightMat_p(wblc,wtrc).reform(vec));
+      wtmp=w3;
+      w3=w2;
+      w2=w1;
+      w1=wtmp;
+    }
+    // Now do data:
+
+    // Work space, references, coords
+    Matrix<Complex> tmp(nChannel(),nRow());
+    Matrix<Complex> p1,p2,p3;
+    IPosition blc(3,0,0,0), trc(3,0,nChannel()-1,nRow()-1), mat(2,nChannel(),nRow());
+
+    // Do visCube if present
+    if (visCubeOK_p && visCube_p.nelements()>0) {
+      blc(0)=trc(0)=1;
+      p1.reference(visCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=2;
+      p2.reference(visCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=3;
+      p3.reference(visCube_p(blc,trc).reform(mat));
+      tmp=p3;
+      p3=p2;
+      p2=p1;
+      p1=tmp;
+    }
+    // Do modelVisCube if present
+    if (modelVisCubeOK_p && modelVisCube_p.nelements()>0) {
+      blc(0)=trc(0)=1;
+      p1.reference(modelVisCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=2;
+      p2.reference(modelVisCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=3;
+      p3.reference(modelVisCube_p(blc,trc).reform(mat));
+      tmp=p3;
+      p3=p2;
+      p2=p1;
+      p1=tmp;
+    }
+    // Do correctedVisCube if present
+    if (correctedVisCubeOK_p && correctedVisCube_p.nelements()>0) {
+      blc(0)=trc(0)=1;
+      p1.reference(correctedVisCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=2;
+      p2.reference(correctedVisCube_p(blc,trc).reform(mat));
+      blc(0)=trc(0)=3;
+      p3.reference(correctedVisCube_p(blc,trc).reform(mat));
+      tmp=p3;
+      p3=p2;
+      p2=p1;
+      p1=tmp;
+    }
+
+    // Data is now back to corrType order
+    corrSorted_p=False;
+  }
+
+}
+
+Bool VisBuffer::nonCanonCorr() {
+  Vector<Int>& corrs(corrType());
+  // Only a meaningful question is all 4 corrs present
+  if (corrs.nelements()==4)
+    // (assumes corrs(0) is RR or XX)
+    return (corrs(1)==Stokes::LL || corrs(1)==Stokes::YY);
+  else
+    // Assumed OK (fewer than 4 elements, or in canonical order already)
+    return False;
+}
+
+// Fill weight matrix from sigma matrix
+void VisBuffer::resetWeightMat() {
+  
+  // fill sigmaMat_p, size weightMat_p storage
+  sigmaMat();   
+  IPosition ip(sigmaMat_p.shape());
+  weightMat_p.resize(ip);
+  
+  Int nPol(ip(0));
+  Int nRow(ip(1));
+
+  // Weight is inverse square of sigma (or zero[?])
+  Float *w=weightMat_p.data();
+  Float *s=sigmaMat_p.data();
+  for (Int irow=0;irow<nRow;++irow)
+    for (Int ipol=0;ipol<nPol;++ipol,++w,++s)
+      if (*s >0.0f)
+	*w = 1.0f/square(*s);
+      else
+	*w = 0.0f;
+
+  // Scale by (unselected!) # of channels 
+  //  (to stay aligned with original nominal weights)
+  Int nchan=msColumns().spectralWindow().numChan()(spectralWindow());
+  weightMat_p*=Float(nchan);
+
+  // weightMat_p now OK
+  weightMatOK_p=True;
+
+}
+
+// Divide visCube by modelVisCube
+void VisBuffer::normalize(const Bool& phaseOnly) {
+
+  // NB: phase-only now handled by SolvableVisCal
+  //   (we will remove phaseOnly parameter later)
+
+
+  // NB: Handles pol-dep weights in chan-indep way
+  // TBD: optimizations?
+  // TBD: Handle channel-dep weights?
+
+  // Only if all relevant columns are present
+  if (visCubeOK_p && modelVisCubeOK_p && weightMatOK_p) {
+
+    //    cout << "Normalizing!----------------------------" << endl;
+
+    Int nCor=nCorr();
+
+    // Amplitude data
+    Float amp(1.0);
+    Vector<Float> ampCorr(nCor);
+    Vector<Int> n(nCor);
+
+    Bool* flR=flagRow().data();
+    Bool* fl =flag().data();
+
+    for (Int irow=0;irow<nRow();irow++,flR++) {
+      if (!*flR) {
+	ampCorr=0.0f;
+	n=0;
+	for (Int ich=0;ich<nChannel();ich++,fl++) {
+	  if (!*fl) {
+	    for (Int icorr=0;icorr<nCor;icorr++) {
+	      amp=abs(modelVisCube_p(icorr,ich,irow));
+	      if (amp>0.0f) {
+		visCube_p(icorr,ich,irow)=Complex( DComplex(visCube_p(icorr,ich,irow))/
+						   DComplex(modelVisCube_p(icorr,ich,irow)) );
+
+		modelVisCube_p(icorr,ich,irow)=Complex(1.0);
+		ampCorr(icorr)+=amp;
+		n(icorr)++;
+	      }
+	      else
+		// zero data if model is zero
+		visCube_p(icorr,ich,irow)=0.0;
+	    }
+	  }
+	}
+
+	for (Int icorr=0;icorr<nCor;icorr++) {
+	  if (n(icorr)>0)
+	    weightMat_p(icorr,irow)*=square(ampCorr(icorr)/Float(n(icorr)));
+	  else
+	    weightMat_p(icorr,irow)=0.0f;
+	}
+	
+      }
+      else {
+	// Zero weight on this flagged row
+	weightMat_p.column(irow)=0.0f;
+	
+	// Advance fl over this row
+	fl+=nChannel();
+      }
+    }
+  }
+  else
+    throw(AipsError("Failed to normalize data by model!"));
 }
 
 Vector<Int> VisBuffer::vecIntRange(const MSCalEnums::colDef& calEnum) const
@@ -470,6 +1017,21 @@ Bool VisBuffer::timeRange(MEpoch& rTime, MVEpoch& rTimeEP,
   return retval;
 };
 
+
+Vector<uInt>& VisBuffer::rowIds() {
+
+  if(!rowIdsOK_p) {
+
+    rowIdsOK_p=True;
+    visIter_p->rowIds(rowIds_p);
+  }
+  return rowIds_p;
+  
+
+
+}
+
+
 void VisBuffer::updateCoordInfo()
 {
   antenna1();
@@ -485,6 +1047,8 @@ void VisBuffer::updateCoordInfo()
   feed2();
   feed1_pa();
   feed2_pa();
+  direction1();
+  direction2();
 }
 
 void VisBuffer::setVisCube(Complex c)
@@ -540,6 +1104,13 @@ void VisBuffer::removeScratchCols()
   correctedVisOK_p=False;
 }
 
+
+Int & VisBuffer::fillnCorr() 
+{ 
+  nCorrOK_p=True; 
+  nCorr_p=corrType().nelements();
+  return nCorr_p;
+ }
 
 Int & VisBuffer::fillnChannel() 
 { 
@@ -765,6 +1336,9 @@ Int& VisBuffer::fillPolFrame()
 Vector<Float>& VisBuffer::fillSigma()
 { sigmaOK_p=True; return visIter_p->sigma(sigma_p);}
 
+Matrix<Float>& VisBuffer::fillSigmaMat()
+{ sigmaMatOK_p=True; return visIter_p->sigmaMat(sigmaMat_p);}
+
 Int& VisBuffer::fillSpW()
 { 
   spwOK_p=True; 
@@ -780,6 +1354,10 @@ Vector<Double>& VisBuffer::fillTimeInterval()
 
 Vector<RigidVector<Double,3> >& VisBuffer::filluvw()
 { uvwOK_p=True; return visIter_p->uvw(uvw_p);}
+
+Matrix<Double>& VisBuffer::filluvwMat()
+{ uvwMatOK_p=True; return visIter_p->uvwMat(uvwMat_p);}
+
 Matrix<CStokesVector>& 
 VisBuffer::fillVis(VisibilityIterator::DataColumn whichOne)
 {
@@ -821,8 +1399,15 @@ Cube<Complex>& VisBuffer::fillVisCube(VisibilityIterator::DataColumn whichOne)
 
 Vector<Float>& VisBuffer::fillWeight()
 { weightOK_p=True; return visIter_p->weight(weight_p);}
+
+Matrix<Float>& VisBuffer::fillWeightMat()
+{ weightMatOK_p=True; return visIter_p->weightMat(weightMat_p);}
+
+Cube<Float>& VisBuffer::fillWeightSpectrum()
+{ weightSpectrumOK_p=True; return visIter_p->weightSpectrum(weightSpectrum_p);}
+
 Matrix<Float>& VisBuffer::fillImagingWeight()
-{ weightMatOK_p=True; return visIter_p->imagingWeight(weightMat_p);}
+{ imagingWeightOK_p=True; return visIter_p->imagingWeight(imagingWeight_p);}
 
 const Vector<Float>& VisBuffer::feed_pa(Double time) const
 {return visIter_p->feed_pa(time);}
@@ -830,6 +1415,14 @@ const Vector<Float>& VisBuffer::feed_pa(Double time) const
 const Vector<MDirection>& VisBuffer::azel(Double time) const
 {return visIter_p->azel(time);}
 
+Matrix<Double>& VisBuffer::azelMat(Double time, Matrix<Double>& azelMat) const {
+  Vector<MDirection> azelMeas=This->azel(time);
+  azelMat.resize(2,azelMeas.nelements());
+  for (uInt iant=0;iant<azelMeas.nelements();++iant)
+    azelMat.column(iant) = (azelMeas(iant).getAngle("deg").getValue());
+  return azelMat;
+
+}
 
 Vector<Int> VisBuffer::unique(const Vector<Int>& indices) const
 {
@@ -853,6 +1446,9 @@ Vector<Int> VisBuffer::unique(const Vector<Int>& indices) const
     uniqIndices.resize(nUniq, True);
   };
   return uniqIndices;
+
+
+
 };
 
 Bool VisBuffer::checkMSId() {

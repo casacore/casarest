@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: IncCEMemModel.cc,v 19.9 2005/12/06 20:18:51 wyoung Exp $
+//# $Id$
 
 #include <synthesis/MeasurementEquations/IncCEMemModel.h>
 #include <synthesis/MeasurementEquations/CEMemProgress.h>
