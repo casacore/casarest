@@ -26,6 +26,7 @@
 //# $Id$
 //#
 //#include <casa/Quanta/MVTime.h>
+#include <casa/Quanta/QuantumHolder.h>
 #include <casa/Containers/RecordFieldId.h>
 #include <measures/Measures/Stokes.h>
 #include <ms/MeasurementSets/MSColumns.h>
@@ -87,49 +88,14 @@ MSContinuumSubtractor& MSContinuumSubtractor::operator=(MSContinuumSubtractor& o
 MSContinuumSubtractor::~MSContinuumSubtractor()
 {}
 
-// 
-// Set the spws to process
-//
-void MSContinuumSubtractor::setSpw(const String& spw)
-{
-
-  // NB: this method assumes spwids == ddids!
-
-  //  cout << "spw = " << spw << endl;
-
-  MSSelection mssel;
-  mssel.setSpwExpr(spw);
-  Vector<Int> spwlist;
-  spwlist=mssel.getSpwList(ms_p);
-
-  if (spwlist.nelements()==0) {
-    spwlist.resize(nSpw_);
-    indgen(spwlist);
-  }
-   
-  //  cout << "spwids = " << spwlist << endl;
-
-  setDataDescriptionIds(spwlist);
-
-}
-
-void MSContinuumSubtractor::setDataDescriptionIds(const Vector<Int>& ddIds)
-{
-  itsDDIds = ddIds;
-}
-
 // Set the required field Ids
 void MSContinuumSubtractor::setField(const String& field)
 {
-
-  //  cout << "field = " << field << endl;
 
   MSSelection mssel;
   mssel.setFieldExpr(field);
   Vector<Int> fldlist;
   fldlist=mssel.getFieldList(ms_p);
-
-  //  cout << "fldlist = " << fldlist << endl;
 
   setFields(fldlist);
 
@@ -140,10 +106,42 @@ void MSContinuumSubtractor::setFields(const Vector<Int>& fieldIds)
   itsFieldIds = fieldIds;
 }
 
+
 // Set the channels to use in the fit
-void MSContinuumSubtractor::setChannels(const Vector<Int>& channels)
+void MSContinuumSubtractor::setFitSpw(const String& fitspw)
 {
-  itsChannels = channels;
+  // NB: this method assumes spwids == ddids!
+
+  // Using MSSelection  
+  MSSelection mssel;
+  mssel.setSpwExpr(fitspw);
+  Vector<Int> spwlist;
+  spwlist=mssel.getSpwList(ms_p);
+
+  if (spwlist.nelements()==0) {
+    spwlist.resize(nSpw_);
+    indgen(spwlist);
+  }
+
+  setDataDescriptionIds(spwlist);
+
+  itsFitChans= mssel.getChanList(ms_p);
+
+}
+
+// Set the channels from which the fit should be subtracted
+void MSContinuumSubtractor::setSubSpw(const String& subspw)
+{
+  // Using MSSelection  
+  MSSelection mssel;
+  mssel.setSpwExpr(subspw);
+  itsSubChans= mssel.getChanList(ms_p);
+
+}
+
+void MSContinuumSubtractor::setDataDescriptionIds(const Vector<Int>& ddIds)
+{
+  itsDDIds = ddIds;
 }
 
 // Set the solution interval in seconds, the value zero implies scan averaging
@@ -151,6 +149,52 @@ void MSContinuumSubtractor::setSolutionInterval(Float solInt)
 {
   itsSolInt = solInt;
 }
+
+// Set the solution interval in seconds, the value zero implies scan averaging
+void MSContinuumSubtractor::setSolutionInterval(String solInt)
+{
+
+  LogIO os(LogOrigin("MSContinuumSubtractor","setSolutionInterval"));
+
+  os << LogIO::NORMAL << "Fitting continuum on ";
+
+  if (upcase(solInt).contains("INF")) {
+    // ~Infinite (this actually means per-scan in UV contsub)
+    solInt="inf";
+    itsSolInt=0.0;  
+    os <<"per-scan ";
+  }
+  else if (upcase(solInt).contains("INT")) {
+    // Per integration
+    itsSolInt=-1.0;
+    os << "per-integration ";
+  }
+  else {
+    // User-selected timescale
+    QuantumHolder qhsolint;
+    String error;
+    Quantity qsolint;
+    qhsolint.fromString(error,solInt);
+    if (error.length()!=0)
+      throw(AipsError("Unrecognized units for solint."));
+
+    qsolint=qhsolint.asQuantumDouble();
+
+    if (qsolint.isConform("s"))
+      itsSolInt=qsolint.get("s").getValue();
+    else {
+      // assume seconds
+      itsSolInt=qsolint.getValue();
+    }
+
+    os << itsSolInt <<"-second (per scan) ";
+  }
+
+  os << "timescale." << LogIO::POST;
+    
+}
+
+
 
 // Set the order of the fit (1=linear)
 void MSContinuumSubtractor::setOrder(Int order)
@@ -162,7 +206,6 @@ void MSContinuumSubtractor::setOrder(Int order)
 void MSContinuumSubtractor::setMode(const String& mode)
 {
   itsMode = mode;
-  cerr<<"mode now set to "<< mode<<endl;
 }
 
 // Do the subtraction (or save the model)
@@ -170,11 +213,18 @@ void MSContinuumSubtractor::subtract()
 {
   
   LogIO os(LogOrigin("MSContinuumSubtractor","subtract"));
-  os<< LogIO::NORMAL<< "MSContinuumSubtractor::subtract() - parameters:"<<
-      "ddIds="<<itsDDIds<<", fieldIds="<<itsFieldIds<<", channels="<<
-      itsChannels<<", solInt="<<itsSolInt<<", order="<<itsOrder<<
-      ", mode="<<itsMode<<LogIO::POST;
-  
+  os << LogIO::NORMAL<< "MSContinuumSubtractor::subtract() - parameters:"
+     << "ddIds="<<itsDDIds<<", fieldIds="<<itsFieldIds
+     << ", order="<<itsOrder
+     << ", mode="<<itsMode<<LogIO::POST;
+
+  if (itsFitChans.nelements()>0) {
+    os<<"fit channels: " << LogIO::POST;
+    for (uInt i=0;i<itsFitChans.nrow();++i)
+      os<<" spw="<<itsFitChans.row(i)(0)
+	<<": "<<itsFitChans.row(i)(1)<<"~"<<itsFitChans.row(i)(2)
+	<< LogIO::POST;
+  }
 
   ostringstream select;
   select <<"select from $1 where ANTENNA1!=ANTENNA2";
@@ -206,21 +256,57 @@ void MSContinuumSubtractor::subtract()
                   .numChan()(msc.dataDescription().spectralWindowId()(ddIDs(0)));
     Vector<Int> corrTypes=msc.polarization().
           corrType()(msc.dataDescription().polarizationId()(ddIDs(0)));
-    // default to all channels
-    Vector<Bool> chanMask(nChan,True);
+
+
+    // default to fit all channels
+    Vector<Bool> fitChanMask(nChan,True);
 
     // Handle non-trivial channel selection:
-    if (itsChannels.nelements()>0) {
-      if (allLT(itsChannels,nChan)) {
-	chanMask=False;
-	for (uInt j=0; j<itsChannels.nelements(); j++) {
-	  chanMask(itsChannels(j))=True;
+
+    if (itsFitChans.nelements()>0 && anyEQ(itsFitChans.column(0),itsDDIds(iDD))) {
+      // If subset of channels selected, set mask all False...
+      fitChanMask=False;
+      
+      IPosition blc(1,0);
+      IPosition trc(1,0);
+
+      // ... and set only selected channels True:
+      for (uInt i=0;i<itsFitChans.nrow();++i) {
+	Vector<Int> chansel(itsFitChans.row(i));
+
+	// match current spwId/DDid
+	if (chansel(0)==itsDDIds(iDD)) {
+	  blc(0)=chansel(1);
+	  trc(0)=chansel(2);
+	  fitChanMask(blc,trc)=True;
 	}
-      }   
-      else {
-	throw(AipsError("Bad channel selection."));
       }
     }
+
+    //    cout << "fitChanMask = " << fitChanMask << endl;
+
+    // default to subtract from all channels
+    Vector<Bool> subChanMask(nChan,True);
+    if (itsSubChans.nelements()>0 && anyEQ(itsSubChans.column(0),itsDDIds(iDD))) {
+      // If subset of channels selected, set sub mask all False...
+      subChanMask=False;
+      
+      IPosition blc(1,0);
+      IPosition trc(1,0);
+
+      // ... and set only selected sub channels True:
+      for (uInt i=0;i<itsSubChans.nrow();++i) {
+	Vector<Int> chansel(itsSubChans.row(i));
+
+	// match current spwId/DDid
+	if (chansel(0)==itsDDIds(iDD)) {
+	  blc(0)=chansel(1);
+	  trc(0)=chansel(2);
+	  subChanMask(blc,trc)=True;
+	}
+      }
+    }
+
     // select parallel hand polarizations
     Vector<String> polSel(corrTypes.nelements()); 
     Int nPol = 0;
@@ -239,11 +325,9 @@ void MSContinuumSubtractor::subtract()
     msSel.iterOrigin();
     Int nIter=1;
     while (msSel.iterNext()) nIter++;
-    cout<<"Processing "<<nIter<<" slots."<<endl<<" Slot ";
+    os<<"Processing "<<nIter<<" slots."<< LogIO::POST;
     msSel.iterOrigin();
-    Int iter=1;
     do {
-      cout<<" "<<iter++;cout.flush();
       Record avRec = msSel.getData(stringToVector("corrected_data"),True,0,1,True);
       Record dataRec = msSel.getData(stringToVector("model_data,corrected_data"),
                                      True,0,1);
@@ -269,17 +353,20 @@ void MSContinuumSubtractor::subtract()
         for (start[0]=end[0]=0; start[0]<nPol; start[0]++,end[0]++) {
           Vector<Complex> c(avCorData(start,end).nonDegenerate());
           tmp=c; // copy into contiguous storage
+	  c.set(Complex(0.0));  // zero the input
           real(y1,tmp);
           imag(y2,tmp);
-          sol = fitter.fit(x,y1,&chanMask);
+          sol = fitter.fit(x,y1,&fitChanMask);
           poly.setCoefficients(sol);
           y1=x;
           y1.apply(poly);
-          sol = fitter.fit(x,y2,&chanMask);
+          sol = fitter.fit(x,y2,&fitChanMask);
           poly.setCoefficients(sol);
           y2=x;
           y2.apply(poly);
-          for (Int chn=0; chn<nChan; chn++) c(chn)=Complex(y1(chn),y2(chn));
+          for (Int chn=0; chn<nChan; chn++) 
+	    if (subChanMask(chn))
+	      c(chn)=Complex(y1(chn),y2(chn));
         }
       }
         
@@ -306,7 +393,6 @@ void MSContinuumSubtractor::subtract()
       msSel.putData(newDataRec);
       
     } while (msSel.iterNext());
-    cout<<endl;
     
   }
 }

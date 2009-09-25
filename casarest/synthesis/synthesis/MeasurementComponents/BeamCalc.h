@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: BeamCalc.h,v 1.2 2006/06/22 04:59:06 sbhatnag Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_BEAMCALC_H
 #define SYNTHESIS_BEAMCALC_H
@@ -43,6 +43,7 @@ namespace casa
       BeamCalc_VLA_U,
       BeamCalc_VLA_K,
       BeamCalc_VLA_Q,
+      BeamCalc_VLA_4,
 
       BeamCalc_EVLA_L,
       BeamCalc_EVLA_S,
@@ -52,6 +53,7 @@ namespace casa
       BeamCalc_EVLA_K,
       BeamCalc_EVLA_A,
       BeamCalc_EVLA_Q,
+      BeamCalc_EVLA_4,
       
       BeamCalc_NumBandCodes	/* this line last */
     };

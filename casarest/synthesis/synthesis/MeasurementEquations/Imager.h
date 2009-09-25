@@ -22,16 +22,18 @@
 //#                        National Radio Astronomy Observatory
 //#                        520 Edgemont Road
 //#
-//# $Id: Imager.h,v 19.18 2006/10/05 20:32:23 rurvashi Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_IMAGER_H
 #define SYNTHESIS_IMAGER_H
 
 #include <casa/aips.h>
 #include <casa/OS/Timer.h>
+#include <casa/Containers/Record.h>
 #include <ms/MeasurementSets/MeasurementSet.h>
 #include <casa/Arrays/IPosition.h>
 #include <casa/Quanta/Quantum.h>
+
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
 #include <measures/Measures/MRadialVelocity.h>
@@ -41,20 +43,20 @@
 #include <synthesis/MeasurementComponents/WFCleanImageSkyModel.h>
 #include <synthesis/MeasurementComponents/ClarkCleanImageSkyModel.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
-#include <synthesis/MeasurementComponents/EPJones.h>
-
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 // Forward declarations
 class VisSet;
+class VisImagingWeight_p;
 class MSHistoryHandler;
 class PBMath;
 class MeasurementSet;
+class MFrequency;
 class File;
 class VPSkyJones;
 class PGPlotter;
-
+class EPJones;
 template<class T> class ImageInterface;
 
 // <summary> Class that contains functions needed for imager </summary>
@@ -67,7 +69,7 @@ class Imager
 
   Imager();
 
-  Imager(MeasurementSet& ms, Bool compress=False);
+  Imager(MeasurementSet& ms, Bool compress=False, Bool useModel=False);
   Imager(MeasurementSet& ms, PGPlotter& pgplotter, Bool compress=False);
 
   // Copy constructor and assignment operator
@@ -90,7 +92,7 @@ class Imager
 
   // Utility function to do channel selection
 
-  Bool selectDataChannel(VisSet& vs, Vector<Int>& spectralwindowids, 
+  Bool selectDataChannel(Vector<Int>& spectralwindowids, 
 				 String& dataMode, 
 				 Vector<Int>& dataNchan, 
 				 Vector<Int>& dataStart, Vector<Int>& dataStep,
@@ -104,11 +106,11 @@ class Imager
   virtual void setImageParam(Int& nx, Int& ny, Int& npol, Int& nchan); 
 
   //VisSet and resort 
-  virtual void makeVisSet(VisSet* & vs, MeasurementSet& ms, 
-			  Bool compress=False, Bool mosaicOrder=False);
-  //Just to create the SORTED_TABLE
   virtual void makeVisSet(MeasurementSet& ms, 
 			  Bool compress=False, Bool mosaicOrder=False);
+  //Just to create the SORTED_TABLE if one can
+  //virtual void makeVisSet(MeasurementSet& ms, 
+  //			  Bool compress=False, Bool mosaicOrder=False);
 
   virtual void writeHistory(LogIO& os);
 
@@ -122,7 +124,7 @@ class Imager
 		   Bool useSymmetricBeam=True);
   Bool makePBImage(const CoordinateSystem& imageCoord, 
 		   const String& telescopeName, const String& diskPBName, 
-		   Bool useSymmetricBeam=True);
+		   Bool useSymmetricBeam=True, Double dishdiam=-1.0);
   
   Bool makePBImage(const CoordinateSystem& imageCoord, 
 		   const Table& vpTable, const String& diskPBName);
@@ -138,7 +140,7 @@ class Imager
 // Close the current ms, and replace it with the supplied ms.
   // Optionally compress the attached calibration data
   // columns if they are created here.
-  Bool open(MeasurementSet &thems, Bool compress=False);
+  Bool open(MeasurementSet &thems, Bool compress=False, Bool useModel=False);
   
   // Flush the ms to disk and detach from the ms file. All function
   // calls after this will be a no-op.
@@ -160,9 +162,24 @@ class Imager
                 const Int start, const Int step,
 		const MRadialVelocity& mStart, const MRadialVelocity& mStep,
 		const Vector<Int>& spectralwindowids, const Int fieldid,
-		const Int facets, const Quantity& distance,
-		const Float &paStep, const Float &pbLimit);
-  
+		const Int facets, const Quantity& distance);
+
+  virtual Bool defineImage(const Int nx, const Int ny,
+			   const Quantity& cellx, const Quantity& celly,
+			   const String& stokes,
+			   const MDirection& phaseCenter, 
+			   const Int fieldid,
+			   const String& mode, const Int nchan,
+			   const Int start, const Int step,
+			   const MFrequency& mFreqStart,
+			   const MRadialVelocity& mStart, 
+			   const Quantity& qStep,
+			   const Vector<Int>& spectralwindowids, 
+			   const Quantity& restFreq,
+			   const Int facets, const Quantity& distance,
+			   const Bool trackSource=False, const MDirection& 
+			   trackDir=MDirection(Quantity(0.0, "deg"), 
+					       Quantity(90.0, "deg")));
   // Set the data selection parameters
  
   virtual  Bool setDataPerMS(const String& msname, const String& mode, 
@@ -171,7 +188,15 @@ class Imager
 			     const Vector<Int>& step,
 			     const Vector<Int>& spectralwindowids,
 			     const Vector<Int>& fieldid,
-			     const String& msSelect="");
+			     const String& msSelect="",
+                             const String& timerng="",
+			     const String& fieldnames="",
+			     const Vector<Int>& antIndex=Vector<Int>(),
+			     const String& antnames="",
+			     const String& spwstring="",
+			     const String& uvdist="",
+                             const String& scan="",
+                             const Bool useModelCol=False);
 
 
   Bool setdata(const String& mode, const Vector<Int>& nchan, 
@@ -180,21 +205,32 @@ class Imager
 	       const MRadialVelocity& mStep,
 	       const Vector<Int>& spectralwindowids,
 	       const Vector<Int>& fieldid,
-	       const String& msSelect="");
+	       const String& msSelect="",
+	       const String& timerng="",
+	       const String& fieldnames="",
+	       const Vector<Int>& antIndex=Vector<Int>(),
+	       const String& antnames="",
+	       const String& spwstring="",
+	       const String& uvdist="",
+               const String& scan="",
+               const Bool usemodelCol=False);
   
   // Set the processing options
   Bool setoptions(const String& ftmachine, const Long cache, const Int tile,
 		  const String& gridfunction, const MPosition& mLocation,
-		  const Float padding, const Bool usemodelcol=True, 
+                  const Float padding,
 		  const Int wprojplanes=1,
 		  const String& epJTableName="",
 		  const Bool applyPointingOffsets=True,
 		  const Bool doPointingCorrection=True,
-		  const String& cfCacheDirName="");
+		  const String& cfCacheDirName="", 
+		  const Float& pastep=5.0,
+		  const Float& pbLimit=5.0e-2,
+		  const String& freqinterpmethod="linear");
 
   // Set the single dish processing options
   Bool setsdoptions(const Float scale, const Float weight, 
-		    const Int convsupport=-1);
+		    const Int convsupport=-1, String pointingColToUse="DIRECTION");
 
   // Set the voltage pattern
   Bool setvp(const Bool dovp,
@@ -209,9 +245,13 @@ class Imager
   Bool setscales(const String& scaleMethod,          // "nscales"  or  "uservector"
 		 const Int inscales,
 		 const Vector<Float>& userScaleSizes);
+  // set bias
+  Bool setSmallScaleBias(const Float inbias);
+
   // Set the number of taylor series terms in the expansion of the
   // image as a function of frequency.
-  Bool settaylorterms(const Int intaylor);
+  Bool settaylorterms(const Int intaylor, 
+		      const Double inreffreq);
 
   // </group>
   
@@ -257,8 +297,21 @@ class Imager
   
   // Fill in a region of a mask
   Bool boxmask(const String& mask, const Vector<Int>& blc,
-	       const Vector<Int>& trc, const Float value);
+	       const Vector<Int>& trc,const Float value);
 
+  //Make a region either from record or array of blc trc 
+  //(Matrix(nboxes,4)) into a mask image
+  //value is the value of the mask pixels
+  //circular masks has form Matrix(ncircles,3)
+  //where the 3 values on a row are radius, x, y pixel values 
+  Bool regionmask(const String& maskimage, Record* imageRegRec, 
+		  Matrix<Quantity>& blctrcs, Matrix<Float>& circles, 
+		  const Float& value=1.0);
+
+  static Bool regionToImageMask(const String& maskimage, Record* imageRegRec, 
+				Matrix<Quantity>& blctrcs, 
+				Matrix<Float>& circles, 
+				const Float& value=1.0);
   // Clip on Stokes I
   Bool clipimage(const String& image, const Quantity& threshold);
 
@@ -278,7 +331,7 @@ class Imager
 	       const Vector<String>& image);
 
   // Approximate PSF
-  Bool approximatepsf(const Vector<String>& model, const Vector<String>& psf);
+  Bool approximatepsf(const String& psf);
 
   // Smooth
   Bool smooth(const Vector<String>& model, 
@@ -296,7 +349,8 @@ class Imager
 	     const String& complist,
 	     const Vector<String>& mask,
 	     const Vector<String>& restored,
-	     const Vector<String>& residual);
+	     const Vector<String>& residual,
+	     const Vector<String>& psf=Vector<String>(0));
   
   // MEM algorithm
   Bool mem(const String& algorithm,
@@ -364,10 +418,18 @@ class Imager
   // Compute the model visibility using specified source flux densities
   Bool setjy(const Int fieldid, const Int spectralwindowid,
 	     const Vector<Double>& fluxDensity, const String& standard);
+  Bool setjy(const Vector<Int>& fieldid, const Vector<Int>& spectralwindowid, 
+	     const String& fieldnames, const String& spwstring, 
+	     const Vector<Double>& fluxDensity, const String& standard);
+
+  Bool setjy(const Vector<Int>& fieldid, 
+	     const Vector<Int>& spectralwindowid, 
+	     const String& fieldnames, const String& spwstring, 
+	     const String& model,
+	     const Vector<Double>& fluxDensity, const String& standard);
 
   // Make an empty image
   Bool make(const String& model);
-
 
   // make a model from a SD image. 
   // This model then can be used as initial clean model to include the 
@@ -411,10 +473,15 @@ class Imager
   //Check if can proceed with this object
   Bool valid() const;
 
+
+  //Interactive mask drawing
+  Int interactivemask(const String& imagename, const String& maskname, 
+		      Int& niter, Int& ncycles, String& threshold);
+
 protected:
 
   MeasurementSet* ms_p;
-  MSHistoryHandler *hist_p;
+  CountedPtr<MSHistoryHandler> hist_p;
   Table antab_p;
   Table datadesctab_p;
   Table feedtab_p;
@@ -442,6 +509,8 @@ protected:
   String msname_p;
   MeasurementSet *mssel_p;
   VisSet *vs_p;
+  ROVisibilityIterator* rvi_p;
+  VisibilityIterator* wvi_p;
   FTMachine *ft_p;
   ComponentFTMachine *cft_p;
   SkyEquation* se_p;
@@ -457,14 +526,17 @@ protected:
   Int wprojPlanes_p;
   Quantity mcellx_p, mcelly_p;
   String stokes_p;
-  String dataMode_p, imageMode_p;
+  String dataMode_p;
+  String imageMode_p;           // channel, (optical)velocity, mfs, or frequency
   Vector<Int> dataNchan_p;
   Int imageNchan_p;
   Vector<Int> dataStart_p, dataStep_p;
   Int imageStart_p, imageStep_p;
   MRadialVelocity mDataStart_p, mImageStart_p;
   MRadialVelocity mDataStep_p,  mImageStep_p;
+  MFrequency mfImageStart_p, mfImageStep_p;
   MDirection phaseCenter_p;
+  Quantity restFreq_p;
   Quantity distance_p;
   Bool doShift_p;
   Quantity shiftx_p;
@@ -512,6 +584,7 @@ protected:
   Bool  multiFields_p; 	      // multiple fields have been specified in setdata
 
   Bool doWideBand_p;          // Do Multi Frequency Synthesis Imaging
+  String freqInterpMethod_p; //frequency interpolation mode
 
   // Set the defaults
   void defaults();
@@ -546,7 +619,11 @@ protected:
   Bool addResidualsToSkyEquation(const Vector<String>& residual);
 
   // Add or replace the masks
-  Bool addMasksToSkyEquation(const Vector<String>& mask);
+  Bool addMasksToSkyEquation(const Vector<String>& mask, const Vector<Bool>& fixed=Vector<Bool>(0));
+
+  // Get the rest frequency ..returns 1 element in restfreq 
+  // if user specified or try to get the info from the SOURCE table 
+  Bool getRestFreq(Vector<Double>& restFreq, const Int& spw);
 
   Bool restoreImages(const Vector<String>& restored);
 
@@ -570,27 +647,34 @@ protected:
     
   virtual void setClarkCleanImageSkyModel()
     {sm_p = new ClarkCleanImageSkyModel(); return;};
-  virtual void setSkyEquation()
-    {se_p = new SkyEquation(*sm_p, *vs_p, *ft_p, *cft_p, !useModelCol_p); return;};
+  virtual void setSkyEquation();
+    
+  virtual void savePSF(const Vector<String>& psf);
 
   String frmtTime(const Double time);
 
+  //copy imageregion to pixels on image as value given
+  static Bool regionToMask(ImageInterface<Float>& maskImage, ImageRegion& imagreg, const Float& value=1.0);
+
+  //set the mosaic ft machine and right convolution function
+  virtual void setMosaicFTMachine(); 
  
   ComponentList* componentList_p;
 
   String scaleMethod_p;   // "nscales"   or  "uservector"
   Int nscales_p;
   Int ntaylor_p;
+  Double reffreq_p;
   Vector<Float> userScaleSizes_p;
   Bool scaleInfoValid_p;  // This means that we have set the information, not the scale beams
-
+  Float smallScaleBias_p; //ms-clean
   Int nmodels_p;
   // Everything here must be a real class since we make, handle and
   // destroy these.
-  PtrBlock<PagedImage<Float>* > images_p;
-  PtrBlock<PagedImage<Float>* > masks_p;
-  PtrBlock<PagedImage<Float>* > fluxMasks_p;
-  PtrBlock<PagedImage<Float>* > residuals_p;
+  Block<CountedPtr<PagedImage<Float> > > images_p;
+  Block<CountedPtr<PagedImage<Float> > > masks_p;
+  Block<CountedPtr<PagedImage<Float> > > fluxMasks_p;
+  Block<CountedPtr<PagedImage<Float> > > residuals_p;
   
   // Freq frame is good and valid conversions can be done (or not)
   Bool freqFrameValid_p;
@@ -611,9 +695,13 @@ protected:
   EPJones *epJ;
   String epJTableName_p, cfCacheDirName_p;
   Bool doPointing, doPBCorr;
+  Record interactiveState_p;
 
-
-
+  //Track moving source stuff
+  Bool doTrackSource_p;
+  MDirection trackDir_p;
+  String pointingDirCol_p;
+  VisImagingWeight imwgt_p;
 
 };
 

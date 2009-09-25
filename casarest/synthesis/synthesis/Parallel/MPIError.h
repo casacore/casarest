@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: MPIError.h,v 19.6 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_MPIERROR_H
 #define SYNTHESIS_MPIERROR_H

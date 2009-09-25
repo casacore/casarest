@@ -25,7 +25,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: VLACalcIlluminationConvFunc.cc,v 1.8 2006/07/20 00:23:48 sbhatnag Exp $
+//# $Id$
 
 #define USETABLES 1
 #include <synthesis/MeasurementComponents/VLACalcIlluminationConvFunc.h>
@@ -61,9 +61,9 @@ namespace casa{
     ap.freq=1.365;
     ap.freq=1.4;
     ap.band = BeamCalc_VLA_L;
-    //    ap.band = bandID;
     IPosition shape(4,ap.nx,ap.ny,4,1);
     ap.aperture = new TempImage<Complex>();
+    if (maximumCacheSize() > 0) ap.aperture->setMaximumCacheSize(maximumCacheSize());
     ap.aperture->resize(shape);
    }
 
@@ -78,42 +78,95 @@ namespace casa{
     Vector<Bool> axes(2); axes=True;
     Vector<Int> dirShape(2); dirShape(0)=shape(0);dirShape(1)=shape(1);
     Coordinate* FTdc=dc.makeFourierCoordinate(axes,dirShape);
-    //    cout << dc.increment() << " " << dirShape << " " << FTdc->increment() << endl;
 
     FTCoords.replaceCoordinate(*FTdc,dirIndex);
     delete FTdc;
 
     return FTCoords;
   }
+  //----------------------------------------------------------------------
+  // Write PB to the pbImage
+  //
+  void VLACalcIlluminationConvFunc::applyPB(ImageInterface<Float>& pbImage,
+					    const VisBuffer& vb, const Vector<Float>& paList, 
+					    Int bandID)
+  {
+    CoordinateSystem skyCS(pbImage.coordinates());
+    IPosition skyShape(pbImage.shape());
+    TempImage<Complex> uvGrid;
+    if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
+    regridAperture(skyCS, skyShape, uvGrid, vb, paList, False, bandID);
 
+    fillPB(*(ap.aperture),pbImage);
+  }
   void VLACalcIlluminationConvFunc::applyPB(ImageInterface<Float>& pbImage,
 					    const VisBuffer& vb, Int bandID)
   {
     CoordinateSystem skyCS(pbImage.coordinates());
     IPosition skyShape(pbImage.shape());
-    //    TempImage<Complex> uvGrid(skyShape, skyCS);
+
     TempImage<Complex> uvGrid;
+    if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
     regridAperture(skyCS, skyShape, uvGrid, vb,False, bandID);
     fillPB(*(ap.aperture),pbImage);
-//     String name("calcI.im");
-//     storeImg(name,pbImage);
-//     exit(0);
   }
-
   void VLACalcIlluminationConvFunc::applyPB(ImageInterface<Complex>& pbImage, 
 					    const VisBuffer& vb, Int bandID)
   {
     CoordinateSystem skyCS(pbImage.coordinates());
     IPosition skyShape(pbImage.shape());
-    //    TempImage<Complex> uvGrid(skyShape, skyCS);
-    TempImage<Complex> uvGrid;
-    regridAperture(skyCS, skyShape, uvGrid, vb, True, bandID);
-    fillPB(*(ap.aperture),pbImage);
-//       String name("calcAF.im");
-//       storeImg(name,pbImage);
-//       exit(0);
-  }
 
+    TempImage<Complex> uvGrid;
+    if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
+    regridAperture(skyCS, skyShape, uvGrid, vb, True, bandID);
+    /*
+    {
+      String name("pb.im");
+      storeImg(name,*(ap.aperture));
+    }
+    */
+    fillPB(*(ap.aperture),pbImage);
+  }
+  //--------------------------------------------------------------------------
+  // Write PB^2 to the pbImage
+  //
+  void VLACalcIlluminationConvFunc::applyPBSq(ImageInterface<Float>& pbImage,
+					      const VisBuffer& vb, const Vector<Float>& paList, 
+					      Int bandID)
+  {
+    CoordinateSystem skyCS(pbImage.coordinates());
+    IPosition skyShape(pbImage.shape());
+    TempImage<Complex> uvGrid;
+    if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
+    regridAperture(skyCS, skyShape, uvGrid, vb, paList, False, bandID);
+
+    fillPB(*(ap.aperture),pbImage, True);
+  }
+  void VLACalcIlluminationConvFunc::applyPBSq(ImageInterface<Float>& pbImage,
+					      const VisBuffer& vb, Int bandID)
+  {
+    CoordinateSystem skyCS(pbImage.coordinates());
+    IPosition skyShape(pbImage.shape());
+
+    TempImage<Complex> uvGrid;
+    if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
+    regridAperture(skyCS, skyShape, uvGrid, vb,False, bandID);
+    fillPB(*(ap.aperture),pbImage,True);
+  }
+  void VLACalcIlluminationConvFunc::applyPBSq(ImageInterface<Complex>& pbImage, 
+					      const VisBuffer& vb, Int bandID)
+  {
+    CoordinateSystem skyCS(pbImage.coordinates());
+    IPosition skyShape(pbImage.shape());
+
+    TempImage<Complex> uvGrid;
+    if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
+    regridAperture(skyCS, skyShape, uvGrid, vb, True, bandID);
+    fillPB(*(ap.aperture),pbImage, True);
+  }
+  //
+  //--------------------------------------------------------------------------
+  //
   void VLACalcIlluminationConvFunc::regridAperture(CoordinateSystem& skyCS,
 						   IPosition& skyShape,
 						   TempImage<Complex>& uvGrid,
@@ -129,11 +182,10 @@ namespace casa{
     AlwaysAssert(ap.band>=-1, AipsError);
     {
       Vector<Float> antPA = vb.feed_pa(timeValue);
-      //      pa = vb.feed_pa(timeValue)(0);
       pa = sum(antPA)/(antPA.nelements()-1);
     }
 
-    Float Freq = 1.365e9;
+    Float Freq;
     Vector<Double> chanFreq = vb.frequency();
 
     if (lastPA != pa)
@@ -143,14 +195,11 @@ namespace casa{
 	const ROMSSpWindowColumns& spwCol = vb.msColumns().spectralWindow();
 	ROArrayColumn<Double> chanfreq = spwCol.chanFreq();
 	ROScalarColumn<Double> reffreq = spwCol.refFrequency();
-	//    cout << "MS spectralWindow column = " << chanFreq.nrow() << " " << chanFreq.getColumn() << endl;
-	//     cout << "MS spectralWindow column: Chan Freq = " << chanFreq 
-	// 	 << " Ref. Freq. = " << reffreq.getColumn()
-	// 	 << " NRows = " << spwCol.nrow() << endl;
 	
-	Freq = sum(chanFreq)/chanFreq.nelements();
+	//	Freq = sum(chanFreq)/chanFreq.nelements();
+	Freq = max(chanfreq.getColumn());
+	ap.freq = Freq/1E9;
 	
-	//    IPosition imsize(ap.aperture->shape());
 	IPosition imsize(skyShape);
 	CoordinateSystem uvCoords = makeUVCoords(skyCoords,imsize);
 	
@@ -175,11 +224,8 @@ namespace casa{
  	ap.y0 = -(ap.ny/2)*ap.dy;
 
 	ap.pa=pa;
-	//	cout << "x0, dx, nx = " << ap.x0 << " " << ap.dx << " " << ap.nx << endl;
-	//	cout << "Calculating Aperture [PA=" << ap.pa*180/M_PI << "]...";
 	ap.aperture->set(0.0);
 	calculateAperture(&ap);
-	//	cout << "done" << endl;
 	
 	//  Make the aperture function = (1,0) - for testing
 	
@@ -236,18 +282,9 @@ namespace casa{
 		      else if (tndx(2)==1) ap.aperture->putAt(val*conj(Lval),tndx);
 		      else if (tndx(2)==2) ap.aperture->putAt(val*conj(Rval),tndx);
 		      else if (tndx(2)==3) ap.aperture->putAt(val*conj(Lval),tndx);
-		      //	ap.aperture->putAt(Complex(val.real(),0.0),tndx);
 		    }
 	  }
-	//    CoordinateSystem uvCoords;
 
-	//     Matrix<Double> xform(2,2);                   
-	//     xform = 0.0; xform.diagonal() = 1.0;     
-	//     DirectionCoordinate dirCoord(MDirection::J2000,
-	// 				 Projection(Projection::SIN),  
-	// 				 135*C::pi/180.0, 60*C::pi/180.0,
-	// 				 -1*C::pi/180.0, 1*C::pi/180,    
-	// 				 xform,52, 52); 
 	Vector<Int> poln(4);
 	poln(0) = Stokes::RR;
 	poln(1) = Stokes::RL;
@@ -261,38 +298,158 @@ namespace casa{
 	index = uvCoords.findCoordinate(Coordinate::SPECTRAL);
 	uvCoords.replaceCoordinate(spectralCoord,index);
 	
-	//    uvCoords.addCoordinate(polnCoord);
-	//    uvCoords.addCoordinate(spectralCoord);
-	
 	ap.aperture->setCoordinateInfo(uvCoords);
 
-//     	String fn="aperture.im";
-//     	storeImg(fn,*(ap.aperture));
-//    	exit(0);
 	//
 	// Now FT the re-gridded Fourier plane to get the primary beam.
 	//
-	//    ftAperture(uvGrid);
 	ftAperture(*(ap.aperture));
       }
-//     else
-//       cout << "Using pre-computed aperture for PA="<<ap.pa*180/M_PI <<endl;
   }
+  void VLACalcIlluminationConvFunc::regridAperture(CoordinateSystem& skyCS,
+						   IPosition& skyShape,
+						   TempImage<Complex>& uvGrid,
+						   const VisBuffer &vb,
+						   const Vector<Float>& paList,
+						   Bool doSquint, Int bandID)
+  {
+    CoordinateSystem skyCoords(skyCS);
+
+    Float pa, Freq;
+    if (bandID != -1) ap.band = (BeamCalcBandCode)bandID;
+    AlwaysAssert(ap.band>=-1, AipsError);
+    Vector<Double> chanFreq = vb.frequency();
+
+    const ROMSSpWindowColumns& spwCol = vb.msColumns().spectralWindow();
+    ROArrayColumn<Double> chanfreq = spwCol.chanFreq();
+    ROScalarColumn<Double> reffreq = spwCol.refFrequency();
+    //    Freq = sum(chanFreq)/chanFreq.nelements();
+
+    Freq = max(chanfreq.getColumn());
+    IPosition imsize(skyShape);
+    CoordinateSystem uvCoords = makeUVCoords(skyCoords,imsize);
+	
+    Int index = uvCoords.findCoordinate(Coordinate::LINEAR);
+    LinearCoordinate lc=uvCoords.linearCoordinate(index);
+    Vector<Double> incr = lc.increment();
+    Double Lambda = C::c/Freq;
+    ap.freq = Freq/1E9;
+	
+    ap.nx = skyShape(0); ap.ny = skyShape(1);
+    IPosition apertureShape(ap.aperture->shape());
+    apertureShape(0) = ap.nx;  apertureShape(1) = ap.ny;
+    ap.aperture->resize(apertureShape);
+
+    TempImage<Complex> tmpAperture;tmpAperture.resize(apertureShape);
+    if (maximumCacheSize() > 0) tmpAperture.setMaximumCacheSize(maximumCacheSize());
+
+    ap.dx = abs(incr(0)*Lambda); ap.dy = abs(incr(1)*Lambda);
+    //	cout << ap.dx << " " << incr(0) << endl;
+    //	ap.x0 = -(25.0/(2*ap.dx)+1)*ap.dx; ap.y0 = -(25.0/(2*ap.dy)+1)*ap.dy;
+    // Following 3 lines go with the ANT tag in BeamCalc.cc
+    //	Double antRadius=BeamCalcGeometryDefaults[ap.band].Rant;
+    //	ap.x0 = -(antRadius/(ap.dx)+1)*ap.dx; 
+    //	ap.y0 = -(antRadius/(ap.dy)+1)*ap.dy;
+    // Following 2 lines go with the PIX tag in BeamCalc.cc
+    ap.x0 = -(ap.nx/2)*ap.dx; 
+    ap.y0 = -(ap.ny/2)*ap.dy;
+
+    //
+    // Accumulate apertures for a list of PA
+    //
+    for(uInt ipa=0;ipa<paList.nelements();ipa++)
+      {
+	pa = paList[ipa];
+
+	ap.pa=pa;
+	ap.aperture->set(0.0);
+	calculateAperture(&ap);
+	//
+	// Set the phase of the aperture function to zero if doSquint==F
+	// Poln. axis indices
+        // 0: RR, 1:RL, 2:LR, 3:LL
+	// This is electic field. 0=> Poln R, 
+	//                        1=> Leakage of R->L
+	//                        2=> Leakage of L->R
+	//                        3=> Poln L
+	//
+	// The squint is removed in the following code using
+	// honest-to-god pixel indexing. If this is not the most
+	// efficient method of doing this in AIPS++ (i.e. instead use
+	// slices etc.), then this cost will show up in making the
+	// average PB.  Since this goes over each pixel of a full
+	// stokes (poln. really) complex image, look here (also) for
+	// optimization (if required).
+	//
+	if (!doSquint)
+	  {
+	    IPosition PolnRIndex(4,0,0,0,0), PolnLIndex(4,0,0,3,0);
+	    IPosition tndx(4,0,0,0,0);
+	    for(tndx(3)=0;tndx(3)<apertureShape(3);tndx(3)++)   // The freq. axis
+	      for(tndx(2)=0;tndx(2)<apertureShape(2);tndx(2)++) // The Poln. axis
+		for(tndx(1)=0;tndx(1)<apertureShape(1);tndx(1)++)   // The spatial
+		  for(tndx(0)=0;tndx(0)<apertureShape(0);tndx(0)++) // axis.
+		    {
+		      PolnRIndex(0)=PolnLIndex(0)=tndx(0);
+		      PolnRIndex(1)=PolnLIndex(1)=tndx(1);
+		      Complex val, Rval, Lval;
+		      Float phase;
+		      val = ap.aperture->getAt(tndx);
+		      Rval = ap.aperture->getAt(PolnRIndex);
+		      Lval = ap.aperture->getAt(PolnLIndex);
+		      phase = arg(Rval); Rval=Complex(cos(phase),sin(phase));
+		      phase = arg(Lval); Lval=Complex(cos(phase),sin(phase));
+		      
+		      if      (tndx(2)==0) ap.aperture->putAt(val*conj(Rval),tndx);
+		      else if (tndx(2)==1) ap.aperture->putAt(val*conj(Lval),tndx);
+		      else if (tndx(2)==2) ap.aperture->putAt(val*conj(Rval),tndx);
+		      else if (tndx(2)==3) ap.aperture->putAt(val*conj(Lval),tndx);
+		    }
+	  }
+	tmpAperture += *(ap.aperture);
+      }
+    *(ap.aperture) = tmpAperture;
+    tmpAperture.resize(IPosition(1,1));//Release temp. store.
+    Vector<Int> poln(4);
+    poln(0) = Stokes::RR;
+    poln(1) = Stokes::RL;
+    poln(2) = Stokes::LR;
+    poln(3) = Stokes::LL;
+    StokesCoordinate polnCoord(poln);
+    SpectralCoordinate spectralCoord(MFrequency::TOPO,Freq,1.0,0.0);
+    //    uvCoords.addCoordinate(dirCoord);
+    index = uvCoords.findCoordinate(Coordinate::STOKES);
+    uvCoords.replaceCoordinate(polnCoord,index);
+    index = uvCoords.findCoordinate(Coordinate::SPECTRAL);
+    uvCoords.replaceCoordinate(spectralCoord,index);
+
+    ap.aperture->setCoordinateInfo(uvCoords);
+    
+    ftAperture(*(ap.aperture));
+  }
+
   
   
   void VLACalcIlluminationConvFunc::fillPB(ImageInterface<Complex>& inImg,
-					   ImageInterface<Complex>& outImg)
+					   ImageInterface<Complex>& outImg,
+					   Bool Square)
   {
     IPosition imsize(outImg.shape());
     IPosition ndx(outImg.shape());
     IPosition inShape(inImg.shape()),inNdx;
-    
     Vector<Int> inStokes,outStokes;
-    Int index,s;
+    Int index,s,index1;
     index = inImg.coordinates().findCoordinate(Coordinate::STOKES);
     inStokes = inImg.coordinates().stokesCoordinate(index).stokes();
     index = outImg.coordinates().findCoordinate(Coordinate::STOKES);
     outStokes = outImg.coordinates().stokesCoordinate(index).stokes();
+    index = outImg.coordinates().findCoordinate(Coordinate::SPECTRAL);
+    index1 = inImg.coordinates().findCoordinate(Coordinate::SPECTRAL);
+    SpectralCoordinate inSpectralCoords = inImg.coordinates().spectralCoordinate(index1);
+    CoordinateSystem outCS = outImg.coordinates();
+    outCS.replaceCoordinate(inSpectralCoords,index);
+    outImg.setCoordinateInfo(outCS);
+
     ndx(3)=0;
     for(ndx(2)=0;ndx(2)<imsize(2);ndx(2)++) // The poln axes
       {
@@ -304,13 +461,15 @@ namespace casa{
 	      Complex cval;
 	      inNdx = ndx; inNdx(2)=s;
 	      cval = inImg.getAt(inNdx);
+	      if (Square) cval = cval*conj(cval);
 	      outImg.putAt(cval*outImg.getAt(ndx),ndx);
 	    }
       }
   }
   
   void VLACalcIlluminationConvFunc::fillPB(ImageInterface<Complex>& inImg,
-					   ImageInterface<Float>& outImg)
+					   ImageInterface<Float>& outImg,
+					   Bool Square)
   {
     IPosition imsize(outImg.shape());
     IPosition ndx(outImg.shape());
@@ -323,18 +482,46 @@ namespace casa{
     index = outImg.coordinates().findCoordinate(Coordinate::STOKES);
     outStokes = outImg.coordinates().stokesCoordinate(index).stokes();
     ndx(3)=0;
+
     for(ndx(2)=0;ndx(2)<imsize(2);ndx(2)++) // The poln axes
       {
-	for(s=0;s<inShape(2);s++) if (inStokes(s) == outStokes(ndx(2))) break;
+	if (outStokes(ndx(2)) == Stokes::I)
+	  {
+	    //
+	    // Fill the outImg wiht (inImg(RR)+inImage(LL))/2 
+	    //
+	    for(ndx(0)=0;ndx(0)<imsize(0);ndx(0)++)
+	      for(ndx(1)=0;ndx(1)<imsize(1);ndx(1)++)
+		{
+		  Complex cval;
+		  inNdx = ndx; 
+		  inNdx(2)=0; cval = inImg.getAt(inNdx);
+		  inNdx(2)=3; cval += inImg.getAt(inNdx);
+		  cval/2;
+		  
+		  if (Square) cval = cval*conj(cval);
+		  
+		  outImg.putAt(abs(cval*outImg.getAt(ndx)),ndx);
+		}
+	  }
+	else if ((outStokes(ndx(2)) == Stokes::RR) ||
+		 (outStokes(ndx(2)) == Stokes::RL) ||
+		 (outStokes(ndx(2)) == Stokes::LR) ||
+		 (outStokes(ndx(2)) == Stokes::LL))
+	  {
+	    for(s=0;s<inShape(2);s++) if (inStokes(s) == outStokes(ndx(2))) break;
 	
-	for(ndx(0)=0;ndx(0)<imsize(0);ndx(0)++)
-	  for(ndx(1)=0;ndx(1)<imsize(1);ndx(1)++)
-	    {
-	      Complex cval;
-	      inNdx = ndx; inNdx(2)=s;
-	      cval = inImg.getAt(inNdx);
-	      outImg.putAt(abs(cval*outImg.getAt(ndx)),ndx);
-	    }
+	    for(ndx(0)=0;ndx(0)<imsize(0);ndx(0)++)
+	      for(ndx(1)=0;ndx(1)<imsize(1);ndx(1)++)
+		{
+		  Complex cval;
+		  inNdx = ndx; inNdx(2)=s;
+		  cval = inImg.getAt(inNdx);
+		  if (Square) cval = cval*conj(cval);
+		  outImg.putAt(abs(cval*outImg.getAt(ndx)),ndx);
+		}
+	  }
+	else throw(AipsError("Unsupported Stokes found in VLACalcIlluminationConvFunc::fillPB."));
       }
   }
   
@@ -379,33 +566,10 @@ namespace casa{
     // Make SkyJones
     //
     LatticeFFT::cfft2d(uvgrid);
-//     TempImage<Complex> tmp(uvgrid);
-//     IPosition shape(uvgrid.shape());
-//     IPosition ndx(shape),ndx1,ndx2,ndx3;
-//     ndx1 = ndx2 = ndx3 = ndx;
-//     ndx(3)=ndx1(3)=ndx2(3) = ndx3(3) = 0;
-//     ndx(2)=0;ndx1(2)=0; ndx2(2) = 1; ndx3(2)=1;
-//     for(ndx(0)=ndx1(0)=0;ndx(0)<shape(0);ndx(0)++,ndx1(0)++)
-//       for(ndx(1)=ndx1(1)=0;ndx(1)<shape(1);ndx(1)++,ndx1(1)++)
-// 	tmp(ndx) = uvgrid(ndx)*conjg(uvgrid(ndx1);
-//     for(ndx2(0)=ndx3(0)=0;ndx2(0)<shape(0);ndx2(0)++,ndx3(0)++)
-//       for(ndx2(1)=ndx3(1)=0;ndx2(1)<shape(1);ndx2(1)++,ndx3(1)++)
-// 	tmp(ndx2) = tmp(ndx2) uvgrid(ndx)*conjg(uvgrid(ndx1);
-
-//      String fn("Jones.im");
-//      storeImg(fn,uvgrid);
-//      exit(0);
     //
     // Now make SkyMuller
     //
     skyMuller(uvgrid);
-//      String fn("Muller.im");
-//      storeImg(fn,uvgrid);
-//      exit(0);
-//     Array<Complex> buf=uvgrid.get();
-//     buf *= (buf);
-//     uvgrid.put(buf);
-//    exit(0);    
   }
   
   void VLACalcIlluminationConvFunc::store(String& fileName){storeImg(fileName,convFunc_p);}
@@ -445,7 +609,6 @@ namespace casa{
       IPosition newShape(convFunc_p.shape());
       newShape(0)=newShape(1)=200;
       PagedImage<Float> tmp(newShape, convFunc_p.coordinates(), Name);
-      //    PagedImage<Float> tmp(convFunc_p.shape(), FTCoords, Name);
       LatticeExpr<Float> le(real(convFunc_p));
       tmp.copyData(le);
     }
@@ -456,13 +619,13 @@ namespace casa{
       IPosition newShape(convFunc_p.shape());
       newShape(0)=newShape(1)=200;
       PagedImage<Float> tmp(newShape, convFunc_p.coordinates(), Name);
-      //    PagedImage<Float> tmp(convFunc_p.shape(), FTCoords, Name);
       LatticeExpr<Float> le(imag(convFunc_p));
       tmp.copyData(le);
     }
   }
   void VLACalcIlluminationConvFunc::loadFromImage(String& fileName)
   {
+    throw(AipsError("VLACalcIlluminationConvFunc::loadFromImage() not yet supported."));
   };
 
   void VLACalcIlluminationConvFunc::skyMuller(ImageInterface<Complex>& skyJones)
@@ -487,9 +650,9 @@ namespace casa{
 	for(t(0)=0;t(0)<shape(0);t(0)++)
 	  if (abs(buf(t)) > peak) peak = abs(buf(t));
     if (peak > 1E-8)
-      for(t(3)=0;t(3)<shape(3);t(3)++) // Freq axis
-	for(t(2)=0;t(2)<shape(2);t(2)++) // Poln axis
-	  for(t(1)=0;t(1)<shape(1);t(1)++) // y axis
+      for(t(3)=0;t(3)<shape(3);t(3)++)       // Freq axis
+	for(t(2)=0;t(2)<shape(2);t(2)++)     // Poln axis
+	  for(t(1)=0;t(1)<shape(1);t(1)++)   // y axis
 	    for(t(0)=0;t(0)<shape(0);t(0)++) // X axis
 	      buf(t) = buf(t)/peak;
 
@@ -559,10 +722,13 @@ namespace casa{
 	  return BeamCalc_VLA_K;
 	else if ((freq >=40.0E9) && (freq <=50.0E9))
 	  return BeamCalc_VLA_Q;
+	else if ((freq >=100E6) && (freq <=300E6))
+	  return BeamCalc_VLA_4;
       }
-    else if (telescopeName=="EVLA")
+    else 
+      if (telescopeName=="EVLA")
       {
-	if ((freq >=1.0E9) && (freq <=2.0E9))
+	if ((freq >=0.6E9) && (freq <=2.0E9))
 	  return BeamCalc_EVLA_L;
 	else if ((freq >=2.0E9) && (freq <=4.0E9))
 	  return BeamCalc_EVLA_S;
@@ -575,7 +741,7 @@ namespace casa{
 	else if ((freq >=18.0E9) && (freq <=26.5E9))
 	  return BeamCalc_EVLA_K;
 	else if ((freq >=26.5E9) && (freq <=40.8E9))
-	  return BeamCalc_EVLA_K;
+	  return BeamCalc_EVLA_A;
 	else if ((freq >=4.0E9) && (freq <=50.0E9))
 	  return BeamCalc_EVLA_Q;
       }

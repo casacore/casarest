@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SolvableVJMBuf.h,v 19.5 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_SOLVABLEVJMBUF_H
 #define CALIBRATION_SOLVABLEVJMBUF_H
@@ -104,6 +104,8 @@ class SolvableVisJonesMBuf : public TimeVarVisJonesMBuf
   virtual Array<Bool>& solnOk();
   virtual Array<Float>& fit();
   virtual Array<Float>& fitWgt();
+  virtual Array<Bool>& flag();
+  virtual Array<Float>& snr();
 
  protected:
   // Factory method to create a columns accessor object of the appropriate type
@@ -140,6 +142,8 @@ class SolvableVisJonesMBuf : public TimeVarVisJonesMBuf
   Array<Bool> solnOk_p;
   Array<Float> fit_p;
   Array<Float> fitWgt_p;
+  Array<Bool> flag_p;
+  Array<Float> snr_p;
 
   // Buffer field status flags
   Bool totalSolnOkOK_p;
@@ -148,6 +152,8 @@ class SolvableVisJonesMBuf : public TimeVarVisJonesMBuf
   Bool solnOkOK_p;
   Bool fitOK_p;
   Bool fitWgtOK_p;
+  Bool flagOK_p;
+  Bool snrOK_p;
 };
 
 // <summary> 

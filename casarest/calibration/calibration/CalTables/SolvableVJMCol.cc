@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SolvableVJMCol.cc,v 19.3 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/SolvableVJMCol.h>
@@ -50,6 +50,8 @@ ROSolvableVisJonesMCol::ROSolvableVisJonesMCol (const SolvableVisJonesTable&
   attach (svjTable, solnOk_p, MSC::SOLUTION_OK);
   attach (svjTable, fit_p, MSC::FIT);
   attach (svjTable, fitWgt_p, MSC::FIT_WEIGHT);
+  attach (svjTable, flag_p, MSC::FLAG);
+  attach (svjTable, snr_p, MSC::SNR);
 };
 
 //----------------------------------------------------------------------------
@@ -71,6 +73,8 @@ SolvableVisJonesMCol::SolvableVisJonesMCol (SolvableVisJonesTable& svjTable) :
   attach (svjTable, solnOk_p, MSC::SOLUTION_OK);
   attach (svjTable, fit_p, MSC::FIT);
   attach (svjTable, fitWgt_p, MSC::FIT_WEIGHT);
+  attach (svjTable, flag_p, MSC::FLAG);
+  attach (svjTable, snr_p, MSC::SNR);
 };
 
 //----------------------------------------------------------------------------

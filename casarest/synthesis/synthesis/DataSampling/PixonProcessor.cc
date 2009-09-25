@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: PixonProcessor.cc,v 19.3 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #include <synthesis/DataSampling/PixonProcessor.h>
 #include <synthesis/IDL/IDL.h>

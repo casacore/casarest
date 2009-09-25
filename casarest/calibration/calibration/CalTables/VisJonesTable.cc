@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: VisJonesTable.cc,v 19.3 2004/11/30 17:50:13 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/VisJonesTable.h>
@@ -32,7 +32,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 //----------------------------------------------------------------------------
 
-VisJonesTable::VisJonesTable() : itsVisJonesDesc(), CalTable()
+VisJonesTable::VisJonesTable() :  CalTable(), itsVisJonesDesc()
 {
 // Default null constructor for calibration table; do nothing for now
 // Output to private data:

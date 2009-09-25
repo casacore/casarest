@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath1D.h,v 19.7 2004/11/30 17:50:49 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PBMATH1D_H
 #define SYNTHESIS_PBMATH1D_H
@@ -38,7 +38,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 class Table;
 class SkyComponent;
 class ImageRegion;
-
+class CoordinateSystem;
 
 // <summary> base class for 1D PBMath objects </summary>
 
@@ -198,6 +198,9 @@ public:
 		       const SkyJones::SizeType sizeType);
 
 
+  virtual Int support(const CoordinateSystem& cs);
+
+
 protected:
 
   // Protect default constructor: this will do you no good
@@ -230,12 +233,15 @@ protected:
 				 Float cutoff,
 				 Bool forward); 
 
+
   ImageInterface<Float>& apply(const ImageInterface<Float>& in,
 			       ImageInterface<Float>& out,
 			       const MDirection& sp,
 			       const Quantity parAngle,	      
 			       const BeamSquint::SquintType doSquint,
-			       Float cutoff);
+			       Float cutoff, 
+			       const Int ipower=4); //only 2 values allowed 2 and 4
+                                              //PB and PB^2
 
   SkyComponent& apply(SkyComponent& in,
 		      SkyComponent& out,

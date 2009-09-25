@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SimpleComponentFTMachine.h,v 19.5 2004/11/30 17:50:56 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_SIMPLECOMPONENTFTMACHINE_H
 #define SYNTHESIS_SIMPLECOMPONENTFTMACHINE_H

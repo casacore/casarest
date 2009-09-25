@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: GJonesMBuf.cc,v 19.4 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/GJonesMBuf.h>
@@ -250,14 +250,14 @@ Bool GJonesPolyMBuf::fillMatchingRows (const Vector<Int>& matchingRows,
 
     // Resize the coefficient arrays
     IPosition ampCoeffShape = polyCoeffAmp().shape();
-    if (sPolyMode.contains("AMP")  && ampCoeffShape(3) != sNPolyAmp) {
-      ampCoeffShape(3) = sNPolyAmp;
+    if (sPolyMode.contains("AMP")  && ampCoeffShape(3) != 2*sNPolyAmp) {
+      ampCoeffShape(3) = 2*sNPolyAmp;
       polyCoeffAmp().resize(ampCoeffShape);
     };
     IPosition phaseCoeffShape = polyCoeffPhase().shape();
-    if (sPolyMode.contains("PHAS") && phaseCoeffShape(3) != sNPolyPhase) {
+    if (sPolyMode.contains("PHAS") && phaseCoeffShape(3) != 2*sNPolyPhase) {
       IPosition phaseCoeffShape = polyCoeffPhase().shape();
-      phaseCoeffShape(3) = sNPolyPhase;
+      phaseCoeffShape(3) = 2*sNPolyPhase;
       polyCoeffPhase().resize(phaseCoeffShape);
       polyCoeffPhase() = 0;
     };
@@ -312,7 +312,7 @@ Bool GJonesPolyMBuf::fillMatchingRows (const Vector<Int>& matchingRows,
 	      refAnt()(ipos4) = sRefAnt;
 	      
 	      // Phase polynomial coefficients
-	      for (Int coeff=0; coeff < sNPolyPhase; coeff++) {
+	      for (Int coeff=0; coeff < 2*sNPolyPhase; coeff++) {
 		IPosition ipos5(5, recep, spw, chan, coeff, row);
 		// Multiply exisiting coefficients by the phase scale factor
 		polyCoeffPhase()(ipos5) *= phaseScaleFactor;
@@ -322,7 +322,7 @@ Bool GJonesPolyMBuf::fillMatchingRows (const Vector<Int>& matchingRows,
 
 	    if (sPolyMode.contains("AMP")) {
 	      // Amplitude polynomial coefficients
-	      for (Int coeff=0; coeff < sNPolyAmp; coeff++) {
+	      for (Int coeff=0; coeff < 2*sNPolyAmp; coeff++) {
 		IPosition ipos5(5, recep, spw, chan, coeff, row);
 		polyCoeffAmp()(ipos5) = sPolyCoeffAmp(coeff);
 	      };

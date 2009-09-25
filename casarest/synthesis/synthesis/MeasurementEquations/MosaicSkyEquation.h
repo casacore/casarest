@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: MosaicSkyEquation.h,v 19.6 2006/08/31 23:34:30 gvandiep Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_MOSAICSKYEQUATION_H
 #define SYNTHESIS_MOSAICSKYEQUATION_H
@@ -36,7 +36,7 @@
 #include <casa/Logging/LogSink.h>
 #include <synthesis/MeasurementComponents/FTMachine.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
-#include <images/Images/ImageRegion.h>
+#include <images/Regions/ImageRegion.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

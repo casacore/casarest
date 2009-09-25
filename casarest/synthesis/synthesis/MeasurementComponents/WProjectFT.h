@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: WProjectFT.h,v 1.11 2005/09/06 20:12:09 kgolap Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_WPROJECTFT_H
 #define SYNTHESIS_WPROJECTFT_H
@@ -53,7 +53,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 template <class K, class V> class SimpleOrderedMap;
 template <class T> class PtrBlock;
-
+template <class T> class CountedPtr;
+class   WPConvFunc; 
 
 // <summary>  An FTMachine for Gridded Fourier transforms </summary>
 
@@ -135,11 +136,15 @@ public:
   // size of the tile used in gridding (cannot be less than
   // 12, 16 works in most cases). 
   // <group>
-  WProjectFT(MeasurementSet& ms,
+  WProjectFT(
 	   Int nFacets, Long cachesize, Int tilesize=16, 
 	   Bool usezero=True);
-
-  WProjectFT(MeasurementSet& ms,
+  //Constructor without tangent direction
+  WProjectFT(Int nFacets, MPosition mLocation,
+	     Long cachesize, Int tilesize=16, 
+	     Bool usezero=True, Float padding=1.0);
+  //Deprecated no longer need ms in constructor
+  WProjectFT(
 	     Int nFacets, MDirection mTangent, MPosition mLocation,
 	     Long cachesize, Int tilesize=16, 
 	   Bool usezero=True, Float padding=1.0);
@@ -161,11 +166,7 @@ public:
   void initializeToVis(ImageInterface<Complex>& image,
 		       const VisBuffer& vb);
   // This version returns the gridded vis...should be used in conjunction 
-  // with the version of 'get' that needs the gridded visdata 
-  void initializeToVis(ImageInterface<Complex>& image,
-		       const VisBuffer& vb, Array<Complex>& griddedVis,
-		       Vector<Double>& uvscale);
-
+  
   // Finalize transform to Visibility plane: flushes the image
   // cache and shows statistics if it is being used.
   void finalizeToVis();
@@ -182,17 +183,11 @@ public:
   // Get actual coherence from grid by degridding
   void get(VisBuffer& vb, Int row=-1);
 
-  // Get the coherence from grid return it in the degrid 
-  // is used especially when scratch columns are not 
-  // present in ms.
-  void get(VisBuffer& vb, Cube<Complex>& degrid, 
-		   Array<Complex>& griddedVis, Vector<Double>& scale, 
-		   Int row=-1);
-
 
   // Put coherence to grid by gridding.
   void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False,
-	   FTMachine::Type type=FTMachine::OBSERVED);
+	   FTMachine::Type type=FTMachine::OBSERVED,
+	   const Matrix<Float>& wgt=Matrix<Float>(0,0));
 
   // Make the entire image
   void makeImage(FTMachine::Type type,
@@ -220,6 +215,13 @@ public:
 
   String name();
 
+  // Copy convolution function etc to another FT machine
+  // necessary if ft and ift are distinct but can share convfunctions
+
+  void setConvFunc(CountedPtr<WPConvFunc>& pbconvFunc);
+  CountedPtr<WPConvFunc>& getConvFunc();
+
+
 protected:
 
   // Padding in FFT
@@ -230,8 +232,6 @@ protected:
   // Find the convolution function
   void findConvFunction(const ImageInterface<Complex>& image,
 			const VisBuffer& vb);
-
-  MeasurementSet* ms_p;
 
   Int nWPlanes_p;
 
@@ -260,11 +260,11 @@ protected:
   Bool isTiled;
 
   // Array lattice
-  Lattice<Complex> * arrayLattice;
+  CountedPtr<Lattice<Complex> > arrayLattice;
 
   // Lattice. For non-tiled gridding, this will point to arrayLattice,
   //  whereas for tiled gridding, this points to the image
-  Lattice<Complex>* lattice;
+  CountedPtr<Lattice<Complex> > lattice;
 
   Float maxAbsData;
 
@@ -278,11 +278,6 @@ protected:
   // Array for non-tiled gridding
   Array<Complex> griddedData;
 
-  // Pointing columns
-  MSPointingColumns* mspc;
-
-  // Antenna columns
-  MSAntennaColumns* msac;
 
   DirectionCoordinate directionCoord;
 
@@ -302,12 +297,8 @@ protected:
   Int convSize;
   Vector<Int> convSupport;
 
-  PtrBlock < Cube<Complex> *> convFunctions_p;
-  PtrBlock < Vector<Int> *> convSupportBlock_p;
-  SimpleOrderedMap <String, Int> convFunctionMap_p;
   Vector<Int> convSizes_p;
 
-  Int actualConvIndex_p;
 
   Int wConvSize;
 
@@ -318,9 +309,9 @@ protected:
 
   Bool getXYPos(const VisBuffer& vb, Int row);
 
-  Bool checkCenterPix(const ImageInterface<Complex>& image);
-
   String machineName_p;
+
+  CountedPtr<WPConvFunc> wpConvFunc_p;
 
 };
 

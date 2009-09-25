@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: Applicator.cc,v 19.4 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #include <casa/Utilities/Assert.h>
 #include <synthesis/Parallel/Applicator.h>
@@ -42,8 +42,8 @@
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 Applicator::Applicator() : comm(0), algorithmIds(0),
-  knownAlgorithms((Algorithm*)0), usedAllThreads(False), serial(True),
-  nProcs(0), procStatus(0), LastID(101)
+  knownAlgorithms((Algorithm*)0), LastID(101), usedAllThreads(False),
+  serial(True), nProcs(0), procStatus(0)
 {
 // Default constructor; requires later init().
 }

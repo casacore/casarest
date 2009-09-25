@@ -2,16 +2,47 @@
 #include <casa/Exceptions/Error.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <casa/Quanta/Quantum.h>
+#include <ms/MeasurementSets/MSColumns.h>
+#include <ms/MeasurementSets/MSRange.h>
+#include <images/Images/ImageInterface.h>
+#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casa/Arrays/Array.h>
+#include <casa/Logging/LogIO.h>
 
 #ifndef SYNTHESIS_UTILS_H
 #define SYNTHESIS_UTILS_H
 
 namespace casa
 {
+  Int getPhaseCenter(MeasurementSet& ms, MDirection& dir0, Int whichField=-1);
+  Bool findMaxAbsLattice(const ImageInterface<Float>& lattice,
+			 Float& maxAbs,IPosition& posMaxAbs);
+  Bool findMaxAbsLattice(const ImageInterface<Float>& masklat,
+			 const Lattice<Float>& lattice,
+			 Float& maxAbs,IPosition& posMaxAbs, 
+			 Bool flip=False);
   Double getCurrentTimeStamp(const VisBuffer& vb);
   void makeStokesAxis(Int npol_p, Vector<String>& polType, Vector<Int>& whichStokes);
   Double getPA(const VisBuffer& vb);
+  void storeImg(String& fileName,ImageInterface<Complex>& theImg);
+  void storeImg(String& fileName,ImageInterface<Float>& theImg);
+  Bool isVBNaN(const VisBuffer& vb, String& mesg);
+  namespace SynthesisUtils
+  {
+    void rotateComplexArray(LogIO& logIO, Array<Complex>& inArray, 
+			    CoordinateSystem& inCS,
+			    Array<Complex>& outArray, 
+			    Double dAngleRad, 
+			    String interpMathod=String("CUBIC"));
+    void findLatticeMax(const ImageInterface<Complex>& lattice,
+			Vector<Float>& maxAbs,
+			Vector<IPosition>& posMaxAbs) ;
+    void findLatticeMax(const ImageInterface<Float>& lattice,
+			Vector<Float>& maxAbs,
+			Vector<IPosition>& posMaxAbs) ;
+  }
 
+  void getHADec(MeasurementSet& ms, const VisBuffer& vb, Double &HA, Double& RA, Double& Dec);
   /////////////////////////////////////////////////////////////////////////////
   // 
   // An interface class to detect changes in the VisBuffer

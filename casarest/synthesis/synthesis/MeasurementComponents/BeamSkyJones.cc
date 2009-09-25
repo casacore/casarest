@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: BeamSkyJones.cc,v 19.15 2006/04/04 02:03:33 mvoronko Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <casa/BasicSL/Complex.h>
@@ -49,7 +49,7 @@
 #include <msvis/MSVis/VisBuffer.h>
 
 #include <images/Images/ImageInterface.h>
-#include <images/Images/ImageRegion.h>
+#include <images/Regions/ImageRegion.h>
 
 #include <casa/Utilities/Assert.h>
 
@@ -81,6 +81,7 @@ BeamSkyJones::BeamSkyJones(MeasurementSet& ms,
      
 {  
   reset();
+  setThreshold(0.01); // use this in apply to determine level of cutoff
 };
 
 void BeamSkyJones::reset()
@@ -164,7 +165,8 @@ Bool BeamSkyJones::changed(const VisBuffer& vb, Int row)
   
   updatePBMathIndices(vb,row); // lastUpdateIndex?_p are now valid
 
-  if (!hasBeenApplied) return True; // we shouldn't have such a flag in
+  //Unnecessary ...i believe and causes issues with PSF making
+  //if (!hasBeenApplied) return True; // we shouldn't have such a flag in
                  // a well designed code
 
   if (!lastParallacticAngles_p.nelements() && myPBMaths_p.nelements())
@@ -208,7 +210,7 @@ Bool BeamSkyJones::directionsCloseEnough(const MDirection &dir1,
       sep=dir1.getValue().separation(MDirection::Convert(dir2.getRef(),
               dir1.getRef())(dir2).getValue());
   else sep=dir1.getValue().separation(dir2.getValue());
-  return sep<skyPositionThreshold_p;
+  return (fabs(sep)<skyPositionThreshold_p);
 }
 
 // Does this BeamSkyJones change during this buffer, starting from
@@ -280,12 +282,15 @@ void BeamSkyJones::update(const VisBuffer& vb, Int row)
       !directionsCloseEnough(pointingDirection1_p,pointingDirection2_p)) {
         // the case is inhomogeneous: pointing directions are slightly
 	// different at different antennae
-	LogIO os;
+    //This check is an overkill for standard arrays...need to find a better one
+
+    /*	LogIO os;
 	os << LogIO::WARN << LogOrigin("BeamSkyJones","update")
 	   << "The pointing directions differ for different stations."
 	   << LogIO::POST << LogIO::WARN << LogOrigin("BeamSkyJones","update")
 	   << "This case is not handled correctly. Continuing anyway."<<LogIO::POST;
 
+    */
 	// we could, in principle, clone a PBMath object for one of the
 	// antennae and rebuild lastDirections_p.
 	// For now, the value for the second antenna will be used
@@ -303,18 +308,19 @@ void BeamSkyJones::update(const VisBuffer& vb, Int row)
   Float feed2_pa=vb.feed2_pa()[row];  
 
   if (lastUpdateIndex1_p == lastUpdateIndex2_p &&
-      abs(feed1_pa-feed2_pa)>parallacticAngleIncrement_p) {
-         // the array is not compact: position angles are significantly
-	 // different at different antennae
-	 LogIO os;
-	 os << LogIO::WARN << LogOrigin("BeamSkyJones","update")
-	    << "The array is not compact, position angles differ for different stations."
-	    << LogIO::POST << LogIO::WARN << LogOrigin("BeamSkyJones","update")
-	    << "Primary beams are not correctly handled if they are asymmetric. Continuing anyway."<<LogIO::POST;
-	 // we could, in principle, clone a PBMath object for one of the
-	 // antennae and rebuild lastParallacticAngles_p.
-	 // For now, the value for the second antenna will be used
-      }
+      abs(abs(feed1_pa-feed2_pa)-parallacticAngleIncrement_p)> 1e-5 ) {
+      // the array is not compact: position angles are significantly
+      // different at different antennae
+      LogIO os;
+      //Commenting out this message...more pest than  useful to have it at this low level
+      //    os << LogIO::WARN << LogOrigin("BeamSkyJones","update")
+      //       << "The array is not compact, position angles differ for different stations."
+      //     << LogIO::POST << LogIO::WARN << LogOrigin("BeamSkyJones","update")
+      //      << "Primary beams are not correctly handled if they are asymmetric. Continuing anyway."<<LogIO::POST;
+    // we could, in principle, clone a PBMath object for one of the
+    // antennae and rebuild lastParallacticAngles_p.
+    // For now, the value for the second antenna will be used
+  }
   if (lastUpdateIndex1_p!=-1)
       lastParallacticAngles_p[lastUpdateIndex1_p]=feed1_pa;
   if (lastUpdateIndex2_p!=-1)
@@ -348,12 +354,34 @@ BeamSkyJones::apply(const ImageInterface<Complex>& in,
     if (getPBMath(lastUpdateIndex1_p, myPBMath)) 
       return myPBMath.applyPB(in, out, lastDirections_p[lastUpdateIndex1_p], 
 	      Quantity(lastParallacticAngles_p[lastUpdateIndex1_p],"rad"),
-              doSquint_p, False, Float(0.01), forward);
+              doSquint_p, False, threshold(), forward);
     else 
       throw(AipsError("BeamSkyJones::apply(Image...)!!! - PBMath not found"));
   }
 }; 
 
+
+ImageInterface<Float>& 
+BeamSkyJones::apply(const ImageInterface<Float>& in,
+			  ImageInterface<Float>& out,
+			  const VisBuffer& vb, Int row){
+  if(changed(vb, row)) update(vb, row);
+  hasBeenApplied=True;
+  // now lastUpdateIndex?_p are valid
+  
+  if (lastUpdateIndex1_p!=lastUpdateIndex2_p) 
+    throw(AipsError("BeamSkyJones::apply(Image...) - can only treat homogeneous PB case"));
+  else {
+    PBMath myPBMath; 
+    if (getPBMath(lastUpdateIndex1_p, myPBMath)) 
+      return myPBMath.applyPB(in, out, lastDirections_p[lastUpdateIndex1_p], 
+			      Quantity(lastParallacticAngles_p[lastUpdateIndex1_p],"rad"),
+			      doSquint_p, threshold());
+    else 
+      throw(AipsError("BeamSkyJones::apply(Image...)!!! - PBMath not found"));
+  }
+
+}
 ImageInterface<Float>& 
 BeamSkyJones::applySquare(const ImageInterface<Float>& in,
 			  ImageInterface<Float>& out,
@@ -373,7 +401,7 @@ BeamSkyJones::applySquare(const ImageInterface<Float>& in,
     PBMath myPBMath;
     if (getPBMath(lastUpdateIndex1_p, myPBMath)) 
       return myPBMath.applyPB2(in, out, lastDirections_p[lastUpdateIndex1_p],
-           lastParallacticAngles_p[lastUpdateIndex1_p], doSquint_p, 0.0);
+           lastParallacticAngles_p[lastUpdateIndex1_p], doSquint_p, threshold()*threshold());
     else 
       throw(AipsError("BeamSkyJones::applySquare(Image...) - PBMath not found"));    
   }
@@ -402,7 +430,7 @@ BeamSkyJones::apply(SkyComponent& in,
       return myPBMath.applyPB(in, out, lastDirections_p[lastUpdateIndex1_p], 
 			      Quantity(vb.frequency()(0), "Hz"), 
 			      lastParallacticAngles_p[lastUpdateIndex1_p],
-			      doSquint_p, False, Float(0.01), forward);
+			      doSquint_p, False, threshold(), forward);
       else 
       throw(AipsError("BeamSkyJones::apply(SkyComponent,...) - PBMath not found"));    
   }
@@ -689,7 +717,17 @@ BeamSkyJones::extent (const ImageInterface<Float>& im,
   }   
 };
 
+Int BeamSkyJones::support(const VisBuffer& vb, const CoordinateSystem& cs){
+  PBMath myPBMath;
 
+  if(changed(vb, 0)) update(vb, 0);
+  if (getPBMath(lastUpdateIndex1_p, myPBMath)) {
+    return myPBMath.support(cs);
+  } else {
+    throw(AipsError("BeamSkyJones::support() - PBMath not found"));
+  }
+
+}
 
 void BeamSkyJones::summary(Int n) 
 {

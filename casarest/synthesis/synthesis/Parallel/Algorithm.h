@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: Algorithm.h,v 19.5 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 //#! ========================================================================
 
 #ifndef SYNTHESIS_ALGORITHM_H

@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: Applicator.h,v 19.4 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_APPLICATOR_H
 #define SYNTHESIS_APPLICATOR_H

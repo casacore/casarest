@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: ACoh.h,v 19.5 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_ACOH_H
 #define SYNTHESIS_ACOH_H

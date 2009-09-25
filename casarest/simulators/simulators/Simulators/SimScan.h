@@ -24,7 +24,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SimScan.h,v 19.7 2006/12/22 05:25:49 gvandiep Exp $
+//# $Id$
 
 #ifndef SIMULATORS_SIMSCAN_H
 #define SIMULATORS_SIMSCAN_H

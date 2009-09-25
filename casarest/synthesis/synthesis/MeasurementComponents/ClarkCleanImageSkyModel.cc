@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ClarkCleanImageSkyModel.cc,v 19.7 2005/08/31 20:53:22 kgolap Exp $
+//# $Id$
 
 #include <casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementComponents/ClarkCleanImageSkyModel.h>
@@ -53,6 +53,13 @@
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
+  ClarkCleanImageSkyModel::ClarkCleanImageSkyModel() : CleanImageSkyModel(), itsProgress(0) {
+
+
+
+}
+
+
 ClarkCleanImageSkyModel::~ClarkCleanImageSkyModel()
 { 
   if (itsProgress) delete itsProgress; 
@@ -63,7 +70,7 @@ Bool ClarkCleanImageSkyModel::solve(SkyEquation& se) {
 
   LogIO os(LogOrigin("ClarkCleanImageSkyModel","solve",WHERE));
   
-  Bool converged=True; 
+  Bool converged=False; 
   if(numberOfModels()>1) {
     os << "Cannot process more than one field" << LogIO::EXCEPTION;
   }
@@ -75,12 +82,32 @@ Bool ClarkCleanImageSkyModel::solve(SkyEquation& se) {
   //Make the PSF
   if(!donePSF_p)
     makeApproxPSFs(se);
+
+  if(numberIterations() < 1){
+
+    return True;
+  }
   
   Int nx=image(0).shape()(0);
   Int ny=image(0).shape()(1);
   Int npol=image(0).shape()(2);
   Int nchan=image(0).shape()(3);
+  Int polloop=1;
+  Vector<String> stokesID(npol, "");
+  if (!doPolJoint_p) {
+    polloop=npol;
+    CoordinateSystem cs=image(0).coordinates();
+    Int stokesindex=cs.findCoordinate(Coordinate::STOKES);
+    StokesCoordinate stcoord=cs.stokesCoordinate(stokesindex);
+    for (Int jj=0; jj < npol ; ++jj){
+      stokesID(jj)=Stokes::name(Stokes::type(stcoord.stokes()(jj)));      
+    }
+  }
   
+  
+  Int newNx=nx;
+  Int newNy=ny;
+
   Int xbeg, xend, ybeg, yend;
   //default clean box
   xbeg=nx/4; 
@@ -89,14 +116,17 @@ Bool ClarkCleanImageSkyModel::solve(SkyEquation& se) {
   yend=3*ny/4-1;
 
   Bool isCubeMask=False; 
-  AlwaysAssert((npol==1)||(npol==2)||(npol==4), AipsError);
+  //AlwaysAssert((npol==1)||(npol==2)||(npol==4), AipsError);
   
-  SubLattice<Float>* mask_sl = 0;
+  Lattice<Float>* mask_sl = 0;
   RO_LatticeIterator<Float>* maskli = 0;
   
   if(hasMask(0)) {
-    AlwaysAssert(mask(0).shape()(0)==nx, AipsError);
-    AlwaysAssert(mask(0).shape()(1)==ny, AipsError);
+    // AlwaysAssert(mask(0).shape()(0)==nx, AipsError);
+    // AlwaysAssert(mask(0).shape()(1)==ny, AipsError);
+    if((mask(0).shape()(0)!=nx) || (mask(0).shape()(1)!=ny)){
+      throw(AipsError("Mask image shape is different from dirty image"));
+    }
     if(nchan >1){
       if(mask(0).shape()(3)==nchan){
 	isCubeMask=True;
@@ -114,7 +144,7 @@ Bool ClarkCleanImageSkyModel::solve(SkyEquation& se) {
 		       IPosition(4, 0, 1, 3, 2));
     maskli= new RO_LatticeIterator<Float>(mask(0), mls);
     maskli->reset();
-    mask_sl=makeMaskSubLat(nx, ny, *maskli, xbeg, xend, 
+    mask_sl=makeMaskSubLat(nx, ny, newNx, newNy, *maskli, xbeg, xend, 
 			   ybeg, yend);
   }
 
@@ -122,77 +152,110 @@ Bool ClarkCleanImageSkyModel::solve(SkyEquation& se) {
   for (Int ichan=0; ichan < nchan; ichan++) {
     if(hasMask(0) && isCubeMask && ichan >0) {
       (*maskli)++;
-      mask_sl=makeMaskSubLat(nx, ny, *maskli, xbeg, 
+      if(mask_sl) delete mask_sl;
+      mask_sl=0;
+      mask_sl=makeMaskSubLat(nx, ny, newNx, newNy, *maskli, xbeg, 
 			     xend, ybeg, yend);       
     }
-    LCBox imagebox(IPosition(4, xbeg, ybeg, 0, ichan), 
-		   IPosition(4, xend, yend, npol-1, ichan),
-		   image(0).shape());
-    LCBox psfbox(IPosition(4, 0, 0, 0, ichan), 
-		 IPosition(4, nx-1, ny-1, 0, ichan),
-		 PSF(0).shape());
-    
-    SubLattice<Float>  psf_sl (PSF(0), psfbox, False);
-    SubLattice<Float>  residual_sl (residual(0), imagebox, True);
-    SubLattice<Float>  model_sl (image(0), imagebox, True);
 
-    TempLattice<Float> dirty_sl( residual_sl.shape());
-    dirty_sl.copyData(residual_sl);
-    TempLattice<Float> localmodel(model_sl.shape());
-    localmodel.set(0.0);
-
-    Float psfmax;
-    {
-      LatticeExprNode node = max(psf_sl);
-      psfmax = node.getFloat();
-    }
     if(nchan>1) {
-      os<<"Processing channel "<<ichan+1<<" of "<<nchan<<LogIO::POST;
+	os<<"Processing channel "<<ichan+1<<" of "<<nchan<<LogIO::POST;
     }
-    if(psfmax==0.0) {
-      os << "No data for this channel: skipping" << LogIO::POST;
-    } else {
-      LatConvEquation eqn(psf_sl, residual_sl);
-      ClarkCleanLatModel cleaner( localmodel );
-      cleaner.setResidual(dirty_sl);
-      if (mask_sl != 0 ) cleaner.setMask( *mask_sl );
-
-      ClarkCleanProgress *cpp  = 0;
-      if (displayProgress_p) {
-	cpp = new ClarkCleanProgress( pgplotter_p );
-	cleaner.setProgress(*cpp);
+    for (Int ipol=0; ipol < polloop; ++ipol){
+      Int polbeg=0;
+      Int polend=npol-1;
+      if(!doPolJoint_p){
+	polbeg=ipol;
+	polend=ipol;
+	os << "Doing stokes "<< stokesID(ipol) << " image" <<LogIO::POST;
       }
+      LCBox imagebox(IPosition(4, xbeg, ybeg, polbeg, ichan), 
+		     IPosition(4, xend, yend, polend, ichan),
+		     image(0).shape());
+      LCBox psfbox(IPosition(4, 0, 0, 0, ichan), 
+		   IPosition(4, nx-1, ny-1, 0, ichan),
+		   PSF(0).shape());
 
-      cleaner.setGain(gain());
-      cleaner.setNumberIterations(numberIterations());
-      cleaner.setThreshold(threshold()); 
-      cleaner.setPsfPatchSize(IPosition(2,51)); 
-      cleaner.setHistLength(1024);
-      cleaner.setMaxNumPix(32*1024);
-      cleaner.setCycleFactor(cycleFactor_p);
-      cleaner.solve(eqn);
-      cleaner.setChoose(False);
-      os << "Clean used " << cleaner.numberIterations() << " iterations" 
-	 << " to get to a max residual of " << cleaner.threshold() 
-	 << LogIO::POST;
-      LatticeExpr<Float> expr= model_sl + localmodel; 
-      model_sl.copyData(expr);
+      SubLattice<Float> psf_sl(PSF(0), psfbox, False);
+      SubLattice<Float>  residual_sl(residual(0), imagebox, True);
+      SubLattice<Float>  model_sl=SubLattice<Float>   (image(0), imagebox, True);
+    
+    
+      ArrayLattice<Float> psftmp;
+      
+      if(nx != newNx){
+	
+	psftmp=ArrayLattice<Float> (IPosition(4, newNx, newNy, 1, 1));
+	psftmp.set(0.0);
+	Array<Float> tmparr=psf_sl.get();
+	psftmp.putSlice(tmparr, IPosition(4, (newNx-nx)/2, (newNy-ny)/2, 0,0));
+	psf_sl=SubLattice<Float>(psftmp, True);
  
-      converged = converged && (cleaner.getMaxResidual() < threshold());
-      //      if (cpp != 0 ) delete cpp; cpp=0;
-      //      if (pgp != 0 ) delete pgp; pgp=0;
-    }
-    if (mask_sl != 0 && isCubeMask)  {
-      delete mask_sl;
-      mask_sl=0;
+      }
+      
+      TempLattice<Float> dirty_sl( residual_sl.shape());
+      dirty_sl.copyData(residual_sl);
+      TempLattice<Float> localmodel(model_sl.shape());
+      localmodel.set(0.0);
+      
+      Float psfmax;
+      {
+	LatticeExprNode node = max(psf_sl);
+	psfmax = node.getFloat();
+      }
+      
+      if((psfmax==0.0) ||(hasMask(0) && (mask_sl == 0)) ) {
+	os << "No data or blank mask for this channel: skipping" << LogIO::POST;
+      } else {
+	LatConvEquation eqn(psf_sl, residual_sl);
+	ClarkCleanLatModel cleaner( localmodel );
+	cleaner.setResidual(dirty_sl);
+	if (mask_sl != 0 ) cleaner.setMask( *mask_sl );
+	
+	ClarkCleanProgress *cpp  = 0;
+	if (displayProgress_p) {
+	  cpp = new ClarkCleanProgress( pgplotter_p );
+	  cleaner.setProgress(*cpp);
+	}
+	
+	cleaner.setGain(gain());
+	cleaner.setNumberIterations(numberIterations());
+	cleaner.setThreshold(threshold()); 
+	cleaner.setPsfPatchSize(IPosition(2,51,51)); 
+	cleaner.setHistLength(1024);
+	cleaner.setMaxNumPix(32*1024);
+	cleaner.setCycleFactor(cycleFactor_p);
+	// clean if there is no mask or if it has mask AND mask is not empty 
+	cleaner.solve(eqn);
+	cleaner.setChoose(False);
+	os << "Clean used " << cleaner.numberIterations() << " iterations" 
+	   << " to get to a max residual of " << cleaner.threshold() 
+	   << LogIO::POST;
+	
+	LatticeExpr<Float> expr= model_sl + localmodel; 
+	model_sl.copyData(expr);
+	
+ 
+	converged =  (cleaner.getMaxResidual() < threshold()) 
+	  || (cleaner.numberIterations()==0);
+	//      if (cpp != 0 ) delete cpp; cpp=0;
+	//      if (pgp != 0 ) delete pgp; pgp=0;
+      }
     }
   }
+  if (mask_sl != 0)  {
+    delete mask_sl;
+    mask_sl=0;
+  }
+  os << LatticeExprNode(sum(image(0))).getFloat() 
+	       << " Jy is the sum of clean components " << LogIO::POST;
   modified_p=True;
   return(converged);
 };
 
-SubLattice<Float>* ClarkCleanImageSkyModel::makeMaskSubLat(const Int& nx, 
+Lattice<Float>* ClarkCleanImageSkyModel::makeMaskSubLat(const Int& nx, 
 							    const Int& ny, 
+							Int& newNx, Int& newNy,
 							    RO_LatticeIterator<Float>& maskIter,
 							   Int& xbeg,
 							   Int& xend,
@@ -201,6 +264,9 @@ SubLattice<Float>* ClarkCleanImageSkyModel::makeMaskSubLat(const Int& nx,
 
   LogIO os(LogOrigin("ClarkCleanImageSkyModel","makeMaskSubLat",WHERE)); 
 
+
+  newNx=nx;
+  newNy=ny;
   SubLattice<Float>* mask_sl = 0;
   xbeg=nx/4;
   ybeg=ny/4;
@@ -208,10 +274,8 @@ SubLattice<Float>* ClarkCleanImageSkyModel::makeMaskSubLat(const Int& nx,
   xend=xbeg+nx/2-1;
   yend=ybeg+ny/2-1;  
   Matrix<Float> mask= maskIter.matrixCursor();
-  // ignore mask if none exists
   if(max(mask) < 0.000001) {
-    os << "Mask seems to be empty; will CLEAN inner quarter" 
-       << LogIO::WARN;
+    //zero mask ....
     return mask_sl;
   }
   // Now read the mask and determine the bounding box
@@ -235,33 +299,55 @@ SubLattice<Float>* ClarkCleanImageSkyModel::makeMaskSubLat(const Int& nx,
   }
   // Now have possible BLC. Make sure that we don't go over the
   // edge later
+  Bool larger_quarter=False;
   if((xend - xbeg)>nx/2) {
-    xbeg=nx/4-1; //if larger than quarter take inner of mask
-    os << LogIO::WARN << "Mask span over more than half the x-axis: Considering inner half of the x-axis"  << LogIO::POST;
+    // xbeg=nx/4-1; //if larger than quarter take inner of mask
+    //os << LogIO::WARN << "Mask span over more than half the x-axis: Considering inner half of the x-axis"  << LogIO::POST;
+    larger_quarter=True;
   } 
   if((yend - ybeg)>ny/2) { 
-    ybeg=ny/4-1;
-    os << LogIO::WARN << "Mask span over more than half the y-axis: Considering inner half of the y-axis" << LogIO::POST;
+    //ybeg=ny/4-1;
+    //os << LogIO::WARN << "Mask span over more than half the y-axis: Considering inner half of the y-axis" << LogIO::POST;
+    larger_quarter=True;
   }  
-  xend=min(xend,xbeg+nx/2-1);
-  yend=min(yend,ybeg+ny/2-1); 
-  
+
+  // make sure xend, yend does not go out of bounds
+  if(larger_quarter){
+    xend=min(xend, nx-1);
+    yend=min(yend, ny-1);
+
+  }
+  else{
+    xend=min(xend,xbeg+nx/2-1);
+    yend=min(yend,ybeg+ny/2-1); 
+  }
 
   
   if ((xend > xbeg) && (yend > ybeg) ) {
+
     IPosition latshape(4, mask.shape()(0), mask.shape()(1), 1,1);
     ArrayLattice<Float> arrayLat(latshape);
     LCBox maskbox (IPosition(4, xbeg, ybeg, 0, 0), 
 		   IPosition(4, xend, yend, 0, 0), 
-		   latshape);
-    arrayLat.putSlice(mask, IPosition(4, 0, 0, 0, 0));
-    mask_sl = new SubLattice<Float> (arrayLat, maskbox, False);
+    		   latshape);
+    
+    arrayLat.putSlice(mask, IPosition(4,0,0,0,0));
+    mask_sl=new SubLattice<Float> (arrayLat, maskbox, False);
+    
 
 
   }
   
-
-return mask_sl;
+  if(larger_quarter){
+    newNx=2*nx;
+    newNy=2*ny;
+    /*xbeg=xbeg+(newNx-nx)/2;
+    ybeg=ybeg+(newNy-ny)/2;
+    xend=xend+(newNx-nx)/2;
+    yend=yend+(newNy-ny)/2;
+    */
+  }
+  return mask_sl;
 }
 
 

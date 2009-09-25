@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: StokesImageUtil.cc,v 19.9 2004/12/01 16:42:18 ddebonis Exp $
+//# $Id$
 
 #include <casa/aips.h>
 
@@ -51,6 +51,7 @@
 #include <msvis/MSVis/StokesVector.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
 #include <images/Images/PagedImage.h>
+#include <images/Images/SubImage.h>
 #include <casa/OS/File.h>
 
 #include <casa/Quanta/UnitMap.h>
@@ -385,6 +386,8 @@ Bool StokesImageUtil::FitGaussianPSF(ImageInterface<Float>& psf,
   return status;
 }
 
+
+
 Bool StokesImageUtil::FitGaussianPSF(ImageInterface<Float>& psf, Vector<Float>& beam) {
   
   Vector<Double> deltas;
@@ -401,31 +404,13 @@ Bool StokesImageUtil::FitGaussianPSF(ImageInterface<Float>& psf, Vector<Float>& 
   Int nchan = psf.shape()(map(3));
   Int px=0;
   Int py=0;
-  Matrix<Float> lpsf;
-  Float psfmax;
-
   Float bamp=0;
+  Matrix<Float> lpsf;
+  locatePeakPSF(psf, px, py, bamp, lpsf);
 
-
-  IPosition oneplane(psf.ndim(), nx, ny, 1, 1);
-  LatticeStepper psfls(psf.shape(), oneplane,
-		       IPosition(4,map(0),map(1),map(3),map(2)));
-  RO_LatticeIterator<Float> psfli(psf,psfls);
-  while (nchan >= 1 && bamp < 0.9){
-    lpsf=psfli.matrixCursor();
-    
-    IPosition psfposmax(lpsf.ndim());
-    IPosition psfposmin(lpsf.ndim());
-    Float psfmin;
-    
-    minMax(psfmin, psfmax, psfposmin, psfposmax, lpsf); 
-    
-    px=psfposmax(0);
-    py=psfposmax(1);
-    bamp=lpsf(px,py);
-
-    ++psfli;
-    --nchan;
+  //check if peak is outside inner quarter
+  if(px < nx/4.0 || px > 3.0*nx/4.0 || py < ny/4.0 || py > 3.0*ny/4.0) {    
+    throw(AipsError("Peak of psf is outside the inner quarter of defined image"));
   }
 
   LogIO os(LogOrigin("StokesImageUtil", "FitGaussianPSF()",WHERE));
@@ -444,7 +429,7 @@ try{
     return False;
   }
   
-  lpsf/=psfmax;
+  lpsf/=bamp;
 
   // The selection code attempts to avoid including any sidelobes, even
   // if they exceed the threshold, by starting from the center column and
@@ -593,6 +578,173 @@ try{
 
 }
 
+void StokesImageUtil::locatePeakPSF(ImageInterface<Float>& in, Int& xpos, Int& ypos, Float& amp, Matrix<Float>& lpsf){
+  Vector<Int> map;
+  AlwaysAssert(StokesMap(map, in.coordinates()), AipsError);
+  
+  Int nx = in.shape()(map(0));
+  Int ny = in.shape()(map(1));
+  Int nchan = in.shape()(map(3));
+  xpos=0;
+  ypos=0;
+  Float psfmax;
+
+  amp=0;
+
+
+  IPosition oneplane(in.ndim(), nx, ny, 1, 1);
+  LatticeStepper psfls(in.shape(), oneplane,
+		       IPosition(4,map(0),map(1),map(3),map(2)));
+  RO_LatticeIterator<Float> psfli(in,psfls);
+  while (nchan >= 1 && amp < 0.9){
+    lpsf=psfli.matrixCursor();
+    
+    IPosition psfposmax(lpsf.ndim());
+    IPosition psfposmin(lpsf.ndim());
+    Float psfmin;
+    
+    minMax(psfmin, psfmax, psfposmin, psfposmax, lpsf); 
+    
+    xpos=psfposmax(0);
+    ypos=psfposmax(1);
+    
+
+
+    amp=lpsf(xpos,ypos);
+
+    ++psfli;
+    --nchan;
+  }
+
+}
+
+void StokesImageUtil::directCFromR(ImageInterface<Complex>& out, ImageInterface<Float>& in) {
+  AlwaysAssert(in.shape()(0)==out.shape()(0), AipsError);
+  AlwaysAssert(in.shape()(1)==out.shape()(1), AipsError);
+  AlwaysAssert(in.shape()(3)==out.shape()(3), AipsError);
+  
+  Vector<Int> inmap;
+  AlwaysAssert(StokesMap(inmap, in.coordinates()), AipsError);
+  Vector<Int> outmap;
+  AlwaysAssert(StokesMap(outmap, out.coordinates()), AipsError);
+  
+  Int innpol = in.shape()(inmap(2));
+  Int outnpol = out.shape()(outmap(2));
+  if(innpol != outnpol){
+    throw(AipsError("Cannot convert directly between images of different polarization shape"));
+  }
+  Vector<Int> inMap(innpol), outMap(outnpol); 
+  SkyModel::PolRep outPolFrame;
+  Int nStokesOut=CStokesPolMap(outMap, outPolFrame, out.coordinates());
+  SkyModel::PolRep inPolFrame;
+  Int nStokesIn=CStokesPolMap(inMap, inPolFrame, in.coordinates());
+  AlwaysAssert(nStokesOut, AipsError);
+  AlwaysAssert(nStokesIn, AipsError);
+
+  if(inPolFrame != outPolFrame){
+    throw(AipsError("Cannot convert directly between polarization types"));
+  }
+  IPosition inblc(4,0,0,0,0);
+  IPosition intrc(4,0,0,0,0);
+  intrc(inmap(0))=in.shape()(inmap(0))-1;
+  intrc(inmap(1))=in.shape()(inmap(1))-1;
+  intrc(inmap(2))=0;
+  intrc(inmap(3))= in.shape()(inmap(3))-1;
+  IPosition outblc(4,0,0,0,0);
+  IPosition outtrc(4,0,0,0,0);
+  outtrc(outmap(0))=in.shape()(outmap(0))-1;
+  outtrc(outmap(1))=in.shape()(outmap(1))-1;
+  outtrc(outmap(2))=0;
+  outtrc(outmap(3))= in.shape()(outmap(3))-1;
+  
+  for (Int k=0; k < innpol ; ++k){
+    inblc(inmap(2))=k;
+    intrc(inmap(2))=k;
+    Int outindex=-1;
+    for ( Int j=0; j < innpol; ++j){
+      if(inMap[k]==outMap[j])
+	outindex=j;
+    }
+    if(outindex < 0){
+      throw(AipsError("cannot match polarization in direct copy"));
+    }
+    outblc(outmap(2))=outindex;
+    outtrc(outmap(2))=outindex;
+    Slicer slin(inblc, intrc, Slicer::endIsLast);
+    Slicer slout(outblc, outtrc, Slicer::endIsLast);
+    SubImage<Complex> sliceout(out, slout, True);
+    SubImage<Float> slicein(in, slin);
+    sliceout.copyData(LatticeExpr<Complex>(toComplex(slicein)));
+  }
+
+
+
+
+}
+
+void StokesImageUtil::directCToR(ImageInterface<Float>& out, ImageInterface<Complex>& in) {
+  AlwaysAssert(in.shape()(0)==out.shape()(0), AipsError);
+  AlwaysAssert(in.shape()(1)==out.shape()(1), AipsError);
+  AlwaysAssert(in.shape()(3)==out.shape()(3), AipsError);
+  
+  Vector<Int> inmap;
+  AlwaysAssert(StokesMap(inmap, in.coordinates()), AipsError);
+  Vector<Int> outmap;
+  AlwaysAssert(StokesMap(outmap, out.coordinates()), AipsError);
+  
+  Int innpol = in.shape()(inmap(2));
+  Int outnpol = out.shape()(outmap(2));
+  if(innpol != outnpol){
+    throw(AipsError("Cannot convert directly between images of different polarization shape"));
+  }
+  Vector<Int> inMap(innpol), outMap(outnpol); 
+  SkyModel::PolRep outPolFrame;
+  Int nStokesOut=CStokesPolMap(outMap, outPolFrame, out.coordinates());
+  SkyModel::PolRep inPolFrame;
+  Int nStokesIn=CStokesPolMap(inMap, inPolFrame, in.coordinates());
+
+
+  AlwaysAssert(nStokesOut, AipsError);
+  AlwaysAssert(nStokesIn, AipsError);
+  if(inPolFrame != outPolFrame){
+    throw(AipsError("Cannot convert directly between polarization types"));
+  }
+  IPosition inblc(4,0,0,0,0);
+  IPosition intrc(4,0,0,0,0);
+  intrc(inmap(0))=in.shape()(inmap(0))-1;
+  intrc(inmap(1))=in.shape()(inmap(1))-1;
+  intrc(inmap(2))=0;
+  intrc(inmap(3))= in.shape()(inmap(3))-1;
+  IPosition outblc(4,0,0,0,0);
+  IPosition outtrc(4,0,0,0,0);
+  outtrc(outmap(0))=in.shape()(outmap(0))-1;
+  outtrc(outmap(1))=in.shape()(outmap(1))-1;
+  outtrc(outmap(2))=0;
+  outtrc(outmap(3))= in.shape()(outmap(3))-1;
+
+  for (Int k=0; k < innpol ; ++k){
+    inblc(inmap(2))=k;
+    intrc(inmap(2))=k;
+    Int outindex=-1;
+    for ( Int j=0; j < innpol; ++j){
+      if(inMap[k]==outMap[j])
+	outindex=j;
+    }
+    if(outindex < 0){
+      throw(AipsError("cannot match polarization in direct copy"));
+    }
+    outblc(outmap(2))=outindex;
+    outtrc(outmap(2))=outindex;
+    Slicer slin(inblc, intrc, Slicer::endIsLast);
+    Slicer slout(outblc, outtrc, Slicer::endIsLast);
+    SubImage<Float> sliceout(out, slout, True);
+    SubImage<Complex> slicein(in, slin);
+    sliceout.copyData(LatticeExpr<Float>(real(slicein)));
+  }
+  
+  
+}
+
 void StokesImageUtil::To(ImageInterface<Float>& out, ImageInterface<Complex>& in) {
   
   AlwaysAssert(in.shape()(0)==out.shape()(0), AipsError);
@@ -620,6 +772,10 @@ void StokesImageUtil::To(ImageInterface<Float>& out, ImageInterface<Complex>& in
   SkyModel::PolRep polFrame=SkyModel::CIRCULAR;
   Int nStokesIn=CStokesPolMap(inMap, polFrame, in.coordinates());
   Int nStokesOut=StokesPolMap(outMap, out.coordinates());
+  if(nStokesOut <=0){
+    directCToR(out, in);
+    return;
+  }
   AlwaysAssert(nStokesOut, AipsError);
   // Try taking real part only (uses LatticeExpr)
   if(nStokesIn==0) {
@@ -791,6 +947,10 @@ void StokesImageUtil::From(ImageInterface<Complex>& out,
   Vector<Int> inMap(innpol), outMap(outnpol);
   SkyModel::PolRep polFrame=SkyModel::LINEAR;
   Int nStokesIn=StokesPolMap(inMap, in.coordinates());
+  if(nStokesIn <=0){
+    directCFromR(out, in);
+    return;
+  }
   AlwaysAssert(nStokesIn, AipsError);
   Int nStokesOut=CStokesPolMap(outMap, polFrame, out.coordinates());
   if(nStokesOut==0) {
@@ -915,6 +1075,8 @@ Int StokesImageUtil::CStokesPolMap(Vector<Int>& map, SkyModel::PolRep& polFrame,
     stokesCoord.toPixel(p, Stokes::LR)||
     stokesCoord.toPixel(p, Stokes::RL)||
     stokesCoord.toPixel(p, Stokes::RR);
+
+
   if(Circular) {
     pol=0;
     if(stokesCoord.toPixel(p, Stokes::RR)) {map(p)=pol;found++;} pol++;
@@ -1088,7 +1250,12 @@ CoordinateSystem StokesImageUtil::CStokesCoord(const IPosition& shape,
   
   Int spectralIndex=coord.findCoordinate(Coordinate::SPECTRAL);
   SpectralCoordinate spectralCoord=coord.spectralCoordinate(spectralIndex);
-  
+ 
+  Int stokesIndex=coord.findCoordinate(Coordinate::STOKES);
+  StokesCoordinate
+    stokesCoord=coord.stokesCoordinate(stokesIndex);
+
+ 
   // Polarization: If the specified whichStokes are ok, we use them
   // otherwise we guess
   if(Int(whichStokes.nelements())!=npol) {
@@ -1099,7 +1266,15 @@ CoordinateSystem StokesImageUtil::CStokesCoord(const IPosition& shape,
       switch(npol) {
       case 1:
 	whichStokes.resize(1);
-	whichStokes(0)=Stokes::I;
+	if(Stokes::type(stokesCoord.stokes()[0])==Stokes::XX){
+	  whichStokes(0)=Stokes::XX; 
+	}
+	else if(Stokes::type(stokesCoord.stokes()[0])==Stokes::YY){
+	  whichStokes(0)=Stokes::YY;
+	}
+	else{
+	  whichStokes(0)=Stokes::I;
+	}
 	break;
       case 2:
 	whichStokes.resize(2);
@@ -1119,7 +1294,15 @@ CoordinateSystem StokesImageUtil::CStokesCoord(const IPosition& shape,
       switch(npol) {
       case 1:
 	whichStokes.resize(1);
-	whichStokes(0)=Stokes::I;
+	if(Stokes::type(stokesCoord.stokes()[0])==Stokes::RR){
+	  whichStokes(0)=Stokes::RR; 
+	}
+	else if(Stokes::type(stokesCoord.stokes()[0])==Stokes::LL){
+	  whichStokes(0)=Stokes::LL;
+	}
+	else{
+	  whichStokes(0)=Stokes::I;
+	}
 	break;
       case 2:
 	whichStokes.resize(2);
@@ -1137,12 +1320,12 @@ CoordinateSystem StokesImageUtil::CStokesCoord(const IPosition& shape,
     }
   }
   AlwaysAssert(whichStokes.nelements(), AipsError);
-  StokesCoordinate stokesCoord(whichStokes);
+  StokesCoordinate stokesCoordOut(whichStokes);
   
   // Now set up coordinates
   CoordinateSystem coordInfo; 
   coordInfo.addCoordinate(directionCoord);
-  coordInfo.addCoordinate(stokesCoord);
+  coordInfo.addCoordinate(stokesCoordOut);
   coordInfo.addCoordinate(spectralCoord);
   return coordInfo;
 
@@ -1297,6 +1480,7 @@ void StokesImageUtil::changeCStokesRep(ImageInterface<Complex>& image,
 
   Int npol=stokesCoord.stokes().nelements();
 
+
   Vector<Int> whichStokes(npol);
 
   AlwaysAssert((npol==1)||(npol==2)||(npol==4), AipsError);
@@ -1306,11 +1490,16 @@ void StokesImageUtil::changeCStokesRep(ImageInterface<Complex>& image,
     
     switch(npol) {
     case 1:
-      whichStokes(0)=Stokes::I;
+      if(!(Stokes::type(stokesCoord.stokes()[0])==Stokes::XX || Stokes::type(stokesCoord.stokes()[0])==Stokes::YY)){
+	whichStokes(0)=Stokes::I;
+      }
+      else{
+	whichStokes(0)=stokesCoord.stokes()[0];
+      }
       break;
     case 2:
-      whichStokes(1)=Stokes::XX;
       whichStokes(0)=Stokes::YY;
+      whichStokes(1)=Stokes::XX;      
       break;
     default:
       whichStokes(0)=Stokes::XX;
@@ -1322,7 +1511,12 @@ void StokesImageUtil::changeCStokesRep(ImageInterface<Complex>& image,
   else {
     switch(npol) {
     case 1:
-      whichStokes(0)=Stokes::I;
+      if(!(Stokes::type(stokesCoord.stokes()[0])==Stokes::RR || Stokes::type(stokesCoord.stokes()[0])==Stokes::LL)){
+	whichStokes(0)=Stokes::I;
+      }
+      else{
+	whichStokes(0)=stokesCoord.stokes()[0];
+      }
       break;
     case 2:
       whichStokes(0)=Stokes::LL;

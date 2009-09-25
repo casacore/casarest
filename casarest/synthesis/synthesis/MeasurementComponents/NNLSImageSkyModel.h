@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: NNLSImageSkyModel.h,v 19.4 2004/11/30 17:50:49 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_NNLSIMAGESKYMODEL_H
 #define SYNTHESIS_NNLSIMAGESKYMODEL_H

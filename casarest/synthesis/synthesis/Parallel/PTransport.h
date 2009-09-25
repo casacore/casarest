@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PTransport.h,v 19.4 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PTRANSPORT_H
 #define SYNTHESIS_PTRANSPORT_H
@@ -32,7 +32,6 @@
 //# Includes
 #include <casa/aips.h>
 #include <casa/Arrays/Array.h>
-#include <casa/BasicSL/String.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

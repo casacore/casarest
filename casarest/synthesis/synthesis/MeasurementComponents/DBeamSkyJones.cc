@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: DBeamSkyJones.cc,v 19.5 2006/02/13 06:28:07 mvoronko Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <casa/BasicSL/Complex.h>

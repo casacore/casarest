@@ -1,3 +1,4 @@
+
 //# Copyright (C) 2000,2001
 //# Associated Universities, Inc. Washington DC, USA.
 //#
@@ -22,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFDataMapper.h,v 19.5 2004/11/30 17:50:24 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFDATAMAPPER_H
 #define FLAGGING_RFDATAMAPPER_H
 

@@ -32,14 +32,10 @@
 #include <casa/Containers/Record.h>
 #include <ms/MeasurementSets/MeasurementSet.h>
 #include <measures/Measures/MRadialVelocity.h>
-#include <synthesis/MeasurementEquations.h>
-#include <synthesis/MeasurementComponents.h>
-#include <synthesis/MeasurementComponents/SolvableVisJones.h>
-#include <synthesis/MeasurementComponents/GJonesPoly.h>
-#include <synthesis/MeasurementComponents/BJonesPoly.h>
-#include <synthesis/MeasurementComponents/SolvableMJones.h>
-
-
+#include <synthesis/MeasurementEquations/VisEquation.h>
+#include <synthesis/MeasurementComponents/VisCal.h>
+#include <synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <synthesis/MeasurementComponents/VisCalGlobals.h>
 #include <casa/Logging/LogIO.h>
 #include <casa/Logging/LogSink.h>
 #include <ms/MeasurementSets/MSHistoryHandler.h>
@@ -63,37 +59,142 @@ class Calibrater
   // Destructor
   ~Calibrater();
   
-  // Initialize the calibrator object from an input MeasurementSet.
-  // Optional compression of the calibration columns (MODEL_DATA,
-  // CORRECTED_DATA and IMAGING_WEIGHT) is supported.
-  Bool initialize(MeasurementSet& inputMS, Bool compress=True);
 
-  // Set uv-data selection criteria
-  void setdata(const String& mode, const Int& nchan,
-		       const Int& start, const Int& step,
-		       const MRadialVelocity& mStart,
-		       const MRadialVelocity& mStep,
-		       const String& msSelect);
+  // Set uv-data selection via MSSelection
+  void selectvis(const String& time="",
+		 const String& spw="",
+		 const String& scan="",
+		 const String& field="",
+		 const String& baseline="",
+		 const String& uvrange="",
+		 const String& chanmode="none",
+		 const Int& nchan=1,
+		 const Int& start=0, 
+		 const Int& step=1,
+		 const MRadialVelocity& mStart=MRadialVelocity(),
+		 const MRadialVelocity& mStep=MRadialVelocity(),
+		 const String& msSelect="");
 
-  // Flush the underlying uv-data to disk
-  Bool write();
+  // Initialize calibration components to be apply or solved for
+  //  Bool setapply(const String& type, const Record& applypar);
+  Bool setapply (const String& type, 
+		 const Double& t,
+		 const String& table,
+		 const String& interp,
+		 const String& select,
+		 const Bool& calwt,
+		 const Vector<Int>& spwmap,
+		 const Float& opacity);
 
-  // Initialize calibration components to be solved for or applied
-  Bool setApply(const String& typeComp, const Record& interpolation, 
-		Vector<Int> rawspw= Vector<Int>(0));
-  Bool setSolve(const String& typeComp, const Record& solver);
+  // Set up to apply calibration (using MSSelection syntax)
+  Bool setapply (const String& type, 
+		 const Double& t,
+		 const String& table,
+		 const String& spw,
+		 const String& field,
+		 const String& interp,
+		 const Bool& calwt,
+		 const Vector<Int>& spwmap,
+		 const Float& opacity);
 
-  // Unset a calibration component
-  Bool unset(String typeComp);
+  Bool setapply (const String& type, 
+		 const Record& applypar);
+
+  Bool setmodel(const String& modelImage);
+
+  //  Arrange to solve
+  Bool setsolve (const String& type, 
+		 const Double& t,
+		 const Double& preavg, 
+		 const Bool& phaseonly,
+		 const Int& refant, 
+		 const String& table,
+		 const Bool& append,
+		 const String& cfCache="",
+		 const Float& paInc=360.0f);
+
+  // Arrange to solve (using MSSelection syntax)
+  Bool setsolve (const String& type, 
+		 const String& solint,
+		 const String& table,
+		 const Bool& append,
+		 const Double& preavg, 
+		 const String& apmode="AP",
+		 const Int& minblperant=4,
+		 const String& refant="",
+		 const Bool& solnorm=False,
+		 const Float& minsnr=0.0f,
+		 const String& combine="",
+		 const Int& fillgaps=0,
+		 const String& cfcache="",
+		 const Double& painc=360.0);
+
+  // Arrange to solve for BPOLY
+  Bool setsolvebandpoly(const String& table,
+			const Bool& append,
+			const Vector<Int>& degree,
+			const Bool& visnorm,
+			const Bool& bpnorm,
+			const Int& maskcenter,
+			const Float& maskedge,
+			const Int& refant);
+
+  // Arrange to solve for BPOLY (using MSSelection syntax)
+  Bool setsolvebandpoly(const String& table,
+			const Bool& append,
+			const String& solint,
+			const String& combine,
+			const Vector<Int>& degree,
+			const Bool& visnorm,
+			const Bool& solnorm,
+			const Int& maskcenter,
+			const Float& maskedge,
+			const String& refant);
+
+  // Arrange to solve for GSPLINE 
+  Bool setsolvegainspline(const String& table,
+			  const Bool& append,
+			  const String& mode,
+			  const Double& splinetime,
+			  const Double& preavg,
+			  const Int& refant,
+			  const Int& numpoint,
+			  const Double& phasewrap);
+
+  // Arrange to solve for GSPLINE (using MSSelection syntax)
+  Bool setsolvegainspline(const String& table,
+			  const Bool& append,
+			  const String& mode,
+			  const Double& splinetime,
+			  const Double& preavg,
+			  const Int& numpoint,
+			  const Double& phasewrap,
+			  const String& refant);
+
+  Bool setsolve (const String& type, 
+		 const Record& solvepar);
+
+  // Unset all (default) or one apply calibration component
+  Bool unsetapply(const Int& which=-1);
+  // TBD:   Bool unsetapply(const String& type);  // by type?
 
   // Unset the solved-for calibration component
-  Bool unsetSolve();
+  Bool unsetsolve();
 
-  // Apply all set calibration components to update the CORRECTED_DATA column
+  // Reset the calibrator object
+  Bool reset(const Bool& apply=True, 
+	     const Bool& solve=True);
+
+  // Apply all setapply'd calibration components to DATA and
+  //  deposit in the CORRECTED_DATA column
   Bool correct();
 
-  // Solve for a given calibration component (Jones matrix)
-  Bool solve(String typeComp);
+  // Apply all setapply'd calibration components to MODEL_DATA and
+  //  deposit in the MODEL_DATA column
+  Bool corrupt();
+
+  // Solve for a given calibration component
+  Bool solve();
 
   // Modelfit
   Vector<Double> modelfit(const Int& iter,
@@ -102,17 +203,25 @@ class Calibrater
 			  const Vector<Bool>& vary,
 			  const String& file);
 
-  // Smooth and Interpolate calibration
-  Bool smooth(const String& infile,
-              const String& outfile, const Bool& append,
-              const String& select,
-              const String& smoothtype, const Double& smoothtime,
-              const String& interptype, const Double& interptime);
-
-  // Flush calibration solutions to disk
-  Bool put(String typeComp, String tableName, Bool append);
-
   // Fluxscale
+  void fluxscale(const String& infile, 
+		 const String& outfile,
+		 const Vector<String>& refFields, 
+		 const Vector<Int>& refSpwMap,
+		 const Vector<String>& tranFields,
+		 const Bool& append,
+		 Matrix<Double>& fluxScaleFactor);
+
+  // Fluxscale (using MSSelection syntax for fields)
+  void fluxscale(const String& infile, 
+		 const String& outfile,
+		 const String& refFields, 
+		 const Vector<Int>& refSpwMap,
+		 const String& tranFields,
+		 const Bool& append,
+		 Matrix<Double>& fluxScaleFactor);
+
+  // Fluxscale (via field indices)
   void fluxscale(const String& infile, 
 		 const String& outfile,
 		 const Vector<Int>& refField, 
@@ -125,22 +234,74 @@ class Calibrater
   void accumulate(const String& intab,
 		  const String& incrtab,
 		  const String& outtab,
+		  const Vector<String>& fields,
+		  const Vector<String>& calFields,
+		  const String& interp="linear",
+		  const Double& t=-1.0,
+		  const Vector<Int>& spwmap=Vector<Int>(1,-1));
+
+  // Accumulate (using MSSelection syntax)
+  void accumulate(const String& intab,
+		  const String& incrtab,
+		  const String& outtab,
+		  const String& fields,
+		  const String& calFields,
+		  const String& interp="linear",
+		  const Double& t=-1.0,
+		  const Vector<Int>& spwmap=Vector<Int>(1,-1));
+
+  // Accumululate (via field indices)
+  void accumulate(const String& intab,
+		  const String& incrtab,
+		  const String& outtab,
 		  const Vector<Int>& fields,
 		  const Vector<Int>& calFields,
 		  const String& interp="linear",
-		  const Double& t=-1.0);
+		  const Double& t=-1.0,
+		  const Vector<Int>& spwmap=Vector<Int>(1,-1));
 
-  // Reset the calibrator object
-  Bool reset();
+  // Smooth  calibration
+  Bool smooth(const String& infile,
+              String& outfile, 
+	      const String& smoothtype, 
+	      const Double& smoothtime,
+	      const Vector<String>& fields);
+
+  // Smooth  calibration (using MSSelection syntax
+  Bool smooth(const String& infile,
+              String& outfile, 
+	      const String& smoothtype, 
+	      const Double& smoothtime,
+	      const String& fields);
+
+
+  // List a calibration table
+  Bool listCal(const String& infile,
+	       const String& field,
+	       const String& antenna,
+	       const String& spw,
+	       const String& listfile="",
+	       const Int& pagerows=50);
+
+  // Initialize the calibrator object from an input MeasurementSet.
+  // Optional compression of the calibration columns (MODEL_DATA,
+  // CORRECTED_DATA and IMAGING_WEIGHT) is supported.
+  Bool initialize(MeasurementSet& inputMS, 
+		  Bool compress=True);
 
   // Re-initialize the calibration scratch columns
   Bool initCalSet(const Int& calSet);
 
-  // Set parameters for 360 jump de-wrapping in spline solver
-  void setPhaseSplineParam(const Int& npoi, const Double& phaseWrap);
+  // Report apply/solve state
+  Bool state();
+  Bool applystate();
+  Bool solvestate();
+
+  Bool cleanup();
 
   // Method to update MS HISTORY Table
-  void writeHistory(LogIO& os, Bool cliCommand=False);
+  void writeHistory(LogIO& os, 
+		    Bool cliCommand=False);
 
   
  private:
@@ -152,11 +313,45 @@ class Calibrater
   String timerString();
   Timer timer_p;
 
+  // Select on channel using MSSelection
+  void selectChannel(const String& spw);
+
+  // Channel mask services
+  void initChanMask();
+
+  // Select on channel in the VisSet
+  void selectChannel(const String& mode, 
+		     const Int& nchan, const Int& start, const Int& step,
+		     const MRadialVelocity& mStart,
+		     const MRadialVelocity& mStep);
+  
+  // Interpret refant index
+  Int getRefantIdx(const String& refant);
+  
+  Vector<Int> getAntIdx(const String& antenna);
+
+  // Interpret field indices (MSSelection)
+  Vector<Int> getFieldIdx(const String& fields);
+
+  // Interpret spw indices (MSSelection)
+  Vector<Int> getSpwIdx(const String& spws);
+
+  // Interpret spw indices (MSSelection)
+  Matrix<Int> getChanIdx(const String& spws);
+  
+  // Query apply types to see if we need to calibrate the weights
+  Bool calWt();
+
   // Returns True if calibrator object is in a valid state
   Bool ok();
 
   // Create a VisSet for raw phase transfer if needed
   void getRawPhaseVisSet(Vector<Int>& spwid); 
+
+  // The standard solving mechanism
+  Bool standardSolve();
+  Bool standardSolve2();
+  Bool standardSolve3();
 
   // Input MeasurementSet and derived selected MeasurementSet
   String msname_p;
@@ -169,31 +364,14 @@ class Calibrater
   VisSet* rawvs_p;
   VisEquation* ve_p;
 
-  // Jones matrices used in the Measurement Equation.
-  BJones* bj_p;
-  GJones* gj_p;
-  DJones* dj_p;
-  CJones* cj_p;
-  EVisJones* ej_p;
-  PJones* pj_p;
-  TJones* tj_p;
-  MIfr *mj_p;
-
-  KMueller* km_p;
-  MMueller* mm_p;
-  MfMueller* mfm_p;
-
-  // The type to be solved for
-  SolvableVisJones* svj_p;
-  Bool delsvj_;
+  // VisCals for applying and solving:
+  PtrBlock<VisCal*> vc_p;
   SolvableVisCal* svc_p;
-  Bool delsvc_;
 
   // MeasurementSet selection parameters
   String dataMode_p;
   Int dataNchan_p, dataStart_p, dataStep_p;
   MRadialVelocity mDataStart_p, mDataStep_p;
-
 
   //Spline phase wrapping helper params
   Double phasewrap_p;
@@ -203,6 +381,9 @@ class Calibrater
   Int histLockCounter_p;
   MSHistoryHandler *hist_p;
   Table historytab_p;
+
+  // channel masking 
+  PtrBlock<Vector<Bool>*> chanmask_;
 
 };
 

@@ -29,9 +29,7 @@
 #include <casa/aips.h>
 #include <synthesis/MeasurementEquations/Imager.h>
 #include <images/Images/PagedImage.h>
-#ifdef HAVE_HDF5
-# include <images/Images/HDF5Image.h>
-#endif
+#include <images/Images/HDF5Image.h>
 #include <images/Images/ImageFITSConverter.h>
 #include <casa/Inputs.h>
 #include <casa/Arrays/ArrayUtil.h>
@@ -129,7 +127,7 @@ int main (Int argc, char** argv)
   try {
     Input inputs(1);
     // define the input structure
-    inputs.version("20081119-GvD");
+    inputs.version("20090910-GvD");
     inputs.create ("ms", "",
 		   "Name of input MeasurementSet",
 		   "string");
@@ -175,6 +173,9 @@ int main (Int argc, char** argv)
     inputs.create ("stokes", "I",
 		   "Stokes parameters to image (e.g. IQUV)",
 		   "string");
+    inputs.create ("nfacets", "1",
+                   "number of facets in x or y",
+                   "int");
     inputs.create ("npix", "256",
 		   "number of image pixels in x and y direction",
 		   "int");
@@ -251,6 +252,7 @@ int main (Int argc, char** argv)
     Int fieldid      = inputs.getInt("field");
     Int spwid        = inputs.getInt("spwid");
     Int npix         = inputs.getInt("npix");
+    Int nfacet       = inputs.getInt("nfacets");
     Int nchan        = inputs.getInt("nchan");
     Int chanstart    = inputs.getInt("chanstart");
     Int chanstep     = inputs.getInt("chanstep");
@@ -318,15 +320,6 @@ int main (Int argc, char** argv)
     }
     if (hdf5Name == "no") {
       hdf5Name = String();
-#ifdef HAVE_HDF5
-    } else if (hdf5Name.empty()) {
-      hdf5Name = imgName + ".hdf5";
-#else
-    } else {
-      std::cerr << "Cannot create image in HDF5 format"
-		<< " (HDF5 support is not compiled in)" << std::endl;
-      hdf5Name = String();
-#endif
     }
     if (modelName.empty()) {
       modelName = imgName + ".model";
@@ -371,28 +364,35 @@ int main (Int argc, char** argv)
 		    MRadialVelocity(),              // mStep
 		    Vector<Int>(1, spwid),          // spectralwindowsids
 		    Vector<Int>(1, fieldid),        // fieldids
-		    select);                        // msSelect
-    imager.setimage (npix,                          // nx
-		     npix,                          // ny
-		     qcellsize,                     // cellx
-		     qcellsize,                     // celly
-		     stokes,                        // stokes
-		     doShift,                       // doShift
-		     phaseCenter,                   // phaseCenter
-		     Quantity(0, "arcsec"),         // shiftx
-		     Quantity(0, "arcsec"),         // shifty
-		     mode,                          // mode
-		     img_nchan,                     // nchan
-		     img_start,                     // start
-		     img_step,                      // step
-		     MRadialVelocity(),             // mStart
-		     MRadialVelocity(),             // mStep
-		     Vector<Int>(1, spwid),         // spectralwindowids
-		     fieldid,                       // fieldid
-		     1,                             // facets
-		     Quantity(0, "m"),              // distance
-		     5.0,                           // paStep
-		     5e-2);                         // pbLimit
+		    select,                         // msSelect
+                    String(),                       // timerng
+                    String(),                       // fieldnames
+                    Vector<Int>(),                  // antIndex
+                    String(),                       // antnames
+                    String(),                       // spwstring
+                    String(),                       // uvdist
+                    String(),                       // scan
+                    True);                          // useModelCol
+
+    imager.defineImage (npix,                       // nx
+                        npix,                       // ny
+                        qcellsize,                  // cellx
+                        qcellsize,                  // celly
+                        stokes,                     // stokes
+                        phaseCenter,                // phaseCenter
+                        fieldid,                    // fieldid
+                        mode,                       // mode
+                        img_nchan,                  // nchan
+                        img_start,                  // start
+                        img_step,                   // step
+                        Quantity(0,"Hz"),           // mFreqstart
+                        Quantity(0,"km/s"),         // mstart, Def=0 km/s
+                        Quantity(1,"km/s"),         // mstep, Def=1 km/s
+                        Vector<Int>(1, spwid),      // spectralwindowids
+                        Quantity(0, "Hz"),          // restFreq
+                        nfacet,                     // facets
+                        Quantity(0, "m"));          // distance
+
     if (weight != "default") {
       imager.weight (weight,                        // type
 		     "none",                        // rmode
@@ -414,28 +414,12 @@ int main (Int argc, char** argv)
 		      "SF",                         // gridfunction
 		      MPosition(),                  // mLocation
 		      padding,                      // padding
-		      True,                         // usemodelcol
-		      wplanes,                      // wprojplanes
-		      "",                           // epJTableName
-		      True,                         // applyPointingOffsets
-		      True,                         // doPointingCorrection
-		      "");                          // cfCacheDirName
+		      wplanes);                     // wprojplanes
 
     // Do the imaging.
     if (operation == "image") {
-      imager.makeimage (imageType, imgName, "");
+      imager.makeimage (imageType, imgName);
 
-      // Convert to HDF5 if needed.
-#ifdef HAVE_HDF5
-      if (! hdf5Name.empty()) {
-	PagedImage<float> pimg(imgName);
-	HDF5Image<float>  himg(pimg.shape(), pimg.coordinates(), hdf5Name);
-	himg.copyData (pimg);
-	himg.setUnits     (pimg.units());
-	himg.setImageInfo (pimg.imageInfo());
-	himg.setMiscInfo  (pimg.miscInfo());
-      }
-#endif
       // Convert result to fits if needed.
       if (! fitsName.empty()) {
 	String error;
@@ -445,10 +429,17 @@ int main (Int argc, char** argv)
 	}
       }
 
-//      // Delete PagedImage if HDF5 was used.
-//      if (! hdf5Name.empty()) {
-//        Table::deleteTable (imgName);
-//      }
+      // Convert to HDF5 if needed.
+      if (! hdf5Name.empty()) {
+	PagedImage<float> pimg(imgName);
+	HDF5Image<float>  himg(pimg.shape(), pimg.coordinates(), hdf5Name);
+	himg.copyData (pimg);
+	himg.setUnits     (pimg.units());
+	himg.setImageInfo (pimg.imageInfo());
+	himg.setMiscInfo  (pimg.miscInfo());
+        // Delete PagedImage if HDF5 is used.
+        Table::deleteTable (imgName);
+      }
 
     } else {
     // Do the cleaning.

@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: CExp.new3.h,v 1.2 2005/10/17 17:46:42 sbhatnag Exp $
+//# $Id$
 #if !defined(CEXP3_H)
 #define CEXP3_H
 
@@ -44,9 +44,9 @@ using namespace std;
 template <class T> class CExp3
 {
 public:
-  CExp3<T>() { Size = 0; ITable=RTable=NULL; };
-  CExp3<T>(int n) { Size = n; build(Size); };
-  ~CExp3<T>(){if (ITable) {free(ITable);free(RTable);}}
+  CExp3() { Size = 0; ITable=RTable=NULL; };
+  CExp3(int n) { Size = n; build(Size); };
+  ~CExp3(){if (ITable) {free(ITable);free(RTable);}}
   inline void build(int n)
   {
     Size = n;

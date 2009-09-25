@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#! ========================================================================
-//# $Id: Flagging.h,v 1.1 2004/11/09 21:09:31 wyoung Exp $
+//# $Id$
 
 
 #if !defined (AIPS_MODULE_FLAGGING_H)

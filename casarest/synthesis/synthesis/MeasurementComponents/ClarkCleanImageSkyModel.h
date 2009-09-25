@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: ClarkCleanImageSkyModel.h,v 19.4 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_CLARKCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_CLARKCLEANIMAGESKYMODEL_H
@@ -87,7 +87,7 @@ class ClarkCleanImageSkyModel : public CleanImageSkyModel {
 public:
 
   // constructor
-  ClarkCleanImageSkyModel() : itsProgress(0) {}
+  ClarkCleanImageSkyModel();
 
   // destructor
   ~ClarkCleanImageSkyModel();
@@ -98,11 +98,12 @@ public:
 
   //make a mask sub-lattice
 
-  SubLattice<Float>* makeMaskSubLat(const Int& nx, 
-				    const Int& ny, 
+  Lattice<Float>* makeMaskSubLat(const Int& nx, 
+				 const Int& ny, Int& newNx, Int& newNy,
 				    RO_LatticeIterator<Float>& maskIter,
 				    Int& xbeg, Int& xend, 
 				    Int& ybeg, Int& yend);
+
 private:
 
   ClarkCleanProgress *itsProgress;

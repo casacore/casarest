@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: TabulatedConvFunc.h,v 1.1 2005/05/29 04:56:06 sbhatnag Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_TABULATEDCONVFUNC_H
 #define SYNTHESIS_TABULATEDCONVFUNC_H
@@ -40,9 +40,11 @@ namespace casa{
     TabulatedConvFunc(Int n): ConvolutionFunction(n) {};
     ~TabulatedConvFunc() {};
 
+    virtual void setMaximumCacheSize(const Long howManyRealPixels=-1) {cacheSizeInPixels_p=howManyRealPixels;}
+    virtual Long maximumCacheSize() {return cacheSizeInPixels_p;}
     virtual void initTables(Int n){};
   private:
-    
+    Long cacheSizeInPixels_p;
   };
 
 };

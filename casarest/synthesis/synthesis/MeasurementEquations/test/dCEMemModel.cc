@@ -23,14 +23,14 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: dCEMemModel.cc,v 19.4 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
  
 #include <casa/iostream.h>
 #include <casa/aips.h>
 #include <images/Images/PagedImage.h>
 #include <casa/Arrays/IPosition.h>
 #include <lattices/Lattices/LCSlicer.h>
-#include <images/Images/ImageRegion.h>
+#include <images/Regions/ImageRegion.h>
 #include <images/Images/SubImage.h>
 #include <lattices/Lattices/PagedArray.h>
 #include <casa/Arrays/Vector.h>

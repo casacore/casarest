@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: ClarkCleanLatModel.h,v 19.8 2005/08/31 20:48:31 kgolap Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_CLARKCLEANLATMODEL_H
 #define SYNTHESIS_CLARKCLEANLATMODEL_H

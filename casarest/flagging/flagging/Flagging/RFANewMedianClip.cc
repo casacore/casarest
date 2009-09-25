@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFANewMedianClip.cc,v 1.10 2005/12/07 15:59:27 wyoung Exp $
+//# $Id$
 
 #include <flagging/Flagging/RFANewMedianClip.h>
 #include <casa/Arrays/ArrayMath.h>

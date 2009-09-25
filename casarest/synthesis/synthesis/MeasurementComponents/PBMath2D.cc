@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath2D.cc,v 19.4 2004/11/30 17:50:50 ddebonis Exp $
+//# $Id$
  
 #include <casa/aips.h>
 #include <casa/BasicSL/Complex.h>
@@ -32,7 +32,7 @@
 #include <casa/Arrays/Vector.h>
 #include <synthesis/MeasurementComponents/PBMath2D.h>
 
-#include <images/Images/ImageRegion.h>
+#include <images/Regions/ImageRegion.h>
 #include <images/Images/ImageInterface.h>
 
 #include <components/ComponentModels/SkyComponent.h>
@@ -111,6 +111,12 @@ PBMath2D::extent (const ImageInterface<Float>& in, const MDirection& pointDir,
   return  ( new ImageRegion() );
 };
 
+
+Int PBMath2D::support(const CoordinateSystem& cs){
+
+  return 0;
+
+}
 
 
 } //# NAMESPACE CASA - END

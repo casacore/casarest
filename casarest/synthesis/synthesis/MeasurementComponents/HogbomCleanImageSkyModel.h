@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: HogbomCleanImageSkyModel.h,v 19.4 2004/11/30 17:50:48 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_HOGBOMCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_HOGBOMCLEANIMAGESKYMODEL_H
@@ -81,7 +81,9 @@ public:
   // Solve for this SkyModel
   virtual Bool solve (SkyEquation& me);
   Matrix<Float>* makeMaskMatrix(const Int& nx, 
-				const Int& ny, 
+				const Int& ny,
+				Int& newNx,
+				Int& newNy,
 				RO_LatticeIterator<Float>& maskIter,
 				Int& xbeg,
 				Int& xend,

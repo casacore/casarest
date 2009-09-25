@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath2DImage.cc,v 19.21 2005/02/05 22:19:15 tcornwel Exp $
+//# $Id$
  
 #include <casa/aips.h>
 #include <casa/Arrays/ArrayMath.h>
@@ -120,6 +120,8 @@ PBMath2DImage& PBMath2DImage::operator=(const PBMath2DImage& other)
 
   return *this;
 };
+
+
 
 void
 PBMath2DImage::summary(Int nValues)
@@ -452,8 +454,8 @@ ImageInterface<Complex>& PBMath2DImage::apply(const ImageInterface<Complex>& in,
   Bool circular=(polframe==SkyModel::CIRCULAR);
 	      
   // Now get the polarization remapping for the Jones image
-  Int jsm=StokesImageUtil::CStokesPolMap(polmap, polframe,
-					 reJonesImage_p->coordinates());
+  //Int jsm=StokesImageUtil::CStokesPolMap(polmap, polframe,
+  //					 reJonesImage_p->coordinates());
 
   // For the input and output images, get all polarizations for x, y plane
   IPosition inPlane(4, nx, ny, npol, 1);
@@ -509,7 +511,7 @@ ImageInterface<Float>& PBMath2DImage::apply(const ImageInterface<Float>& in,
 					    const MDirection& sp,
 					    const Quantity parAngle,	      
 					    const BeamSquint::SquintType doSquint,
-					    Float cutoff)
+					    Float cutoff, Int ipower)
 {
   LogIO os(LogOrigin("PBMath2DImage", "apply"));
 
@@ -542,8 +544,8 @@ ImageInterface<Float>& PBMath2DImage::apply(const ImageInterface<Float>& in,
   Bool circular=(insm<1);
 
   // Now get the polarization remapping for the Jones image
-  Int jsm=StokesImageUtil::CStokesPolMap(polmap, polframe,
-					 reJonesImage_p->coordinates());
+  //Int jsm=StokesImageUtil::CStokesPolMap(polmap, polframe,
+  //					 reJonesImage_p->coordinates());
 
   // For the input and output images, get all polarizations for x, y plane
   IPosition inPlane(4, nx, ny, npol, 1);
@@ -599,8 +601,11 @@ SkyComponent& PBMath2DImage::apply(SkyComponent& in,
   // Now get the polarization remapping for the Jones image
   Vector<Int> polmap(4);
   SkyModel::PolRep polframe;
-  Int jsm=StokesImageUtil::CStokesPolMap(polmap, polframe,
-					 reJonesImage_p->coordinates());
+
+  // jsm (= circular or linear) is not used, but CStokesPolMap also sets polframe.
+  //Int jsm=
+  //					 reJonesImage_p->coordinates());
+  StokesImageUtil::CStokesPolMap(polmap, polframe, reJonesImage_p->coordinates());
 
   // First get the frequency of the output image
   Double desiredFrequency=frequency.getValue("Hz");
@@ -997,4 +1002,40 @@ void PBMath2DImage::checkImageCongruent(ImageInterface<Float>& image)
     
   }
 }
+
+Int PBMath2DImage::support(const CoordinateSystem& cs){
+  
+  Int spectralIndex=cs.findCoordinate(Coordinate::SPECTRAL);
+  AlwaysAssert(spectralIndex>=0, AipsError);
+  SpectralCoordinate
+    imageSpectralCoord=cs.spectralCoordinate(spectralIndex);
+  Double desiredFrequency=imageSpectralCoord.referenceValue()(0);
+
+  // Next get the frequency of the Jones image
+  spectralIndex=reJonesImage_p->coordinates().findCoordinate(Coordinate::SPECTRAL);
+  AlwaysAssert(spectralIndex>=0, AipsError);
+  imageSpectralCoord=reJonesImage_p->coordinates().spectralCoordinate(spectralIndex);
+  Double reFrequency=imageSpectralCoord.referenceValue()(0);
+
+  Double reFreqScale = reFrequency/desiredFrequency;
+
+  Double npixels=reJonesImage_p->shape()(0)*reFreqScale;
+  
+  Int dirIndex=cs.findCoordinate(Coordinate::DIRECTION);
+  DirectionCoordinate
+   directionCoord=cs.directionCoordinate(dirIndex);
+ 
+ Vector<String> dirunit=directionCoord.worldAxisUnits();
+
+ npixels=npixels/fabs(directionCoord.increment()(0));
+ dirIndex=reJonesImage_p->coordinates().findCoordinate(Coordinate::SPECTRAL);
+
+ directionCoord=(reJonesImage_p->coordinates()).directionCoordinate(dirIndex);
+ directionCoord.setWorldAxisUnits(dirunit);
+ npixels=npixels*fabs(directionCoord.increment()(0));
+
+ return Int(floor(npixels));
+
+}
+
 } //#End casa namespace

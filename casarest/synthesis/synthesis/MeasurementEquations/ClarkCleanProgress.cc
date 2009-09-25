@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ClarkCleanProgress.cc,v 19.7 2005/12/06 20:18:51 wyoung Exp $
+//# $Id$
 
 
 //# Includes

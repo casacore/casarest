@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: tImager.cc,v 1.3 2005/07/07 20:49:30 rrusk Exp $
+//# $Id$
 
 #include <casa/iostream.h>
 #include <casa/aips.h>

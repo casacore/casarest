@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SolvableVJMBuf.cc,v 19.3 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/SolvableVJMBuf.h>
@@ -50,6 +50,8 @@ SolvableVisJonesMBuf::SolvableVisJonesMBuf() : TimeVarVisJonesMBuf()
 //    solnOkOK_p         Bool                 Solution validity mask cache ok
 //    fitOK_p            Bool                 Fit array cache ok
 //    fitWgtOK_p         Bool                 Fit weight array cache ok
+//    flagOK_p           Bool                 flag array cache ok
+//    snrOK_p            Bool                 snr array cache ok
 //
   // Invalidate cache 
   invalidate();
@@ -91,6 +93,8 @@ SolvableVisJonesMBuf::SolvableVisJonesMBuf (CalIterBase& calIter)
 //    solnOkOK_p         Bool                 Solution validity mask cache ok
 //    fitOK_p            Bool                 Fit array cache ok
 //    fitWgtOK_p         Bool                 Fit weight array cache ok
+//    flagOK_p           Bool                 flag array cache ok
+//    snrOK_p            Bool                 snr array cache ok
 //
   // Invalidate cache
   invalidate();
@@ -125,6 +129,8 @@ Int SolvableVisJonesMBuf::append (CalTable& calTable)
   svjMainCol.solnOk().putColumnCells(refRows, solnOk());
   svjMainCol.fit().putColumnCells(refRows, fit());
   svjMainCol.fitWgt().putColumnCells(refRows, fitWgt());
+  svjMainCol.flag().putColumnCells(refRows, flag());
+  svjMainCol.snr().putColumnCells(refRows, snr());
   
   return nAdded;
 };
@@ -154,7 +160,7 @@ Int SolvableVisJonesMBuf::nRow()
   Int nRowParent = CalMainBuffer::nRow();
 
   // Process each local column individually
-  Vector<Int> colLength(7);
+  Vector<Int> colLength(9);
   Int n = 0;
   colLength(n++) = nRowParent;
   colLength(n++) = totalSolnOk().nelements();
@@ -166,6 +172,10 @@ Int SolvableVisJonesMBuf::nRow()
     fit().shape().getLast(1)(0) : 0;
   colLength(n++) = fitWgt().shape().nelements() > 0 ?
     fitWgt().shape().getLast(1)(0) : 0;
+  colLength(n++) = flag().shape().nelements() > 0 ? 
+    flag().shape().getLast(1)(0) : 0;
+  colLength(n++) = snr().shape().nelements() > 0 ? 
+    snr().shape().getLast(1)(0) : 0;
 
   return max(colLength);
 };
@@ -280,6 +290,42 @@ Array<Float>& SolvableVisJonesMBuf::fitWgt()
 
 //----------------------------------------------------------------------------
 
+Array<Bool>& SolvableVisJonesMBuf::flag()
+{
+// FLAG data field accessor
+// Input from private data:
+//    flag_p           Array<Bool>          Solution flags mask
+//
+  // Fill local cache for this column if cache not valid
+  if (connectedToIter()) {
+    if (!flagOK_p) {
+      calMainCol()->flag().getColumn (flag_p);
+      flagOK_p = True;
+    };
+  };
+  return flag_p;
+};
+
+//----------------------------------------------------------------------------
+
+Array<Float>& SolvableVisJonesMBuf::snr()
+{
+// SNR data field accessor
+// Input from private data:
+//    snr_p           Array<Float>         Snr array
+//
+  // Fill local cache for this column if cache not valid
+  if (connectedToIter()) {
+    if (!snrOK_p) {
+      calMainCol()->snr().getColumn (snr_p);
+      snrOK_p = True;
+    };
+  };
+  return snr_p;
+};
+
+//----------------------------------------------------------------------------
+
 void SolvableVisJonesMBuf::invalidate()
 {
 // Invalidate the current cache
@@ -290,6 +336,8 @@ void SolvableVisJonesMBuf::invalidate()
 //    solnOkOK_p         Bool                 Solution validity mask cache ok
 //    fitOK_p            Bool                 Fit array cache ok
 //    fitWgtOK_p         Bool                 Fit weight array cache ok
+//    flagOK_p           Bool                 Flag array cache ok
+//    snrOK_p            Bool                 Snr array cache ok
 //
   // Invalidate parent class cache
   CalMainBuffer::invalidate();
@@ -301,6 +349,8 @@ void SolvableVisJonesMBuf::invalidate()
   solnOkOK_p = False;     
   fitOK_p = False;      
   fitWgtOK_p = False;     
+  flagOK_p = False;
+  snrOK_p = False;
 };
 
 //----------------------------------------------------------------------------
@@ -354,6 +404,15 @@ void SolvableVisJonesMBuf::fillAttributes (const Vector<Int>& calIndices)
   // FIT_WEIGHT
   fitWgt().resize(sizeA);
   fitWgt() = 0;
+
+  // FLAG
+  flag().resize(sizeA);
+  flag() = True;
+
+  // SNR
+  snr().resize(sizeA);
+  snr() = 0;
+
 
   return;
 };

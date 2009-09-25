@@ -24,14 +24,14 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: IlluminationConvFunc.h,v 1.2 2006/03/30 23:30:21 sbhatnag Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_ILLUMINATIONCONVFUNC_H
 #define SYNTHESIS_ILLUMINATIONCONVFUNC_H
 
 #include <casa/Exceptions.h>
 #include <synthesis/MeasurementComponents/TabulatedConvFunc.h>
-#include <synthesis/MeasurementComponents/Exp.h>
+#include <synthesis/MeasurementComponents/ExpCache.h>
 #include <synthesis/MeasurementComponents/CExp.new3.h>
 
 namespace casa{
@@ -72,7 +72,7 @@ namespace casa{
 			     );
 		  
   private:
-    FExp<CF_TYPE> ExpTable;
+    ExpCache<CF_TYPE> ExpTable;
     CExp3<CF_TYPE> CExpTable;
     Double sigma, pa_p;
     Bool expTableReady,cexpTableReady,sigmaReady;

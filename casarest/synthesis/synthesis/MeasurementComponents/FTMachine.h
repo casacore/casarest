@@ -24,16 +24,16 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: FTMachine.h,v 19.13 2005/12/23 02:18:19 kgolap Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_FTMACHINE_H
 #define SYNTHESIS_FTMACHINE_H
 
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
+#include <casa/Arrays/Array.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Cube.h>
 #include <casa/Logging/LogIO.h>
 #include <casa/Logging/LogSink.h>
 #include <casa/Logging/LogMessage.h>
@@ -41,11 +41,13 @@
 #include <casa/Containers/Block.h>
 #include <images/Images/TempImage.h>
 #include <coordinates/Coordinates/SpectralCoordinate.h>
+#include <scimath/Mathematics/InterpolateArray1D.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 class VisSet;
 class VisBuffer;
+class ROVisibilityIterator;
 class UVWMachine;
 
 // <summary> defines interface for the Fourier Transform Machine </summary>
@@ -157,7 +159,8 @@ public:
 
   // Put coherence to grid
   virtual void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False, 
-		   FTMachine::Type type= FTMachine::OBSERVED) = 0;
+		   FTMachine::Type type= FTMachine::OBSERVED, 
+		   const Matrix<Float>& imweight = Matrix<Float>(0,0)) = 0;
 
   virtual void put(const VisBuffer& vb, TempImage<Complex>& image,
 		   Vector<Double>& scale,
@@ -170,12 +173,20 @@ public:
   // Get the final weights image
   virtual void getWeightImage(ImageInterface<Float>&, Matrix<Float>&) = 0;
 
+  // Get a flux (divide by this to get a flux density correct image) 
+  // image if there is one
+  virtual void getFluxImage(ImageInterface<Float>& image){};
+
   // Make the entire image
   virtual void makeImage(FTMachine::Type type,
 			 VisSet& vs,
 			 ImageInterface<Complex>& image,
 			 Matrix<Float>& weight);
-
+  // Make the entire image using a ROVisIter
+  virtual void makeImage(FTMachine::Type type,
+			 ROVisibilityIterator& vi,
+			 ImageInterface<Complex>& image,
+			 Matrix<Float>& weight);
   // Rotate the uvw from the observed phase center to the
   // desired phase center.
   void rotateUVW(Matrix<Double>& uvw, Vector<Double>& dphase,
@@ -206,6 +217,27 @@ public:
   // Return the name of the machine
 
   virtual String name(){ return "None";};
+ 
+  // set and get the location used for frame 
+  void setLocation(const MPosition& loc);
+  MPosition& getLocation();
+
+  // set a moving source aka planets or comets =>  adjust phase center
+  // on the fly for gridding 
+  virtual void setMovingSource(const String& sourcename);
+  virtual void setMovingSource(const MDirection& mdir);
+
+  //reset stuff in an FTMachine
+  virtual void reset(){};
+
+  //set frequency interpolation type
+  virtual void setFreqInterpolation(const String& method);
+
+  //tell ftmachine which Pointing table column to use for Direction
+  //Mosaic or Single dish ft use this for example
+  virtual void setPointingDirColumn(const String& column="DIRECTION");
+
+  virtual String getPointingDirColumnInUse();
 
 
 protected:
@@ -225,6 +257,12 @@ protected:
   MDirection mTangent_p;
 
   MDirection mImage_p;
+
+  // moving source stuff
+  MDirection movingDir_p;
+  Bool fixMovingSource_p;
+  MDirection firstMovingDir_p;
+    
 
   Double distance_p;
 
@@ -271,11 +309,43 @@ protected:
   //redo all spw chan match especially if ms has changed underneath 
   Bool matchAllSpwChans(const VisBuffer& vb);
 
+  //interpolate visibility data of vb to grid frequency definition
+  //flag will be set the one as described in interpolateArray1D
+  //return False if no interpolation is done...for e.g for nearest case
+  virtual Bool interpolateFrequencyTogrid(const VisBuffer& vb, 
+					  const Matrix<Float>& wt,
+					  Cube<Complex>& data, 
+					  Cube<Int>& flag,
+					  Matrix<Float>& weight,
+					  FTMachine::Type type=FTMachine::OBSERVED ); 
+  //degridded data interpolated back onto visibilities
+  virtual Bool interpolateFrequencyFromgrid(VisBuffer& vb, 
+					    Cube<Complex>& data,
+					    FTMachine::Type type=FTMachine::MODEL );
+  
+
+  //Interpolate visibilities to be degridded upon
+  virtual void getInterpolateArrays(const VisBuffer& vb,
+				    Cube<Complex>& data, Cube<Int>& flag);
+
 
   // Private variables needed for spectral frame conversion 
   SpectralCoordinate spectralCoord_p;
   Vector<Bool> doConversion_p;
   Bool freqFrameValid_p;
+  Vector<Float> imageFreq_p;
+  Vector<Double> interpVisFreq_p;
+  InterpolateArray1D<Float,Complex>::InterpolationMethod freqInterpMethod_p;
+  String pointingDirCol_p;
+ private:
+  //Some temporary wasteful function for swapping axes because we don't 
+  //Interpolation along the second axis...will need to implement 
+  //interpolation on y axis of a cube. 
+  
+  void swapyz(Cube<Complex>& out, const Cube<Complex>& in);
+  void swapyz(Cube<Bool>& out, const Cube<Bool>& in);
+
+
 };
 
 } //# NAMESPACE CASA - END

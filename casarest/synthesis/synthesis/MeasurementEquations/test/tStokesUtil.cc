@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: tStokesUtil.cc,v 19.5 2005/01/20 21:01:34 kgolap Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <casa/Arrays/IPosition.h>

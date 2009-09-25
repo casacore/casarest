@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: XCorr.h,v 19.5 2004/11/30 17:50:58 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_XCORR_H
 #define SYNTHESIS_XCORR_H

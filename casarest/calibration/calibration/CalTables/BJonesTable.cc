@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: BJonesTable.cc,v 19.3 2004/11/30 17:50:11 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/BJonesTable.h>
@@ -107,6 +107,7 @@ BJonesPolyTable::BJonesPolyTable (const String& tableName,
   if (access == Table::New || access == Table::NewNoReplace ||
       access == Table::Scratch) {
     createCalTable (tableName, itsBJonesPolyDesc, access);
+    calMainAsTable().tableInfo().setSubType("BPOLY");
   } else {
     openCalTable (tableName, access);
   };

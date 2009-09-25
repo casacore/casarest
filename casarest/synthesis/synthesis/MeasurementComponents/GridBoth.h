@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: GridBoth.h,v 19.6 2005/09/06 20:12:09 kgolap Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_GRIDBOTH_H
 #define SYNTHESIS_GRIDBOTH_H
@@ -115,20 +115,20 @@ public:
   // mTangent is specified then the uvw rotation is done for
   // that location iso the image center.
   // <group>
-  GridBoth(MeasurementSet& ms, SkyJones& sj, Long cachesize, Int tilesize,
+  GridBoth(SkyJones& sj, Long cachesize, Int tilesize,
 	   String sdConvType="BOX",
 	   String synConvType="SF",
 	   Float padding=1.0,
 	   Float sdScale=1.0,
 	   Float sdWeight=1.0);
-  GridBoth(MeasurementSet& ms, SkyJones& sj, Long cachesize, Int tilesize,
+  GridBoth(SkyJones& sj, Long cachesize, Int tilesize,
 	   MPosition mLocation,
 	   String sdConvType="BOX",
 	   String synConvType="SF",
 	   Float padding=1.0,
 	   Float sdScale=1.0,
 	   Float sdWeight=1.0);
-  GridBoth(MeasurementSet& ms, SkyJones& sj, Long cachesize, Int tilesize,
+  GridBoth(SkyJones& sj, Long cachesize, Int tilesize,
 	   MPosition mLocation, MDirection mTangent,
 	   String sdConvType="BOX",
 	   String synConvType="SF",
@@ -171,7 +171,8 @@ public:
 
   // Put coherence to grid by gridding.
   void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False,
-	   FTMachine::Type type=FTMachine::OBSERVED);
+	   FTMachine::Type type=FTMachine::OBSERVED,
+	   const Matrix<Float>& wgt=Matrix<Float>(0,0));
 
   // Get the final image: do the Fourier transform and
   // grid-correct, then optionally normalize by the summed weights

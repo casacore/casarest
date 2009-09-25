@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: IPLatConvEquation.h,v 19.4 2004/11/30 17:50:59 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_IPLATCONVEQUATION_H
 #define SYNTHESIS_IPLATCONVEQUATION_H

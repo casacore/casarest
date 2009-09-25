@@ -34,6 +34,11 @@
 #include <casa/OS/File.h>
 #include <casa/Logging/LogMessage.h>
 #include <casa/Logging/LogSink.h>
+#include <calibration/CalTables/CalTableDesc2.h>
+#include <calibration/CalTables/CalTable2.h>
+#include <calibration/CalTables/SolvableCalSetMCol.h>
+#include <calibration/CalTables/VisCalEnum.h>
+//#include <calibration/CalTables/BaseCalSet.h>
 
 // #include <synthesis/MeasurementComponents/VisJones.h>
 // #include <synthesis/MeasurementEquations/VisEquation.h>
@@ -94,8 +99,14 @@ public:
   Vector<Int>& nTime()  { return nTime_; };
   Int& nTime(const Int& spw) { return nTime_(spw); };
 
-  IPosition shape(const Int& spw) { return IPosition(4,nPar_,nChan_(spw),nElem_,nTime_(spw)); };
   //  IPosition& shape(const Int& spw) { return IPosition(4,nPar(),nChan(spw),nElem(),nTime(spw)); };
+  IPosition shape(const Int& spw) { return IPosition(4,nPar_,nChan_(spw),nElem_,nTime_(spw)); };
+
+  // Set up spwOK according to solution availability
+  inline void setSpwOK() { spwOK_ = (nTime()!=0); };
+
+  // Report if solutions available for specified spw
+  Vector<Bool> spwOK() { return spwOK_; };
 
   // Freq list per spw
   Vector<Double>& frequencies(const Int& spw) { return *freq_[spw]; };
@@ -111,21 +122,27 @@ public:
   Vector<Int>&    fieldId(const Int& spw)      { return *fieldId_[spw]; };
   Vector<String>& fieldName(const Int& spw)    { return *fieldName_[spw]; };
   Vector<String>& sourceName(const Int& spw)   { return *sourceName_[spw]; };
-  Array<T>& par(const Int& spw)     { return *par_[spw]; };
-  Cube<Bool>&     parOK(const Int& spw)   { return *parOK_[spw]; };
+  Array<T>&       par(const Int& spw)          { return *par_[spw]; };
+  Array<Bool>&    parOK(const Int& spw)        { return *parOK_[spw]; };
+  Array<Float>&   parErr(const Int& spw)       { return *parErr_[spw]; };
+  Array<Float>&   parSNR(const Int& spw)       { return *parSNR_[spw]; };
 
   // Statistics
-  Matrix<Bool>&   iSolutionOK(const Int& spw)  { return *iSolutionOK_[spw]; };
+  //  Matrix<Bool>&   iSolutionOK(const Int& spw)  { return *iSolutionOK_[spw]; };
   Matrix<Float>&  iFit(const Int& spw)         { return *iFit_[spw]; };
   Matrix<Float>&  iFitwt(const Int& spw)       { return *iFitwt_[spw]; };
   Vector<Bool>&   solutionOK(const Int& spw)   { return *solutionOK_[spw]; };
   Vector<Float>&  fit(const Int& spw)          { return *fit_[spw]; };
   Vector<Float>&  fitwt(const Int& spw)        { return *fitwt_[spw]; };
 
-
   // Store/Retrieve solutions to/from a table.
   //  (will evolve to use table iteration)
-  virtual void store(const String& file, const String& type, const Bool& append);
+  virtual void initCalTableDesc(const String& type, const Int& parType);
+  virtual void attach();
+  virtual void store(const String& file, const String& type, const Bool& append,
+		     const String& msname="");
+//   virtual void store(const String& file, const String& type, 
+// 		     const String& msname, const Bool& append);
   virtual void load(const String& file, const String& select);
 
 protected:
@@ -156,6 +173,9 @@ private:
   // Number of time slots
   Vector<Int> nTime_;         // (nSpw_) number of slots per spw
 
+  // Spw OK?
+  Vector<Bool> spwOK_;
+
   // Channel frequencies, etc.
   Vector<Int> startChan_;            // (nSpw_) start data channel per spw
   PtrBlock<Vector<Double>*> freq_;   // [nSpw_](nChan_)
@@ -169,11 +189,13 @@ private:
   PtrBlock<Vector<String>*> sourceName_;     // (nSpw_)(numberSlots_)
 
   // Per spw, per channel, per element, per slot solution generic PARAMETER storage  
-  PtrBlock<Array<T>*> par_;    // (nSpw_)(nPar_,nSolnChan_,nElem_,numberSlots_)
-  PtrBlock<Cube<Bool>*>     parOK_;  // (nSpw_)(nSolnChan_,nElem_,numberSlots_)
+  PtrBlock<Array<T>*>      par_;    // (nSpw_)(nPar_,nSolnChan_,nElem_,numberSlots_)
+  PtrBlock<Array<Bool>*>   parOK_;  // (nSpw_)(nPar_,nSolnChan_,nElem_,numberSlots_)
+  PtrBlock<Array<Float>*>  parErr_; // (nSpw_)(nPar_,nSolnChan_,nElem_,numberSlots_)
+  PtrBlock<Array<Float>*>  parSNR_; // (nSpw_)(nPar_,nSolnChan_,nElem_,numberSlots_)
 
   // Statistics
-  PtrBlock<Matrix<Bool>*> iSolutionOK_;  // [nSpw_](nElem_,nSlots_)
+  //  PtrBlock<Matrix<Bool>*> iSolutionOK_;  // [nSpw_](nElem_,nSlots_)
   PtrBlock<Matrix<Float>*> iFit_;        // [nSpw_](nElem_,nSlots_)
   PtrBlock<Matrix<Float>*> iFitwt_;      // [nSpw_](nElem_,nSlots_)
 
@@ -184,9 +206,24 @@ private:
   LogSink logSink_p;
   LogSink& logSink() {return logSink_p;};
 
+  CalTableDesc2 *calTabDesc_;
+  CalTable2 *calTab_;
+  SolvableCalSetMCol<T> *svjmcol_;
+
 };
 
+// Globals
+
+// Smooth the solutions in a CalSet
+  void smooth(CalSet<Complex>& cs,
+	      const String& smtype,
+	      const Double& smtime,
+	      Vector<Int> selfields);
 
 } //# NAMESPACE CASA - END
+
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <calibration/CalTables/CalSet.tcc>
+#endif
 
 #endif

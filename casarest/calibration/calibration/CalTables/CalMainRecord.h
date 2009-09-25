@@ -165,6 +165,8 @@ class CalMainRecord
    void dSolnOk (const Array <Bool>& solnOk);
    void dFit (const Array <Float>& fit);
    void dFitWgt (const Array <Float>& fitWgt);
+   void dFlag (const Array <Bool>& flag);
+   void dSnr (const Array <Float>& snr);
 
    // b) get
    void gTotalSolnOk (Bool& totalSolnOk);
@@ -173,6 +175,8 @@ class CalMainRecord
    void gSolnOk (Array <Bool>& solnOk);
    void gFit (Array <Float>& fit);
    void gFitWgt (Array <Float>& fitWgt);
+   void gFlag (Array <Bool>& flag);
+   void gSnr (Array <Float>& snr);
 
  private:
    Record itsRecord;

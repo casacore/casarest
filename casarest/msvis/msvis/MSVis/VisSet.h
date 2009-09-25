@@ -124,12 +124,19 @@ public:
 	 const Matrix<Int>& chanSelection, Double timeInterval=0,
 	 Bool compress=False);
 
+  // Same as above, but provide scratch column option
+  VisSet(MeasurementSet& ms,const Block<Int>& columns, 
+	 const Matrix<Int>& chanSelection, 
+	 Bool addScratch,
+	 Double timeInterval=0,Bool compress=False);
+
   // This is a constructor for multiple MS...but everything is same as the one 
   // above
 
+
   VisSet(Block<MeasurementSet>& mss, const Block<Int>& columns, 
-	 const Block< Matrix<Int> >& chanSelections, Double timeInterval=0, 
-	 Bool compress=False);
+         const Block< Matrix<Int> >& chanSelections, Bool addStratch=False, Double timeInterval=0,
+         Bool compress=False);
 
 
 
@@ -142,7 +149,9 @@ public:
   VisSet(MeasurementSet & ms, const Matrix<Int>& chanSelection, 
 	 Double timeInterval=0);
 
-
+  //Constructor from visibility iterator ....a temporary fix 
+  //as EPJones as Imager stops using VisSet 
+  VisSet(ROVisibilityIterator& vi);
   // Construct from an existing VisSet, this references the underlying
   // MeasurementSet(s) but allows a new iteration order and time interval
   // to be specified.
@@ -169,9 +178,21 @@ public:
   // Note: this calls origin on the iterator.
   void selectChannel(Int nGroup,Int start, Int width, Int increment, 
 		     Int spectralWindow);
+  // call to VisIter origin optional:
+  void selectChannel(Int nGroup,Int start, Int width, Int increment, 
+		     Int spectralWindow, Bool callOrigin);
+
+  // Collective selection via MSSelection channel selection Matrix
+  void selectChannel(const Matrix<Int>& chansel);
+
+  // Set nominal selection to ALL channels
+  void selectAllChans();
 
   // number of antennas
   Int numberAnt();
+
+  // number of fields
+  Int numberFld();
 
   // number of spectral windows
   Int numberSpw();
@@ -211,6 +232,7 @@ private:
   VisIter* iter_p;
   Matrix<Int> selection_p;
   Block<MeasurementSet> *blockOfMS_p;
+  Bool multims_p;
 
 };
 

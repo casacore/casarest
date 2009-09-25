@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFABase.h,v 19.5 2004/11/30 17:50:24 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFABASE_H
 #define FLAGGING_RFABASE_H
 
@@ -114,7 +114,7 @@ public:
 // Called after a dry pass is complete
   virtual IterMode endDry    () { return STOP; };
 // Called after a flag pass is complete
-  virtual void endFlag        () {};
+  virtual void endFlag () {};
   
 // Iteration methods for a data pass. Either or both may be implemented.
 // iterTime() is called once for each new VisBuffer (= new time slot)
@@ -138,6 +138,8 @@ public:
 // called (before endChunk()) to plots a graphical flagging report  
   virtual void plotFlaggingReport ( PGPlotterInterface & ) {};
   virtual void printFlaggingReport ( ) {};
+
+  virtual String getID() {return String("");};
   
 // returns the name of this RFA (set in myname)
   const String & name ();
@@ -148,7 +150,14 @@ public:
 
 // static method for setting the indexing base for agent arguments
   static void setIndexingBase ( uInt base );
-  
+
+  virtual Record getResult( ) { return Record(); };
+
+  virtual void finalize() {};
+  virtual void initialize() {};
+  virtual void initializeIter(uInt iter) {};
+  virtual void finalizeIter(uInt iter) {};
+
 protected:
   RFChunkStats &chunk;
   Record params;

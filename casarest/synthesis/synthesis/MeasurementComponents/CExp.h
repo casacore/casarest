@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: CExp.h,v 1.1 2005/05/29 04:47:04 sbhatnag Exp $
+//# $Id$
 #if !defined(CEXP_H)
 #define CEXP_H
 

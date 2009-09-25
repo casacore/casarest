@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: EPointDesc.cc,v 1.1 2005/05/29 04:21:48 sbhatnag Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/EPointDesc.h>

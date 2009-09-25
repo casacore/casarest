@@ -54,7 +54,7 @@ public:
 
 
   // Set non-trivial spw mapping
-  void setSpwMap(const Vector<Int>& spwmap) {spwMap_ = spwmap;};
+  void setSpwMap(const Vector<Int>& spwmap) {spwMap_ = spwmap; setSpwOK();};
 
   // Interpolate, given timestamp, spw, freq list; returns T if new result
   Bool interpolate(const Double& time,
@@ -70,8 +70,12 @@ public:
   // Timestamp of current Slot
   Double slotTime() { return csTimes()(currSlot()); };
 
-  // Access to result  
+  // Access to result (by reference)
   inline Cube<Complex>& result() { return r; };
+  inline Cube<Bool>& resultOK() { return ok; };
+
+  // Spwmap-sensitive spwOK()
+  inline Vector<Bool> spwOK() { return spwOK_; };
 
 protected:
 
@@ -132,12 +136,9 @@ protected:
   inline Vector<Double>& csTimes() { return cs_->time(currSpwMap()); };
   inline Vector<Double>& csFreq()  { return cs_->frequencies(currSpwMap()); };
   inline Array<Complex>& csPar()   { return cs_->par(currSpwMap()); };
-  inline Cube<Bool>&     csParOK() { return cs_->parOK(currSpwMap()); };
+  inline Array<Bool>&    csParOK() { return cs_->parOK(currSpwMap()); };
 
   // Access to IPositions
-  inline IPosition&  ip4s() { return (*ip4s_[currSpw_]); };
-  inline IPosition&  ip3s() { return (*ip3s_[currSpw_]); };
-  inline IPosition&  ip2s() { return (*ip2s_[currSpw_]); };
   inline IPosition&  ip4d() { return (*ip4d_[currSpw_]); };
   inline IPosition&  ip3d() { return (*ip3d_[currSpw_]); };
   inline IPosition&  ip2d() { return (*ip2d_[currSpw_]); };
@@ -156,13 +157,13 @@ protected:
   inline Array<Float>&   tAC() {return (*tAC_[currSpw()]); };
   inline Array<Float>&   tPC() {return (*tPC_[currSpw()]); };
   inline Array<Complex>& tCC() {return (*tCC_[currSpw()]); };
-  inline Matrix<Bool>&   tOk() {return (*tOk_[currSpw()]); };
+  inline Cube<Bool>&     tOk() {return (*tOk_[currSpw()]); };
 
   // In-focus Freq Interpolation coefficients
   inline Array<Float>&   fAC() {return (*fAC_[currSpw()]); };
   inline Array<Float>&   fPC() {return (*fPC_[currSpw()]); };
   inline Array<Complex>& fCC() {return (*fCC_[currSpw()]); };
-  inline Matrix<Bool>&   fOk() {return (*fOk_[currSpw()]); };
+  inline Cube<Bool>&     fOk() {return (*fOk_[currSpw()]); };
 
   inline void rPart(Array<Complex>& c,Array<Float>& rp) { return part(c,0,rp); };
   inline void iPart(Array<Complex>& c,Array<Float>& ip) { return part(c,1,ip); };
@@ -174,6 +175,9 @@ protected:
 
 private:
 
+  // Set spwOK_ according to spwmap
+  void setSpwOK();
+
   // The CalSet from which we interpolate
   CalSet<Complex>* cs_;
 
@@ -182,6 +186,9 @@ private:
 
   // Spw map
   Vector<Int> spwMap_;
+
+  // SpwOK
+  Vector<Bool> spwOK_;
 
   // Prior interp time, per spw
   Vector<Double> lastTime_;
@@ -204,14 +211,11 @@ private:
 
   Cube<Float> a,p;    // For referencing interp results
   Cube<Complex> c;
-  Matrix<Bool> ok;
+  Cube<Bool> ok;
 
   Cube<Complex> r, r_;
 
   // Array shapes
-  PtrBlock<IPosition*> ip4s_;     // [nSpw]
-  PtrBlock<IPosition*> ip3s_;     // [nSpw]
-  PtrBlock<IPosition*> ip2s_;     // [nSpw]
   PtrBlock<IPosition*> ip4d_;     // [nSpw]
   PtrBlock<IPosition*> ip3d_;     // [nSpw]
   PtrBlock<IPosition*> ip2d_;     // [nSpw]
@@ -224,7 +228,7 @@ private:
   // Time Interpolation coefficients (per spw)
   PtrBlock<Array<Float>*>   tAC_, tPC_;  // [nSpw](2,nPar,nChan,nElem)
   PtrBlock<Array<Complex>*> tCC_;        // [nSpw](2,nPar,nChan,nElem)
-  PtrBlock<Matrix<Bool>*>   tOk_;        // [nSpw](nChan,nElem)
+  PtrBlock<Cube<Bool>*>     tOk_;        // [nSpw](nPar,nChan,nElem)
 
   // Time Interpolation results (currSpw)
   Cube<Float>    tA_, tP_;    // (nPar,nChan,nElem)
@@ -239,7 +243,7 @@ private:
   // Freq Interpolation coefficients (per spw)
   PtrBlock<Array<Float>*>   fAC_, fPC_;  // [nSpw](2,nPar,nFreq,nElem)
   PtrBlock<Array<Complex>*> fCC_;        // [nSpw](2,nPar,nFreq,nElem)
-  PtrBlock<Matrix<Bool>*>   fOk_;        // [nSpw](nFreq,nElem)
+  PtrBlock<Cube<Bool>*>     fOk_;        // [nSpw](nPar,nFreq,nElem)
 
   // Freq Interpolation results (currSspw)
   Cube<Float>    fA_, fP_;               // (nPar,nFreq,nElem)

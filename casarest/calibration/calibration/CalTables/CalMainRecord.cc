@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: CalMainRecord.cc,v 19.4 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/CalMainRecord.h>
@@ -1055,6 +1055,36 @@ void CalMainRecord::dFitWgt (const Array <Float>& fitWgt)
 
 //----------------------------------------------------------------------------
 
+void CalMainRecord::dFlag (const Array <Bool>& flag)
+{
+// Define the Flag field value
+// Input:
+//    flag             const Array <Bool>&   FLAG value
+// Output:
+//    itsRecord        Record                Underlying record object
+//
+  Record newRec;
+  newRec.define (MSC::fieldName (MSC::FLAG), flag);
+  addRec (newRec);
+};
+
+//----------------------------------------------------------------------------
+void CalMainRecord::dSnr (const Array <Float>& snr)
+{
+// Define the SNR field value
+// Input:
+//    snr              const Array <Float>&  SNR value
+// Output:
+//    itsRecord        Record                Underlying record object
+//
+  Record newRec;
+  newRec.define (MSC::fieldName (MSC::SNR), snr);
+  addRec (newRec);
+};
+
+
+//----------------------------------------------------------------------------
+
 void CalMainRecord::gTotalSolnOk (Bool& totalSolnOk)
 {
 // Get the TOTAL_SOLUTION_OK field value
@@ -1132,6 +1162,33 @@ void CalMainRecord::gFitWgt (Array <Float>& fitWgt)
 };
 
 //----------------------------------------------------------------------------
+
+void CalMainRecord::gFlag (Array <Bool>& flag)
+{
+// Get the Flag field value
+// Output:
+//    flag             Array <Bool>&         FLAG value
+// Input:
+//    itsRecord        Record                Underlying record object
+//
+  record().get (MSC::fieldName (MSC::FLAG), flag);
+};
+
+//----------------------------------------------------------------------------
+void CalMainRecord::gSnr (Array <Float>& snr)
+{
+// Define the SNR field value
+// Output:
+//    snr              Array <Float>&        SNR value
+// Output:
+//    itsRecord        Record                Underlying record object
+//
+  record().get (MSC::fieldName (MSC::SNR), snr);
+};
+
+//----------------------------------------------------------------------------
+
+
 
 } //# NAMESPACE CASA - END
 

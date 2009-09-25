@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFChunkStats.h,v 19.5 2005/06/18 21:19:15 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFCHUNKSTATS_H
 #define FLAGGING_RFCHUNKSTATS_H
 
@@ -37,7 +37,7 @@
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
-class RedFlagger;
+class Flagger;
 class MeasurementSet;
 class VisibilityIterator;
 class VisBuffer;
@@ -59,7 +59,7 @@ typedef RFABase RFA;
 //   <li> VisibilityIterator
 //   <li> VisBuffer
 //   <li> MeasurementSet
-//   <li> RedFlagger
+//   <li> Flagger
 // </prerequisite>
 //
 // <etymology>
@@ -88,7 +88,7 @@ class RFChunkStats : public FlaggerEnums
 protected:
   VisibilityIterator &visiter;
   VisBuffer          &visbuf;
-  RedFlagger         &flagger;
+  Flagger            &flagger;
   
   IPosition visshape;  
   uInt counts[Num_StatEnums];
@@ -96,18 +96,29 @@ protected:
   Vector<uInt> rows_per_ifr;
   Vector<uInt> nrf_ifr,nrf_time;
   Vector<Int>  ifr_nums;
+  Vector<Int>  feed_nums;
   Vector<Int>  corrtypes;
   Vector<Double> freq;
   String       corr_string;
   Double       start_time,end_time,current_time;
   uInt chunk_no,pass_no;
   Int itime;
+
+//  Matrix<uInt> nf_corr_ifr, nf_chan_corr, nf_chan_time, nf_corr_time;
+  Cube<uInt> nf_chan_ifr_time;
   
   PGPlotterInterface *pgp_screen,*pgp_report;
+
+  std::vector<double> scan_start;      /* first time stamp in scan */
+  std::vector<double> scan_start_flag; /* first time stamp with any 
+                                          unflagged data in scan*/
+  std::vector<double> scan_end, scan_end_flag; /* as above */
   
+
+
 public:
 // constructor
-  RFChunkStats( VisibilityIterator &vi,VisBuffer &vb,RedFlagger &rf,
+  RFChunkStats( VisibilityIterator &vi,VisBuffer &vb,Flagger &rf,
          PGPlotterInterface *pgp_scr=NULL,PGPlotterInterface *pgp_rep=NULL );
 
 // accessors to VisIter
@@ -121,6 +132,24 @@ public:
   const String msName () const;
 // returns antenna names
   const Vector<String>  & antNames () const;
+
+  // scan start/end times
+  double get_scan_start(unsigned scan) const
+    { return scan_start[scan]; }
+
+  double get_scan_end(unsigned scan) const
+    { return scan_end[scan]; }
+
+  // scan start/end times for unflagged data
+  //
+  // returns: time stamps of first/last unflagged
+  // data in the given scan, or a negative number 
+  // if there's no unflagged data in the scan.
+  double get_scan_start_unflagged(unsigned scan) const
+    { return scan_start_flag[scan]; }
+
+  double get_scan_end_unflagged(unsigned scan) const
+    { return scan_end_flag[scan]; }
 
 // accessors to plotters
   PGPlotterInterface & pgpscr() const;
@@ -171,6 +200,11 @@ public:
 // returns IFR index corresponding to current VisBuffer rows
   const Vector<Int> & ifrNums ()  { return ifr_nums; };
 
+// returns FEED index corresponding to current VisBuffer rows
+  uInt feedNum( uInt nr )  { return feed_nums(nr); };
+// returns FEED index corresponding to current VisBuffer rows
+  const Vector<Int> & feedNums ()  { return feed_nums; };
+
 // converts antenna indices into IFR index
   uInt antToIfr ( uInt ant1,uInt ant2 );
 // converts IFR index back to antenna numbers
@@ -200,6 +234,20 @@ public:
   const Vector<uInt> & nrfTime () const     
                                           { return nrf_time; };
 
+  //Matrix<uInt> nf_corr_ifr, nf_chan_corr, nf_chan_time, nf_corr_time;
+  //uInt & nfCorrIfr( uInt icorr, uInt ifr ) { return nf_corr_ifr(icorr,ifr); }
+  //const Matrix<uInt> & nfCorrIfr () const { return nf_corr_ifr; }
+  //uInt & nfChanCorr( uInt ich, uInt icorr ) { return nf_chan_corr(ich,icorr); }
+  //const Matrix<uInt> & nfChanCorr () const { return nf_chan_corr; }
+  //uInt & nfChanTime( uInt ich, uInt itime ) { return nf_chan_time(ich,itime); }
+  //const Matrix<uInt> & nfChanTime () const { return nf_chan_time; }
+  //uInt & nfCorrTime( uInt icorr, uInt itime ) { return nf_corr_time(icorr,itime); }
+  //const Matrix<uInt> & nfCorrTime () const { return nf_corr_time; }
+  
+  uInt & nfChanIfrTime( uInt ichan, uInt ifr, uInt itime ) 
+                { return nf_chan_ifr_time(ichan,ifr,itime); }
+  const Cube<uInt> & nfChanIfrTime () const { return nf_chan_ifr_time; }
+
 // prints stats to stderr
   void printStats ();
 };
@@ -214,4 +262,7 @@ Int findCorrType( Stokes::StokesTypes type,const Vector<Int> &corr );
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <flagging/Flagging/RFChunkStats.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

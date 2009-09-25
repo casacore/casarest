@@ -4,7 +4,8 @@ import sys
 import os
 import re
 
-deps = {'msvis' : None,
+deps = {'graphics' : None,
+        'msvis' : None,
         'flagging' : ['msvis'],
 	'calibration': ['msvis'],
 	'synthesis': ['calibration'],
@@ -82,7 +83,8 @@ if "-h" not in args:
 	    args.append("casarestroot=/usr/local")
 
 # build all by default
-tobuild = ['msvis', 'flagging', 'calibration', 'synthesis', 'simulators']
+##tobuild = ['tableplot', 'msvis', 'flagging', 'calibration', 'synthesis', 'simulators']
+tobuild = ['msvis', 'flagging', 'calibration', 'simulators', 'synthesis']
 
 for k in deps.keys():
     k = k.rstrip("/")

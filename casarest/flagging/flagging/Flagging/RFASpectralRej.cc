@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFASpectralRej.cc,v 19.6 2005/12/07 15:59:27 wyoung Exp $
+//# $Id$
 
 #include <flagging/Flagging/RFASpectralRej.h> 
 #include <scimath/Functionals/Polynomial.h>
@@ -377,10 +377,17 @@ String RFASpectralRej::getDesc ()
       sprintf(s, " %s%.2f-%.2fMHz",s1,seg.fq0,seg.fq1);
     desc+=s;
   }
-  desc+="; ";
-  sprintf(s,"%s=%d %s=%.1f %s=%d ",RF_NDEG,ndeg,RF_ROW_THR,threshold,RF_ROW_HW,halfwin);
-  desc+=s;
-  desc+=RFAFlagCubeBase::getDesc();
+  desc += "; ";
+  sprintf(s,
+	  "%s=%d %s=%.1f %s=%d",
+	  RF_NDEG,
+	  ndeg,
+	  RF_ROW_THR,
+	  threshold,
+	  RF_ROW_HW,
+	  halfwin);
+  desc += s;
+  desc += RFAFlagCubeBase::getDesc();
   return desc;
 }
 

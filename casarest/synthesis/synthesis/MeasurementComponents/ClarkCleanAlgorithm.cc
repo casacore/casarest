@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ClarkCleanAlgorithm.cc,v 19.5 2005/06/17 16:55:36 ddebonis Exp $
+//# $Id$
 
 //# Includes
 #include <casa/BasicSL/String.h>

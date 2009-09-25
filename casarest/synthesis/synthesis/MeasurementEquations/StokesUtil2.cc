@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: StokesUtil2.cc,v 19.3 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <synthesis/MeasurementEquations/StokesUtil.h>

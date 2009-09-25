@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#! ========================================================================
-//# $Id: Ionosphere.h,v 1.1 2004/11/09 21:11:49 wyoung Exp $
+//# $Id$
 
 
 #if !defined (AIPS_MODULE_IONOSPHERE_H)

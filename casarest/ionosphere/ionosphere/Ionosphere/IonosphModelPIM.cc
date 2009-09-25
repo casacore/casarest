@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: IonosphModelPIM.cc,v 19.4 2004/11/30 17:50:28 ddebonis Exp $
+//# $Id$
 
 #include <stdio.h>
 #include <ctype.h>
@@ -31,6 +31,8 @@
 #include <signal.h>
 #include <casa/System/Aipsrc.h>    
 #include <casa/Exceptions/Error.h>
+#include <measures/Measures/MCPosition.h>
+#include <measures/Measures/MCDirection.h>
 #include <measures/Measures.h>
 #include <measures/Measures/MEpoch.h>
 #include <casa/System/ProgressMeter.h>
@@ -71,8 +73,8 @@ extern "C"
   void fslantedp_(const int*,const int*,const double*,const float*,const float*,
                   const float*,const float*,int*,
                   Float*,float*,Float*,Float*);
-  struct { char pusu[80], pmid[80], plow[80], plme[80], paws[80]; } dpath_;
-  struct { char pkpf[80], pimf[80], pgdb[80]; } pimpaths_;
+  extern struct { char pusu[80], pmid[80], plow[80], plme[80], paws[80]; } dpath_;
+  extern struct { char pkpf[80], pimf[80], pgdb[80]; } pimpaths_;
 };
 
 // -----------------------------------------------------------------------
@@ -123,23 +125,6 @@ static void reportFortranError ( const String &message = String("") )
 // Error handler for the replaced stop statements in the FORTRAN PIM code
 
 extern "C" {
-void a2stop_( char *message,int len ) // STOP statement
-{
-  fprintf(stderr,"Caught STOP in FORTRAN [%s]\n",fortranModule.chars());
-  String err("STOP");
-  if( len )
-  {
-    char *msg = new char[len+1];
-    strncpy(msg,message,len);
-    msg[len+1]=0;
-    err+=" (";
-    err+=msg;
-    err+=" )";
-    fprintf(stderr,"STOP '%s'\n",msg);
-  }
-  reportFortranError(err);
-}
-
 void sig_die ( char *str,int kill ) // fatal error
 {
   fprintf(stderr,"Caught fatal error in FORTRAN [%s]: %s\n",fortranModule.chars(),str);

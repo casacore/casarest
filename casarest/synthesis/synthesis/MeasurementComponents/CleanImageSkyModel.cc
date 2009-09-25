@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: CleanImageSkyModel.cc,v 19.6 2005/06/17 16:55:36 ddebonis Exp $
+//# $Id$
 
 #include <casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
@@ -46,8 +46,10 @@
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
-CleanImageSkyModel::CleanImageSkyModel() : ImageSkyModel()
+  CleanImageSkyModel::CleanImageSkyModel() : ImageSkyModel(), doPolJoint_p(True)
 {
+
+
 }
 
 Bool CleanImageSkyModel::addMask(Int thismodel, ImageInterface<Float>& mask)
@@ -139,7 +141,9 @@ Bool CleanImageSkyModel::addFluxMask(Int thismodel, ImageInterface<Float>& fluxM
   return True;
 }
 
-
+void  CleanImageSkyModel::setJointStokesClean(Bool joint) {
+  doPolJoint_p=joint;
+}
 
 } //# NAMESPACE CASA - END
 

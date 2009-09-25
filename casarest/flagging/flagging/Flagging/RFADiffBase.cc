@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFADiffBase.cc,v 19.6 2005/12/07 15:59:27 wyoung Exp $
+//# $Id$
 #include <flagging/Flagging/RFADiffBase.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>

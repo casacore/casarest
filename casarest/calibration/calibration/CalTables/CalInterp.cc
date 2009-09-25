@@ -47,6 +47,7 @@ CalInterp::CalInterp(CalSet<Complex>& cs,
   timeType_(timetype),
   freqType_(freqtype),
   spwMap_(cs.nSpw(),-1),
+  spwOK_(cs.nSpw(),False),
   lastTime_(cs.nSpw(),-1.0e99),
   finit_(cs.nSpw(),False),
   nFreq_(cs.nSpw(),1),
@@ -56,9 +57,6 @@ CalInterp::CalInterp(CalSet<Complex>& cs,
   currSlot_(cs.nSpw(),-1),
   exactTime_(False),
 
-  ip4s_(cs.nSpw(),NULL),
-  ip3s_(cs.nSpw(),NULL),
-  ip2s_(cs.nSpw(),NULL),
   ip4d_(cs.nSpw(),NULL),
   ip3d_(cs.nSpw(),NULL),
   ip2d_(cs.nSpw(),NULL),
@@ -88,25 +86,28 @@ CalInterp::CalInterp(CalSet<Complex>& cs,
 
   if (verbose_) cout << "CalInterp::constructor" << endl;
 
+  if (verbose_) cout << " timeType_ = " << timeType_ << endl;
+  if (verbose_) cout << " freqType_ = " << freqType_ << endl;
+
+  // Nominally, spwOK_ follows CalSet
+  spwOK_ = cs_->spwOK();
+
   // Allocate (zero-size) working arrays and shapes
   //  (will resize non-trivially as needed)
   for (currSpw_=0;currSpw_<cs.nSpw();currSpw_++) {
 
     // nFreq()=1 here, will set this in initFreqInterp
-    ip4s_[currSpw()] = new IPosition(4,2,nPar(),nChan(),nElem());
-    ip3s_[currSpw()] = new IPosition(3,nPar(),nChan(),nElem());
-    ip2s_[currSpw()] = new IPosition(2,nChan(),nElem());
     ip4d_[currSpw()] = new IPosition(4,2,nPar(),nFreq(),nElem());
     ip3d_[currSpw()] = new IPosition(3,nPar(),nFreq(),nElem());
     ip2d_[currSpw()] = new IPosition(2,nFreq(),nElem());
 
     tAC_[currSpw()] = new Array<Float>();
-    tOk_[currSpw()] = new Matrix<Bool>();
+    tOk_[currSpw()] = new Cube<Bool>();
     tPC_[currSpw()] = new Array<Float>();
     tCC_[currSpw()] = new Array<Complex>();
     
     fAC_[currSpw()] = new Array<Float>();
-    fOk_[currSpw()] = new Matrix<Bool>();
+    fOk_[currSpw()] = new Cube<Bool>();
     fPC_[currSpw()] = new Array<Float>();
     fCC_[currSpw()] = new Array<Complex>();
     
@@ -165,6 +166,7 @@ Bool CalInterp::interpTime(const Double& time) {
 
   Bool newTime=False;         // assume no new calculations needed
 
+  Bool newSlot(False);
   if (time != lastTime() ) {
     lastTime()=time;
 
@@ -172,7 +174,7 @@ Bool CalInterp::interpTime(const Double& time) {
     if ( !nearestT() ) newTime=True;
 
     // Find relevant time slot
-    Bool newSlot = findSlot(time);
+    newSlot = findSlot(time);
 
     if (newSlot) 
       newTime = True;
@@ -182,9 +184,11 @@ Bool CalInterp::interpTime(const Double& time) {
     
   }
 
-  if (verbose_) cout << "   "
-		     << "newTime = " << newTime << " "
+  if (verbose_) cout << "   " << boolalpha 
+		     << "newTime = " << newTime << " " 
+		     << "newSlot = " << newSlot << " " 
 		     << "currSlot() = " << currSlot() << " "
+		     << "fieldId = " << cs_->fieldId(currSpwMap())(currSlot()) << " "
 		     << "exactTime() = " << exactTime()  << " "
 		     << "nearestT() = " << nearestT()  << " "
 		     << endl;
@@ -205,6 +209,7 @@ Bool CalInterp::interpTime(const Double& time) {
       Cube<Complex> t;
       t.reference(csPar()(blc,trc).reform(IPosition(3,nPar(),nChan(),nElem())));
       r_.reference(t);
+      tOk().reference(csParOK()(blc,trc).reform(IPosition(3,nPar(),nChan(),nElem())));
 
     } else {
 
@@ -217,6 +222,12 @@ Bool CalInterp::interpTime(const Double& time) {
 
       interpTimeCalc(time);
     }
+    
+  if (verbose_) 
+    cout << " CalInterp addr: " << r_.data()
+	 << endl;
+
+
 
   } 
 
@@ -315,14 +326,17 @@ void CalInterp::updTimeCoeff() {
   if ( currSlot() != lastlo() ) {
     lastlo()=currSlot();
 
-    // Resize Coefficient arrays (no-op if already correct size)
+    // Resize Coefficient arrays 
+    IPosition ip4s(4,2,nPar(),nChan(),nElem());
+    IPosition ip3s(3,nPar(),nChan(),nElem());
 
-    tAC().resize(ip4s());
-    tOk().resize(ip2s());
+    tAC().resize(ip4s);
+    tOk().resize(ip3s);
+
     if ( timeType()=="linear") 
-      tPC().resize(ip4s());
+      tPC().resize(ip4s);
     else if (timeType()=="aipslin") 
-      tCC().resize(ip4s());
+      tCC().resize(ip4s);
     
     // Time ref/step for this interval
     t0()=csTimes()(currSlot());
@@ -331,16 +345,17 @@ void CalInterp::updTimeCoeff() {
     // For indexing parameter cache
     IPosition lo(4,0,0,0,currSlot()), hi(4,0,0,0,currSlot()+1);
     IPosition ref(4,0,0,0,0), slope(4,1,0,0,0);
+
     for (Int ielem=0;ielem<nElem();ielem++) {
       lo(2)=hi(2)=ref(3)=slope(3)=ielem;
       for (Int ichan=0;ichan<nChan();ichan++) {
 	lo(1)=hi(1)=ref(2)=slope(2)=ichan;
-	tOk()(ichan,ielem) = csParOK()(ichan,ielem,currSlot()) &&
-	  csParOK()(ichan,ielem,currSlot()+1);
 	for (Int ipar=0;ipar<nPar();ipar++) {
 	  lo(0)=hi(0)=ref(1)=slope(1)=ipar;
+
+	  tOk()(ipar,ichan,ielem) = (csParOK()(lo) && csParOK()(hi));
 	  
-	  if (tOk()(ichan,ielem)) {
+	  if (tOk()(ipar,ichan,ielem)) {
 	    // Intercept
 	    tAC()(ref) = abs(csPar()(lo));
 	    tAC()(slope) = abs(csPar()(hi)) - tAC()(ref);
@@ -417,35 +432,43 @@ void CalInterp::interpTimeCalc(const Double& time) {
     for (Int ichan=ref(2)=slope(2)=0;
 	 ichan<nChan();
 	 ichan++,ref(2)++,slope(2)++) {
-      if (tOk()(ichan,ielem)) {
-	for (Int ipar=ref(1)=slope(1)=0;
-	     ipar<nPar();
-	     ipar++,ref(1)++,slope(1)++) {
+      for (Int ipar=ref(1)=slope(1)=0;
+	   ipar<nPar();
+	   ipar++,ref(1)++,slope(1)++) {
+	
+	if (tOk()(ipar,ichan,ielem)) {
+
 	  tA_(ipar,ichan,ielem) = tAC()(ref) + tAC()(slope)*dt;
 	  if (timeType()=="linear") {
 	    tP_(ipar,ichan,ielem) = tPC()(ref) + tPC()(slope)*dt;
 	  } else if (timeType()=="aipslin") {
-	    tC_(ipar,ichan,ielem) = tCC()(ref) + tCC()(slope)*dt;
+	    Complex tCtmp(tCC()(ref) + tCC()(slope)*dt);
+	    Float Amp(abs(tCtmp));
+	    if (Amp>0.0)
+	      tC_(ipar,ichan,ielem) = tCtmp/abs(tCtmp);
+	    else
+	      tC_(ipar,ichan,ielem) = Complex(1.0);
 	  }
-	} // ipar
-      } 
-      else {
-	for (Int ipar=ref(1)=slope(1)=0;
-	     ipar<nPar();
-	     ipar++,ref(1)++,slope(1)++) {
+	} 
+	else {
 	  tA_(ipar,ichan,ielem) = 1.0;
 	  if (timeType()=="linear") {
 	    tP_(ipar,ichan,ielem) = 0.0;
 	  } else if (timeType()=="aipslin") {
 	    tC_(ipar,ichan,ielem) = Complex(1.0,0.0);
 	  }
-	} // ipar
-
-      }	// tOk()
+	}	// tOk()
+      } // ipar
     } // ichan
   } // ielem
-
-  if (verbose_) cout << "tA_ = " << tA_ << endl;
+  
+  if (verbose_) {
+    cout << "tA_ = " << tA_.nonDegenerate() << endl;
+    if (timeType()=="linear") 
+      cout << "tP_ = " << tP_.nonDegenerate() << endl;
+    else if (timeType()=="aipslin")
+      cout << "tC_ = " << tC_.nonDegenerate() << endl;
+  }
 
 }
 
@@ -589,7 +612,7 @@ void CalInterp::updFreqCoeff() {
   // Resize Coefficient arrays (no-op if already correct size)
   ip4d()(2)=ip2d()(0)=nFreq();
   fAC().resize(ip4d());
-  fOk().resize(ip2d());
+  fOk().resize(ip3d());
   if ( timeType()=="linear") 
     fPC().resize(ip4d());
   else if (timeType()=="aipslin") 
@@ -602,12 +625,14 @@ void CalInterp::updFreqCoeff() {
     lo(2)=hi(2)=ref(3)=slope(3)=ielem;
     for (Int ichan=0;ichan<nChan()-1;ichan++) {
       lo(1)=hi(1)=ref(2)=slope(2)=ichan;
-      fOk()(ichan,ielem) = tOk()(ichan,ielem) && tOk()(ichan+1,ielem);
-
+      
       if (!ef()(ichan)) {
-	if (fOk()(ichan,ielem)) {
-	  for (Int ipar=0;ipar<nPar();ipar++) {
-	    lo(0)=hi(0)=ref(1)=slope(1)=ipar;
+	for (Int ipar=0;ipar<nPar();ipar++) {
+	  lo(0)=hi(0)=ref(1)=slope(1)=ipar;
+
+	  fOk()(ipar,ichan,ielem) = tOk()(ipar,ichan,ielem) && 
+	                            tOk()(ipar,ichan+1,ielem);
+	  if (fOk()(ipar,ichan,ielem)) {
 	    
 	    // Intercept
 	    fAC()(ref) = tA_(lo);
@@ -630,11 +655,7 @@ void CalInterp::updFreqCoeff() {
 	      fCC()(slope) = tC_(hi)-tC_(lo);
 	      
 	    }
-	  } 
-	} else {
-	  for (Int ipar=0;ipar<nPar();ipar++) {
-	    lo(0)=hi(0)=ref(1)=slope(1)=ipar;
-	    
+	  } else {
 	    fAC()(ref)=1.0;
 	    fAC()(slope)=0.0;
 	    if (timeType()=="linear") {
@@ -644,12 +665,11 @@ void CalInterp::updFreqCoeff() {
 	      fCC()(ref)=Complex(1.0,0.0);
 	      fCC()(slope)=Complex(0.0,0.0);
 	    }
-	  }
-	}   // fOk()
-      }   // ipar
-    }   // !ef()(ichan)
-    
-  }
+	  }   // fOk()
+	}   // ipar
+      }   // !ef()(ichan)
+    } // ichan
+  } // ielem
 
 }
 
@@ -683,33 +703,31 @@ void CalInterp::interpFreqCalc() {
 	 ichan<nFreq();
 	 ichan++,ref(2)++,slope(2)++) {
       // if non-exact channel and otherwise ok, calc interp per par
-      if ( !ef()(ichan) && fOk()(ichan,ielem) ) {
+      if ( !ef()(ichan) ) {
 	for (Int ipar=ref(1)=slope(1)=0;
 	     ipar<nPar();
 	     ipar++,ref(1)++,ref(2)++) {
-	  fA_(ipar,ichan,ielem) = fAC()(ref) + fAC()(slope)*fdf()(ichan);
-	  if ( freqType()=="linear") {
-	    fP_(ipar,ichan,ielem) = fPC()(ref) + fPC()(slope)*fdf()(ichan);
-	  } else if ( freqType()=="aipslin") {
-	    fC_(ipar,ichan,ielem) = fCC()(ref) + fCC()(slope)*fdf()(ichan);
-	  }
+	  if (fOk()(ipar,ichan,ielem) ) {
+	    fA_(ipar,ichan,ielem) = fAC()(ref) + fAC()(slope)*fdf()(ichan);
+	    if ( freqType()=="linear") {
+	      fP_(ipar,ichan,ielem) = fPC()(ref) + fPC()(slope)*fdf()(ichan);
+	    } else if ( freqType()=="aipslin") {
+	      fC_(ipar,ichan,ielem) = fCC()(ref) + fCC()(slope)*fdf()(ichan);
+	    }
+	  } 
+	  else {
+	    // copy from time interp
+	    fA_(ipar,ichan,ielem) = tA_(ipar,ch0()(ichan),ielem);
+	    if ( freqType()=="linear") {
+	      fP_(ipar,ichan,ielem) = tP_(ipar,ch0()(ichan),ielem);
+	    } else if ( freqType()=="aipslin") {
+	      fC_(ipar,ichan,ielem) = tC_(ipar,ch0()(ichan),ielem);
+	    }
+	  } // fOk()
 	} // ipar
-      } 
-      else {
-	// copy from time interp
-	for (Int ipar=0;ipar<nPar();ipar++) {
-	  fA_(ipar,ichan,ielem) = tA_(ipar,ch0()(ichan),ielem);
-	  if ( freqType()=="linear") {
-	    fP_(ipar,ichan,ielem) = tP_(ipar,ch0()(ichan),ielem);
-	  } else if ( freqType()=="aipslin") {
-	    fC_(ipar,ichan,ielem) = tC_(ipar,ch0()(ichan),ielem);
-	  }
-	}
-      } // !ef() && fOk()
-      
+      } // !ef() 
     } // ichan
   } // ielem
-
 
 }
   
@@ -747,6 +765,7 @@ void CalInterp::finalize() {
   // make public by reference
   r.reference(r_);
 
+  ok.reference(tOk());
 
 }
 
@@ -816,6 +835,20 @@ void CalInterp::part(const Array<Complex>& c,
   blc(0)=trc(0)=which;
   f.reference(asfl(blc,trc).reform(ip1));
 }
+
+void CalInterp::setSpwOK() {
+
+  for (Int i=0;i<nSpw();i++)
+    if (spwMap(i)>-1)
+      spwOK_(i) = cs_->spwOK()(spwMap(i));
+    else
+      spwOK_(i) = cs_->spwOK()(i);
+
+  //  cout << "CalInterp::spwOK() (spwmap) = " << boolalpha << spwOK() << endl;
+
+}
+
+
 
 
 } //# NAMESPACE CASA - END

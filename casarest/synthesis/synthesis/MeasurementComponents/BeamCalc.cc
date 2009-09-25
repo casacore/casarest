@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: BeamCalc.cc,v 1.6 2006/07/20 00:23:22 sbhatnag Exp $
+//# $Id$
 
 //#include <stdio.h>
 //#include <complex.h>
@@ -36,7 +36,7 @@
 #include <synthesis/MeasurementComponents/BeamCalcAntenna.h>
 #include <images/Images/TempImage.h>
 #include <casa/Exceptions.h>
-#include <cstring>
+#include <synthesis/MeasurementComponents/SynthesisError.h>
 namespace casa{
   /* normalizes a "vector" of 3 Doubles in the vector sense */
   
@@ -56,12 +56,21 @@ namespace casa{
     Int i;
     Double d, r, m, z;
     FILE *in;
-    
-    in = fopen(geomfile, "r");
+    const char *sep=" ";
+    char *aipsPath = strtok(getenv("CASAPATH"),sep);
+    if (aipsPath == NULL)
+      throw(SynthesisError("CASAPATH not found."));
+
+    String fullFileName(aipsPath);
+    fullFileName = fullFileName + "/data/nrao/VLA/" + geomfile;
+
+    in = fopen(fullFileName.c_str(), "r");
+
     if(!in)
       {
-	fprintf(stderr, "File %s not found\n", geomfile);
-	return 0;
+	String msg = "File " + fullFileName 
+	  + " not found.\n   Did you forget to install package data repository?\n";
+	throw(SynthesisError(msg));
       }
     
     a = (calcAntenna *)malloc(sizeof(calcAntenna));

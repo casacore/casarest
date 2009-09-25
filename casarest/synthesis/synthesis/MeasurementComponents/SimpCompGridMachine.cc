@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SimpCompGridMachine.cc,v 19.4 2004/11/30 17:50:56 ddebonis Exp $
+//# $Id$
 
 #include <synthesis/MeasurementComponents/SimpCompGridMachine.h>
 #include <scimath/Mathematics/RigidVector.h>

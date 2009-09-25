@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: MosaicFT.h,v 1.16 2006/06/26 21:57:14 kgolap Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_MOSAICFT_H
 #define SYNTHESIS_MOSAICFT_H
@@ -39,7 +39,7 @@
 #include <casa/Containers/Block.h>
 #include <casa/Arrays/Array.h>
 #include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
+#include <casa/Utilities/CountedPtr.h>
 #include <scimath/Mathematics/ConvolveGridder.h>
 #include <lattices/Lattices/LatticeCache.h>
 #include <lattices/Lattices/ArrayLattice.h>
@@ -122,6 +122,10 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 // <todo asof="97/10/01">
 // <ul> Deal with large VLA spectral line case 
 // </todo>
+  class MosaicFT;
+  class SimplePBConvFunc;
+  class MPosition;
+
 
 class MosaicFT : public FTMachine {
 public:
@@ -131,7 +135,7 @@ public:
   // size of the tile used in gridding (cannot be less than
   // 12, 16 works in most cases). 
   // <group>
-  MosaicFT(MeasurementSet& ms, SkyJones& sj,
+  MosaicFT(SkyJones* sj, MPosition mloc, String stokes,
 	    Long cachesize, Int tilesize=16, 
 	   Bool usezero=True);
   // </group>
@@ -151,12 +155,7 @@ public:
   // as a template. The image is loaded and Fourier transformed.
   void initializeToVis(ImageInterface<Complex>& image,
 		       const VisBuffer& vb);
-  // This version returns the gridded vis...should be used in conjunction 
-  // with the version of 'get' that needs the gridded visdata 
-  void initializeToVis(ImageInterface<Complex>& image,
-		       const VisBuffer& vb, Array<Complex>& griddedVis,
-		       Vector<Double>& uvscale);
-
+ 
   // Finalize transform to Visibility plane: flushes the image
   // cache and shows statistics if it is being used.
   void finalizeToVis();
@@ -173,17 +172,11 @@ public:
   // Get actual coherence from grid by degridding
   void get(VisBuffer& vb, Int row=-1);
 
-  // Get the coherence from grid return it in the degrid 
-  // is used especially when scratch columns are not 
-  // present in ms.
-  void get(VisBuffer& vb, Cube<Complex>& degrid, 
-		   Array<Complex>& griddedVis, Vector<Double>& scale, 
-		   Int row=-1);
-
 
   // Put coherence to grid by gridding.
   void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False, 
-	   FTMachine::Type type=FTMachine::OBSERVED);
+	   FTMachine::Type type=FTMachine::OBSERVED,
+	   const Matrix<Float>& wgt=Matrix<Float>(0,0));
 
   // Make the entire image
   void makeImage(FTMachine::Type type,
@@ -198,6 +191,10 @@ public:
   // Get the final weights image
   void getWeightImage(ImageInterface<Float>&, Matrix<Float>&);
 
+  // Get a flux (divide by this to get a flux density correct image) 
+  // image if there is one
+  virtual void getFluxImage(ImageInterface<Float>& image);
+
   // Save and restore the MosaicFT to and from a record
   Bool toRecord(String& error, RecordInterface& outRec, 
 		Bool withImage=False);
@@ -210,7 +207,19 @@ public:
 
   String name();
 
-protected:
+  // Copy convolution function etc to another FT machine
+  // necessary if ft and ift are distinct but can share convfunctions
+
+  void setConvFunc(CountedPtr<SimplePBConvFunc>& pbconvFunc);
+  CountedPtr<SimplePBConvFunc>& getConvFunc();
+
+  CountedPtr<TempImage<Float> >& getConvWeightImage();
+
+  //reset weight image
+  virtual void reset();
+
+
+protected:        
 
   Int nint(Double val) {return Int(floor(val+0.5));};
 
@@ -220,7 +229,6 @@ protected:
 
   void addBeamCoverage(ImageInterface<Complex>& image);
 
-  MeasurementSet* ms_p;
 
   SkyJones* sj_p;
 
@@ -236,9 +244,6 @@ protected:
   // ends bracket the middle
   Bool recordOnGrid(const VisBuffer& vb, Int rownr) const;
 
-  // Check whether the convolution function for this field is already
-  //done
-  Bool checkPBOfField(const VisBuffer& vb);
 
   // Image cache
   LatticeCache<Complex> * imageCache;
@@ -254,12 +259,12 @@ protected:
   Bool isTiled;
 
   // Array lattice
-  Lattice<Complex> * arrayLattice;
+  CountedPtr<Lattice<Complex> > arrayLattice;
 
   // Lattice. For non-tiled gridding, this will point to arrayLattice,
   //  whereas for tiled gridding, this points to the image
-  Lattice<Complex>* lattice;
-  Lattice<Complex>* weightLattice;
+  CountedPtr<Lattice<Complex> > lattice;
+  CountedPtr<Lattice<Complex> > weightLattice;
 
   Float maxAbsData;
 
@@ -292,13 +297,14 @@ protected:
   // Grid/degrid zero spacing points?
   Bool usezero_p;
 
-  Matrix<Complex> convFunc;
-  Matrix<Complex> weightConvFunc_p;
+  Cube<Complex> convFunc;
+  Cube<Complex> weightConvFunc_p;
   Int convSampling;
   Int convSize;
-  PtrBlock<Vector<Int> *> convSizes_p;
   Int convSupport;
-  Vector<Int> convSupportPerAnt_p;
+  Vector<Int> convSupportPlanes_p;
+  Vector<Int> convSizePlanes_p;
+  Vector<Int> convRowMap_p;
 
   Int wConvSize;
 
@@ -309,19 +315,15 @@ protected:
 
   Bool getXYPos(const VisBuffer& vb, Int row);
 
-  //These are cubes for multiple PA
-  //May need a per antenna one if each antenna has its own.
-  PtrBlock < Cube<Complex> *> convFunctions_p;
-  PtrBlock < Cube<Complex> *> convWeights_p;
-
-  TempImage<Float>* skyCoverage_p;
+  CountedPtr<TempImage<Float> >skyCoverage_p;
   TempImage<Complex>* convWeightImage_p;
+  CountedPtr<SimplePBConvFunc> pbConvFunc_p;
  //Later this 
-  PtrBlock < Vector<Int> *> convSupportBlock_p;
-  SimpleOrderedMap <String, Int> convFunctionMap_p;
-  Int actualConvIndex_p;
   String machineName_p;
   Bool doneWeightImage_p;
+  MosaicFT *otherFT_p;
+  String stokes_p;
+
 
 };
 

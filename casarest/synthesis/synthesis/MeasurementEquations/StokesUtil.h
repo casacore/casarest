@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: StokesUtil.h,v 19.6 2005/06/18 21:19:17 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_STOKESUTIL_H
 #define SYNTHESIS_STOKESUTIL_H
@@ -150,4 +150,7 @@ Bool near(const StokesVector& val1, const StokesVector& val2,
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <synthesis/MeasurementEquations/StokesUtil.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

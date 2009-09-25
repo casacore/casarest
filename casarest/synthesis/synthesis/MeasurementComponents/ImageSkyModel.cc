@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ImageSkyModel.cc,v 19.9 2005/07/28 00:34:59 kgolap Exp $
+//# $Id$
 
 #include <casa/Arrays/ArrayMath.h>
 #include <casa/OS/HostInfo.h>
@@ -32,7 +32,7 @@
 #include <components/ComponentModels/ComponentList.h>
 #include <images/Images/TempImage.h>
 #include <images/Images/SubImage.h>
-#include <images/Images/ImageRegion.h>
+#include <images/Regions/ImageRegion.h>
 #include <casa/OS/File.h>
 #include <lattices/Lattices/LatticeExpr.h>
 #include <lattices/Lattices/TiledLineStepper.h>
@@ -40,6 +40,7 @@
 #include <lattices/Lattices/LatticeIterator.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
+#include <coordinates/Coordinates/StokesCoordinate.h>
 #include <casa/Exceptions/Error.h>
 #include <casa/BasicSL/String.h>
 #include <casa/Utilities/Assert.h>
@@ -206,9 +207,13 @@ ImageSkyModel& ImageSkyModel::operator=(const ImageSkyModel& other) {
 void ImageSkyModel::makeApproxPSFs(SkyEquation& se) {
   LogIO os(LogOrigin("ImageSkyModel", "makeApproxPSFs"));
 
-  for (Int thismodel=0;thismodel<nmodels_p;thismodel++) {
-    if( !donePSF_p || !psf_p[thismodel]){ 
-      se.makeApproxPSF(thismodel, PSF(thismodel));  
+  if(!donePSF_p){
+    for (Int thismodel=0;thismodel<nmodels_p;thismodel++) {
+      //make sure the psf images are made
+      PSF(thismodel);
+    }
+    se.makeApproxPSF(psf_p);
+    for (Int thismodel=0;thismodel<nmodels_p;thismodel++) {
       beam(thismodel)=0.0;
       if(!StokesImageUtil::FitGaussianPSF(PSF(thismodel),
 					  beam(thismodel))) {
@@ -258,8 +263,8 @@ Bool ImageSkyModel::solve(SkyEquation& se) {
 
 // Simply finds residual image: i.e. Dirty Image if started with
 // zero'ed image. We work from corrected visibilities only!
-Bool ImageSkyModel::solveResiduals(SkyEquation& se) {
-  makeNewtonRaphsonStep(se, False);
+Bool ImageSkyModel::solveResiduals(SkyEquation& se, Bool modelToMS) {
+  makeNewtonRaphsonStep(se, False, modelToMS);
   return True;
 }
 
@@ -294,7 +299,7 @@ ImageInterface<Complex>& ImageSkyModel::cImage(Int model)
   AlwaysAssert(nmodels_p>0, AipsError);
   AlwaysAssert((model>-1)&&(model<nmodels_p), AipsError);
 
-  if(model>0&&(cimage_p[model-1])) cimage_p[model-1]->tempClose();
+  //if(model>0&&(cimage_p[model-1])) cimage_p[model-1]->tempClose();
 
   Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
   if(cimage_p[model]==0) {
@@ -304,7 +309,17 @@ ImageInterface<Complex>& ImageSkyModel::cImage(Int model)
     
     Int npol=cimageShape(2);
     if(npol==3) cimageShape(2)=4;
-    
+    if(npol==2){
+      // 2-pol pixels and having Q or U
+      Int stokesIndex=image_p[model]->coordinates().findCoordinate(Coordinate::STOKES);
+      StokesCoordinate sC=image_p[model]->coordinates().stokesCoordinate(stokesIndex);
+      if(Stokes::type(sC.stokes()[0])==Stokes::Q || 
+	 Stokes::type(sC.stokes()[0])==Stokes::U ||
+	 Stokes::type(sC.stokes()[1])==Stokes::Q ||
+	 Stokes::type(sC.stokes()[1])==Stokes::U){
+	cimageShape(2)=4;
+      }
+    }
     CoordinateSystem cimageCoord =
       StokesImageUtil::CStokesCoord(cimageShape,
 				    image_p[model]->coordinates(),
@@ -316,12 +331,8 @@ ImageInterface<Complex>& ImageSkyModel::cImage(Int model)
 			min(4, cimageShape(2)), min(32, cimageShape(3)));
     
     TempImage<Complex>* cimagePtr = 
-      new TempImage<Complex> (IPosition(image_p[model]->ndim(),
-					image_p[model]->shape()(0),
-					image_p[model]->shape()(1),
-					image_p[model]->shape()(2),
-					image_p[model]->shape()(3)),
-			      image_p[model]->coordinates(),
+      new TempImage<Complex> (cimageShape,
+			      cimageCoord,
 			      memoryMB);
     AlwaysAssert(cimagePtr, AipsError);
     cimage_p[model] = cimagePtr;
@@ -396,7 +407,7 @@ ImageInterface<Float>& ImageSkyModel::PSF(Int model)
   AlwaysAssert(nmodels_p>0, AipsError);
   AlwaysAssert((model>-1)&&(model<nmodels_p), AipsError);
 
-  if(model>0&&(psf_p[model-1])) psf_p[model-1]->tempClose();
+  //if(model>0&&(psf_p[model-1])) psf_p[model-1]->tempClose();
 
   Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
   if(psf_p[model]==0) {
@@ -442,7 +453,7 @@ ImageInterface<Float>& ImageSkyModel::gS(Int model)
   AlwaysAssert(nmodels_p>0, AipsError);
   AlwaysAssert((model>-1)&&(model<nmodels_p), AipsError);
 
-  if(model>0&&(gS_p[model-1])) gS_p[model-1]->tempClose();
+  //if(model>0&&(gS_p[model-1])) gS_p[model-1]->tempClose();
 
   if(gS_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
@@ -459,7 +470,7 @@ ImageInterface<Float>& ImageSkyModel::ggS(Int model)
 {
   AlwaysAssert(nmodels_p>0, AipsError);
 
-  if(model>0&&(ggS_p[model-1])) ggS_p[model-1]->tempClose();
+  //if(model>0&&(ggS_p[model-1])) ggS_p[model-1]->tempClose();
 
   if(ggS_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
@@ -478,7 +489,7 @@ ImageInterface<Float>& ImageSkyModel::fluxScale(Int model)
 {
   AlwaysAssert(nmodels_p>0, AipsError);
 
-  if(model>0&&(fluxScale_p[model-1])) fluxScale_p[model-1]->tempClose();
+  //  if(model>0&&(fluxScale_p[model-1])) fluxScale_p[model-1]->tempClose();
 
   if(fluxScale_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
@@ -501,7 +512,7 @@ ImageInterface<Float>& ImageSkyModel::work(Int model)
   AlwaysAssert(nmodels_p>0, AipsError);
   AlwaysAssert((model>-1)&&(model<nmodels_p), AipsError);
 
-  if(model>0&&(work_p[model-1])) work_p[model-1]->tempClose();
+  //  if(model>0&&(work_p[model-1])) work_p[model-1]->tempClose();
 
   if(work_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
@@ -520,7 +531,7 @@ ImageInterface<Float>& ImageSkyModel::deltaImage(Int model)
   AlwaysAssert(nmodels_p>0, AipsError);
   AlwaysAssert((model>-1)&&(model<nmodels_p), AipsError);
 
-  if(model>0&&(deltaimage_p[model-1])) deltaimage_p[model-1]->tempClose();
+  // if(model>0&&(deltaimage_p[model-1])) deltaimage_p[model-1]->tempClose();
 
   if(deltaimage_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);

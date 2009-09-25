@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: CalDescBuffer.h,v 19.4 2004/11/30 17:50:11 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_CALDESCBUFFER_H
 #define CALIBRATION_CALDESCBUFFER_H

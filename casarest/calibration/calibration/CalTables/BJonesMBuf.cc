@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: BJonesMBuf.cc,v 19.3 2004/11/30 17:50:11 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/BJonesMBuf.h>
@@ -276,14 +276,13 @@ Bool BJonesPolyMBuf::putAntGain (const Int& antennaId,
 
       // Resize the coefficient arrays
       IPosition ampCoeffShape = polyCoeffAmp().shape();
-      if (ampCoeffShape(3) != sNPolyAmp) {
-	ampCoeffShape(3) = sNPolyAmp;
+      if (ampCoeffShape(3) != 2*sNPolyAmp) {
+	ampCoeffShape(3) = 2*sNPolyAmp;
 	polyCoeffAmp().resize(ampCoeffShape);
       };
       IPosition phaseCoeffShape = polyCoeffPhase().shape();
-      if (phaseCoeffShape(3) != sNPolyPhase) {
-	IPosition phaseCoeffShape = polyCoeffPhase().shape();
-	phaseCoeffShape(3) = sNPolyPhase;
+      if (phaseCoeffShape(3) != 2*sNPolyPhase) {
+	phaseCoeffShape(3) = 2*sNPolyPhase;
 	polyCoeffPhase().resize(phaseCoeffShape);
       };
 
@@ -297,13 +296,13 @@ Bool BJonesPolyMBuf::putAntGain (const Int& antennaId,
 	    refAnt()(ipos4) = sRefAnt;
 
 	    // Amplitude polynomial coefficients
-	    for (Int coeff=0; coeff < sNPolyAmp; coeff++) {
+	    for (Int coeff=0; coeff < 2*sNPolyAmp; coeff++) {
 	      IPosition ipos5(5, recep, spw, chan, coeff, row);
 	      polyCoeffAmp()(ipos5) = sPolyCoeffAmp(coeff);
 	    };
 
 	    // Phase polynomial coefficients
-	    for (Int coeff=0; coeff < sNPolyPhase; coeff++) {
+	    for (Int coeff=0; coeff < 2*sNPolyPhase; coeff++) {
 	      IPosition ipos5(5, recep, spw, chan, coeff, row);
 	      polyCoeffPhase()(ipos5) = sPolyCoeffPhase(coeff);
 	    };

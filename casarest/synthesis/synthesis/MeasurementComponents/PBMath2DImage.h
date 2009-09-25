@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMath2DImage.h,v 19.8 2004/11/30 17:50:50 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PBMATH2DIMAGE_H
 #define SYNTHESIS_PBMATH2DIMAGE_H
@@ -137,7 +137,7 @@ public:
 
 protected:
 
-  ImageInterface<Complex>& apply(const ImageInterface<Complex>& in,
+  virtual ImageInterface<Complex>& apply(const ImageInterface<Complex>& in,
 				 ImageInterface<Complex>& out,
 				 const MDirection& sp,
 				 const Quantity parAngle,	      
@@ -148,14 +148,14 @@ protected:
 				 Float cutoff,
 				 Bool forward); 
 
-  ImageInterface<Float>& apply(const ImageInterface<Float>& in,
+  virtual ImageInterface<Float>& apply(const ImageInterface<Float>& in,
 			       ImageInterface<Float>& out,
 			       const MDirection& sp,
 			       const Quantity parAngle,	      
 			       const BeamSquint::SquintType doSquint,
-			       Float cutoff);
+			       Float cutoff, Int ipower);
 
-  SkyComponent& apply(SkyComponent& in,
+  virtual SkyComponent& apply(SkyComponent& in,
 		      SkyComponent& out,
 		      const MDirection& sp,
 		      const Quantity frequency,	      
@@ -166,6 +166,9 @@ protected:
 		      Int ipower,  // ie, 1=VP, 2=PB, 4=PB^2
 		      Float cutoff,
 		      Bool forward); 
+
+  virtual Int support(const CoordinateSystem& cs);
+
 
 
 private:    

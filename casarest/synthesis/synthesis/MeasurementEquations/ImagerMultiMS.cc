@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: ImagerMultiMS.cc,v 1.5 2005/12/23 02:15:07 kgolap Exp $
+//# $Id$
 
 #include <synthesis/MeasurementEquations/ImagerMultiMS.h>
 #include <casa/BasicSL/String.h>
@@ -34,6 +34,8 @@
 
 #include <casa/Exceptions/Error.h>
 #include <casa/iostream.h>
+#include <ms/MeasurementSets/MSSelection.h>
+#include <ms/MeasurementSets/MSDataDescIndex.h>
 #include <ms/MeasurementSets/MSHistoryHandler.h>
 #include <ms/MeasurementSets/MeasurementSet.h>
 #include <ms/MeasurementSets/MSDataDescColumns.h>
@@ -63,16 +65,31 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       blockMSSel_p(0), numMS_p(0), dataSet_p(False)
   {
     
-
+    lockCounter_p=0;
+    ms_p=0;
+    mssel_p=0;
+    se_p=0;
+    vs_p=0;
+    ft_p=0;
+    cft_p=0;
+    rvi_p=wvi_p=0;
+    
   }
 
   Bool ImagerMultiMS::setDataPerMS(const String& msname, const String& mode, 
-		   const Vector<Int>& nchan, 
-		   const Vector<Int>& start,
-		   const Vector<Int>& step,
-		   const Vector<Int>& spectralwindowids,
-		   const Vector<Int>& fieldids,
-		   const String& msSelect) {
+				   const Vector<Int>& nchan, 
+				   const Vector<Int>& start,
+				   const Vector<Int>& step,
+				   const Vector<Int>& spectralwindowids,
+				   const Vector<Int>& fieldids,
+				   const String& msSelect,
+				   const String& timerng,
+				   const String& fieldnames,
+				   const Vector<Int>& antIndex,
+				   const String& antnames,
+				   const String& spwstring,
+				   const String& uvdist,
+                                   const String& scan, const Bool useModel) {
     LogIO os(LogOrigin("imager", "setDataPerMS()"), logSink_p);  
 
 
@@ -87,6 +104,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     dataspectralwindowids_p=spectralwindowids;
     datafieldids_p.resize(fieldids.nelements());
     datafieldids_p=fieldids;
+    useModelCol_p=useModel;
     
 
 
@@ -109,10 +127,18 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       blockSpw_p.resize(numMS_p);
       //Using autolocking here 
       //Will need to rethink this when in parallel mode with multi-cpu access
-      thisms=MeasurementSet(msname, TableLock(TableLock::AutoLocking), 
-			    Table::Update);
+      if(useModelCol_p)
+	thisms=MeasurementSet(msname, TableLock(TableLock::AutoNoReadLocking), 
+			      Table::Update);
+      else
+	thisms=MeasurementSet(msname, TableLock(TableLock::AutoNoReadLocking), 
+			      Table::Old);
       blockMSSel_p[numMS_p-1]=thisms;
-      ms_p=new MeasurementSet();
+      //breaking reference
+      if(ms_p == 0)
+	ms_p=new MeasurementSet();
+      else
+	(*ms_p)=MeasurementSet();
       (*ms_p)=thisms;
     }
     
@@ -128,60 +154,130 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
     }
 
-    // Map the selected spectral window ids to data description ids
-    MSDataDescColumns dataDescCol(thisms.dataDescription());
-    Vector<Int> ddSpwIds=dataDescCol.spectralWindowId().getColumn();
-
-    datadescids_p.resize(0);
-    for (uInt row=0; row<ddSpwIds.nelements(); row++) {
-      Bool found=False;
-      for (uInt j=0; j<dataspectralwindowids_p.nelements(); j++) {
-	if (ddSpwIds(row)==dataspectralwindowids_p(j)) found=True;
-      };
-      if (found) {
-	datadescids_p.resize(datadescids_p.nelements()+1,True);
-	datadescids_p(datadescids_p.nelements()-1)=row;
-      };
-    };
-
- // If a selection has been made then close the current MS
+    // If a selection has been made then close the current MS
     // and attach to a new selected MS. We do this on the original
-    // MS. 
-    if(datafieldids_p.nelements()>0||datadescids_p.nelements()>0) {
+    // MS.
+    //I don't think i need this if statement
+    //   if(datafieldids_p.nelements()>0||datadescids_p.nelements()>0) {
       os << "Performing selection on MeasurementSet" << LogIO::POST;
-      if(vs_p) delete vs_p; vs_p=0;
+      //if(vs_p) delete vs_p; vs_p=0;
+      if(rvi_p) delete rvi_p;
+      rvi_p=0; wvi_p=0;
       if(mssel_p) delete mssel_p; mssel_p=0;
       
       // check that sorted table exists (it should), if not, make it now.
-      this->makeVisSet(thisms);
-      
-      Table sorted=thisms.keywordSet().asTable("SORTED_TABLE");
-      
-      
-      // Now we make a condition to do the old FIELD_ID, SPECTRAL_WINDOW_ID
-      // selection
-      TableExprNode condition;
-      String colf=MS::columnName(MS::FIELD_ID);
-      String cols=MS::columnName(MS::DATA_DESC_ID);
-      if(datafieldids_p.nelements()>0&&datadescids_p.nelements()>0){
-	condition=sorted.col(colf).in(datafieldids_p)&&
-	  sorted.col(cols).in(datadescids_p);
-        os << "Selecting on field and spectral window ids" << LogIO::POST;
-      }
-      else if(datadescids_p.nelements()>0) {
-	condition=sorted.col(cols).in(datadescids_p);
-        os << "Selecting on spectral window id" << LogIO::POST;
-      }
-      else if(datafieldids_p.nelements()>0) {
-	condition=sorted.col(colf).in(datafieldids_p);
-        os << "Selecting on field id" << LogIO::POST;
-      }
-      
-      // Now remake the selected ms
-      mssel_p = new MeasurementSet(sorted(condition));
+      //this->makeVisSet(thisms);
 
+      //if you want to use scratch col...make sure they are there
+      if(useModelCol_p){
+	Block<Int> sort(0);
+	Matrix<Int> noselection;
+	VisSet(thisms,sort,noselection);
+      }
+      //MeasurementSet sorted=thisms.keywordSet().asTable("SORTED_TABLE");
+      
+      
+      //Some MSSelection 
+      MSSelection thisSelection;
+      if(datafieldids_p.nelements() > 0){
+	thisSelection.setFieldExpr(MSSelection::indexExprStr(datafieldids_p));
+	os << "Selecting on field ids" << LogIO::POST;
+      }
+      if(fieldnames != ""){
+	thisSelection.setFieldExpr(fieldnames);
+      }
+      if(dataspectralwindowids_p.nelements() > 0){
+	thisSelection.setSpwExpr(MSSelection::indexExprStr(dataspectralwindowids_p));
+	os << "Selecting on spectral windows" << LogIO::POST;
+      }
+      else if(spwstring != ""){
+	thisSelection.setSpwExpr(spwstring);
+	os << "Selecting on spectral windows expression "<< spwstring  << LogIO::POST;
+      }
+      if(antIndex.nelements() >0){
+	thisSelection.setAntennaExpr( MSSelection::indexExprStr(antIndex) );
+	os << "Selecting on antenna ids" << LogIO::POST;	
+      }
+      if(antnames != ""){
+	Vector<String> antNames(1, antnames);
+	// thisSelection.setAntennaExpr(MSSelection::nameExprStr( antNames));
+	thisSelection.setAntennaExpr(antnames);
+	os << "Selecting on antenna names" << LogIO::POST;
+	
+      }            
+      if(timerng != ""){
+	thisSelection.setTimeExpr(timerng);
+	os << "Selecting on time range" << LogIO::POST;	
+      }
+      if(uvdist != ""){
+	thisSelection.setUvDistExpr(uvdist);
+      }
+      if(scan != ""){
+	thisSelection.setScanExpr(scan);
+      }
+      if(msSelect != ""){
+	thisSelection.setTaQLExpr(msSelect);
+      }
+      //***************
+
+      TableExprNode exprNode=thisSelection.toTableExprNode(&thisms);
+      //if(exprNode.isNull())
+      //	throw(AipsError("Selection failed...review ms and selection parameters"));
+      datafieldids_p.resize();
+      datafieldids_p=thisSelection.getFieldList();
+      if(datafieldids_p.nelements()==0){
+	Int nf=ms_p->field().nrow();
+	datafieldids_p.resize(nf);
+	indgen(datafieldids_p);
+      }
+      if((numMS_p > 1) || datafieldids_p.nelements() > 1)
+	multiFields_p= True;
+       //Now lets see what was selected as spw and match it with datadesc
+      dataspectralwindowids_p.resize();
+      dataspectralwindowids_p=thisSelection.getSpwList();
+      if(dataspectralwindowids_p.nelements()==0){
+	Int nspwinms=thisms.spectralWindow().nrow();
+	dataspectralwindowids_p.resize(nspwinms);
+	indgen(dataspectralwindowids_p);
+      }
+
+      // Map the selected spectral window ids to data description ids
+      MSDataDescIndex msDatIndex(thisms.dataDescription());
+      datadescids_p.resize(0);
+      datadescids_p=msDatIndex.matchSpwId(dataspectralwindowids_p);
+
+
+      if(mode=="none"){
+	//check if we can find channel selection in the spw string
+	Matrix<Int> chanselmat=thisSelection.getChanList();
+	if(chanselmat.nrow()==dataspectralwindowids_p.nelements()){
+	  dataMode_p="channel";
+	  dataStep_p.resize(dataspectralwindowids_p.nelements());
+	  dataStart_p.resize(dataspectralwindowids_p.nelements());
+	  dataNchan_p.resize(dataspectralwindowids_p.nelements());
+	  for (uInt k =0 ; k < dataspectralwindowids_p.nelements(); ++k){
+	    dataStep_p[k]=chanselmat.row(k)(3);
+	    if(dataStep_p[k] < 1)
+	      dataStep_p[k]=1;
+	    dataStart_p[k]=chanselmat.row(k)(1);
+	    dataNchan_p[k]=Int(ceil(Double(chanselmat.row(k)(2)-dataStart_p[k]))/Double(dataStep_p[k]))+1;
+	    if(dataNchan_p[k]<1)
+	      dataNchan_p[k]=1;	  
+	  }
+	}
+      }
+
+
+
+      // Now remake the selected ms
+      if(!(exprNode.isNull())){
+	mssel_p = new MeasurementSet(thisms(exprNode));
+      }
+      else{
+	// Null take all the ms ...setdata() blank means that
+	mssel_p = new MeasurementSet(thisms);
+      } 
       AlwaysAssert(mssel_p, AipsError);
-      mssel_p->rename(msname+"/SELECTED_IMAGER_TABLE", Table::Scratch);
       if(mssel_p->nrow()==0) {
 	delete mssel_p; mssel_p=0;
 	//Ayeee...lets back out of this one
@@ -191,40 +287,12 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	blockStart_p.resize(numMS_p, True);
 	blockStep_p.resize(numMS_p, True);
 	blockSpw_p.resize(numMS_p, True);
+	mssel_p=new MeasurementSet(thisms);	
 	os << "Selection is empty: you may want to review this MSs selection"
 	   << LogIO::EXCEPTION;
-	mssel_p=new MeasurementSet(sorted);
       }
       else {
 	mssel_p->flush();
-      }
-
-      Int len = msSelect.length();
-      Int nspace = msSelect.freq (' ');
-      Bool nullSelect=(msSelect.empty() || nspace==len);
-      if (!nullSelect) {
-	MeasurementSet* mssel_p2;
-	// Apply the TAQL selection string, to remake the selected MS
-	String parseString="select from $1 where " + msSelect;
-	mssel_p2=new MeasurementSet(tableCommand(parseString,*mssel_p));
-	AlwaysAssert(mssel_p2, AipsError);
-	// Rename the selected MS as */SELECTED_TABLE2
-	mssel_p2->rename(msname+"/SELECTED_TABLE2", Table::Scratch); 
-	if (mssel_p2->nrow()==0) {
-	  os << LogIO::WARN
-	     << "Selection string results in empty MS: "
-	     << "reverting to sorted MeasurementSet"
-	     << LogIO::POST;
-	  delete mssel_p2;
-	} else {
-	  if (mssel_p) {
-	    delete mssel_p; 
-	    mssel_p=mssel_p2;
-	    mssel_p->flush();
-	  }
-	}
-      } else {
-	os << "No selection string given" << LogIO::POST;
       }
 
       if(mssel_p->nrow()!=thisms.nrow()) {
@@ -234,19 +302,33 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       else {
 	os << "Selection did not drop any rows" << LogIO::POST;
       }
-    }
+      //  }
 
-    blockMSSel_p[numMS_p-1]=*mssel_p;
-    //lets make the visSet now
-    Block<Matrix<Int> > noChanSel;
-    noChanSel.resize(numMS_p);
-    Block<Int> sort(0);
-    if(vs_p) delete vs_p; vs_p=0;
-    vs_p= new VisSet(blockMSSel_p, sort, noChanSel);
-    selectDataChannel();
-    dataSet_p=True;
+      blockMSSel_p[numMS_p-1]=*mssel_p;
+      //lets make the visSet now
+      Block<Matrix<Int> > noChanSel;
+      noChanSel.resize(numMS_p);
+      Block<Int> sort(0);
+      //if(vs_p) delete vs_p; vs_p=0;
+      if(rvi_p) delete rvi_p;
+      rvi_p=0;
+      wvi_p=0;
 
-    return dataSet_p;
+      //vs_p= new VisSet(blockMSSel_p, sort, noChanSel, useModelCol_p);
+      if(!useModelCol_p){
+	rvi_p=new ROVisibilityIterator(blockMSSel_p, sort);
+      }
+      else{
+	wvi_p=new VisibilityIterator(blockMSSel_p, sort);
+	rvi_p=wvi_p;    
+      }
+  
+
+
+      selectDataChannel();
+      dataSet_p=True;
+      
+      return dataSet_p;
 
   } //End of setDataPerMS
 
@@ -264,8 +346,7 @@ Bool ImagerMultiMS::setimage(const Int nx, const Int ny,
 			     const Vector<Int>& spectralwindowids,
 			     const Int fieldid,
 			     const Int facets,
-			     const Quantity& distance,
-			     const Float &paStep, const Float &pbLimit)
+			     const Quantity& distance)
 {
 
   if(!dataSet_p){
@@ -281,7 +362,7 @@ Bool ImagerMultiMS::setimage(const Int nx, const Int ny,
 				  phaseCenter, shiftx, shifty, mode, nchan,
 				  start, step, mStart, mStep, 
 				  spectralwindowids, 
-				  fieldid, facets, distance, paStep, pbLimit);
+				  fieldid, facets, distance);
 
   return returnval;
 }
@@ -318,7 +399,7 @@ Bool ImagerMultiMS::setimage(const Int nx, const Int ny,
     {
       //Fill default numChan for now
       
-      MSSpWindowColumns msSpW(ms_p->spectralWindow());
+      ROMSSpWindowColumns msSpW(ms_p->spectralWindow());
       Vector<Int> numChan=msSpW.numChan().getColumn(); 
       for (uInt k=0; k < dataspectralwindowids_p.nelements(); ++k){
 	blockNChan_p[numMS_p-1][k]=numChan[dataspectralwindowids_p[k]];
@@ -377,24 +458,37 @@ Bool ImagerMultiMS::setimage(const Int nx, const Int ny,
 	  Int spwid=dataspectralwindowids_p(i);
 	  if(dataStart_p[i]<0) {
 	    os << LogIO::SEVERE << "Illegal start pixel = " 
-	       << dataStart_p[i] + 1 << " for spw " << spwid+1
+	       << dataStart_p[i]  << " for spw " << spwid
 	       << LogIO::POST;
 	    return False;
 	  }
 	 
-	  if(dataNchan_p[i]==0) nch=blockNChan_p[numMS_p-1](i);
+	  if(dataNchan_p[i]<=0){
+	    if(dataStep_p[i] <= 0)
+	      dataStep_p[i]=1;
+	    nch=(blockNChan_p[numMS_p-1](i)-dataStart_p[i])/Int(dataStep_p[i])+1;
+	    
+	  }
 	  else nch = dataNchan_p[i];
-	  Int end = Int(dataStart_p[i]) + Int(nch) * Int(dataStep_p[i]);
-	  if(end < 1 || end > blockNChan_p[numMS_p-1](i)) {
+	  while((nch*dataStep_p[i]+dataStart_p[i]) >
+		blockNChan_p[numMS_p-1](i)){
+	    --nch;
+	  }
+	  Int end = Int(dataStart_p[i]) + Int(nch-1) * Int(dataStep_p[i]);
+	  if(end < 0 || end > (blockNChan_p[numMS_p-1](i)-1)) {
 	    os << LogIO::SEVERE << "Illegal step pixel = " << dataStep_p[i]
-	       << " for spw " << spwid+1
+	       << " for spw " << spwid
+	       << "\n end channel " << end << " out of range " 
+	       << dataStart_p[i] << " to "   
+	       << (blockNChan_p[numMS_p-1](i)-1)
+
 	       << LogIO::POST;
 	    return False;
 	  }
 	  os << "Selecting "<< nch
 	     << " channels, starting at visibility channel "
-	     << dataStart_p[i] + 1 << " stepped by "
-	     << dataStep_p[i] << " for spw " << spwid+1 << LogIO::POST;
+	     << dataStart_p[i]  << " stepped by "
+	     << dataStep_p[i] << " for spw " << spwid << LogIO::POST;
 	  dataNchan_p[i]=nch;
 	  blockNChan_p[numMS_p-1][i]=nch;
 	  blockStep_p[numMS_p-1][i]=dataStep_p[i];
@@ -410,70 +504,74 @@ Bool ImagerMultiMS::setimage(const Int nx, const Int ny,
        blockGroup[k].set(1);
      }
 
-     vs_p->iter().selectChannel(blockGroup, blockStart_p, blockNChan_p, 
-				blockStep_p, blockSpw_p);
-    return True;
+     rvi_p->selectChannel(blockGroup, blockStart_p, blockNChan_p, 
+			  blockStep_p, blockSpw_p);
+     return True;
   }
 
   Bool ImagerMultiMS::openSubTables(){
 
     antab_p=Table(ms_p->antennaTableName(),
 		  TableLock(TableLock::AutoNoReadLocking));
- datadesctab_p=Table(ms_p->dataDescriptionTableName(),
-	       TableLock(TableLock::AutoNoReadLocking));
- feedtab_p=Table(ms_p->feedTableName(),
-		 TableLock(TableLock::AutoNoReadLocking));
- fieldtab_p=Table(ms_p->fieldTableName(),
-		  TableLock(TableLock::AutoNoReadLocking));
- obstab_p=Table(ms_p->observationTableName(),
-		TableLock(TableLock::AutoNoReadLocking));
- poltab_p=Table(ms_p->polarizationTableName(),
-		TableLock(TableLock::AutoNoReadLocking));
- proctab_p=Table(ms_p->processorTableName(),
-		TableLock(TableLock::AutoNoReadLocking));
- spwtab_p=Table(ms_p->spectralWindowTableName(),
-		TableLock(TableLock::AutoNoReadLocking));
- statetab_p=Table(ms_p->stateTableName(),
-		TableLock(TableLock::AutoNoReadLocking));
-
- if(Table::isReadable(ms_p->dopplerTableName()))
-   dopplertab_p=Table(ms_p->dopplerTableName(),
-		      TableLock(TableLock::AutoNoReadLocking));
-
- if(Table::isReadable(ms_p->flagCmdTableName()))
-   flagcmdtab_p=Table(ms_p->flagCmdTableName(),
-		      TableLock(TableLock::AutoNoReadLocking));
- if(Table::isReadable(ms_p->freqOffsetTableName()))
-   freqoffsettab_p=Table(ms_p->freqOffsetTableName(),
-			 TableLock(TableLock::AutoNoReadLocking));
-
- if(!(Table::isReadable(ms_p->historyTableName()))){
-   // setup a new table in case its not there
-   TableRecord &kws = ms_p->rwKeywordSet();
-   SetupNewTable historySetup(ms_p->historyTableName(),
-			      MSHistory::requiredTableDesc(),Table::New);
-   kws.defineTable(MS::keywordName(MS::HISTORY), Table(historySetup));
-   
- }
- historytab_p=Table(ms_p->historyTableName(),
-		    TableLock(TableLock::AutoNoReadLocking), Table::Update);
- if(Table::isReadable(ms_p->pointingTableName()))
-   pointingtab_p=Table(ms_p->pointingTableName(), 
-		       TableLock(TableLock::AutoNoReadLocking));
-
- if(Table::isReadable(ms_p->sourceTableName()))
-   sourcetab_p=Table(ms_p->sourceTableName(),
+    datadesctab_p=Table(ms_p->dataDescriptionTableName(),
+			TableLock(TableLock::AutoNoReadLocking));
+    feedtab_p=Table(ms_p->feedTableName(),
+		    TableLock(TableLock::AutoNoReadLocking));
+    fieldtab_p=Table(ms_p->fieldTableName(),
 		     TableLock(TableLock::AutoNoReadLocking));
-
- if(Table::isReadable(ms_p->sysCalTableName()))
- syscaltab_p=Table(ms_p->sysCalTableName(),
+    obstab_p=Table(ms_p->observationTableName(),
 		   TableLock(TableLock::AutoNoReadLocking));
- if(Table::isReadable(ms_p->weatherTableName()))
-   weathertab_p=Table(ms_p->weatherTableName(),
-		      TableLock(TableLock::AutoNoReadLocking));
+    poltab_p=Table(ms_p->polarizationTableName(),
+		   TableLock(TableLock::AutoNoReadLocking));
+    proctab_p=Table(ms_p->processorTableName(),
+		    TableLock(TableLock::AutoNoReadLocking));
+    spwtab_p=Table(ms_p->spectralWindowTableName(),
+		   TableLock(TableLock::AutoNoReadLocking));
+    statetab_p=Table(ms_p->stateTableName(),
+		     TableLock(TableLock::AutoNoReadLocking));
+    
+    if(Table::isReadable(ms_p->dopplerTableName()))
+      dopplertab_p=Table(ms_p->dopplerTableName(),
+			 TableLock(TableLock::AutoNoReadLocking));
+    
+    if(Table::isReadable(ms_p->flagCmdTableName()))
+      flagcmdtab_p=Table(ms_p->flagCmdTableName(),
+			 TableLock(TableLock::AutoNoReadLocking));
+    if(Table::isReadable(ms_p->freqOffsetTableName()))
+      freqoffsettab_p=Table(ms_p->freqOffsetTableName(),
+			    TableLock(TableLock::AutoNoReadLocking));
+    
+    if(ms_p->isWritable()){
+      if(!(Table::isReadable(ms_p->historyTableName()))){
+	// setup a new table in case its not there
+	TableRecord &kws = ms_p->rwKeywordSet();
+	SetupNewTable historySetup(ms_p->historyTableName(),
+				   MSHistory::requiredTableDesc(),Table::New);
+	kws.defineTable(MS::keywordName(MS::HISTORY), Table(historySetup));
+	
+      }
+      historytab_p=Table(ms_p->historyTableName(),
+			 TableLock(TableLock::AutoNoReadLocking), Table::Update);
+    }
+    if(Table::isReadable(ms_p->pointingTableName()))
+      pointingtab_p=Table(ms_p->pointingTableName(), 
+			  TableLock(TableLock::AutoNoReadLocking));
+    
+    if(Table::isReadable(ms_p->sourceTableName()))
+      sourcetab_p=Table(ms_p->sourceTableName(),
+			TableLock(TableLock::AutoNoReadLocking));
 
- hist_p= new MSHistoryHandler(*ms_p, "imager");
-
+    if(Table::isReadable(ms_p->sysCalTableName()))
+      syscaltab_p=Table(ms_p->sysCalTableName(),
+			TableLock(TableLock::AutoNoReadLocking));
+    if(Table::isReadable(ms_p->weatherTableName()))
+      weathertab_p=Table(ms_p->weatherTableName(),
+			 TableLock(TableLock::AutoNoReadLocking));
+    
+    if(ms_p->isWritable()){
+      hist_p= new MSHistoryHandler(*ms_p, "imager");
+    }
+    
 return True;
 
   

@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: SolvableVJMCol.h,v 19.4 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_SOLVABLEVJMCOL_H
 #define CALIBRATION_SOLVABLEVJMCOL_H
@@ -85,6 +85,8 @@ class ROSolvableVisJonesMCol : public ROTimeVarVisJonesMCol
   const ROArrayColumn<Bool>& solnOk() const {return solnOk_p;};
   const ROArrayColumn<Float>& fit() const {return fit_p;};
   const ROArrayColumn<Float>& fitWgt() const {return fitWgt_p;};
+  const ROArrayColumn<Bool>& flag() const {return flag_p;};
+  const ROArrayColumn<Float>& snr() const {return snr_p;};
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -103,6 +105,8 @@ class ROSolvableVisJonesMCol : public ROTimeVarVisJonesMCol
   ROArrayColumn<Bool> solnOk_p;
   ROArrayColumn<Float> fit_p;
   ROArrayColumn<Float> fitWgt_p;
+  ROArrayColumn<Bool> flag_p;
+  ROArrayColumn<Float> snr_p;
 };
 
 // <summary> 
@@ -156,6 +160,8 @@ class SolvableVisJonesMCol : public TimeVarVisJonesMCol
   ArrayColumn<Bool>& solnOk() {return solnOk_p;};
   ArrayColumn<Float>& fit() {return fit_p;};
   ArrayColumn<Float>& fitWgt() {return fitWgt_p;};
+  ArrayColumn<Bool>& flag() {return flag_p;};
+  ArrayColumn<Float>& snr() {return snr_p;};
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -174,6 +180,8 @@ class SolvableVisJonesMCol : public TimeVarVisJonesMCol
   ArrayColumn<Bool> solnOk_p;
   ArrayColumn<Float> fit_p;
   ArrayColumn<Float> fitWgt_p;
+  ArrayColumn<Bool> flag_p;
+  ArrayColumn<Float> snr_p;
 };
 
 // <summary> 

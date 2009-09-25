@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: IPLatConvEquation.cc,v 19.3 2004/11/30 17:50:59 ddebonis Exp $
+//# $Id$
 
 #include <synthesis/MeasurementEquations/IPLatConvEquation.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>

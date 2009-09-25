@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: MFMSCleanImageSkyModel.cc,v 19.13 2005/04/08 21:03:34 kgolap Exp $
+//# $Id$
 
 #include <casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementComponents/MFMSCleanImageSkyModel.h>
@@ -65,9 +65,10 @@ MFMSCleanImageSkyModel::MFMSCleanImageSkyModel()
 
 MFMSCleanImageSkyModel::MFMSCleanImageSkyModel(const Int nscales, 
 					       const Int sln,
-					       const Int spm)
+					       const Int spm,
+                                               const Float inbias)
 : method_p(NSCALES), nscales_p(nscales), progress_p(0),
-  stopLargeNegatives_p(sln), stopPointMode_p(spm)
+  stopLargeNegatives_p(sln), stopPointMode_p(spm),smallScaleBias_p(inbias)
 {
 
 
@@ -79,9 +80,10 @@ MFMSCleanImageSkyModel::MFMSCleanImageSkyModel(const Int nscales,
 
 MFMSCleanImageSkyModel::MFMSCleanImageSkyModel(const Vector<Float>& userScaleSizes, 
 					       const Int sln,
-					       const Int spm)
+					       const Int spm,
+                                               const Float inbias)
 : method_p(USERVECTOR), userScaleSizes_p(userScaleSizes), progress_p(0),
-  stopLargeNegatives_p(sln), stopPointMode_p(spm)
+  stopLargeNegatives_p(sln), stopPointMode_p(spm), smallScaleBias_p(inbias)
 {
 
   donePSF_p=False;
@@ -136,7 +138,9 @@ Bool MFMSCleanImageSkyModel::solve(SkyEquation& se) {
     makeApproxPSFs(se);
   }
 
-  Bool converged=True;
+  Int converged=True;
+  Int converging=0;
+  
   // Validate PSFs for each field
   Vector<Float> psfmax(numberOfModels()); psfmax=0.0;
   Vector<Float> psfmin(numberOfModels()); psfmin=1.0;
@@ -201,6 +205,7 @@ Bool MFMSCleanImageSkyModel::solve(SkyEquation& se) {
     os << "*** Starting major cycle " << cycle+1 << LogIO::POST;
     cycle++;
 
+
     // Make the residual images. We do an incremental update
     // for cycles after the first one. If we have only one
     // model then we use convolutions to speed the processing
@@ -220,6 +225,8 @@ Bool MFMSCleanImageSkyModel::solve(SkyEquation& se) {
       }
     
     }
+    
+
     absmax=maxField(resmax, resmin);
 
     for (model=0;model<numberOfModels();model++) {
@@ -331,6 +338,7 @@ Bool MFMSCleanImageSkyModel::solve(SkyEquation& se) {
 		    os << "Creating multiscale cleaner with psf and residual images" << LogIO::POST;
 		    cleaner=new LatticeCleaner<Float>(subPSF, subResid);
 		    setScales(*cleaner);
+                    cleaner->setSmallScaleBias(smallScaleBias_p);
 		    if (doMask) {		  
 		      cleaner->setMask(*subMaskPointer);
 		    }
@@ -351,9 +359,18 @@ Bool MFMSCleanImageSkyModel::solve(SkyEquation& se) {
 		  }
 		  cleaner->stopPointMode(stopPointMode_p);
 		  cleaner->ignoreCenterBox(True);
-		  cleaner->clean( subDeltaImage, progress_p );
-		  
-		
+		  converging=cleaner->clean( subDeltaImage, progress_p );
+		  //diverging
+		  if(converging==-3)
+		    stop=True;
+		  if(converging==-2){
+		    if(userScaleSizes_p.nelements() > 1){
+		       userScaleSizes_p.resize(userScaleSizes_p.nelements()-1, True);
+		       cleaner->setscales(userScaleSizes_p); 
+		    }
+		    else
+		      stop=True;
+		  }
 		  iterations[model](chan)=cleaner->numberIterations();
 		  maxIterations=(iterations[model](chan)>maxIterations) ?
 		    iterations[model](chan) : maxIterations;
@@ -439,6 +456,10 @@ MFMSCleanImageSkyModel::setScales(LatticeCleaner<Float>& cleaner)
 	 << " pixels" << LogIO::POST;
     }  
     cleaner.setscales(scaleSizes);   
+    //store the scales as user setscales..in case we need to reduce scales
+    userScaleSizes_p.resize();
+    userScaleSizes_p=scaleSizes;
+    method_p=USERVECTOR;
   }
 };
 

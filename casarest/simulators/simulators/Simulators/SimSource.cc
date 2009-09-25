@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: SimSource.cc,v 19.4 2005/12/05 02:39:28 mwiering Exp $
+//# $Id$
 
 #include <simulators/Simulators/SimSource.h>
 

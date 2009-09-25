@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: CalMainBuffer.cc,v 19.3 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/CalMainBuffer.h>
@@ -33,6 +33,7 @@
 #include <casa/Arrays/ArrayUtil.h>
 #include <tables/Tables/RefRows.h>
 #include <casa/Exceptions/Error.h>
+#include <measures/Measures/MCFrequency.h>
 #include <casa/typeinfo.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
@@ -1355,7 +1356,8 @@ Vector<Int> CalMainBuffer::matchAntenna1AndFieldId (const Int& antennaId,
   Vector<Int> rowNo(nRow());
   indgen(rowNo);
   MaskedArray<Int> maskRowNo(rowNo, maskArray);
-  return maskRowNo.getCompressedArray();
+  Vector<Int> tmp(maskRowNo.getCompressedArray());
+  return tmp;
 };
 
 //----------------------------------------------------------------------------

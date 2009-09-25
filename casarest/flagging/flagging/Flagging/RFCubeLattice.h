@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFCubeLattice.h,v 19.6 2005/06/18 21:19:15 ddebonis Exp $
+//# $Id$
 #ifndef FLAGGING_RFCUBELATTICE_H
 #define FLAGGING_RFCUBELATTICE_H
     
@@ -204,4 +204,7 @@ public:
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <flagging/Flagging/RFCubeLattice.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

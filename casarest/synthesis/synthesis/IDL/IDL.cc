@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: IDL.cc,v 19.3 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #include <casa/Utilities/Assert.h>
 #include <casa/Exceptions/Error.h>
@@ -68,7 +68,7 @@ IDL::IDL(Int options)
   }
   IDL_ToutPush(idl_output);
 #else
-  os << LogIO::SEVERE << "IDL processing is not available in this installation of AIPS++" << LogIO::EXCEPTION;
+  os << LogIO::SEVERE << "IDL processing is not available in this CASA installation." << LogIO::EXCEPTION;
 #endif
 }
 

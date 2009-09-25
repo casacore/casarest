@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: PBMathInterface.h,v 19.8 2004/11/30 17:50:50 ddebonis Exp $
+//# $Id$
 
 #ifndef SYNTHESIS_PBMATHINTERFACE_H
 #define SYNTHESIS_PBMATHINTERFACE_H
@@ -42,6 +42,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 //Forward declaration
 class Table;
 class MDirection;
+class CoordinateSystem;
 class SkyComponent;
 class ImageRegion;
 class String;
@@ -160,6 +161,13 @@ public:
 				   Float cutoff = 0.01,
 				   Bool forward=True);
 
+  ImageInterface<Float>& applyPB(const ImageInterface<Float>& in,
+				   ImageInterface<Float>& out,
+				   const MDirection& sp,
+				   const Quantity parAngle = Quantity(0.0,"deg"),
+				   const BeamSquint::SquintType doSquint = BeamSquint::NONE,
+				   Float cutoff = 0.01);
+
   // This has a very specialized role (in SkyEquation) and should
   // not be used elsewhere
   ImageInterface<Float>& applyPB2(const ImageInterface<Float>& in,
@@ -232,6 +240,9 @@ public:
 				const SkyJones::SizeType) = 0;
 
 
+
+  virtual Int support (const CoordinateSystem& cs)=0;
+
   // Summarize the Voltage Pattern;
   // For PBMath1D, list nValues worth of the PB array
   virtual void summary(Int nValues=0);
@@ -267,7 +278,7 @@ protected:
 	const MDirection& sp,
 	const Quantity parAngle,       
 	const BeamSquint::SquintType doSquint,
-	Float cutoff) =0;   
+	Float cutoff, const Int ipower=4) =0;   
 
   virtual SkyComponent& 
   apply(SkyComponent& in,

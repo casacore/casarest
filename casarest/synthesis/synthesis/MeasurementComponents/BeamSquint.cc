@@ -24,11 +24,10 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: BeamSquint.cc,v 19.6 2006/06/22 17:28:45 kgolap Exp $
+//# $Id$
 
 #include <casa/aips.h>
 #include <casa/Logging/LogIO.h>
-#include <casa/Arrays/ArrayIO.h>
 #include <synthesis/MeasurementComponents/BeamSquint.h>
 
 

@@ -23,11 +23,10 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RFDebugPlot.cc,v 19.6 2005/12/06 20:18:50 wyoung Exp $
+//# $Id$
 #include <flagging/Flagging/RFDebugPlot.h>
 #include <casa/System/PGPlotter.h>
 #include <casa/stdio.h>
-#include <cstring>
         
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RedFlagger.cc,v 19.22 2005/12/06 20:18:50 wyoung Exp $
+//# $Id$
 #include <casa/Arrays/Vector.h>
 #include <casa/Arrays/ArrayMath.h>
 #include <casa/Arrays/ArrayLogical.h>
@@ -33,7 +33,7 @@
 #include <measures/Measures/Stokes.h>
 #include <casa/Utilities/Regex.h>
 #include <casa/OS/HostInfo.h>
-#include <flagging/Flagging/RedFlagger.h>
+#include <flagging/Flagging/Flagger.h>
 #include <flagging/Flagging/RFAMedianClip.h>
 #include <flagging/Flagging/RFASpectralRej.h>
 #include <flagging/Flagging/RFASelector.h>
@@ -69,11 +69,12 @@
 
 
 #include <flagging/Flagging/RFANewMedianClip.h>
+#include <flagging/Flagging/RedFlagger.h>
 
 namespace casa {
 
  LogIO RedFlagger::os( LogOrigin("RedFlagger") );
- static char str[256];
+ static char str[1024];
  uInt debug_ifr=9999,debug_itime=9999;
 
 
@@ -159,6 +160,15 @@ const RecordInterface & RedFlagger::defaultOptions ()
 // -----------------------------------------------------------------------
 void RedFlagger::attach( const MeasurementSet &mset, Bool setAgentDefaults )
 {
+
+  nant=0;
+  setdata_p = False;
+  if(vs_p) 
+    delete vs_p;
+  vs_p = 0;
+  if(mssel_p)
+    delete mssel_p;
+  mssel_p = 0;
   if(setAgentDefaults)
      setupAgentDefaults();
   ms = mset;
@@ -221,6 +231,12 @@ void RedFlagger::detach()
     os<<"no measurement set was attached"<<LogIO::POST;
   }else{
     os<<"detaching from MS "<<ms.tableName()<<LogIO::POST;
+    hist_p=0;
+    histLockCounter_p = 0;
+
+    nant=0;
+    setdata_p = False;
+    pgprep_nx=pgprep_ny=1;
     ms.flush();
     ms.relinquishAutoLocks(True);
     ms.unlock();
@@ -246,8 +262,10 @@ Bool RedFlagger::setdata(const String& mode, const Vector<Int>& nchan,
   }
 
   Bool mosaicOrder = False;
-  Block<Int> sort(1);
-  sort[0] = MS::TIME;
+  Block<Int> sort(2);
+  sort[0] = MS::FIELD_ID;
+  sort[0] = MS::DATA_DESC_ID;
+  sort[1] = MS::TIME;
 
   if(mosaicOrder){
     sort.resize(4);
@@ -259,15 +277,15 @@ Bool RedFlagger::setdata(const String& mode, const Vector<Int>& nchan,
   //else use default sort order
   
   Matrix<Int> noselection;
-  Double timeInterval=0;
-  Bool compress=False;
+  // Double timeInterval=0;
+  // Bool compress=False;
 
   dataMode_p=mode;
 
   if(dataMode_p.matches("none")) {
-    cout << "Whole data set has been selected or use mode argument to select specific subset " << endl;
+    os << LogIO::NORMAL << "Whole data set has been selected or use mode argument to select specific subset " << LogIO::POST;
 
-    vs_p = new VisSet(ms,noselection);
+    vs_p = new VisSet(ms,sort,noselection, 0.0);
     //    nullSelect_p=True;
     return True;
   } else {
@@ -326,7 +344,7 @@ Bool RedFlagger::setdata(const String& mode, const Vector<Int>& nchan,
     // in non-default pattern
     {
       //      VisSet vs(ms,sort,noselection,timeInterval,compress);
-      vs_p = new VisSet(ms,noselection);
+      vs_p = new VisSet(ms,sort,noselection,0.0);
     }
     Table sorted=ms.keywordSet().asTable("SORTED_TABLE");
     
@@ -423,8 +441,11 @@ Bool RedFlagger::setdata(const String& mode, const Vector<Int>& nchan,
   // Channel selection
   if(!vs_p) {
     //    delete vs_p;
-    vs_p = new VisSet(*mssel_p,noselection);
+	  if(!mssel_p)
+		  throw AipsError ("No measurement set selection available");
+    vs_p = new VisSet(*mssel_p,sort,noselection,0.0);
   }
+  vs_p->resetVisIter(sort, 0.0);
   selectDataChannel(*vs_p, dataspectralwindowids_p, dataMode_p,
 		    dataNchan_p, dataStart_p, dataStep_p,
 		    mDataStart_p, mDataStep_p);
@@ -745,6 +766,7 @@ void RedFlagger::run ( const RecordInterface &agents,const RecordInterface &opt,
     return;
   }
 
+#if 0
   
   if( !nant )
     os<<"No Measurement Set has been attached\n"<<LogIO::EXCEPTION;
@@ -834,7 +856,7 @@ void RedFlagger::run ( const RecordInterface &agents,const RecordInterface &opt,
 	Int count = agcounts.asInt(agent_id)+1;
 	agcounts.define(agent_id,count);
 	// modify the agent name to include an instance count
-	char s[128];
+	char s[1024];
 	sprintf(s,"%s#%d",defparms.asString(RF_NAME).chars(),count);
 	parms.define(RF_NAME,s);
       }
@@ -909,13 +931,13 @@ void RedFlagger::run ( const RecordInterface &agents,const RecordInterface &opt,
     }
     if( !sum(active) )
       {
-	os<<LogIO::WARN<<"Unable to process this chunk with any active method.\n"<<LogIO::POST;
+	// os<<LogIO::WARN<<"Unable to process this chunk with any active method.\n"<<LogIO::POST;
 	continue;
       }
     // initially active agents
     Vector<Bool> active_init = active;
 // start executing passes    
-    char subtitle[128];
+    char subtitle[1024];
     sprintf(subtitle,"Flagging %s chunk %d: ",ms.tableName().chars(),nchunk+1);
     String title(subtitle);
     for( uInt npass=0; anyNE(iter_mode,(Int)RFA::STOP); npass++ ) // repeat passes while someone is active
@@ -1094,7 +1116,6 @@ void RedFlagger::run ( const RecordInterface &agents,const RecordInterface &opt,
 	this->summary(agents, opt, ind_base);
 	printSummaryReport(chunk,opt);
 	printAgentReports();
-	this->writeHistory(os, False);
       }
     }
 // call endChunk on all agents
@@ -1124,6 +1145,7 @@ void RedFlagger::run ( const RecordInterface &agents,const RecordInterface &opt,
   cleanupPlotters();
   ms.flush();
   os<<"Flagging complete\n"<<LogIO::POST;
+#endif
 }
 
 // -----------------------------------------------------------------------
@@ -1203,7 +1225,7 @@ void RedFlagger::cleanupPlotters ()
 void RedFlagger::printSummaryReport (RFChunkStats &chunk,const RecordInterface &opt )
 {
 // generate a short text report in the first pane
-  char s[128];
+  char s[1024];
   sprintf(s,"Flagging MS '%s' chunk %d (field %s, spw %d)",ms.tableName().chars(),
         chunk.nchunk(),chunk.visIter().fieldName().chars(),chunk.visIter().spectralWindow());
   os<<s<<LogIO::POST;
@@ -1243,7 +1265,7 @@ void RedFlagger::plotSummaryReport ( PGPlotterInterface &pgp,RFChunkStats &chunk
 {
 // generate a short text report in the first pane
   pgp.env(0,1,0,1,0,-2);
-  char s[128];
+  char s[1024];
   sprintf(s,"Flagging MS '%s' chunk %d (field %s, spw %d)",ms.tableName().chars(),
         chunk.nchunk(),chunk.visIter().fieldName().chars(),chunk.visIter().spectralWindow());
   pgp.lab("","",s);
@@ -1332,7 +1354,7 @@ void RedFlagger::printAgentReports( )
 // -----------------------------------------------------------------------
 int dprintf( LogIO &os,const char *format, ...) 
 {
-  char str[512];
+  char str[1024];
   va_list ap;
   va_start(ap,format);
   int ret = vsprintf(str,format,ap);
@@ -1340,31 +1362,5 @@ int dprintf( LogIO &os,const char *format, ...)
   os<<LogIO::DEBUGGING<<str<<LogIO::POST;
   return ret;
 }
-
-void RedFlagger::writeHistory(LogIO& os, Bool cliCommand){
-  if (!historytab_p.isNull()) {
-    if (histLockCounter_p == 0) {
-      historytab_p.lock(True);
-    }
-    ++histLockCounter_p;
-
-    os.postLocally();
-    if (cliCommand) {
-      hist_p->cliCommand(os);
-    } else {
-      hist_p->addMessage(os);
-    }
-
-    if (histLockCounter_p == 1) {
-      historytab_p.unlock();
-    }
-    if (histLockCounter_p > 0) {
-      --histLockCounter_p;
-    }
-  } else {
-    os << LogIO::SEVERE << "must attach to MeasurementSet" << LogIO::POST;
-  }
-}
-
 
 } //#end casa namespace

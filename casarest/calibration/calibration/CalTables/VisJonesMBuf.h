@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //#
-//# $Id: VisJonesMBuf.h,v 19.4 2004/11/30 17:50:13 ddebonis Exp $
+//# $Id$
 
 #ifndef CALIBRATION_VISJONESMBUF_H
 #define CALIBRATION_VISJONESMBUF_H

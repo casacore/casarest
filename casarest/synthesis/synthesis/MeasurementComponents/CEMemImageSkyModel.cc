@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: CEMemImageSkyModel.cc,v 19.6 2004/11/30 17:50:47 ddebonis Exp $
+//# $Id$
 
 #include <casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementComponents/CEMemImageSkyModel.h>

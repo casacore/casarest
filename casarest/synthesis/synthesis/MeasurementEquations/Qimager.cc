@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: Qimager.cc,v 1.7 2004/11/30 17:51:00 ddebonis Exp $
+//# $Id$
 
 #include <tables/Tables/Table.h>
 #include <ms/MeasurementSets/MSColumns.h>

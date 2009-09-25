@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: CalTableDesc.cc,v 19.4 2004/11/30 17:50:12 ddebonis Exp $
+//# $Id$
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/CalTableDesc.h>
@@ -320,6 +320,8 @@ TableDesc CalTableDesc::defaultFitDesc()
   td.addColumn (ArrayColumnDesc <Bool> (MSC::fieldName (MSC::SOLUTION_OK)));
   td.addColumn (ArrayColumnDesc <Float> (MSC::fieldName (MSC::FIT)));
   td.addColumn (ArrayColumnDesc <Float> (MSC::fieldName (MSC::FIT_WEIGHT)));
+  td.addColumn (ArrayColumnDesc <Bool> (MSC::fieldName (MSC::FLAG)));
+  td.addColumn (ArrayColumnDesc <Float> (MSC::fieldName (MSC::SNR)));
   
   return td;
 };

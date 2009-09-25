@@ -23,7 +23,7 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-//# $Id: RINEX.cc,v 19.3 2004/11/30 17:50:28 ddebonis Exp $
+//# $Id$
 
 #include <casa/stdio.h>
 #include <errno.h>
@@ -32,6 +32,7 @@
 #include <casa/Exceptions.h>
 #include <measures/Measures.h>
 #include <measures/Measures/MCPosition.h>
+#include <measures/Measures/MCEpoch.h>
 #include <measures/Measures/MPosition.h>
 #include <measures/Measures/MEpoch.h>
 #include <casa/Quanta/MVTime.h>
