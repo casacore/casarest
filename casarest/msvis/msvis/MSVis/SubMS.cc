@@ -4300,13 +4300,15 @@ inline Bool SubMS::checkSpwShape()
     return (dCol && mCol && cCol);
   }
 
+} //#End casa namespace
+
 
 //# Instantiate the required templates.
 #include <msvis/MSVis/SubMS.tcc>
-template uInt SubMS::addOptionalColumns (const MSPointing&, MSPointing&,
-                                         const Vector<String>&, const Bool);
-template uInt SubMS::addOptionalColumns (const MSSource&, MSSource&,
-                                         const Vector<String>&, const Bool);
+namespace casa {
+  template uInt SubMS::addOptionalColumns (const MSPointing&, MSPointing&,
+                                           const Vector<String>&, const Bool);
+  template uInt SubMS::addOptionalColumns (const MSSource&, MSSource&,
+                                           const Vector<String>&, const Bool);
+}
 
-
-} //#End casa namespace
