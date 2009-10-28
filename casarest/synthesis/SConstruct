@@ -35,6 +35,7 @@ opts.Add(("cfitsioincdir", "The cfitsio header location", None))
 opts.Add(("wcsroot", 
         "The root directory where wcs is installed", None))
 opts.Add(("wcslibdir", "The wcs library location", None))
+opts.Add(("wcsincdir", "The wcs header file location", None))
 opts.Add(("hdf5root", 
 	  "The root directory where hdf5 is installed", None))
 opts.Add(("hdf5incdir", "The hdf5 header location", None))
@@ -43,7 +44,7 @@ opts.Add(("hdf5libdir", "The hdf5 library location", None))
 env = Environment(ENV = { 'PATH' : os.environ[ 'PATH' ],
 			  'HOME' : os.environ[ 'HOME' ] 
 			  },
-		  options=opts
+		  variables=opts
 		  )
 # keep a local sconsign database, rather than in very directory
 env.SConsignFile()
@@ -51,11 +52,7 @@ env.SConsignFile()
 env["PACKAGE"] = PACKAGE
 
 # use directory from casacore/casa installation
-env["casaincdir"] = [os.path.join(env["casacoreroot"],"include","casacore")]
-env["casalibdir"] = [os.path.join(env["casacoreroot"],"lib")]
 env["casashrdir"] = [os.path.join(env["casacoreroot"],"share","casacore")]
-env["casarestincdir"] = [os.path.join(env["casarestroot"],"include","casarest")]
-env["casarestlibdir"] = [os.path.join(env["casarestroot"],"lib")]
 env["casarestshrdir"] = [os.path.join(env["casarestroot"],"share","casarest")]
 
 env.Tool('casaoptions', env["casashrdir"])
@@ -76,10 +73,17 @@ env.Tool('casa', env["casashrdir"])
 env.Tool('assaytest', env["casashrdir"])
 env["ASSAYCOM"] = os.path.join(env["casashrdir"][0], "casacore_assay")
 
+env["casaincdir"] = [os.path.join(env["casacoreroot"],"include","casacore")]
+env["casalibdir"] = [os.path.join(env["casacoreroot"],env.ARCHLIBDIR)]
+env["casarestincdir"] = [os.path.join(env["casarestroot"],"include","casarest")]
+env["casarestlibdir"] = [os.path.join(env["casarestroot"],env.ARCHLIBDIR)]
+
 # Auto configure
 if not env.GetOption('clean'):
     conf = Configure(env)
     conf.env.CheckFortran(conf)
+    if not conf.CheckLib("m", autoadd=0): Exit(1)
+    conf.env.PrependUnique(LIBS=['m'])  
     # test for blas/lapack
     blasname = conf.env.get("blaslib", "blas").split(",")
     conf.env.AddCustomPackage("blas")
@@ -104,7 +108,8 @@ if not env.GetOption('clean'):
 				   autoadd=0):
 	Exit(1)
     conf.env.PrependUnique(LIBS=['wcs'])
-
+    if not conf.CheckLib("dl"): Exit(1)
+    conf.env.PrependUnique(LIBS=['dl'])
     # HDF5 is not mandatory
     conf.env.AddCustomPackage('hdf5')
     if conf.CheckLib('hdf5', autoadd=0):
@@ -129,11 +134,10 @@ env.AppendUnique(LIBPATH=env["casarestlibdir"])
 for dep in DEPS:
     env.Prepend(LIBS=["casa_"+dep])
 
-#env.CustomCasaCom()
-
 for bopt in env["build"]:
     # create an environment copy with the dbg/opt compiler flags
     buildenv = env.BuildEnv(bopt)
+    buildenv["buildtype"] = bopt
     # buildir name
     buildenv["BUILDDIR"] = Dir("#/build_%s/%s" % (env.PlatformIdent(), bopt))
     buildenv["BUILDDIR_APPS"] = Dir("#/build_%s/%s/%s" % (env.PlatformIdent(), 
