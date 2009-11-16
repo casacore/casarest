@@ -27,6 +27,7 @@
 #include <flagging/Flagging/RFDebugPlot.h>
 #include <casa/System/PGPlotter.h>
 #include <casa/stdio.h>
+#include <casa/string.h>
         
 namespace casa { //# NAMESPACE CASA - BEGIN
 
