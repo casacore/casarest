@@ -412,7 +412,7 @@ int main (Int argc, char** argv)
                         qcellsize,                  // celly
                         stokes,                     // stokes
                         phaseCenter,                // phaseCenter
-                        fieldid,                    // fieldid
+                        doShift  ?  -1 : fieldid,   // fieldid
                         mode,                       // mode
                         img_nchan,                  // nchan
                         img_start,                  // start
