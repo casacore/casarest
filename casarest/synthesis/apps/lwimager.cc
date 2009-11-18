@@ -33,6 +33,7 @@
 #include <images/Images/ImageFITSConverter.h>
 #include <casa/Inputs.h>
 #include <casa/Arrays/ArrayUtil.h>
+#include <casa/Arrays/ArrayMath.h>
 #include <casa/Utilities/Regex.h>
 #include <casa/Utilities/Assert.h>
 #include <casa/Exceptions/Error.h>
@@ -140,6 +141,9 @@ int main (Int argc, char** argv)
     inputs.create ("hdf5", "no",
     		   "Name of output image HDF5 file ('no' means no HDF5 file) empty is <imagename>.hdf5",
     		   "string");
+    inputs.create ("prior", "",
+		   "Name of prior image file (default is <imagename>.prior",
+		   "string");
     inputs.create ("model", "",
 		   "Name of model image file (default is <imagename>.model",
 		   "string");
@@ -158,6 +162,9 @@ int main (Int argc, char** argv)
     inputs.create ("filter", "",
                    "Apply gaussian tapering filter; specify as major,minor,pa",
                    "string");
+    inputs.create ("nscales", "5",
+                   "Scales for MultiScale Clean",
+                   "int");
     inputs.create ("weight", "briggs",
 		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), or radial",
 		   "string");
@@ -216,7 +223,7 @@ int main (Int argc, char** argv)
 		   "TaQL selection string for MS",
 		   "string");
     inputs.create ("operation", "image",
-		   "Operation (image,clark,hogbom,csclean)",
+		   "Operation (image,clark,hogbom,csclean,multiscale,entropy)",
 		   "string");
     inputs.create ("niter", "1000",
 		   "Number of clean iterations",
@@ -227,8 +234,17 @@ int main (Int argc, char** argv)
     inputs.create ("threshold", "0Jy",
 		   "Flux level at which to stop cleaning",
 		   "quantity string");
+    inputs.create ("targetflux", "1.0Jy",
+		   "Target flux for maximum entropy",
+		   "quantity string");
+    inputs.create ("sigma", "0.001Jy",
+		   "deviation for maximum entropy",
+		   "quantity string");
     inputs.create ("fixed", "False",
 		   "Keep clean model fixed",
+		   "bool");
+    inputs.create ("constrainflux", "False",
+		   "Constrain image to match target flux? For max entropy",
 		   "bool");
     inputs.create ("mask", "",
 		   "Name of the mask to use in cleaning",
@@ -239,6 +255,9 @@ int main (Int argc, char** argv)
     inputs.create ("masktrc", "image shape",
 		   "top-right corner of mask region",
 		   "int vector");
+    inputs.create ("uservector", "0",
+		   "user-defined scales for MultiScale clean",
+		   "float vector");
     inputs.create ("maskvalue", "-1.0",
 		   "Value to store in mask region; if given, mask is created; if mask not exists, defaults to 1.0",
 		   "float");
@@ -248,6 +267,7 @@ int main (Int argc, char** argv)
 
     // Get the input specification.
     Bool fixed       = inputs.getBool("fixed");
+    Bool constrainFlux  = inputs.getBool("constrainflux");
     Long cachesize   = inputs.getInt("cachesize");
     Int fieldid      = inputs.getInt("field");
     Int spwid        = inputs.getInt("spwid");
@@ -261,6 +281,8 @@ int main (Int argc, char** argv)
     Int img_step     = inputs.getInt("img_chanstep");
     Int wplanes      = inputs.getInt("wprojplanes");
     Int niter        = inputs.getInt("niter");
+    Int nscales      = inputs.getInt("nscales");
+    Vector<Double> userScaleSizes(inputs.getDoubleArray("uservector"));
     Double padding   = inputs.getDouble("padding");
     Double gain      = inputs.getDouble("gain");
     Double maskValue = inputs.getDouble("maskvalue");
@@ -272,12 +294,15 @@ int main (Int argc, char** argv)
     String chanmode  = inputs.getString("chanmode");
     String cellsize  = inputs.getString("cellsize");
     String phasectr  = inputs.getString("phasecenter");
+    String sigmaStr  = inputs.getString("sigma");
+    String targetStr = inputs.getString("targetflux");
     String threshStr = inputs.getString("threshold");
     String msName    = inputs.getString("ms");
     String imgName   = inputs.getString("image");
     String fitsName  = inputs.getString("fits");
     String hdf5Name  = inputs.getString("hdf5");
     String modelName = inputs.getString("model");
+    String priorName = inputs.getString("prior");
     String restoName = inputs.getString("restored");
     String residName = inputs.getString("residual");
     String imageType = inputs.getString("data");
@@ -321,6 +346,9 @@ int main (Int argc, char** argv)
     if (hdf5Name == "no") {
       hdf5Name = String();
     }
+    if (priorName.empty()) {
+      priorName = imgName + ".prior";
+    }
     if (modelName.empty()) {
       modelName = imgName + ".model";
     }
@@ -340,13 +368,17 @@ int main (Int argc, char** argv)
       phaseCenter = readDirection (phasectr);
     }
     operation.downcase();
-    AlwaysAssertExit (operation=="image" || operation=="hogbom" || operation=="clark" || operation=="csclean");
+    AlwaysAssertExit (operation=="image" || operation=="hogbom" || operation=="clark" || operation=="csclean" || operation=="multiscale" || operation =="entropy");
     IPosition maskBlc, maskTrc;
-    Quantity  threshold;
+    Quantity threshold;
+    Quantity sigma;
+    Quantity targetFlux;
     if (operation != "image") {
       maskBlc = readIPosition (mstrBlc);
       maskTrc = readIPosition (mstrTrc);
       threshold = readQuantity (threshStr);
+      sigma = readQuantity (sigmaStr);
+      targetFlux = readQuantity (targetStr);
     }
     // Get axis specification from filter.
     Quantity bmajor, bminor, bpa;
@@ -401,6 +433,19 @@ int main (Int argc, char** argv)
 		     Quantity(0, "rad"),            // fieldofview
 		     0);                            // npixels
     }
+
+    // If multiscale, set its parameters.
+    if (operation == "multiscale") {
+      String scaleMethod;
+      Vector<Float> userVector(userScaleSizes.shape());
+      convertArray (userVector, userScaleSizes);
+      if (userScaleSizes.size() > 1) {
+        scaleMethod = "uservector";
+      } else {
+        scaleMethod = "nscales";
+      }
+      imager.setscales(scaleMethod, nscales, userVector);
+    }
     if (! filter.empty()) {
       imager.filter ("gaussian", bmajor, bminor, bpa);
     }
@@ -454,19 +499,35 @@ int main (Int argc, char** argv)
 			  maskValue);
 	}
       }
-      imager.clean (operation,                      // algorithm,
-		    niter,                          // niter
-		    gain,                           // gain
-		    threshold,                      // threshold
-		    False,                          // displayProgress
-		    Vector<String>(1, modelName),   // model
-		    Vector<Bool>(1, fixed),         // fixed
-		    "",                             // complist
-		    Vector<String>(1, maskName),    // mask
-		    Vector<String>(1, restoName),   // restored
-		    Vector<String>(1, residName));  // residual
+      if (operation == "entropy") {
+        imager.mem(operation,                       // algorithm
+                   niter,                           // niter
+                   sigma,                           // sigma
+                   targetFlux,                      // targetflux
+                   constrainFlux,                   // constrainflux
+                   False,                           // displayProgress
+                   Vector<String>(1, modelName),    // model
+                   Vector<Bool>(1, fixed),          // fixed
+                   "",                              // complist
+                   Vector<String>(1, priorName),    // prior
+                   Vector<String>(1, maskName),     // mask
+                   Vector<String>(1, restoName),    // restored
+                   Vector<String>(1, residName));   // residual
+
+      } else {
+        imager.clean(operation,                     // algorithm,
+                     niter,                         // niter
+                     gain,                          // gain
+                     threshold,                     // threshold
+                     False,                         // displayProgress
+                     Vector<String>(1, modelName),  // model
+                     Vector<Bool>(1, fixed),        // fixed
+                     "",                            // complist
+                     Vector<String>(1, maskName),   // mask
+                     Vector<String>(1, restoName),  // restored
+                     Vector<String>(1, residName)); // residual
+      }
       // Convert result to fits if needed.
-       
       if (! fitsName.empty()) {
 	String error;
 	PagedImage<float> img(restoName);
