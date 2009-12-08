@@ -1,6 +1,6 @@
 PROJECT(casarest)
 enable_language(CXX Fortran)
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 2.6.2)
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
 # HDF5 uses an ENV variable.
