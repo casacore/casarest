@@ -246,6 +246,9 @@ int main (Int argc, char** argv)
     inputs.create ("constrainflux", "False",
 		   "Constrain image to match target flux? For max entropy",
 		   "bool");
+    inputs.create ("prefervelocity", "True",
+                   "Should FITS image spectral axis be velocity or frequency",
+                   "bool");
     inputs.create ("mask", "",
 		   "Name of the mask to use in cleaning",
 		   "string");
@@ -268,6 +271,7 @@ int main (Int argc, char** argv)
     // Get the input specification.
     Bool fixed       = inputs.getBool("fixed");
     Bool constrainFlux  = inputs.getBool("constrainflux");
+    Bool preferVelocity = inputs.getBool("prefervelocity");
     Long cachesize   = inputs.getInt("cachesize");
     Int fieldid      = inputs.getInt("field");
     Int spwid        = inputs.getInt("spwid");
@@ -469,7 +473,11 @@ int main (Int argc, char** argv)
       if (! fitsName.empty()) {
 	String error;
 	PagedImage<float> img(imgName);
-	if (! ImageFITSConverter::ImageToFITS (error, img, fitsName)) {
+	if (! ImageFITSConverter::ImageToFITS (error,
+                                               img,
+                                               fitsName,
+                                               64,         // memoryInMB
+                                               preferVelocity)) {
 	  throw AipsError(error);
 	}
       }
@@ -531,7 +539,11 @@ int main (Int argc, char** argv)
       if (! fitsName.empty()) {
 	String error;
 	PagedImage<float> img(restoName);
-	if (! ImageFITSConverter::ImageToFITS (error, img, fitsName)) {
+	if (! ImageFITSConverter::ImageToFITS (error,
+                                               img,
+                                               fitsName,
+                                               64,         // memoryInMB
+                                               preferVelocity)) {
 	  throw AipsError(error);
 	}
       }
