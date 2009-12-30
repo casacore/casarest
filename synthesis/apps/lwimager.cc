@@ -128,7 +128,7 @@ int main (Int argc, char** argv)
   try {
     Input inputs(1);
     // define the input structure
-    inputs.version("20090910-GvD");
+    inputs.version("20091230-GvD");
     inputs.create ("ms", "",
 		   "Name of input MeasurementSet",
 		   "string");
@@ -196,20 +196,20 @@ int main (Int argc, char** argv)
 		   "field id to be used",
 		   "int");
     inputs.create ("spwid", "0",
-		   "spectral window id to be used",
-		   "int");
+		   "spectral window id(s) to be used",
+		   "int vector");
     inputs.create ("chanmode", "channel",
 		   "frequency channel mode",
 		   "string");
     inputs.create ("nchan", "1",
-		   "number of frequency channels in MS",
-		   "int");
+		   "number of frequency channels to select from each spectral window (one number per spw)",
+		   "int vector");
     inputs.create ("chanstart", "0",
-		   "first frequency channel in MS (0-relative)",
-		   "int");
+		   "first frequency channel per each spw (0-relative)",
+		   "int vector");
     inputs.create ("chanstep", "1",
-		   "frequency channel step in MS",
-		   "int");
+		   "frequency channel step per each spw",
+		   "int vector");
     inputs.create ("img_nchan", "1",
 		   "number of frequency channels in image",
 		   "int");
@@ -274,12 +274,12 @@ int main (Int argc, char** argv)
     Bool preferVelocity = inputs.getBool("prefervelocity");
     Long cachesize   = inputs.getInt("cachesize");
     Int fieldid      = inputs.getInt("field");
-    Int spwid        = inputs.getInt("spwid");
+    Vector<Int> spwid(inputs.getIntArray("spwid"));
     Int npix         = inputs.getInt("npix");
     Int nfacet       = inputs.getInt("nfacets");
-    Int nchan        = inputs.getInt("nchan");
-    Int chanstart    = inputs.getInt("chanstart");
-    Int chanstep     = inputs.getInt("chanstep");
+    Vector<Int> nchan(inputs.getIntArray("nchan"));
+    Vector<Int> chanstart(inputs.getIntArray("chanstart"));
+    Vector<Int> chanstep(inputs.getIntArray("chanstep"));
     Int img_nchan    = inputs.getInt("img_nchan");
     Int img_start    = inputs.getInt("img_chanstart");
     Int img_step     = inputs.getInt("img_chanstep");
@@ -393,13 +393,13 @@ int main (Int argc, char** argv)
     MeasurementSet ms(msName, Table::Update);
     Imager imager(ms);
     imager.setdata (chanmode,                       // mode
-		    Vector<Int>(1, nchan),          // nchan
-		    Vector<Int>(1, chanstart),      // start
-		    Vector<Int>(1, chanstep),       // step
+		    nchan,
+		    chanstart,
+                    chanstep,
 		    MRadialVelocity(),              // mStart
 		    MRadialVelocity(),              // mStep
-		    Vector<Int>(1, spwid),          // spectralwindowsids
-		    Vector<Int>(1, fieldid),        // fieldids
+		    spwid,
+		    Vector<Int>(1,fieldid),
 		    select,                         // msSelect
                     String(),                       // timerng
                     String(),                       // fieldnames
@@ -424,7 +424,7 @@ int main (Int argc, char** argv)
                         Quantity(0,"Hz"),           // mFreqstart
                         Quantity(0,"km/s"),         // mstart, Def=0 km/s
                         Quantity(1,"km/s"),         // mstep, Def=1 km/s
-                        Vector<Int>(1, spwid),      // spectralwindowids
+                        spwid,                      // spectralwindowids
                         Quantity(0, "Hz"),          // restFreq
                         nfacet,                     // facets
                         Quantity(0, "m"));          // distance
