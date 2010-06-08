@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Remove all files created by the build.
+rm -rf `find ~/casarest/ -name "build_*"`
+rm -rf `find ~/casarest/ -name "*~"`
+rm -rf `find ~/casarest/ -name "*.log"`
+rm -rf `find ~/casarest/ -name "options.cfg"`
+rm -rf `find ~/casarest/ -name ".sconf_temp"`
+rm -rf `find ~/casarest/ -name ".sconsign.dblite"`
+rm -rf `find ~/casarest/ -name "._SConstruct"`
