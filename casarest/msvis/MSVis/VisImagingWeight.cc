@@ -67,8 +67,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
         // Float uscale, vscale;
         //Int uorigin, vorigin;
         Vector<Double> deltas;
-        uscale_p=(nx*cellx.get("rad").getValue())/2.0;
-        vscale_p=(ny*celly.get("rad").getValue())/2.0;
+        uscale_p=(nx*cellx.get("rad").getValue());
+        vscale_p=(ny*celly.get("rad").getValue());
         uorigin_p=nx/2;
         vorigin_p=ny/2;
         nx_p=nx;
