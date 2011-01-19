@@ -481,29 +481,32 @@ void ROVisibilityIterator::setTileCache(){
 	colVis.attach(thems,columns(k));
 	String dataManType = colVis.columnDesc().dataManagerType();
 	if(dataManType.contains("Tiled")){
-	  ROTiledStManAccessor tacc(thems, 
-				    colVis.columnDesc().dataManagerGroup());
-	  uInt nHyper = tacc.nhypercubes();
-	  // Find smallest tile shape
-	  Int lowestProduct = 0;
-	  Int lowestId = 0;
-	  Bool firstFound = False;
-	  for (uInt id=0; id < nHyper; id++) {
-	    Int product = tacc.getTileShape(id).product();
-	    if (product > 0 && (!firstFound || product < lowestProduct)) {
-	      lowestProduct = product;
-	      lowestId = id;
-	      if (!firstFound) firstFound = True;
-	    }
-	  }
-	  Int nchantile=tacc.getTileShape(lowestId)(1);
-	  if(nchantile > 0)
-	    nchantile=channelGroupSize_p/nchantile+1;
-	  if(nchantile<3)
-	    nchantile=10;
-	  
-	  tacc.setCacheSize (0, nchantile);
-	  
+          // Do a try to avoid that forwarded columns give errors.
+          try {
+            ROTiledStManAccessor tacc(thems, 
+                                      colVis.columnDesc().dataManagerGroup());
+            uInt nHyper = tacc.nhypercubes();
+            // Find smallest tile shape
+            Int lowestProduct = 0;
+            Int lowestId = 0;
+            Bool firstFound = False;
+            for (uInt id=0; id < nHyper; id++) {
+              Int product = tacc.getTileShape(id).product();
+              if (product > 0 && (!firstFound || product < lowestProduct)) {
+                lowestProduct = product;
+                lowestId = id;
+                if (!firstFound) firstFound = True;
+              }
+            }
+            Int nchantile=tacc.getTileShape(lowestId)(1);
+            if(nchantile > 0)
+              nchantile=channelGroupSize_p/nchantile+1;
+            if(nchantile<3)
+              nchantile=10;
+            
+            tacc.setCacheSize (0, nchantile);
+	  } catch (AipsError&) {
+          }
 	}
       }
     }
