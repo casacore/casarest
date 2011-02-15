@@ -481,7 +481,7 @@ void ROVisibilityIterator::setTileCache(){
 	colVis.attach(thems,columns(k));
 	String dataManType = colVis.columnDesc().dataManagerType();
 	if(dataManType.contains("Tiled")){
-          // Do a try to avoid that forwarded columns give errors.
+          // Use a try to avoid that forwarded columns give errors.
           try {
             ROTiledStManAccessor tacc(thems, 
                                       colVis.columnDesc().dataManagerGroup());

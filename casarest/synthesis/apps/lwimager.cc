@@ -168,6 +168,9 @@ int main (Int argc, char** argv)
     inputs.create ("weight", "briggs",
 		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), or radial",
 		   "string");
+    inputs.create ("robust", "0.0",
+		   "Robust parameter"
+		   "float");
     inputs.create ("wprojplanes", "0",
 		   "if >0 specifies nr of convolution functions to use in W-projection",
 		   "int");
@@ -293,6 +296,7 @@ int main (Int argc, char** argv)
     String mode      = inputs.getString("mode");
     String operation = inputs.getString("operation");
     String weight    = inputs.getString("weight");
+    double robust    = inputs.getDouble("robust");
     String filter    = inputs.getString("filter");
     String stokes    = inputs.getString("stokes");
     String chanmode  = inputs.getString("chanmode");
@@ -433,7 +437,7 @@ int main (Int argc, char** argv)
       imager.weight (weight,                        // type
 		     "none",                        // rmode
 		     Quantity(0, "Jy"),             // noise
-		     0.0,                           // robust
+		     robust,                        // robust
 		     Quantity(0, "rad"),            // fieldofview
 		     0);                            // npixels
     }
