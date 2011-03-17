@@ -166,10 +166,13 @@ int main (Int argc, char** argv)
                    "Scales for MultiScale Clean",
                    "int");
     inputs.create ("weight", "briggs",
-		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), or radial",
+		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), briggsabs, or radial",
 		   "string");
+    inputs.create ("noise", "1.0",
+		   "Noise (in Jy) for briggsabs weighting"
+		   "float");
     inputs.create ("robust", "0.0",
-		   "Robust parameter"
+		   "Robust parameter",
 		   "float");
     inputs.create ("wprojplanes", "0",
 		   "if >0 specifies nr of convolution functions to use in W-projection",
@@ -296,6 +299,7 @@ int main (Int argc, char** argv)
     String mode      = inputs.getString("mode");
     String operation = inputs.getString("operation");
     String weight    = inputs.getString("weight");
+    double noise     = inputs.getDouble("noise");
     double robust    = inputs.getDouble("robust");
     String filter    = inputs.getString("filter");
     String stokes    = inputs.getString("stokes");
@@ -368,6 +372,13 @@ int main (Int argc, char** argv)
     }
     if (weight == "robust") {
       weight = "briggs";
+    } else if (weight == "robustabs") {
+      weight = "briggsabs";
+    }
+    string rmode = "norm";
+    if (weight == "briggsabs") {
+      weight = "briggs";
+      rmode  = "abs";
     }
     bool doShift = False;
     MDirection phaseCenter;
@@ -435,8 +446,8 @@ int main (Int argc, char** argv)
 
     if (weight != "default") {
       imager.weight (weight,                        // type
-		     "none",                        // rmode
-		     Quantity(0, "Jy"),             // noise
+		     rmode,                         // rmode
+		     Quantity(noise, "Jy"),         // briggsabs noise
 		     robust,                        // robust
 		     Quantity(0, "rad"),            // fieldofview
 		     0);                            // npixels
