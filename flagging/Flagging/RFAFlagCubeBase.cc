@@ -38,13 +38,14 @@ uInt RFABase::indexing_base = 0;
 RFABase::RFABase ( RFChunkStats &ch,const RecordInterface &parm )
   : chunk(ch),params(parm),
     myname(parm.isDefined(RF_NAME)?parm.asString(RF_NAME):String("RFABase")),
+    only_selector(false),
     os(LogOrigin("Flagger",myname))
 {
 }
 
 void RFABase::init ()
 {
-  os<<myname<<": "<<getDesc()<<endl<<LogIO::POST;
+    os << LogIO::DEBUGGING << myname << ": " << getDesc() << endl << LogIO::POST;
 }
         
 // -----------------------------------------------------------------------
@@ -122,7 +123,7 @@ uInt RFAFlagCubeBase::estimateMemoryUse ()
 // -----------------------------------------------------------------------
 Bool RFAFlagCubeBase::newChunk (Int &)
 {
-  flag.init(corrmask,name());
+  flag.init(corrmask, nAgent, only_selector, name());
   return active=True;
 }
 
@@ -140,7 +141,7 @@ void RFAFlagCubeBase::endChunk ()
 // RFAFlagCubeBase::startData
 // Prepares for an data pass over a VisIter chunk
 // -----------------------------------------------------------------------
-void RFAFlagCubeBase::startData ()
+void RFAFlagCubeBase::startData (bool)
 {
   flag.reset();
 }
@@ -149,7 +150,7 @@ void RFAFlagCubeBase::startData ()
 // RFAFlagCubeBase::startDry
 // Prepares for an dry pass 
 // -----------------------------------------------------------------------
-void RFAFlagCubeBase::startDry ()
+    void RFAFlagCubeBase::startDry (bool)
 {
   flag.reset();
 }
@@ -158,7 +159,7 @@ void RFAFlagCubeBase::startDry ()
 // RFAFlagCubeBase::startFlag
 // Prepares for a flag-copy pass
 // -----------------------------------------------------------------------
-void RFAFlagCubeBase::startFlag ()
+void RFAFlagCubeBase::startFlag (bool)
 {
   flag.reset();
 }
@@ -206,18 +207,6 @@ RFA::IterMode RFAFlagCubeBase::endDry ()
   flag.printStats();
   return RFA::STOP;
 }
-
-// -----------------------------------------------------------------------
-// RFAFlagCubeBase::plotFlaggingReport
-// Defers to FlagCube to produce a flagging report
-// -----------------------------------------------------------------------
-void RFAFlagCubeBase::plotFlaggingReport ( PGPlotterInterface &pgp ) 
-{
-// ask the flag cube to plot the report
-  flag.plotStats(pgp);
-}
-
-
 
 } //# NAMESPACE CASA - END
 

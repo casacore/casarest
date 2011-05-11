@@ -28,8 +28,6 @@
 #define FLAGGING_RFABASE_H
 
 #include <casa/Arrays/Cube.h> 
-#include <lattices/Lattices/TempLattice.h> 
-#include <lattices/Lattices/LatticeIterator.h> 
 #include <flagging/Flagging/RFChunkStats.h>
 #include <casa/Logging/LogIO.h>
 #include <casa/Containers/Record.h>
@@ -96,47 +94,59 @@ public:
 // contain the total memory footprint. Note that only a rough reckoning
 // is sufficient, so only bother estimating the biggest data structures.
 // See implementations in RFADiffBase and RFATimeMedian for good examples.
+// nAgent is the total number of agents.
   virtual Bool newChunk (Int &) 
          { return active=False; };
 // Called once finished with a chunk
   virtual void endChunk () {}
   
 // Called before starting a data pass on a chunk. 
-  virtual void startData () {};
+  virtual void startData (bool /* verbose */) {};
+
 // Called before starting a dry pass on a chunk. 
-  virtual void startDry  () {};
+  virtual void startDry  (bool /* verbose */) {};
+
 // Called before starting the fetch-flags pass.
-  virtual void startFlag () {};
+  virtual void startFlag (bool /* verbose */) {};
+
 // Called after a pass is completed successfully (i.e., not stopped
 // by start or iter methods). Return value: STOP to stop, DATA for 
 // another data pass, DRY for another dry pass.
   virtual IterMode endData   () { return STOP; };
+
 // Called after a dry pass is complete
   virtual IterMode endDry    () { return STOP; };
+
 // Called after a flag pass is complete
   virtual void endFlag () {};
+
+// Called at end of time chunk
+virtual void endRows(uInt /* itime */) {};
   
 // Iteration methods for a data pass. Either or both may be implemented.
 // iterTime() is called once for each new VisBuffer (= new time slot)
 // Return value: STOP to finish iterating, CONT/DATA to continue, or DRY
 // to cancel the data pass and request a dry pass.
-  virtual IterMode iterTime ( uInt itime ) { return CONT; };
+  virtual IterMode iterTime ( uInt /* itime */ ) { return CONT; };
+
 // iterRow() is called once per each row in the VisBuffer.
 // Iterating over rows is perhaps preferrable in terms of performance,
 // at least for data iterations.
-  virtual IterMode iterRow  ( uInt irow ) { return CONT; };
+  virtual IterMode iterRow  ( uInt /* irow */ ) { return CONT; };
+
 // Iteration method for a dry pass. Called once per each time slot.
 // Return value: STOP to finish iterating, CONT/DRY to continue, or DATA
 // to cancel the dry pass and request another data pass.
-  virtual IterMode iterDry  ( uInt itime ) { return CONT; };
+  virtual IterMode iterDry  ( uInt /* itime */ ) { return CONT; };
+
 // Iteration method for a flag pass. Called once per each VisBuffer.
-  virtual void iterFlag ( uInt itime ) {}
+  virtual void iterFlag ( uInt /* itime */ ) {}
+
 // called to obtain a short description of this RFA
   virtual String getDesc () { return ""; }
 // called (before endChunk()) to obtain a statistics report 
   virtual String getStats () { return ""; }
-// called (before endChunk()) to plots a graphical flagging report  
-  virtual void plotFlaggingReport ( PGPlotterInterface & ) {};
+
   virtual void printFlaggingReport ( ) {};
 
   virtual String getID() {return String("");};
@@ -154,15 +164,21 @@ public:
   virtual Record getResult( ) { return Record(); };
 
   virtual void finalize() {};
+  // Initialize chunk
   virtual void initialize() {};
-  virtual void initializeIter(uInt iter) {};
-  virtual void finalizeIter(uInt iter) {};
+  virtual void initializeIter(uInt /* iter */) {};
+  virtual void finalizeIter(uInt /* iter */) {};
+
+  virtual void setNAgent(uInt n) { nAgent = n; };
+  virtual void setOnlySelector(bool only_sel) { only_selector = only_sel; };
 
 protected:
+  uInt nAgent;
   RFChunkStats &chunk;
   Record params;
   String myname;
-  
+  bool only_selector;  //Do only RFASelector agents exist?
+
   uInt num (StatEnums which) { return chunk.num(which); };
 
 // Bit mask of correlations which are used & flagged by this RFA. This mask is

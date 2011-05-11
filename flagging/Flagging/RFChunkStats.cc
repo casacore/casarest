@@ -32,21 +32,13 @@
 #include <msvis/MSVis/VisBuffer.h>
 #include <stdio.h>
 #include <casa/sstream.h>
-#include <casa/System/PGPlotter.h>
-    
-namespace casa { //# NAMESPACE CASA - BEGIN
 
-// when no plotter is specified for screen/report,
-// use a null (unattached plotter)
-static class PGPlotter nullPGPlotter;
-        
-RFChunkStats::RFChunkStats( VisibilityIterator &vi,VisBuffer &vb,Flagger &rf,
-    PGPlotterInterface *pgp_scr,PGPlotterInterface *pgp_rep )
+namespace casa { //# NAMESPACE CASA - BEGIN
+      
+RFChunkStats::RFChunkStats( VisibilityIterator &vi,VisBuffer &vb,Flagger &rf )
   : visiter(vi),
     visbuf(vb),
-    flagger(rf),
-    pgp_screen(pgp_scr?pgp_scr:&nullPGPlotter),
-    pgp_report(pgp_rep?pgp_rep:&nullPGPlotter)
+    flagger(rf)
 {
   chunk_no=0;
   counts[ANT] = flagger.numAnt();
@@ -75,33 +67,25 @@ const Vector<Double> & RFChunkStats::frequency ()
   return visiter.frequency(freq); 
 }
 
-PGPlotterInterface & RFChunkStats::pgpscr() const  
-{ return flagger.pgpscr(); }
-PGPlotterInterface & RFChunkStats::pgprep() const  
-{ return flagger.pgprep(); }
-void RFChunkStats::setReportPanels (Int nx,Int ny) const 
-{ flagger.setReportPanels(nx,ny); }
-
-void RFChunkStats::newChunk ()
+void RFChunkStats::newChunk(bool init_quack)
 {
   itime=-1;
   chunk_no++;
 // setup shapes
-  visshape = visiter.visibilityShape();
+  visshape = visiter.visibilityShape(); //4
   counts[POLZN] = visshape(0);
   counts[CHAN] = visshape(1);
+
   counts[TIME] = visiter.nSubInterval();
-//  counts[TIME] = flagger.numTime();
-//  Flagger::logSink()<<LogIO::WARN<< 
-//    "RFChunkStats::newChunk(): "
-//    "VisIter::nSubInterval() not yet implemented. Using global NTIME instead\n"<<LogIO::POST;
   counts[ROW]  = visiter.nRowChunk();
+
 // get correlation types
   visiter.corrType(corrtypes);
 // reset min/max time slots
   start_time = end_time = current_time = 0;
 
 // setups statistics
+
   nrf_time.resize(num(TIME));
   nrf_time.set(0);
   nrf_ifr.resize(num(IFR));
@@ -122,10 +106,9 @@ void RFChunkStats::newChunk ()
 //  nf_corr_time.resize(num(CORR),num(TIME));
 //  nf_corr_time.set(0);
 
-  nf_chan_ifr_time.resize(num(CHAN),num(IFR),num(TIME));
-  nf_chan_ifr_time.set(0);
-
-//  cout << "Ifr : " << num(IFR) << " Chan : " << num(CHAN) << " Corr : " << num(CORR) << " Time : " << num(TIME) << endl;
+  if (0) {
+    cout << "Ifr : " << num(IFR) << " Chan : " << num(CHAN) << " Corr : " << num(CORR) << " Time : " << num(TIME) << endl;
+  }
       
 // build up description of correlations
   corr_string = "";
@@ -136,10 +119,9 @@ void RFChunkStats::newChunk ()
   sprintf(s,"Chunk %d : [field: %d, spw: %d] %s, %d channels, %d time slots, %d baselines, %d rows\n", chunk_no,visBuf().fieldId(),visBuf().spectralWindow(),corr_string.chars(),num(CHAN),num(TIME),num(IFR),num(ROW));
  // Flagger::logSink()<<s<<LogIO::POST;
 
-
-      // figure out all scan's start and end times
+  if (init_quack) {
+      // figure out this scan's start and end times
       // for use in quack mode
-
       for (visiter.origin(); 
            visiter.more(); 
            visiter++) {
@@ -177,7 +159,7 @@ void RFChunkStats::newChunk ()
           //cout << "flag() = " << visbuf.flag() << endl;
           //cout << "flagRow() = " << visbuf.flagRow() << endl;
 
-          if (scan_start.size() < scan+1) {
+          if (scan_start.size() < (unsigned) scan+1) {
             // initialize to -1
             scan_start     .resize(scan+1, -1.0);
             scan_start_flag.resize(scan+1, -1.0);
@@ -218,6 +200,7 @@ void RFChunkStats::newChunk ()
           MVTime( scan_end_flag[i]/C::day).string(MVTime::DMY,7) << endl;
 
       }
+  }
 }
 
 void RFChunkStats::newPass (uInt npass)
@@ -230,14 +213,29 @@ void RFChunkStats::newTime ()
 {
 // setup IFR numbers for every row in time slot
   ifr_nums.resize( visbuf.antenna1().nelements() );
-  ifr_nums = flagger.ifrNumbers( visbuf.antenna1(),visbuf.antenna2() );
-// setup FEED CORRELATION numbers for every row in time slot
+  ifr_nums = flagger.ifrNumbers( visbuf.antenna1(),
+                                 visbuf.antenna2() );
+
+  // setup FEED CORRELATION numbers for every row in time slot
   feed_nums.resize( visbuf.feed1().nelements() );
   feed_nums = flagger.ifrNumbers( visbuf.feed1(),visbuf.feed2() );
-// reset stats
-  for( uInt i=0; i<ifr_nums.nelements(); i++ )
-    rows_per_ifr(ifr_nums(i))++;
-// set start/end times
+
+  // reset stats
+  for( uInt i=0; i<ifr_nums.nelements(); i++ ) {
+
+      Int baseline_num = ifr_nums(i);
+      
+      if (baseline_num >= (Int) rows_per_ifr.nelements()) {
+          std::stringstream ss;
+          ss << "Internal error: Baseline number is " << baseline_num
+             << ", but there are only " << rows_per_ifr.nelements() << " baselines" << endl;
+          throw AipsError(ss.str());
+      }
+      
+      rows_per_ifr(ifr_nums(i))++;
+  }
+  
+  // set start/end times
   current_time = (visbuf.time()(0))/(24*3600);
   if( current_time<start_time || start_time==0 )
     start_time = current_time;
@@ -245,7 +243,7 @@ void RFChunkStats::newTime ()
     end_time = current_time;
 
   itime++;
-//  dprintf(os,"newTime: %d\n",itime);
+  //  dprintf(os,"newTime: %d\n",itime);
 }
 
 uInt RFChunkStats::antToIfr ( uInt ant1,uInt ant2 )

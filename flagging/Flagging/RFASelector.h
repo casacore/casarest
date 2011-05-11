@@ -75,8 +75,10 @@ public:
   virtual uInt estimateMemoryUse () { return RFAFlagCubeBase::estimateMemoryUse()+2; }
   virtual Bool newChunk ( Int &maxmem );
   virtual IterMode iterTime ( uInt it );
+  virtual void endRows(uInt itime);
   virtual IterMode iterRow  ( uInt ir );
-  virtual void startData ();
+  virtual void iterFlag(uInt itime);
+  virtual void startData(bool verbose);
 
   virtual String getDesc ();
   static const RecordInterface & getDefaults ();
@@ -87,10 +89,12 @@ public:
 protected:
   typedef struct ClipInfo {
       RFDataMapper *mapper; 
-      Float vmin,vmax; 
-      Bool clip;          // flag outside range if True (otherwise flag inside)
-      Float offset;       // offset added to value (used for angles, etc.)
+      Float vmin, vmax; 
+      Bool channel_average; // average data over channels?
+      Bool clip;            // flag outside range if True (otherwise flag inside)
+      Float offset;         // offset added to value (used for angles, etc.)
   } ClipInfo;
+  
     
   template<class T> Bool reformRange( Matrix<T> &rng,const Array<T> &arr );
   template<class T> Bool parseRange( Matrix<T> &rng,const RecordInterface &parm,const String &id );
@@ -100,7 +104,7 @@ protected:
   void addString   ( String &str,const String &s1,const char *sep=" " );
   virtual void processRow  ( uInt ifr,uInt it );
   Bool parseMinMax ( Float &vmin,Float &vmax,const RecordInterface &spec,uInt f0 );
-  void addClipInfo ( const Vector<String> &expr,Float vmin,Float vmax,Bool clip );
+  void addClipInfo ( const Vector<String> &expr,Float vmin,Float vmax,Bool clip, Bool channel_average );
   void parseClipField  ( const RecordInterface &spec,Bool clip );
   void addClipInfoDesc ( const Block<ClipInfo> &clip );
 
@@ -111,12 +115,16 @@ protected:
   Vector< Double > diameters;
   ROMSAntennaColumns *ac;
 
+  // elevation
+  double lowerlimit;
+  double upperlimit;
+
 // description of agent
   String desc_str;
 // selection arguments
   Matrix<Double> sel_freq,sel_time,sel_timerng,sel_uvrange;
   Matrix<Int>    sel_chan;
-  Vector<Int>    sel_corr,sel_spwid,sel_fieldid;
+  Vector<Int>    sel_corr,sel_spwid,sel_fieldid, sel_stateid;
   Vector<String>  sel_fieldnames;
   LogicalVector  sel_ifr,flagchan,sel_feed;
   Bool          sel_autocorr,unflag;
@@ -129,18 +137,9 @@ protected:
   Vector<Int>   sel_scannumber,sel_arrayid;
   String        sel_column;
 
-  Bool select_fullrow,flag_everything, shadow;
+  Bool select_fullrow,flag_everything, shadow, elevation;
 
 };
-
-
-  template<class T> Array<T> fieldToArray( const RecordInterface &parm,const String &id );
-  template<> inline Array<Int> fieldToArray<Int>( const RecordInterface &parm,const String &id )
-    { return parm.toArrayInt(id); }
-  template<> inline Array<Double> fieldToArray<Double>( const RecordInterface &parm,const String &id )
-    { return parm.toArrayDouble(id); }
-  template<> inline Array<String> fieldToArray<String>( const RecordInterface &parm,const String &id )
-    { return parm.toArrayString(id); }
 
     
     

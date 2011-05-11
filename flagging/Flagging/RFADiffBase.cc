@@ -31,7 +31,6 @@
 #include <casa/Arrays/MaskArrMath.h>
 #include <casa/Arrays/ArrayLogical.h>
 #include <casa/Arrays/Slice.h>
-#include <casa/System/PGPlotterInterface.h>
 
 #include <casa/stdio.h>
 
@@ -57,16 +56,6 @@ RFADiffBase::RFADiffBase (  RFChunkStats &ch,const RecordInterface &parm ) :
 // -----------------------------------------------------------------------
 RFADiffBase::~RFADiffBase () 
 {
-}
-
-// -----------------------------------------------------------------------
-// RFADiffBase::setDebug
-// Enables debugging plots for some specified axis
-// -----------------------------------------------------------------------
-void RFADiffBase::setDebug( const RFDebugPlot &dbg )
-{
-  debug = dbg;
-  rowclipper.setDebug(debug);
 }
 
 // -----------------------------------------------------------------------
@@ -140,7 +129,7 @@ Bool RFADiffBase::newChunk (Int &maxmem)
 // init flag cube
   RFAFlagCubeBase::newChunk(maxmem);
 // create a temp lattice to hold nchan x num(IFR) x ntime diff-medians
-  diff.init(num(CHAN),num(IFR),num(TIME),mmdiff,2);
+  diff.init(num(CHAN),num(IFR),num(TIME),num(CORR), nAgent, mmdiff,2);
 // init the row-clipper object
   rowclipper.init(num(IFR),num(TIME));
   diffrow.resize(num(CHAN));
@@ -170,31 +159,25 @@ void RFADiffBase::endChunk ()
 // RFADiffBase::startData
 // Prepares for an data pass over a VisIter chunk
 // -----------------------------------------------------------------------
-void RFADiffBase::startData ()
+void RFADiffBase::startData (bool verbose)
 {
-  RFAFlagCubeBase::startData();
+  RFAFlagCubeBase::startData(verbose);
   diff.reset(chunk.npass()>0,True);
   rowclipper.reset();
 
   pflagiter = &flag.iterator();
-
-  if( debug.enabled() )
-    resetPlot();
 }
 
 // -----------------------------------------------------------------------
 // RFADiffBase::startDry
 // Prepares for an dry pass 
 // -----------------------------------------------------------------------
-void RFADiffBase::startDry ()
+void RFADiffBase::startDry (bool verbose)
 {
-  RFAFlagCubeBase::startDry();
+  RFAFlagCubeBase::startDry(verbose);
   diff.reset(chunk.npass()>0,False);
   rowclipper.reset();
   pflagiter = &flag.iterator();
-  
-  if( debug.enabled() )
-    resetPlot();
 }
 
 
@@ -223,11 +206,6 @@ RFA::IterMode RFADiffBase::iterDry ( uInt it )
   {
     if( flag.rowFlagged(ifr,it) ) // skip if whole row is flagged
     {
-      if( debug.type()==TIME && debug.ifr() == (Int)ifr ) 
-      { // in time-axis plots, mark flagged rows on plot
-        dbg_sym(it) = DAVIDSTAR;
-        dbg_thr(it) = 1e+10;
-      }
       continue;
     }
     Float thr = clip_level*rowclipper.sigma0(ifr,it);
@@ -235,26 +213,18 @@ RFA::IterMode RFADiffBase::iterDry ( uInt it )
     Bool updated=False;
     for( uInt ich=0; ich<num(CHAN); ich++ ) // loop over channels
     {
-      Int di = debug.index(ich,ifr,it); // belongs in debug plot? 
       if( flag.preFlagged(ich,ifr) ) // skip pixel if pre-flagged
         continue;
-      if( di>=0 )
-        dbg_thr(di) = thr;
+
       Float d = diff(ich,ifr);
       if( d > thr )   // should be clipped?
       {
         Bool res = flag.setFlag(ich,ifr);
         updated |= res;
-        if( di>=0 )
-          dbg_sym(di) = res ? FSTAR5 : STAR5;
       }
       else
       {
         diffrow(idiffrow++) = d;
-        Bool res = flag.clearFlag(ich,ifr);
-        updated |= res;
-        if( di>=0 )
-          dbg_sym(di)= res ? CIRCLE4 : DOT;
       }
     } // for(ich)
     // update the noise level, if any changes in flags
@@ -272,10 +242,7 @@ RFA::IterMode RFADiffBase::endData ()
 {
   RFAFlagCubeBase::endData();
   uInt dum;
-  rowclipper.updateSigma(dum,dum);
-  
-  if( debug.enabled() )
-    makePlot();
+  rowclipper.updateSigma(dum, dum, true, false);
   
   return RFA::DRY;
 }
@@ -287,14 +254,11 @@ RFA::IterMode RFADiffBase::endDry ()
   RFAFlagCubeBase::endDry();
 // update the reference AAD
   uInt ifrmax,itmax;
-  Float dmax =   rowclipper.updateSigma(ifrmax,itmax);
+  Float dmax =   rowclipper.updateSigma(ifrmax,itmax, true, false);
   
   dprintf(os,"Max diff (%f) at ifr %d (%s), it %d: new sigma is %f\n",
       dmax,ifrmax,chunk.ifrString(ifrmax).chars(),itmax,rowclipper.sigma0(ifrmax,itmax));
 
-  if( debug.enabled() )
-    makePlot();
-  
 // no significant change this pass? Then we're really through with it.
   if( dmax <= RFA_AAD_CHANGE )
     return RFA::STOP;
@@ -303,7 +267,7 @@ RFA::IterMode RFADiffBase::endDry ()
   return RFA::DRY;
 }
 
-void RFADiffBase::startDataRow (uInt ifr)
+void RFADiffBase::startDataRow (uInt)
 {
   idiffrow=0;
 }
@@ -340,13 +304,8 @@ Float RFADiffBase::setDiff ( uInt ich,uInt ifr,Float d,Bool &flagged )
   {
     thr = rowclipper.sigma0(ifr,it);
     
-    if( dbg_i>=0 )
-      dbg_thr(dbg_i) = thr;
-    
     if( d > thr )
     {
-      if( dbg_i>=0 )
-        dbg_sym(dbg_i) = 18;
       if( flag.setFlag(ich,ifr,*pflagiter) )
         rowclipper.markSigma(ifr);
       flagged=True;
@@ -418,82 +377,6 @@ RFA::IterMode RFADiffMapBase::iterTime (uInt it)
 String RFADiffMapBase::getDesc ()
 {
   return RFDataMapper::description()+"; "+RFADiffBase::getDesc();
-}
-
-// -----------------------------------------------------------------------
-// RFADiffBase::resetPlot
-// Resets vectors in which plots are accumulated
-// -----------------------------------------------------------------------
-void RFADiffBase::resetPlot ()
-{
-  if( !debug.enabled() )
-    return;
-  uInt dbg_nval = num( debug.type() );
-  dbg_med.resize(dbg_nval);
-  dbg_val.resize(dbg_nval);
-  dbg_thr.resize(dbg_nval);
-  dbg_sym.resize(dbg_nval);
-  dbg_med.set(0);
-  dbg_val.set(0);
-  dbg_thr.set(0);
-  dbg_sym.set(0);
-  dbg_i = -1;
-}
-
-// -----------------------------------------------------------------------
-// RFADiffBase::makePlot
-// Makes plot from accumulated vectors
-// -----------------------------------------------------------------------
-void RFADiffBase::makePlot ()
-{
-  PGPlotterInterface &pgp( debug.pgp() );
-  Float vmin = min(dbg_val);
-  Float vmax = max(dbg_val);
-  Bool redraw=True;
-  
-  while( redraw )
-  {
-    pgp.ask(False);
-    pgp.eras();
-    pgp.sci(BLACK);
-    pgp.env(0,dbg_val.nelements(),vmin,vmax,0,0);
-    char s[256];
-    switch( debug.type() )
-    {
-      case CHAN: 
-          sprintf(s,"Pass %d: IFR %d (%s), time slot %d",
-             chunk.npass(),debug.ifr(),chunk.ifrString(debug.ifr()).chars(),debug.time());
-          pgp.lab("Channel","",s);
-          break;
-      case TIME:  
-          sprintf(s,"Pass %d: channel %d, IFR %d (%s)",
-              chunk.npass(),debug.chan(),debug.ifr(),chunk.ifrString(debug.ifr()).chars());
-          pgp.lab("Time slot","",s);
-          break;
-      case IFR: 
-          sprintf(s,"Pass %d: channel %d, time slot %d",
-             chunk.npass(),debug.chan(),debug.time());
-          pgp.lab("IFR","",s);
-          break;
-      default:
-          return;
-    }
-
-    Vector<Float> x(dbg_val.nelements());
-    indgen(x);
-
-//    cout<<dbg_val-dbg_med<<dbg_sym;
-    
-    pgp.sci(BLACK);
-    pgp.line(x,dbg_med);
-    pgp.line(x,dbg_med-dbg_thr);
-    pgp.line(x,dbg_med+dbg_thr);
-    pgp.sci(YELLOW);
-    pgp.pnts(x,dbg_val,dbg_sym);
-
-    redraw = debug.queryPlotLimits(vmin,vmax);
-  }
-  pgp.ask(True);
 }
 
 } //# NAMESPACE CASA - END

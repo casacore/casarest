@@ -27,3 +27,31 @@ add_library(casa_flagging ${flagging_LIB_SRCS})
 install(TARGETS casa_flagging DESTINATION ${LIBRARY_INSTALL_DIR})
 target_link_libraries(casa_flagging casa_msvis ${OTHER_LIBRARIES})
 set(FLAGGING_LIBRARIES casa_flagging casa_msvis ${OTHER_LIBRARIES})
+
+
+install (FILES
+Flagging/DDMapper.h
+Flagging/ExtendFlagger.h
+Flagging/FlagIndex.h
+Flagging/Flagger.h
+Flagging/RFAApplyFlags.h
+Flagging/RFABase.h
+Flagging/RFADiffBase.h
+Flagging/RFAFlagCubeBase.h
+Flagging/RFAFlagExaminer.h
+Flagging/RFAMedianClip.h
+Flagging/RFANewMedianClip.h
+Flagging/RFASelector.h
+Flagging/RFASpectralRej.h
+Flagging/RFATimeFreqCrop.h
+Flagging/RFAUVBinner.h
+Flagging/RFChunkStats.h
+Flagging/RFCommon.h
+Flagging/RFCubeLattice.h
+Flagging/RFDataMapper.h
+Flagging/RFDebugPlot.h
+Flagging/RFFlagCube.h
+Flagging/RFRowClipper.h
+Flagging/RedFlagger.h
+DESTINATION include/casarest/synthesis/Utilities
+)
