@@ -32,7 +32,6 @@
 #include <calibration/CalTables/SolvableVJTable.h>
 #include <calibration/CalTables/CalMainColumns2.h>
 
-#include <calibration/CalTables/CalDescColumns2.h>
 #include <calibration/CalTables/TimeVarVJDesc.h>
 #include <calibration/CalTables/SolvableVJDesc.h>
 #include <calibration/CalTables/SolvableVJMRec.h>
@@ -51,6 +50,7 @@
 #include <scimath/Mathematics/MatrixMathLA.h>
 #include <casa/BasicSL/String.h>
 #include <casa/Utilities/Assert.h>
+#include <casa/OS/Timer.h>
 #include <casa/Exceptions/Error.h>
 #include <casa/OS/Path.h>
 #include <casa/sstream.h>
@@ -292,6 +292,12 @@ template<class T> void CalSet<T>::load (const String& file,
   //    file         const String&       Cal table name
   //    select       const String&       Selection string
   //
+
+
+  //  cout << "CalSet::load...(nSpw_=" << nSpw_ << ")" << endl;
+
+  Timer timer;
+  timer.mark();
   
   LogMessage message(LogOrigin("CalSet","load"));
   
@@ -308,10 +314,20 @@ template<class T> void CalSet<T>::load (const String& file,
   // Get no. of antennas and time slots
   Int numberAnt = svjtab.maxAntenna() + 1;
 
+  //  cout << "Initial selection: " << timer.all_usec()/1.0e6 << endl;
+  timer.mark();
+
   AlwaysAssert(numberAnt==nElem_,AipsError)
 
   Int nDesc=svjtab.nRowDesc();
   Vector<Int> spwmap(nDesc,-1);
+
+  Vector<Int> nRowPerCDI;
+  svjtab.rowsPerCalDescId(nRowPerCDI);
+
+  //  cout << "Optimized CDI count: " << timer.all_usec()/1.0e6 << endl;
+  timer.mark();
+
   for (Int idesc=0;idesc<nDesc;idesc++) {
 
     // This cal desc
@@ -324,11 +340,18 @@ template<class T> void CalSet<T>::load (const String& file,
     if (nSpw > 1) {};  // ERROR!!!  Should only be one spw per cal desc!
     spwmap(idesc)=spwlist(0);
 
+    // Trap spwids that do not occur in the MS
+    // (Since we rely on the MS meta info for the calibration solutions,
+    //  we cannot identify spws that do not occur in the MS.)
+    if (spwlist(0)>nSpw_-1)
+      throw(AipsError("Caltable '"+file+"' contains spw = "+
+		      String::toString(spwlist(0))+
+		      " which does not occur in the MS.  Cannot proceed."));
+
     // In next few steps, need to watch for repeat spws in new cal descs!!
 
     // Get number of channels this spw
     Vector<Int> nchanlist;
-
 
     calDescRec->getNumChan(nchanlist);
     nChan_(spwmap(idesc))=nchanlist(0);
@@ -338,15 +361,16 @@ template<class T> void CalSet<T>::load (const String& file,
     calDescRec->getChanRange(chanRange);
     startChan_(spwmap(idesc))=chanRange(0,0,0);
 
-    // Get slot count for this desc
-    ostringstream thisDesc;
-    thisDesc << "CAL_DESC_ID==" << idesc;
-    CalTable thisDescTab = svjtab.select(thisDesc.str());
-    nTime_(spwmap(idesc))=thisDescTab.nRowMain()/numberAnt;
+    // Get slot count for this desc's spw
+    nTime_(spwmap(idesc))=nRowPerCDI(idesc)/numberAnt;
 
     delete calDescRec;  
   }
-  
+
+  //  cout << "CalDesc sizeup: " << timer.all_usec()/1.0e6 << endl;
+  //  cout << "nTime_ = " << nTime_ << endl;
+
+  timer.mark();
 
   // At this point, we know how big our slot-dep caches must be
   //  (in private data), so initialize them
@@ -355,8 +379,16 @@ template<class T> void CalSet<T>::load (const String& file,
   // Remember if we found and filled any solutions
   Bool solfillok(False);
 
+  //  cout << "CalSet inflated: " << timer.all_usec()/1.0e6 << endl;
+
+
   // Fill per caldesc
+  Double ttime(0.0);
   for (Int idesc=0;idesc<nDesc;idesc++) {
+
+    //    cout << "CDI = " << idesc << " "<< flush;
+
+    timer.mark();
 
     Int thisSpw=spwmap(idesc);
       
@@ -365,16 +397,22 @@ template<class T> void CalSet<T>::load (const String& file,
     CalTable2 svjtabspw(file);
     svjtabspw.select2(select);
 
-    //    cout << "Sorting..." << endl;
-    Block<String> scol(1);
-    scol[0]="TIME";
-    svjtabspw.sort2(scol);
+    //    cout << " Sel: " << timer.all_usec()/1.0e6 << flush;
 
     // isolate this caldesc:
     ostringstream selectstr;
     selectstr << "CAL_DESC_ID == " << idesc;
     String caldescsel; caldescsel = selectstr.str();
     svjtabspw.select2(caldescsel);
+
+    //    cout << " CDIsel: " << timer.all_usec()/1.0e6 << flush;
+
+    //    cout << "Sorting..." << endl;
+    Block<String> scol(1);
+    scol[0]="TIME";
+    svjtabspw.sort2(scol);
+
+    //    cout << " Sort: " << timer.all_usec()/1.0e6 << flush;
 
     Int nrow = svjtabspw.nRowMain();
     IPosition out(3,0,0,0);   // par, chan, row
@@ -467,6 +505,11 @@ template<class T> void CalSet<T>::load (const String& file,
     } // nrow>0
 
     //    cout << "cs fields = " << *fieldId_[thisSpw] << endl;
+
+    Double itime=timer.all_usec()/1.0e6;
+    ttime+=itime;
+
+    //    cout << " Totals: " << itime << " " << ttime << endl;
 
   } // idesc
 
