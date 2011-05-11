@@ -81,7 +81,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
   MosaicFT::MosaicFT(SkyJones* sj, MPosition mloc, String stokes,
 		   Long icachesize, Int itilesize, 
-		   Bool usezero)
+		     Bool usezero, Bool useDoublePrec)
   : FTMachine(), sj_p(sj),
     imageCache(0),  cachesize(icachesize), tilesize(itilesize), gridder(0),
     isTiled(False),
@@ -97,6 +97,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   pbConvFunc_p=new SimplePBConvFunc();
     
   mLocation_p=mloc;
+  useDoubleGrid_p=useDoublePrec;  
   // We should get rid of the ms dependence in the constructor
   // not used
 }
@@ -115,29 +116,10 @@ MosaicFT::MosaicFT(const RecordInterface& stateRec)
 MosaicFT& MosaicFT::operator=(const MosaicFT& other)
 {
   if(this!=&other) {
-    mLocation_p=other.mLocation_p;
-    nAntenna_p=other.nAntenna_p;
-    distance_p=other.distance_p;
-    lastFieldId_p=other.lastFieldId_p;
-    lastMSId_p=other.lastMSId_p;
-    freqFrameValid_p=other.freqFrameValid_p;
-    selectedSpw_p.resize();
-    selectedSpw_p=other.selectedSpw_p;
-    multiChanMap_p=other.multiChanMap_p;
-    doUVWRotation_p=other.doUVWRotation_p;
-    chanMap.resize();
-    chanMap=other.chanMap;
-    polMap.resize();
-    polMap=other.polMap;
-    nVisChan_p.resize();
-    nVisChan_p=other.nVisChan_p;
-    spectralCoord_p=other.spectralCoord_p;
-    doConversion_p.resize();
-    doConversion_p=other.doConversion_p;
-    nx=other.nx;
-    ny=other.ny;
-    npol=other.npol;
-    nchan=other.nchan;
+
+    //Do the base parameters
+    FTMachine::operator=(other);
+     
     convSampling=other.convSampling;
     sj_p=other.sj_p;
     imageCache=other.imageCache;
@@ -177,8 +159,7 @@ MosaicFT& MosaicFT::operator=(const MosaicFT& other)
 						     uvScale, uvOffset,
 						     "SF");
     }
-    freqInterpMethod_p=other.freqInterpMethod_p;
-
+    
   };
   return *this;
 };
@@ -309,8 +290,14 @@ void MosaicFT::findConvFunction(const ImageInterface<Complex>& iimage,
   pbConvFunc_p->setSkyJones(sj_p);
   pbConvFunc_p->findConvFunction(iimage, vb, convSampling, convFunc, weightConvFunc_p, convSizePlanes_p, convSupportPlanes_p, convRowMap_p);
   //For now only use one size and support
-  convSize=max(convSizePlanes_p);
-  convSupport=max(convSupportPlanes_p);
+  if(convSizePlanes_p.nelements() ==0)
+    convSize=0;
+  else
+    convSize=max(convSizePlanes_p);
+  if(convSupportPlanes_p.nelements() ==0)
+    convSupport=0;
+  else
+    convSupport=max(convSupportPlanes_p);
  				 
 }
 
@@ -470,6 +457,10 @@ void MosaicFT::initializeToSky(ImageInterface<Complex>& iimage,
     IPosition gridShape(4, nx, ny, npol, nchan);
     griddedData.resize(gridShape);
     griddedData=Complex(0.0);
+    if(useDoubleGrid_p){
+      griddedData2.resize(gridShape);
+      griddedData2=DComplex(0.0);
+    }
     //if(arrayLattice) delete arrayLattice; arrayLattice=0;
     arrayLattice = new ArrayLattice<Complex>(griddedData);
     lattice=arrayLattice;
@@ -488,7 +479,13 @@ void MosaicFT::initializeToSky(ImageInterface<Complex>& iimage,
       
       griddedWeight(blc, trc).set(Complex(0.0));
       */
-      griddedWeight.set(Complex(0.0));
+      if(useDoubleGrid_p){
+	griddedWeight2.resize(gridShape);
+	griddedData2=DComplex(0.0);
+      }
+      else{
+	griddedWeight=Complex(0.0);
+      }
       //if(weightLattice) delete weightLattice; weightLattice=0;
       weightLattice = new ArrayLattice<Complex>(griddedWeight);
 
@@ -524,7 +521,12 @@ void MosaicFT::finalizeToSky()
   
 
   if(!doneWeightImage_p){
-    
+     if(useDoubleGrid_p){
+      convertArray(griddedWeight, griddedWeight2);
+      //Don't need the double-prec grid anymore...
+      griddedWeight2.resize();
+    }
+
     LatticeFFT::cfft2d(*weightLattice, False);
     //Get the stokes right
     CoordinateSystem coords=convWeightImage_p->coordinates();
@@ -614,12 +616,14 @@ void MosaicFT::finalizeToSky()
     convWeightImage_p=0;
     doneWeightImage_p=True;
 
-    if(0){
+    /*
+    if(1){
       PagedImage<Float> thisScreen(skyCoverage_p->shape(), 
 				   skyCoverage_p->coordinates(), "Screen");
       thisScreen.copyData(*skyCoverage_p);
     }
-    
+    */
+
   }
 
   if(pointingToImage) delete pointingToImage; pointingToImage=0;
@@ -638,12 +642,45 @@ Array<Complex>* MosaicFT::getDataPointer(const IPosition& centerLoc2D,
 
 #define NEED_UNDERSCORES
 #if defined(NEED_UNDERSCORES)
-#define gmos gmos_
+#define gmoss gmoss_
+#define gmosd gmosd_
 #define dmos dmos_
 #endif
 
 extern "C" { 
-  void gmos(const Double*,
+  void gmosd(const Double*,
+	      Double*,
+	      const Complex*,
+	      Int*,
+	      Int*,
+	      Int*,
+	      const Int*,
+	      const Int*,
+	      const Float*,
+	      Int*,
+	      Int*,
+	      Double*,
+	      Double*,
+	      DComplex*,
+	      Int*,
+	      Int*,
+	      Int *,
+	      Int *,
+	      const Double*,
+	      const Double*,
+	      Int*,
+	      Int*,
+	      Int*,
+	      const Complex*,
+	      Int*,
+	      Int*,
+	      Double*,
+	      DComplex*,
+	      Complex*,
+	      Int*,
+              Int*,
+              Int*);
+  void gmoss(const Double*,
 	      Double*,
 	      const Complex*,
 	      Int*,
@@ -730,6 +767,9 @@ void MosaicFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 
 
   findConvFunction(*image, vb);
+  //nothing to grid here as the pointing resulted in a zero support convfunc
+  if(convSupport <= 0)
+    return;
 
   const Matrix<Float> *imagingweight;
   if(imwght.nelements()>0){
@@ -822,89 +862,61 @@ void MosaicFT::put(const VisBuffer& vb, Int row, Bool dopsf,
   Int doWeightGridding=1;
   if(doneWeightImage_p)
     doWeightGridding=-1;
-   
-  if(isTiled) {
-    /*
-    Double invLambdaC=vb.frequency()(0)/C::c;
-    Vector<Double> uvLambda(2);
-    Vector<Int> centerLoc2D(2);
-    centerLoc2D=0;
+  Bool del;
+  //    IPosition s(flags.shape());
+  const IPosition& fs=flags.shape();
+  std::vector<Int>s(fs.begin(), fs.end());
+  Bool uvwcopy; 
+  const Double *uvwstor=uvw.getStorage(uvwcopy);
+  Bool gridcopy;
+  Bool convcopy;
+  const Complex *convstor=convFunc.getStorage(convcopy);
+  Bool weightcopy;
+  if(useDoubleGrid_p) {
+    DComplex *gridstor=griddedData2.getStorage(gridcopy);
+    DComplex *gridwgtstor=griddedWeight2.getStorage(weightcopy);
+    gmosd(uvwstor,
+	  dphase.getStorage(del),
+	   datStorage,
+	   &s[0],
+	   &s[1],
+	   &idopsf,
+	   flags.getStorage(del),
+	   rowFlags.getStorage(del),
+	   wgtStorage,
+	   &s[2],
+	   &row,
+	   uvScale.getStorage(del),
+	   uvOffset.getStorage(del),
+	   gridstor,
+	   &nx,
+	   &ny,
+	   &npol,
+	   &nchan,
+	   interpVisFreq_p.getStorage(del),
+	   &C::c,
+	   &convSupport,
+	   &convSize,
+	   &convSampling,
+	   convstor,
+	   chanMap.getStorage(del),
+	   polMap.getStorage(del),
+	   sumWeight.getStorage(del),
+	   gridwgtstor,
+	   weightConvFunc_p.getStorage(del),
+	   &doWeightGridding,
+	   convRowMap_p.getStorage(del),
+	   &nConvFunc
+	   );
     
-    // Loop over all rows
-    for (Int rownr=startRow; rownr<=endRow; rownr++) {
-      
-      // Calculate uvw for this row at the center frequency
-      uvLambda(0)=uvw(0,rownr)*invLambdaC;
-      uvLambda(1)=uvw(1,rownr)*invLambdaC;
-      centerLoc2D=gridder->location(centerLoc2D, uvLambda);
-      
-      // Is this point on the grid?
-      if(gridder->onGrid(centerLoc2D)) {
-      
-	// Get the tile
-	Array<Complex>* dataPtr=getDataPointer(centerLoc2D, False);
-	Int aNx=dataPtr->shape()(0);
-	Int aNy=dataPtr->shape()(1);
-	
-	// Now use FORTRAN to do the gridding. Remember to 
-	// ensure that the shape and offsets of the tile are 
-	// accounted for.
-	Bool del;
-	Vector<Double> actualOffset(2);
-	for (Int i=0;i<2;i++) {
-	  actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
-	}
-	IPosition s(flags.shape());
-	// Now pass all the information down to a 
-	// FORTRAN routine to do the work
-		gmosft(uvw.getStorage(del),
-	       dphase.getStorage(del),
-	       datStorage,
-	       &s(0),
-	       &s(1),
-	       &idopsf,
-	       flags.getStorage(del),
-	       rowFlags.getStorage(del),
-	       vb.imagingWeight().getStorage(del),
-	       &s(2),
-	       &rownr,
-	       uvScale.getStorage(del),
-	       actualOffset.getStorage(del),
-	       dataPtr->getStorage(del),
-	       &aNx,
-	       &aNy,
-	       &npol,
-	       &nchan,
-	       vb.frequency().getStorage(del),
-	       &C::c,
-	       &convSupport,
-	       &convSize,
-	       &convSampling,
-	       convFunc.getStorage(del),
-	       chanMap.getStorage(del),
-	       polMap.getStorage(del),
-	       sumWeight.getStorage(del));
-	
-	//NEED to make a getdataposition for weights too
-	}
-      }
-    */
+    griddedData2.putStorage(gridstor, gridcopy);
+    griddedWeight2.putStorage(gridwgtstor, weightcopy);
+    
   }
   else {
-    Bool del;
-    //    IPosition s(flags.shape());
-    const IPosition& fs=flags.shape();
-    std::vector<Int>s(fs.begin(), fs.end());
-    
-    Bool uvwcopy; 
-    const Double *uvwstor=uvw.getStorage(uvwcopy);
-    Bool gridcopy;
     Complex *gridstor=griddedData.getStorage(gridcopy);
-    Bool convcopy;
-    const Complex *convstor=convFunc.getStorage(convcopy);
-    Bool weightcopy;
     Complex *gridwgtstor=griddedWeight.getStorage(weightcopy);
-    gmos(uvwstor,
+    gmoss(uvwstor,
 	   dphase.getStorage(del),
 	   datStorage,
 	   &s[0],
@@ -937,12 +949,12 @@ void MosaicFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 	   convRowMap_p.getStorage(del),
 	   &nConvFunc
 	   );
-    uvw.freeStorage(uvwstor, uvwcopy);
+   
     griddedData.putStorage(gridstor, gridcopy);
-    convFunc.freeStorage(convstor, convcopy);
     griddedWeight.putStorage(gridwgtstor, weightcopy);
   }
-
+  convFunc.freeStorage(convstor, convcopy);
+  uvw.freeStorage(uvwstor, uvwcopy);
   if(!dopsf)
     data.freeStorage(datStorage, isCopy);
   elWeight.freeStorage(wgtStorage,iswgtCopy);
@@ -956,6 +968,9 @@ void MosaicFT::get(VisBuffer& vb, Int row)
   
 
   findConvFunction(*image, vb);
+  // no valid pointing in this buffer
+  if(convSupport <= 0)
+    return;
   // If row is -1 then we pass through all rows
   Int startRow, endRow, nRow;
   if (row==-1) {
@@ -1168,7 +1183,11 @@ ImageInterface<Complex>& MosaicFT::getImage(Matrix<Float>& weights,
     
     logIO() << LogIO::DEBUGGING
 	    << "Starting FFT and scaling of image" << LogIO::POST;
-    
+    if(useDoubleGrid_p){
+      convertArray(griddedData, griddedData2);
+      //Don't need the double-prec grid anymore...
+      griddedData2.resize();
+    }
     // x and y transforms
     LatticeFFT::cfft2d(*lattice,False);
     
@@ -1185,7 +1204,7 @@ ImageInterface<Complex>& MosaicFT::getImage(Matrix<Float>& weights,
       for(lix.reset();!lix.atEnd();lix++) {
 	Int pol=lix.position()(2);
 	Int chan=lix.position()(3);
-	if(weights(pol, chan)>0.0) {
+	if(weights(pol, chan)!=0.0) {
 	  /*
 	  if(!sj_p) {
 	    gridder->correctX1D(correction, lix.position()(1));
@@ -1245,6 +1264,10 @@ void MosaicFT::getWeightImage(ImageInterface<Float>& weightImage,
 
 void MosaicFT::getFluxImage(ImageInterface<Float>& fluxImage) {
 
+  if (stokes_p=="QU"){
+    npol=2;
+    pbConvFunc_p->sliceFluxScale(npol);
+  }
   IPosition inShape=(pbConvFunc_p->getFluxScaleImage()).shape();
   IPosition outShape=fluxImage.shape();
   if(outShape==inShape){

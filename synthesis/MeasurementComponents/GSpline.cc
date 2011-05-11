@@ -218,7 +218,7 @@ void GJonesSpline::setApply(const Record& applypar)
 
 //----------------------------------------------------------------------------
 
-void GJonesSpline::selfSolve (VisSet& vs, VisEquation& ve)
+void GJonesSpline::selfGatherAndSolve (VisSet& vs, VisEquation& ve)
 {
 // Solver for the electronic gain in spline form
 // Input:
@@ -229,7 +229,7 @@ void GJonesSpline::selfSolve (VisSet& vs, VisEquation& ve)
 //                                      else False
 //
 
-  if (prtlev()>2) cout << "GSpline::selfSolve(vs,ve)" << endl;
+  if (prtlev()>2) cout << "GSpline::selfGatherAndSolve(vs,ve)" << endl;
 
 
   //  cout << "Entering GSpline::solve." << endl;
@@ -345,6 +345,10 @@ void GJonesSpline::selfSolve (VisSet& vs, VisEquation& ve)
       if (normalizable())
         vb.normalize();
       
+      // If this solve not freqdep, and channels not averaged yet, do so
+      if (!freqDepMat() && vb.nChannel()>1)
+	vb.freqAveCubes();
+
       // Accumulate collapsed vb in a time average
       vba.accumulate(vb);
     }

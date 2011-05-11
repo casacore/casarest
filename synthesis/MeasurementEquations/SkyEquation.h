@@ -36,6 +36,8 @@
 #include <casa/Logging/LogSink.h>
 #include <synthesis/MeasurementComponents/FTMachine.h>
 #include <msvis/MSVis/VisBuffer.h>
+#include <msvis/MSVis/VisBufferAsync.h>
+#include <ms/MeasurementSets/MSMainEnums.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -201,7 +203,8 @@ public:
   // Predict model coherence for the SkyModel. If this is
   // incremental then the model visibilities are not reset
   // but are simply added to
-  virtual void predict(Bool incremental=False);
+  //virtual void predict(Bool incremental=False);
+  virtual void predict(Bool incremental=False, MS::PredefinedColumns Type=MS::MODEL_DATA);
 
   // Find sum of weights, Chi-squared, and the first and second derivatives
   // by transforming to the measurements. 
@@ -232,7 +235,9 @@ public:
 
   //assign  the flux scale that the ftmachines have if they have
   virtual void getCoverageImage(Int model, ImageInterface<Float>& im);
-    
+  //Set this to true if the residual image for mosaic is to be in
+  //pb^2 units (optimum mode for clean search for centimetric imaging)
+  virtual void doFlatNoise(Bool doFlat=False){doflat_p=doFlat;};
   
  protected:
 
@@ -258,7 +263,7 @@ public:
 			     Bool incremental);
   
 
-  virtual VisBuffer& get(VisBuffer& vb, Int model, Bool incremental);
+  virtual VisBuffer& get(VisBuffer& vb, Int model, Bool incremental, MS::PredefinedColumns Type=MS::MODEL_DATA);
   virtual void finalizeGet();
   virtual void initializePut(const VisBuffer &vb, Int model);
   
@@ -348,8 +353,10 @@ public:
 
   virtual void checkVisIterNumRows(ROVisibilityIterator& vi);
 
-  virtual void predictComponents(Bool& incremental, Bool& initialized);
+  //virtual void predictComponents(Bool& incremental, Bool& initialized);
+  virtual void predictComponents(Bool& incremental, Bool& initialized,  MS::PredefinedColumns Type=MS::MODEL_DATA);
 
+  
   // SkyModel
   SkyModel* sm_;
 
@@ -390,7 +397,8 @@ public:
   // SkyJones;  
   // Set in initializePut and initializePutXFR,
   // Used in finalizePut and finalizePutXFR
-  VisBuffer vb_p;
+
+  mutable VisBufferAutoPtr vb_p;
 
   Float minPB_p;   // ignore model flux below this level in the generalized PB
   Float constPB_p; // make the fluxscale constant for PB above this level
@@ -406,6 +414,7 @@ public:
   //We have to ignore this at the very begining and first call to 'changed'
   //and not call finalizePut
   Bool isBeginingOfSkyJonesCache_p;
+  Bool doflat_p;
 };
 
 } //# NAMESPACE CASA - END

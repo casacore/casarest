@@ -1,125 +1,156 @@
 set(synthesis_LIB_SRCS
-    DataSampling/DataSampling.cc
-    DataSampling/ImageDataSampling.cc
-    DataSampling/PixonProcessor.cc
-    DataSampling/SDDataSampling.cc
-    DataSampling/SynDataSampling.cc
-    IDL/IDL.cc
-    MeasurementComponents/AMueller.cc
-    MeasurementComponents/BeamCalc.cc
-    MeasurementComponents/BeamCalcParams.cc
-    MeasurementComponents/BeamSkyJones.cc
-    MeasurementComponents/BeamSquint.cc
-    MeasurementComponents/BPoly.cc
-    MeasurementComponents/Calibrater.cc
-    MeasurementComponents/CEMemImageSkyModel.cc
-    MeasurementComponents/ClarkCleanAlgorithm.cc
-    MeasurementComponents/ClarkCleanImageSkyModel.cc
-    MeasurementComponents/CleanImageSkyModel.cc
-    MeasurementComponents/ComponentFTMachine.cc
-    MeasurementComponents/ConvFuncDiskCache.cc
-    MeasurementComponents/CSCleanImageSkyModel.cc
-    MeasurementComponents/DBeamSkyJones.cc
-    MeasurementComponents/EJones.cc
-    MeasurementComponents/EPJones.cc
-    MeasurementComponents/FTMachine.cc
-    MeasurementComponents/GlobalFTMachineCallbacks.cc
-    MeasurementComponents/GridBoth.cc
-    MeasurementComponents/GridFT.cc
-    MeasurementComponents/GSpline.cc
-    MeasurementComponents/HetArrayConvFunc.cc
-    MeasurementComponents/HogbomCleanImageSkyModel.cc
-    MeasurementComponents/IlluminationConvFunc.cc
-    MeasurementComponents/ImageSkyModel.cc
-    MeasurementComponents/Jones.cc
-    MeasurementComponents/MakeApproxPSFAlgorithm.cc
-    MeasurementComponents/MFCEMemImageSkyModel.cc
-    MeasurementComponents/MFCleanImageSkyModel.cc
-    MeasurementComponents/MFMSCleanImageSkyModel.cc
-    MeasurementComponents/MosaicFT.cc
-    MeasurementComponents/MSCleanImageSkyModel.cc
-    MeasurementComponents/Mueller.cc
-    MeasurementComponents/NNLSImageSkyModel.cc
-    MeasurementComponents/nPBWProjectFT.cc
-    MeasurementComponents/PBMath.cc
-    MeasurementComponents/PBMath1D.cc
-    MeasurementComponents/PBMath1DAiry.cc
-    MeasurementComponents/PBMath1DCosPoly.cc
-    MeasurementComponents/PBMath1DGauss.cc
-    MeasurementComponents/PBMath1DIPoly.cc
-    MeasurementComponents/PBMath1DNumeric.cc
-    MeasurementComponents/PBMath1DPoly.cc
-    MeasurementComponents/PBMath2D.cc
-    MeasurementComponents/PBMath2DImage.cc
-    MeasurementComponents/PBMathInterface.cc
-    MeasurementComponents/PBMosaicFT.cc
-    MeasurementComponents/PClarkCleanImageSkyModel.cc
-    MeasurementComponents/PixelatedConvFunc.cc
-    MeasurementComponents/PredictAlgorithm.cc
-    MeasurementComponents/PWFCleanImageSkyModel.cc
-    MeasurementComponents/ReadMSAlgorithm.cc
-    MeasurementComponents/ResidualAlgorithm.cc
-    MeasurementComponents/SDGrid.cc
-    MeasurementComponents/SimACoh.cc
-    MeasurementComponents/SimACohCalc.cc
-    MeasurementComponents/SimpCompGridMachine.cc
-    MeasurementComponents/SimpComponentGridMachine.cc
-    MeasurementComponents/SimpleComponentFTMachine.cc
-    MeasurementComponents/SimplePBConvFunc.cc
-    MeasurementComponents/SkyJones.cc
-    MeasurementComponents/SolvableVisCal.cc
-    MeasurementComponents/StandardVisCal.cc
-    MeasurementComponents/SteepestDescentSolver.cc
-    MeasurementComponents/SynthesisError.cc
-    MeasurementComponents/Utils.cc
-    MeasurementComponents/UVMod.cc
-    MeasurementComponents/VisCal.cc
-    MeasurementComponents/VisCalGlobals.cc
-    MeasurementComponents/VisCalSolver.cc
-    MeasurementComponents/VisVector.cc
-    MeasurementComponents/VLACalcIlluminationConvFunc.cc
-    MeasurementComponents/VLAIlluminationConvFunc.cc
-    MeasurementComponents/VPSkyJones.cc
-    MeasurementComponents/WBCleanImageSkyModel.cc
-    MeasurementComponents/WFCleanImageSkyModel.cc
-    MeasurementComponents/WPConvFunc.cc
-    MeasurementComponents/WProjectFT.cc
-    MeasurementEquations/CCList.cc
-    MeasurementEquations/CEMemModel.cc
-    MeasurementEquations/CEMemProgress.cc
-    MeasurementEquations/ClarkCleanLatModel.cc
-    MeasurementEquations/ClarkCleanModel.cc
-    MeasurementEquations/ClarkCleanProgress.cc
-    MeasurementEquations/ConvolutionEquation.cc
-    MeasurementEquations/CubeSkyEquation.cc
-    MeasurementEquations/Deconvolver.cc
-    MeasurementEquations/Entropy.cc
-    MeasurementEquations/Imager.cc
-    MeasurementEquations/ImagerMultiMS.cc
-    MeasurementEquations/IncCEMemModel.cc
-    MeasurementEquations/IncEntropy.cc
-    MeasurementEquations/IPLatConvEquation.cc
-    MeasurementEquations/LatConvEquation.cc
-    MeasurementEquations/LatticeModel.cc
-    MeasurementEquations/MosaicSkyEquation.cc
-    MeasurementEquations/PSkyEquation.cc
-    MeasurementEquations/Qimager.cc
-    MeasurementEquations/Simulator.cc
-    MeasurementEquations/SkyEquation.cc
-    MeasurementEquations/StokesImageUtil.cc
-    MeasurementEquations/StokesUtil2.cc
-    MeasurementEquations/VisEquation.cc
-    MeasurementEquations/VPManager.cc
-    Parallel/Applicator.cc
-    Parallel/MPIError.cc
-    Parallel/MPITransport.cc
-    Parallel/PabloIO.cc
-    Parallel/SerialTransport.cc
-    Templates/casarest_synthesis.cc
-    fortran/fgridft.f
-    fortran/fmosaic.f
-    fortran/fpbmos.f
-    fortran/fpbwproj.f
+ DataSampling/DataSampling.cc
+ DataSampling/ImageDataSampling.cc
+ DataSampling/PixonProcessor.cc
+ DataSampling/SDDataSampling.cc
+ DataSampling/SynDataSampling.cc
+ IDL/IDL.cc
+ MeasurementComponents/ALMAAperture.cc
+ MeasurementComponents/ALMABeamCalc.cc
+ MeasurementComponents/ALMABeamCalcParams.cc
+ MeasurementComponents/ALMACalcIlluminationConvFunc.cc
+ MeasurementComponents/AMueller.cc
+ MeasurementComponents/AWConvFunc.cc
+ MeasurementComponents/AWProjectFT.cc
+ MeasurementComponents/AWProjectWBFT.cc
+ MeasurementComponents/AWVisResampler.cc
+ MeasurementComponents/BeamCalc.cc
+ MeasurementComponents/BeamCalcParams.cc
+ MeasurementComponents/BeamSkyJones.cc
+ MeasurementComponents/BeamSquint.cc
+ MeasurementComponents/BPoly.cc
+ MeasurementComponents/CalCorruptor.cc
+ MeasurementComponents/Calibrater.cc
+ MeasurementComponents/CEMemImageSkyModel.cc
+ MeasurementComponents/CFCache.cc
+ MeasurementComponents/CFStore.cc
+ MeasurementComponents/ClarkCleanAlgorithm.cc
+ MeasurementComponents/ClarkCleanImageSkyModel.cc
+ MeasurementComponents/CleanImageSkyModel.cc
+ MeasurementComponents/ComponentFTMachine.cc
+ MeasurementComponents/ConvFuncDiskCache.cc
+ MeasurementComponents/ConvolutionFunction.cc
+ MeasurementComponents/CSCleanImageSkyModel.cc
+ MeasurementComponents/DBeamSkyJones.cc
+ MeasurementComponents/EVLAConvFunc.cc
+ MeasurementComponents/EVLAAperture.cc
+ MeasurementComponents/EJones.cc
+ MeasurementComponents/EPJones.cc
+ MeasurementComponents/FTMachine.cc
+ MeasurementComponents/GlobalFTMachineCallbacks.cc
+ MeasurementComponents/GridBoth.cc
+ MeasurementComponents/GridFT.cc
+ MeasurementComponents/rGridFT.cc
+ MeasurementComponents/GSpline.cc
+ MeasurementComponents/HetArrayConvFunc.cc
+ MeasurementComponents/HogbomCleanImageSkyModel.cc
+ MeasurementComponents/IlluminationConvFunc.cc
+ MeasurementComponents/ImageSkyModel.cc
+ MeasurementComponents/Jones.cc
+ MeasurementComponents/KJones.cc
+ MeasurementComponents/LJJones.cc
+ MeasurementComponents/MakeApproxPSFAlgorithm.cc
+ MeasurementComponents/MFCEMemImageSkyModel.cc
+ MeasurementComponents/MFCleanImageSkyModel.cc
+ MeasurementComponents/MFMSCleanImageSkyModel.cc
+ MeasurementComponents/MosaicFT.cc
+ MeasurementComponents/MSCleanImageSkyModel.cc
+ MeasurementComponents/Mueller.cc
+ MeasurementComponents/MultiThreadedVisResampler.cc
+ MeasurementComponents/NNLSImageSkyModel.cc
+ MeasurementComponents/nPBWProjectFT.cc
+ MeasurementComponents/PBMath1DAiry.cc
+ MeasurementComponents/PBMath1D.cc
+ MeasurementComponents/PBMath1DCosPoly.cc
+ MeasurementComponents/PBMath1DGauss.cc
+ MeasurementComponents/PBMath1DIPoly.cc
+ MeasurementComponents/PBMath1DNumeric.cc
+ MeasurementComponents/PBMath1DPoly.cc
+ MeasurementComponents/PBMath2D.cc
+ MeasurementComponents/PBMath2DImage.cc
+ MeasurementComponents/PBMath.cc
+ MeasurementComponents/PBMathInterface.cc
+ MeasurementComponents/PBMosaicFT.cc
+ MeasurementComponents/PClarkCleanImageSkyModel.cc
+ MeasurementComponents/PixelatedConvFunc.cc
+ MeasurementComponents/PredictAlgorithm.cc
+ MeasurementComponents/PSTerm.cc
+ MeasurementComponents/PWFCleanImageSkyModel.cc
+ MeasurementComponents/ReadMSAlgorithm.cc
+ MeasurementComponents/ResidualAlgorithm.cc
+ MeasurementComponents/ResamplerWorklet.cc
+ MeasurementComponents/SDGrid.cc
+ MeasurementComponents/SimACohCalc.cc
+ MeasurementComponents/SimACoh.cc
+ MeasurementComponents/SimpCompGridMachine.cc
+ MeasurementComponents/SimpComponentGridMachine.cc
+ MeasurementComponents/SimpleComponentFTMachine.cc
+ MeasurementComponents/SimplePBConvFunc.cc
+ MeasurementComponents/SkyJones.cc
+ MeasurementComponents/SolvableVisCal.cc
+ MeasurementComponents/StandardVisCal.cc
+ MeasurementComponents/SteepestDescentSolver.cc
+ MeasurementComponents/SynthesisError.cc
+ MeasurementComponents/TsysGainCal.cc
+ MeasurementComponents/Utils.cc
+ MeasurementComponents/UVMod.cc
+ MeasurementComponents/VisCal.cc
+ MeasurementComponents/VisCalGlobals.cc
+ MeasurementComponents/VisCalSolver.cc
+ MeasurementComponents/VisVector.cc
+ MeasurementComponents/VisibilityResamplerBase.cc
+ MeasurementComponents/VisibilityResampler.cc
+ MeasurementComponents/VLACalcIlluminationConvFunc.cc
+ MeasurementComponents/VLAIlluminationConvFunc.cc
+ MeasurementComponents/VPSkyJones.cc
+ MeasurementComponents/WBCleanImageSkyModel.cc
+ MeasurementComponents/WFCleanImageSkyModel.cc
+ MeasurementComponents/WPConvFunc.cc
+ MeasurementComponents/WOnlyConvFunc.cc
+ MeasurementComponents/WTerm.cc
+ MeasurementComponents/WProjectFT.cc
+ MeasurementEquations/CCList.cc
+ MeasurementEquations/CEMemModel.cc
+ MeasurementEquations/CEMemProgress.cc
+ MeasurementEquations/ClarkCleanLatModel.cc
+ MeasurementEquations/ClarkCleanModel.cc
+ MeasurementEquations/ClarkCleanProgress.cc
+ MeasurementEquations/ConvolutionEquation.cc
+ MeasurementEquations/CubeSkyEquation.cc
+ MeasurementEquations/Deconvolver.cc
+ MeasurementEquations/Entropy.cc
+ MeasurementEquations/Imager.cc
+ MeasurementEquations/Imager2.cc
+ MeasurementEquations/ImagerMultiMS.cc
+ MeasurementEquations/ImageMSCleaner.cc
+ MeasurementEquations/IncCEMemModel.cc
+ MeasurementEquations/IncEntropy.cc
+ MeasurementEquations/IPLatConvEquation.cc
+ MeasurementEquations/LatConvEquation.cc
+ MeasurementEquations/LatticeModel.cc
+ MeasurementEquations/MatrixCleaner.cc
+ MeasurementEquations/MultiTermMatrixCleaner.cc
+ MeasurementEquations/PSkyEquation.cc
+ MeasurementEquations/Qimager.cc
+ MeasurementEquations/Simulator.cc
+ MeasurementEquations/SkyEquation.cc
+ MeasurementEquations/StokesImageUtil.cc
+ MeasurementEquations/StokesUtil2.cc
+ MeasurementEquations/VisEquation.cc
+ MeasurementEquations/VPManager.cc
+ Parallel/Applicator.cc
+ Parallel/MPIError.cc
+ Parallel/MPITransport.cc
+ Parallel/PabloIO.cc
+ Parallel/SerialTransport.cc
+ Utilities/FixVis.cc
+ Utilities/ThreadCoordinator.cc
+ fortran/fgridft.f
+ fortran/fmosaic.f
+ fortran/fpbmos.f
+ fortran/fpbwproj.f
+ fortran/leakantso.f
+ fortran/wprojgrid.f
 )
 
 set(synthesis_PROGRAMS
@@ -137,3 +168,204 @@ foreach(prog ${synthesis_PROGRAMS})
     target_link_libraries(${prog} ${SYNTHESIS_LIBRARIES})
     install(TARGETS ${prog} DESTINATION bin)
 endforeach(prog ${synthesis_PROGRAMS})
+
+
+install (FILES
+DataSampling/DataSampling.h
+DataSampling/ImageDataSampling.h
+DataSampling/PixonProcessor.h
+DataSampling/SDDataSampling.h
+DataSampling/SynDataSampling.h
+DESTINATION include/casarest/synthesis/DataSampling
+)
+
+install (FILES
+IDL/IDL.h
+DESTINATION include/casarest/synthesis/IDL
+)
+
+install (FILES
+MeasurementComponents/ACoh.h
+MeasurementComponents/ALMAAperture.h
+MeasurementComponents/ALMABeamCalc.h
+MeasurementComponents/ALMACalcIlluminationConvFunc.h
+MeasurementComponents/AMueller.h
+MeasurementComponents/ATerm.h
+MeasurementComponents/AWConvFunc.h
+MeasurementComponents/AWProjectFT.h
+MeasurementComponents/AWProjectWBFT.h
+MeasurementComponents/AWVisResampler.h
+MeasurementComponents/BPoly.h
+MeasurementComponents/BeamCalc.h
+MeasurementComponents/BeamCalcAntenna.h
+MeasurementComponents/BeamCalcConstants.h
+MeasurementComponents/BeamSkyJones.h
+MeasurementComponents/BeamSquint.h
+MeasurementComponents/CEMemImageSkyModel.h
+MeasurementComponents/CExp.h
+MeasurementComponents/CExp.new3.h
+MeasurementComponents/CFCache.h
+MeasurementComponents/CFDefs.h
+MeasurementComponents/CFStore.h
+MeasurementComponents/CFTerms.h
+MeasurementComponents/CSCleanImageSkyModel.h
+MeasurementComponents/CalCorruptor.h
+MeasurementComponents/Calibrater.h
+MeasurementComponents/ClarkCleanAlgorithm.h
+MeasurementComponents/ClarkCleanImageSkyModel.h
+MeasurementComponents/CleanImageSkyModel.h
+MeasurementComponents/ComponentFTMachine.h
+MeasurementComponents/ConvFuncDiskCache.h
+MeasurementComponents/ConvolutionFunction.h
+MeasurementComponents/DBeamSkyJones.h
+MeasurementComponents/EJones.h
+MeasurementComponents/EPJones.h
+MeasurementComponents/EVLAAperture.h
+MeasurementComponents/EVLAConvFunc.h
+MeasurementComponents/ExpCache.h
+MeasurementComponents/FTMachine.h
+MeasurementComponents/GSpline.h
+MeasurementComponents/GlobalFTMachineCallbacks.h
+MeasurementComponents/GridBoth.h
+MeasurementComponents/GridFT.h
+MeasurementComponents/HetArrayConvFunc.h
+MeasurementComponents/HogbomCleanImageSkyModel.h
+MeasurementComponents/IlluminationConvFunc.h
+MeasurementComponents/ImageSkyModel.h
+MeasurementComponents/Jones.h
+MeasurementComponents/KJones.h
+MeasurementComponents/LJJones.h
+MeasurementComponents/MFCEMemImageSkyModel.h
+MeasurementComponents/MFCleanImageSkyModel.h
+MeasurementComponents/MFMSCleanImageSkyModel.h
+MeasurementComponents/MSCleanImageSkyModel.h
+MeasurementComponents/MakeApproxPSFAlgorithm.h
+MeasurementComponents/MosaicFT.h
+MeasurementComponents/Mueller.h
+MeasurementComponents/MultiThreadedVisResampler.h
+MeasurementComponents/NNLSImageSkyModel.h
+MeasurementComponents/PBMath.h
+MeasurementComponents/PBMath1D.h
+MeasurementComponents/PBMath1DAiry.h
+MeasurementComponents/PBMath1DCosPoly.h
+MeasurementComponents/PBMath1DGauss.h
+MeasurementComponents/PBMath1DIPoly.h
+MeasurementComponents/PBMath1DNumeric.h
+MeasurementComponents/PBMath1DPoly.h
+MeasurementComponents/PBMath2D.h
+MeasurementComponents/PBMath2DImage.h
+MeasurementComponents/PBMathInterface.h
+MeasurementComponents/PBMosaicFT.h
+MeasurementComponents/PClarkCleanImageSkyModel.h
+MeasurementComponents/PSTerm.h
+MeasurementComponents/PWFCleanImageSkyModel.h
+MeasurementComponents/PixelatedConvFunc.h
+MeasurementComponents/PredictAlgorithm.h
+MeasurementComponents/ReadMSAlgorithm.h
+MeasurementComponents/ResamplerWorklet.h
+MeasurementComponents/ResidualAlgorithm.h
+MeasurementComponents/SDGrid.h
+MeasurementComponents/SimACoh.h
+MeasurementComponents/SimACohCalc.h
+MeasurementComponents/SimpCompGridMachine.h
+MeasurementComponents/SimpComponentGridMachine.h
+MeasurementComponents/SimpleComponentFTMachine.h
+MeasurementComponents/SimplePBConvFunc.h
+MeasurementComponents/SkyJones.h
+MeasurementComponents/SkyModel.h
+MeasurementComponents/SolvableVisCal.h
+MeasurementComponents/StandardVisCal.h
+MeasurementComponents/SteepestDescentSolver.h
+MeasurementComponents/SynthesisError.h
+MeasurementComponents/TabulatedConvFunc.h
+MeasurementComponents/TsysGainCal.h
+MeasurementComponents/UVMod.h
+MeasurementComponents/Utils.h
+MeasurementComponents/VBStore.h
+MeasurementComponents/VLACalcIlluminationConvFunc.h
+MeasurementComponents/VLAIlluminationConvFunc.h
+MeasurementComponents/VPSkyJones.h
+MeasurementComponents/VisCal.h
+MeasurementComponents/VisCalGlobals.h
+MeasurementComponents/VisCalSolver.h
+MeasurementComponents/VisVector.h
+MeasurementComponents/VisibilityResampler.h
+MeasurementComponents/VisibilityResamplerBase.h
+MeasurementComponents/WBCleanImageSkyModel.h
+MeasurementComponents/WFCleanImageSkyModel.h
+MeasurementComponents/WOnlyConvFunc.h
+MeasurementComponents/WOnlyProjectFT.h
+MeasurementComponents/WPConvFunc.h
+MeasurementComponents/WProjectFT.h
+MeasurementComponents/WTerm.h
+MeasurementComponents/XCorr.h
+MeasurementComponents/nPBWProjectFT.h
+MeasurementComponents/rGridFT.h
+MeasurementComponents/ImageSkyModel.tcc
+DESTINATION include/casarest/synthesis/MeasurementComponents
+)
+
+install (FILES
+MeasurementEquations/ArrayModel.h
+MeasurementEquations/CCList.h
+MeasurementEquations/CEMemModel.h
+MeasurementEquations/CEMemProgress.h
+MeasurementEquations/ClarkCleanLatModel.h
+MeasurementEquations/ClarkCleanModel.h
+MeasurementEquations/ClarkCleanProgress.h
+MeasurementEquations/ConvolutionEquation.h
+MeasurementEquations/CubeSkyEquation.h
+MeasurementEquations/Deconvolver.h
+MeasurementEquations/Entropy.h
+MeasurementEquations/HogbomCleanModel.h
+MeasurementEquations/IPLatConvEquation.h
+MeasurementEquations/ImageMSCleaner.h
+MeasurementEquations/Imager.h
+MeasurementEquations/ImagerMultiMS.h
+MeasurementEquations/IncCEMemModel.h
+MeasurementEquations/IncEntropy.h
+MeasurementEquations/Iterate.h
+MeasurementEquations/LatConvEquation.h
+MeasurementEquations/LatticeModel.h
+MeasurementEquations/LinearEquation.h
+MeasurementEquations/LinearModel.h
+MeasurementEquations/MaskedArrayModel.h
+MeasurementEquations/MaskedHogbomCleanModel.h
+MeasurementEquations/MatrixCleaner.h
+MeasurementEquations/MosaicSkyEquation.h
+MeasurementEquations/MultiTermMatrixCleaner.h
+MeasurementEquations/PSkyEquation.h
+MeasurementEquations/Qimager.h
+MeasurementEquations/ResidualEquation.h
+MeasurementEquations/Simulator.h
+MeasurementEquations/SkyEquation.h
+MeasurementEquations/StokesImageUtil.h
+MeasurementEquations/StokesUtil.h
+MeasurementEquations/VPManager.h
+MeasurementEquations/VisEquation.h
+MeasurementEquations/ArrayModel.tcc
+MeasurementEquations/HogbomCleanModel.tcc
+MeasurementEquations/LinearEquation.tcc
+MeasurementEquations/LinearModel.tcc
+MeasurementEquations/MaskedArrayModel.tcc
+MeasurementEquations/MaskedHogbomCleanModel.tcc
+MeasurementEquations/ResidualEquation.tcc
+MeasurementEquations/StokesUtil.tcc
+DESTINATION include/casarest/synthesis/MeasurementEquations
+)
+
+install (FILES
+Parallel/Algorithm.h
+Parallel/Applicator.h
+Parallel/MPIError.h
+Parallel/PTransport.h
+Parallel/PabloIO.h
+DESTINATION include/casarest/synthesis/Parallel
+)
+
+install (FILES
+Utilities/FixVis.h
+Utilities/ThreadCoordinator.h
+Utilities/ThreadTimers.h
+DESTINATION include/casarest/synthesis/Utilities
+)

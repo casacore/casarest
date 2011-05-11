@@ -1,3 +1,30 @@
+// -*- C++ -*-
+//# Utils.cc: Implementation of global functions from Utils.h 
+//# Copyright (C) 1997,1998,1999,2000,2001,2002,2003
+//# Associated Universities, Inc. Washington DC, USA.
+//#
+//# This library is free software; you can redistribute it and/or modify it
+//# under the terms of the GNU Library General Public License as published by
+//# the Free Software Foundation; either version 2 of the License, or (at your
+//# option) any later version.
+//#
+//# This library is distributed in the hope that it will be useful, but WITHOUT
+//# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+//# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+//# License for more details.
+//#
+//# You should have received a copy of the GNU Library General Public License
+//# along with this library; if not, write to the Free Software Foundation,
+//# Inc., 675 Massachusetts Ave, Cambridge, MA 02139, USA.
+//#
+//# Correspondence concerning AIPS++ should be addressed as follows:
+//#        Internet email: aips2-request@nrao.edu.
+//#        Postal address: AIPS++ Project Office
+//#                        National Radio Astronomy Observatory
+//#                        520 Edgemont Road
+//#                        Charlottesville, VA 22903-2475 USA
+//#
+//# $Id$
 #include <msvis/MSVis/VisBuffer.h>
 #include <casa/Logging/LogIO.h>
 #include <ms/MeasurementSets/MSColumns.h>
@@ -15,35 +42,52 @@
 #include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/TiledLineStepper.h> 
 #include <lattices/Lattices/LatticeStepper.h> 
+#include <casa/System/Aipsrc.h>
 namespace casa{
   //
   //--------------------------------------------------------------------------------------------
   //  
-  void storeImg(String& fileName,ImageInterface<Complex>& theImg)
+  void storeImg(String fileName,ImageInterface<Complex>& theImg, Bool writeReIm)
   {
-    ostringstream reName,imName;
-    reName << "re" << fileName;
-    imName << "im" << fileName;
     PagedImage<Complex> ctmp(theImg.shape(), theImg.coordinates(), fileName);
     LatticeExpr<Complex> le(theImg);
     ctmp.copyData(le);
-    {
-      PagedImage<Float> tmp(theImg.shape(), theImg.coordinates(), reName);
-      LatticeExpr<Float> le(abs(theImg));
-      tmp.copyData(le);
-    }
-    {
-      PagedImage<Float> tmp(theImg.shape(), theImg.coordinates(), imName);
-      LatticeExpr<Float> le(arg(theImg));
-      tmp.copyData(le);
-    }
+    if (writeReIm)
+      {
+	ostringstream reName,imName;
+	reName << "re" << fileName;
+	imName << "im" << fileName;
+	{
+	  PagedImage<Float> tmp(theImg.shape(), theImg.coordinates(), reName);
+	  LatticeExpr<Float> le(abs(theImg));
+	  tmp.copyData(le);
+	}
+	{
+	  PagedImage<Float> tmp(theImg.shape(), theImg.coordinates(), imName);
+	  LatticeExpr<Float> le(arg(theImg));
+	  tmp.copyData(le);
+	}
+      }
   }
   
-  void storeImg(String& fileName,ImageInterface<Float>& theImg)
+  void storeImg(String fileName,ImageInterface<Float>& theImg)
   {
     PagedImage<Float> tmp(theImg.shape(), theImg.coordinates(), fileName);
     LatticeExpr<Float> le(theImg);
     tmp.copyData(le);
+  }
+
+  void storeArrayAsImage(String fileName, const CoordinateSystem& coord,
+			 const Array<Complex>& theImg)
+  {
+    PagedImage<Complex> ctmp(theImg.shape(), coord, fileName);
+    ctmp.put(theImg);
+  }
+  void storeArrayAsImage(String fileName, const CoordinateSystem& coord,
+			 const Array<Float>& theImg)
+  {
+    PagedImage<Float> ctmp(theImg.shape(), coord, fileName);
+    ctmp.put(theImg);
   }
   //
   //---------------------------------------------------------------------
@@ -107,9 +151,18 @@ namespace casa{
   //
   Double getPA(const VisBuffer& vb)
   {
-    Double pa;
+    Double pa=0;
+    Int n=0;
     Vector<Float> antPA = vb.feed_pa(getCurrentTimeStamp(vb));
-    pa = sum(antPA)/(antPA.nelements()-1);
+    for (uInt i=0;i<antPA.nelements();i++)
+      {
+	if (!vb.msColumns().antenna().flagRow()(i))
+	  {pa += antPA(i); n++;break;}
+      }
+    //    pa = sum(antPA)/(antPA.nelements()-1);
+    pa /= n;
+    if (n==0) 
+      throw(AipsError("No unflagged antenna found in getPA()."));
     return pa;
   }
   //
@@ -269,7 +322,7 @@ namespace casa{
   // Set the value of the PA tolerance
   void ParAngleChangeDetector::setTolerance(const Quantity &pa_tolerance)
   {
-    pa_tolerance_p = pa_tolerance.getValue("rad");
+    pa_tolerance_p = abs(pa_tolerance.getValue("rad"));
   }
   // reset to the state which exist just after construction
   void ParAngleChangeDetector::reset() throw(AipsError)
@@ -465,33 +518,45 @@ namespace casa{
 					  CoordinateSystem& inCS,
 					  Array<Complex>& outArray,
 					  Double dAngleRad,
-					  String interpMethod)
+					  String interpMethod,
+					  Bool modifyInCS)
   {
 //     logio << LogOrigin("SynthesisUtils", "rotateComplexArray")
 // 	  << "Rotating CF using " << interpMethod << " interpolation." 
 // 	  << LogIO::POST;
+    (void)logio;
     //
     // If no rotation required, just copy the inArray to outArray.
     //
     if (dAngleRad==0.0) 
       {
-	outArray = inArray;
+	outArray.reference(inArray);
 	return;
       }
     //
     // Re-grid inImage onto outImage
     //
     Vector<Int> pixelAxes;
-    Int linInd = -1, after=-1;
+    Int coordInd = -1;
     // Extract LINRAR coords from inCS.
     // Extract axes2
-    Vector<Double> refPix = inCS.referencePixel();
-    refPix(0) = (inArray.shape()(0)+1)/2;
-    refPix(1) = (inArray.shape()(1)+1)/2;
 
-    inCS.setReferencePixel(refPix);
-    linInd = inCS.findCoordinate(Coordinate::LINEAR, after);
-    pixelAxes=inCS.pixelAxes(linInd);
+    if(modifyInCS){
+      Vector<Double> refPix = inCS.referencePixel();
+      refPix(0) = (inArray.shape()(0)+1)/2;
+      refPix(1) = (inArray.shape()(1)+1)/2;
+      inCS.setReferencePixel(refPix);
+    }
+
+    coordInd = inCS.findCoordinate(Coordinate::LINEAR);
+    Bool haveLinear = True;
+
+    if(coordInd == -1){ // no linear coordinate found, look for DIRECTION instead
+      coordInd = inCS.findCoordinate(Coordinate::DIRECTION);
+      haveLinear = False;
+    }
+
+    pixelAxes=inCS.pixelAxes(coordInd);
     IPosition axes2(pixelAxes);
     // Set linear transformation matrix in inCS.
 //     CoordinateSystem outCS =
@@ -499,13 +564,15 @@ namespace casa{
 
     CoordinateSystem outCS(inCS);
 
-    Matrix<Double> xf = outCS.coordinate(linInd).linearTransform();
+    Matrix<Double> xf = outCS.coordinate(coordInd).linearTransform();
     Matrix<Double> rotm(2,2);
-    Double s = sin(dAngleRad);
-    Double c = cos(dAngleRad);
+    rotm(0,0) = cos(dAngleRad); rotm(0,1) = sin(dAngleRad);
+    rotm(1,0) = -rotm(0,1);     rotm(1,1) = rotm(0,0);
 
-    rotm(0,0) =  c; rotm(0,1) = s;
-    rotm(1,0) = -s; rotm(1,1) = c;
+    // Double s = sin(dAngleRad);
+    // Double c = cos(dAngleRad);
+    // rotm(0,0) =  c; rotm(0,1) = s;
+    // rotm(1,0) = -s; rotm(1,1) = c;
 
     // Create new linear transform matrix
     Matrix<Double> xform(2,2);
@@ -514,9 +581,16 @@ namespace casa{
     xform(1,0) = rotm(1,0)*xf(0,0)+rotm(1,1)*xf(1,0);
     xform(1,1) = rotm(1,0)*xf(0,1)+rotm(1,1)*xf(1,1);
 
-    LinearCoordinate linCoords = outCS.linearCoordinate(linInd);
-    linCoords.setLinearTransform(xform);
-    outCS.replaceCoordinate(linCoords, linInd);
+    if(haveLinear){
+      LinearCoordinate linCoords = outCS.linearCoordinate(coordInd);
+      linCoords.setLinearTransform(xform);
+      outCS.replaceCoordinate(linCoords, coordInd);
+    }
+    else{
+      DirectionCoordinate dirCoords = outCS.directionCoordinate(coordInd);
+      dirCoords.setLinearTransform(xform);
+      outCS.replaceCoordinate(dirCoords, coordInd);
+    }      
     
     outArray.resize(inArray.shape());
     outArray.set(0);
@@ -584,6 +658,40 @@ namespace casa{
   //
   //---------------------------------------------------------------
   //
+  void SynthesisUtils::findLatticeMax(const Array<Complex>& lattice,
+				      Vector<Float>& maxAbs,
+				      Vector<IPosition>& posMaxAbs) 
+  {
+    IPosition lshape(lattice.shape());
+    IPosition ndx(lshape);
+    Int nPol=lshape(2);
+    posMaxAbs.resize(nPol);
+    for(Int i=0;i<nPol;i++)
+      posMaxAbs(i)=IPosition(lattice.shape().nelements(), 0);
+    maxAbs.resize(nPol);
+    ndx=0;
+    
+    for(Int s2=0;s2<lshape(2);s2++)
+      for(Int s3=0;s3<lshape(3);s3++)
+	{
+	  ndx(2) = s2; ndx(3)=s3;
+	  {
+	    //
+	    // Locate the pixel with the peak value.  That's the
+	    // origin in pixel co-ordinates.
+	    //
+	    maxAbs(s2)=0;
+	    posMaxAbs(s2) = 0;
+	    for(ndx(1)=0;ndx(1)<lshape(1);ndx(1)++)
+	      for(ndx(0)=0;ndx(0)<lshape(0);ndx(0)++)
+		if (abs(lattice(ndx)) > maxAbs(s2)) 
+		  {posMaxAbs(s2) = ndx;maxAbs(s2)=abs(lattice(ndx));}
+	  }
+	}
+  }
+  //
+  //---------------------------------------------------------------
+  //
   void SynthesisUtils::findLatticeMax(const ImageInterface<Float>& lattice,
 				      Vector<Float>& maxAbs,
 				      Vector<IPosition>& posMaxAbs) 
@@ -615,4 +723,34 @@ namespace casa{
 	  }
 	}
   }
+  //
+  //---------------------------------------------------------------
+  // Get the value of the named variable from ~/.aipsrc (or ~/.casarc)
+  // or from a env. variable (in this precidence order).
+  //
+  template <class T>
+  T SynthesisUtils::getenv(const char *name,const T defaultVal)
+  {
+    stringstream defaultStr;
+    defaultStr << defaultVal;
+    Int val;
+    uInt handle = Aipsrc::registerRC(name, defaultStr.str().c_str());    
+    String strVal = Aipsrc::get(handle);
+    stringstream toT(strVal);
+    toT >> val;
+    // Looks like Aipsrc did not find the named variable.  See if an
+    // env. variable is defined.
+    if (val==defaultVal)
+      {
+	char *valStr=NULL;
+	if ((valStr = std::getenv(name)) != NULL)
+	  {
+	    stringstream toT2(valStr);
+	    toT2 >> val;
+	  }
+      }
+    return val;
+  }
+  template 
+  Int SynthesisUtils::getenv(const char *name, const Int defaultVal);
 } // namespace casa

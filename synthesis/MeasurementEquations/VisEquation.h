@@ -107,6 +107,13 @@ public:
   // Arrange for solve of a single SolvableVisCal
   void setsolve(SolvableVisCal& svc);
 
+  // Arrange a pivot point for evaluating the equation in collapseForSim
+  void setPivot(VisCal::Type pivot);
+
+  // Arrange the model to use for calibration
+  void setModel(const Vector<Float>& stokes);
+  inline void unSetModel() { useInternalModel_=False; };
+  
   // Report if spw has solutions available from all applied tables
   inline Bool spwOK(const Int& spw) { return (napp_>0) ? spwOK_(spw) : True; };
 
@@ -122,11 +129,16 @@ public:
   //  with the apply-able VisCals on either side of the SolvableVisCal
   void collapse(VisBuffer& vb);
 
+
+  // This collapse avoids I/O (assumes the vb data/model are ready),
+  //  and uses a generic pivot (see setPivot) rather than the svc
+  void collapseForSim(VisBuffer& vb);
+
   // Calculate residuals 
   //   (optionally for specific chan)
   void residuals(VisBuffer& vb, 
 		 Cube<Complex>& R,
-		 const Int& chan=-1);
+		 const Int chan=-1);
   
   // Calculate residuals and differentiated residuals
   //   (optionally for specific chan)
@@ -143,6 +155,11 @@ public:
  
   // Report the VisEq's state
   void state();
+
+  inline const VisCal::Type pivot() const { return pivot_; };
+
+  // Set the print level
+  inline void setPrtlev(const Int& prtlev) { prtlev_=prtlev; };
   
 protected:
 
@@ -173,12 +190,22 @@ private:
   Int lfd_;     // Right-most freq-dep term on LEFT  side
   Int rfd_;     // Left-most  freq-dep term on RIGHT side
 
+  // Trap for frequency averaging in collapse
+  Bool freqAveOK_;
+
   // VisCal with solving interface
   //  (No ownership responsibilities)
   SolvableVisCal* svc_;
 
+  // The pivot point used by collapse2
+  VisCal::Type pivot_;
+
   // SpwOK?
   Vector<Bool> spwOK_;
+
+  // An internal (global) point source model
+  Bool useInternalModel_;
+  Vector<Float> stokesModel_;
 
   // Diagnostic print level
   Int prtlev_;

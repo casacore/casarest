@@ -1,67 +1,68 @@
 set(calibration_LIB_SRCS
-    CalTables/BJonesDesc.cc
-    CalTables/BJonesMBuf.cc
-    CalTables/BJonesMCol.cc
-    CalTables/BJonesMRec.cc
-    CalTables/BJonesTable.cc
-    CalTables/CalBuffer.cc
-    CalTables/CalDescBuffer.cc
-    CalTables/CalDescColumns.cc
-    CalTables/CalDescColumns2.cc
-    CalTables/CalDescRecord.cc
-    CalTables/CalHistoryBuffer.cc
-    CalTables/CalHistoryColumns.cc
-    CalTables/CalHistRecord.cc
-    CalTables/CalInterp.cc
-    CalTables/CalInterpolation.cc
-    CalTables/CalInterpolator.cc
-    CalTables/CalIntpMatch.cc
-    CalTables/CalIter.cc
-    CalTables/CalMainBuffer.cc
-    CalTables/CalMainColumns.cc
-    CalTables/CalMainRecord.cc
-    CalTables/CalSet2.cc
-    CalTables/CalSetMetaInfo.cc
-    CalTables/CalTable.cc
-    CalTables/CalTable2.cc
-    CalTables/CalTableDesc.cc
-    CalTables/CalTableDesc2.cc
-    CalTables/EPointDesc.cc
-    CalTables/EPointMBuf.cc
-    CalTables/EPointMCol.cc
-    CalTables/EPointTable.cc
-    CalTables/EPointVJMRec.cc
-    CalTables/FVisJonesDesc.cc
-    CalTables/FVisJonesMRec.cc
-    CalTables/GJonesDesc.cc
-    CalTables/GJonesMBuf.cc
-    CalTables/GJonesMCol.cc
-    CalTables/GJonesTable.cc
-    CalTables/MJonesDesc.cc
-    CalTables/MJonesMRec.cc
-    CalTables/SolvableMJDesc.cc
-    CalTables/SolvableMJMRec.cc
-    CalTables/SolvableVJDesc.cc
-    CalTables/SolvableVJMBuf.cc
-    CalTables/SolvableVJMCol.cc
-    CalTables/SolvableVJMRec.cc
-    CalTables/SolvableVJTable.cc
-    CalTables/TimeVarMJDesc.cc
-    CalTables/TimeVarMJMRec.cc
-    CalTables/TimeVarVJDesc.cc
-    CalTables/TimeVarVJMBuf.cc
-    CalTables/TimeVarVJMCol.cc
-    CalTables/TimeVarVJMRec.cc
-    CalTables/TimeVarVJTable.cc
-    CalTables/TJonesDesc.cc
-    CalTables/TJonesMBuf.cc
-    CalTables/TJonesMCol.cc
-    CalTables/TJonesTable.cc
-    CalTables/VisJonesDesc.cc
-    CalTables/VisJonesMBuf.cc
-    CalTables/VisJonesMCol.cc
-    CalTables/VisJonesMRec.cc
-    CalTables/VisJonesTable.cc
+  CalTables/BJonesDesc.cc
+  CalTables/BJonesMBuf.cc
+  CalTables/BJonesMCol.cc
+  CalTables/BJonesMRec.cc
+  CalTables/BJonesTable.cc
+  CalTables/CalBuffer.cc
+  CalTables/CalDescBuffer.cc
+  CalTables/CalDescColumns2.cc
+  CalTables/CalDescColumns.cc
+  CalTables/CalDescRecord.cc
+  CalTables/CalHistoryBuffer.cc
+  CalTables/CalHistoryColumns.cc
+  CalTables/CalHistRecord.cc
+  CalTables/CalInterp.cc
+  CalTables/CalInterpolation.cc
+  CalTables/CalInterpolator.cc
+  CalTables/CalIntpMatch.cc
+  CalTables/CalIter.cc
+  CalTables/CalMainBuffer.cc
+  CalTables/CalMainColumns.cc
+  CalTables/CalMainRecord.cc
+  CalTables/CalSet2.cc
+  CalTables/CalSetMetaInfo.cc
+  CalTables/CalTable2.cc
+  CalTables/CalTable.cc
+  CalTables/CalTableDesc2.cc
+  CalTables/CalTableDesc.cc
+  CalTables/EPointDesc.cc
+  CalTables/EPointMBuf.cc
+  CalTables/EPointMCol.cc
+  CalTables/EPointTable.cc
+  CalTables/EPointVJMRec.cc
+  CalTables/FVisJonesDesc.cc
+  CalTables/FVisJonesMRec.cc
+  CalTables/GJonesDesc.cc
+  CalTables/GJonesMBuf.cc
+  CalTables/GJonesMCol.cc
+  CalTables/GJonesTable.cc
+  CalTables/MJonesDesc.cc
+  CalTables/MJonesMRec.cc
+#  CalTables/PlotCal.cc
+  CalTables/SolvableMJDesc.cc
+  CalTables/SolvableMJMRec.cc
+  CalTables/SolvableVJDesc.cc
+  CalTables/SolvableVJMBuf.cc
+  CalTables/SolvableVJMCol.cc
+  CalTables/SolvableVJMRec.cc
+  CalTables/SolvableVJTable.cc
+  CalTables/TimeVarMJDesc.cc
+  CalTables/TimeVarMJMRec.cc
+  CalTables/TimeVarVJDesc.cc
+  CalTables/TimeVarVJMBuf.cc
+  CalTables/TimeVarVJMCol.cc
+  CalTables/TimeVarVJMRec.cc
+  CalTables/TimeVarVJTable.cc
+  CalTables/TJonesDesc.cc
+  CalTables/TJonesMBuf.cc
+  CalTables/TJonesMCol.cc
+  CalTables/TJonesTable.cc
+  CalTables/VisJonesDesc.cc
+  CalTables/VisJonesMBuf.cc
+  CalTables/VisJonesMCol.cc
+  CalTables/VisJonesMRec.cc
+  CalTables/VisJonesTable.cc
 )
 
 
@@ -69,3 +70,84 @@ add_library(casa_calibration ${calibration_LIB_SRCS})
 install(TARGETS casa_calibration DESTINATION ${LIBRARY_INSTALL_DIR})
 target_link_libraries(casa_calibration casa_msvis ${OTHER_LIBRARIES})
 set(CALIBRATION_LIBRARIES casa_calibration casa_msvis ${OTHER_LIBRARIES})
+
+
+install (FILES
+CalTables/BJonesDesc.h
+CalTables/BJonesMBuf.h
+CalTables/BJonesMCol.h
+CalTables/BJonesMRec.h
+CalTables/BJonesTable.h
+CalTables/CalBuffer.h
+CalTables/CalDescBuffer.h
+CalTables/CalDescColumns.h
+CalTables/CalDescColumns2.h
+CalTables/CalDescRecord.h
+CalTables/CalHistRecord.h
+CalTables/CalHistoryBuffer.h
+CalTables/CalHistoryColumns.h
+CalTables/CalInterp.h
+CalTables/CalInterpolation.h
+CalTables/CalInterpolator.h
+CalTables/CalIntpMatch.h
+CalTables/CalIter.h
+CalTables/CalIterBase.h
+CalTables/CalMainBuffer.h
+CalTables/CalMainColumns.h
+CalTables/CalMainColumns2.h
+CalTables/CalMainRecord.h
+CalTables/CalSet.h
+CalTables/CalSetMetaInfo.h
+CalTables/CalTable.h
+CalTables/CalTable2.h
+CalTables/CalTableDesc.h
+CalTables/CalTableDesc2.h
+CalTables/CalTableFromAIPS.h
+CalTables/EPointDesc.h
+CalTables/EPointMBuf.h
+CalTables/EPointMCol.h
+CalTables/EPointTable.h
+CalTables/EPointVJMRec.h
+CalTables/FVisJonesDesc.h
+CalTables/FVisJonesMRec.h
+CalTables/GJonesDesc.h
+CalTables/GJonesMBuf.h
+CalTables/GJonesMCol.h
+CalTables/GJonesTable.h
+CalTables/MJonesDesc.h
+CalTables/MJonesMRec.h
+CalTables/PlotCal.h
+CalTables/PlotCalHooks.h
+CalTables/ROCalMainColumns2.h
+CalTables/SkyJonesDesc.h
+CalTables/SolvableCalSetMCol.h
+CalTables/SolvableMJDesc.h
+CalTables/SolvableMJMRec.h
+CalTables/SolvableVJDesc.h
+CalTables/SolvableVJMBuf.h
+CalTables/SolvableVJMCol.h
+CalTables/SolvableVJMRec.h
+CalTables/SolvableVJTable.h
+CalTables/TJonesDesc.h
+CalTables/TJonesMBuf.h
+CalTables/TJonesMCol.h
+CalTables/TJonesTable.h
+CalTables/TimeVarMJDesc.h
+CalTables/TimeVarMJMRec.h
+CalTables/TimeVarVJDesc.h
+CalTables/TimeVarVJMBuf.h
+CalTables/TimeVarVJMCol.h
+CalTables/TimeVarVJMRec.h
+CalTables/TimeVarVJTable.h
+CalTables/VisCalEnum.h
+CalTables/VisJonesDesc.h
+CalTables/VisJonesMBuf.h
+CalTables/VisJonesMCol.h
+CalTables/VisJonesMRec.h
+CalTables/VisJonesTable.h
+CalTables/CalMainColumns2.tcc
+CalTables/CalSet.tcc
+CalTables/ROCalMainColumns2.tcc
+CalTables/SolvableCalSetMCol.tcc
+DESTINATION include/casarest/calibration/CalTables
+)

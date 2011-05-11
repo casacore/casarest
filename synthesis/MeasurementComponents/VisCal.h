@@ -54,12 +54,31 @@ class VisCal {
 
 public:
 
-  // Allowed types of VisCal matrices
+  // Allowed types of VisCal matrices - 'correct' order
   //  enum Type{UVMOD,Mf,M,K,B,G,D,C,E,P,T,EP,F};
-  enum Type{Test=0,ANoise,M,K,B,G,J,D,X,C,P,E,T,F,A};
+  enum Type{Test=0,ANoise,M,KAntPos,K,B,G,J,D,X,C,P,E,T,F,A,ALL};
 
   // Enumeration of parameter types (Complex, Real, or Both)
   enum ParType{Co,Re,CoRe};
+
+  static String nameOfType(Type type) {
+    switch (type) {
+    case ANoise: return "ANoise";
+    case M: return "M";
+    case K: return "K";
+    case B: return "B";
+    case J: return "J";
+    case D: return "D";
+    case X: return "X";
+    case C: return "C";
+    case P: return "P";
+    case E: return "E";
+    case T: return "T";
+    case F: return "F";
+    case A: return "A";
+    default: return "0";
+    }
+  }
 
   VisCal(VisSet& vs);
   
@@ -123,11 +142,11 @@ public:
 
   // Apply calibration to data in VisBuffer (correct Data or corrupt Model)
   //  (in-place versions)
-  virtual void correct(VisBuffer& vb);
+  virtual void correct(VisBuffer& vb,Bool avoidACs=True);
   virtual void corrupt(VisBuffer& vb);
   // Apply calibration to data in VisBuffer; 
   //  (alternate output versions)
-  virtual void correct(VisBuffer& vb, Cube<Complex>& Vout);
+  virtual void correct(VisBuffer& vb, Cube<Complex>& Vout,Bool avoidACs=True);
   virtual void corrupt(VisBuffer& vb, Cube<Complex>& Mout);
 
   // Report the state
@@ -138,7 +157,12 @@ public:
   // Set the print level
   inline void setPrtlev(const Int& prtlev) { prtlev_=prtlev; };
 
+  // Baseline index from antenna indices: (assumes a1<=a2 !!)
+  inline Int blnidx(const Int& a1, 
+		    const Int& a2) { return  a1*nAnt() - a1*(a1+1)/2 + a2; };
 
+  inline String& extraTag() { return extratag_; };
+ 
 protected:
 
   // Set applied state flag
@@ -200,7 +224,8 @@ protected:
   inline Matrix<Float>& currWtScale() { return (*currWtScale_[currSpw()]); };
 
   // Row-by-row apply to a Cube<Complex> (generic)
-  virtual void applyCal(VisBuffer& vb, Cube<Complex>& Vout)=0;
+  virtual void applyCal(VisBuffer& vb, Cube<Complex>& Vout,
+			Bool avoidACs=True)=0;
 
   // Synchronize "gains" with a VisBuffer or another VisCal
   virtual void syncCal(const VisBuffer& vb,
@@ -309,6 +334,9 @@ private:
   // Print level
   Int prtlev_;
 
+  String extratag_;  // e.g. to tag as noise scale
+
+
 };
 
 
@@ -367,7 +395,8 @@ protected:
   inline Bool MValid()      {return MValid_(currSpw());};
 
   // Row-by-row apply to a Cube<Complex> (applyByMueller override)
-  virtual void applyCal(VisBuffer& vb, Cube<Complex>& Vout);
+  virtual void applyCal(VisBuffer& vb, Cube<Complex>& Vout,
+			Bool avoidACs=True);
 
   // Sync matrices for current meta data (Mueller override)
   virtual void syncCalMat(const Bool& doInv=False);
@@ -394,9 +423,6 @@ protected:
   // Update the wt vector for a baseline
   virtual void updateWt(Vector<Float>& wt,const Int& a1,const Int& a2);
 
-  // Baseline index from antenna indices: (assumes a1<=a2 !!)
-  inline Int blnidx(const Int& a1, 
-		    const Int& a2) { return  a1*nAnt() - a1*(a1+1)/2 + a2; };
 
 private:
 
@@ -418,8 +444,6 @@ private:
 
   // Mueller validity
   Vector<Bool> MValid_;
-
-
 
 };
 
@@ -491,7 +515,8 @@ protected:
   inline Bool JValid()      {return JValid_(currSpw());};
 
   // Row-by-row apply to a Cube<Complex> (applyByJones override)
-  virtual void applyCal(VisBuffer& vb, Cube<Complex>& Vout);
+  virtual void applyCal(VisBuffer& vb, Cube<Complex>& Vout,
+			Bool avoidACs=True);
 
   // Sync matrices for current meta data (VisJones override)
   virtual void syncCalMat(const Bool& doInv=False);

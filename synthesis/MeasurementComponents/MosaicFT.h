@@ -137,7 +137,7 @@ public:
   // <group>
   MosaicFT(SkyJones* sj, MPosition mloc, String stokes,
 	    Long cachesize, Int tilesize=16, 
-	   Bool usezero=True);
+	   Bool usezero=True, Bool useDoublePrec=False);
   // </group>
 
   // Construct from a Record containing the MosaicFT state
@@ -187,6 +187,12 @@ public:
   // Get the final image: do the Fourier transform and
   // grid-correct, then optionally normalize by the summed weights
   ImageInterface<Complex>& getImage(Matrix<Float>&, Bool normalize=True);
+  virtual void normalizeImage(Lattice<Complex>& skyImage,
+			      const Matrix<Double>& sumOfWts,
+			      Lattice<Float>& sensitivityImage,
+			      Bool fftNorm)
+  {throw(AipsError("MosaicFT::normalizeImage() called"));}
+    
  
   // Get the final weights image
   void getWeightImage(ImageInterface<Float>&, Matrix<Float>&);
@@ -217,7 +223,8 @@ public:
 
   //reset weight image
   virtual void reset();
-
+  virtual void setMiscInfo(const Int qualifier){(void)qualifier;};
+  virtual void ComputeResiduals(VisBuffer&vb, Bool useCorrected) {};
 
 protected:        
 
@@ -277,7 +284,8 @@ protected:
   // Array for non-tiled gridding
   Array<Complex> griddedData;
   Array<Complex> griddedWeight;
-
+  Array<DComplex> griddedData2;
+  Array<DComplex> griddedWeight2;
   // Pointing columns
   MSPointingColumns* mspc;
 

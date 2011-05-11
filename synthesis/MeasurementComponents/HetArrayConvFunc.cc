@@ -34,6 +34,8 @@
 #include <casa/Arrays/Matrix.h>
 #include <casa/Arrays/Cube.h>
 #include <casa/Containers/SimOrdMap.h>
+#include <scimath/Mathematics/MathFunc.h>
+#include <scimath/Mathematics/ConvolveGridder.h>
 #include <casa/Utilities/Assert.h>
 #include <casa/Utilities/CompositeNumber.h>
 #include <coordinates/Coordinates/CoordinateSystem.h>
@@ -60,17 +62,18 @@
 #include <msvis/MSVis/VisibilityIterator.h>
 
 #include <synthesis/MeasurementComponents/PBMath1DAiry.h>
+#include <synthesis/MeasurementComponents/PBMath1DNumeric.h>
 #include <synthesis/MeasurementComponents/HetArrayConvFunc.h>
 namespace casa { //# NAMESPACE CASA - BEGIN
 
-  HetArrayConvFunc::HetArrayConvFunc() : convFunctionMap_p(-1), antDiam2IndexMap_p(-1),msId_p(-1), actualConvIndex_p(-1)
+  HetArrayConvFunc::HetArrayConvFunc() : convFunctionMap_p(0), nDefined_p(0), antDiam2IndexMap_p(-1),msId_p(-1), actualConvIndex_p(-1)
   {
     
     init(PBMathInterface::AIRY);
   }
 
   HetArrayConvFunc::HetArrayConvFunc(const PBMathInterface::PBClass typeToUse):
-    convFunctionMap_p(-1), antDiam2IndexMap_p(-1),msId_p(-1), actualConvIndex_p(-1) 
+    convFunctionMap_p(0), nDefined_p(0), antDiam2IndexMap_p(-1),msId_p(-1), actualConvIndex_p(-1) 
   {
     
     init(typeToUse);
@@ -94,6 +97,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     if(msId_p != vb.msId()){
       msId_p=vb.msId();
       const ROMSAntennaColumns& ac=vb.msColumns().antenna();
+      //cerr << "K: Number of rows " << ac.nrow() << endl;
       antIndexToDiamIndex_p.resize(ac.nrow());
       antIndexToDiamIndex_p.set(-1);
       Int diamIndex=antDiam2IndexMap_p.ndefined();
@@ -103,24 +107,27 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	  antIndexToDiamIndex_p(k)=antDiam2IndexMap_p(dishDiam(k));
 	}
 	else{
-	  antDiam2IndexMap_p.define(dishDiam(k), diamIndex);
-	  antIndexToDiamIndex_p(k)=diamIndex;
-	  antMath_p.resize(diamIndex+1);
-	  if(pbClass_p== PBMathInterface::AIRY){
-	    Quantity qdiam(dishDiam(k),"m");
-	    //VLA ratio of blockage to dish
-	    Quantity blockDiam(dishDiam(k)/25.0*2.0, "m");
-	    
-	    antMath_p[diamIndex]=new PBMath1DAiry(qdiam, blockDiam,  
-						Quantity(70,"arcsec"), 
-						Quantity(100.0,"GHz"));
-	  }
-	  else{
+	  if(dishDiam[k] > 0.0){ //there may be stations with no dish on
+	    antDiam2IndexMap_p.define(dishDiam(k), diamIndex);
+	    antIndexToDiamIndex_p(k)=diamIndex;
+	    antMath_p.resize(diamIndex+1);
+	    if(pbClass_p== PBMathInterface::AIRY){
+	      Quantity qdiam(dishDiam(k),"m");
+	      
+	      //VLA ratio of blockage to dish
+	      Quantity blockDiam(dishDiam(k)/25.0*2.0, "m");	      
+	      antMath_p[diamIndex]=new PBMath1DAiry(qdiam, blockDiam,  
+						    Quantity(150,"arcsec"), 
+						    Quantity(100.0,"GHz"));
+	      
+	      
+	    }
+	    else{
 
-	    cout<< "Don't deal with non airy dishes yet " << endl;
-	  }
-	  ++diamIndex;
-	  
+	      cout<< "Don't deal with non airy dishes yet " << endl;
+	    }
+	    ++diamIndex;
+	  } 
 	}
 
       }
@@ -144,7 +151,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 					  Vector<Int>& rowMap)
   {
 
-    storeImageParams(iimage);
+    storeImageParams(iimage,vb);
     findAntennaSizes(vb);
     uInt ndish=antMath_p.nelements();
     if(ndish==0)
@@ -161,11 +168,22 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     convsize.resize();
     convSupport.resize();
 
-    if(checkPBOfField(vb, rowMap) && (rowMap.shape()[0]==vb.nRow())){
+    Int isCached=checkPBOfField(vb, rowMap);
+ 
+    //cout << "isCached " << isCached <<  endl;
+    if(isCached==1 && (rowMap.shape()[0]==vb.nRow())){
       convFunc.reference(convFunc_p);
       weightConvFunc.reference(weightConvFunc_p);
       convsize=*convSizes_p[actualConvIndex_p];
       convSupport=convSupport_p;
+      return;
+    }
+    else if(isCached ==2){
+      convFunc.resize();
+      weightConvFunc.resize();
+      convsize.resize();
+      convSupport.resize();
+      rowMap.resize();
       return;
     }
     // Get the coordinate system
@@ -175,28 +193,36 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     // Set up the convolution function.
     Int nx=nx_p;
     Int ny=ny_p;
+    Int support=0;
     if(!doneMainConv_p){
-      Int support=0;
       for (uInt ii=0; ii < ndish; ++ii){
 	support=max((antMath_p[ii])->support(coords), support);
       }
-      convSize_p=2*support*convSampling;
+      support=min(Int(max(nx_p, ny_p)*1.2), support);
+      convSize_p=support*convSampling;
       CompositeNumber cn(convSize_p);
       convSize_p=cn.nearestEven(convSize_p);
     }
     
-    MDirection fieldDir=vb.direction1()(0);
     
-    DirectionCoordinate dc=coords.directionCoordinate(directionIndex);
+    DirectionCoordinate dc=dc_p;
     //where in the image in pixels is this pointing
     Vector<Double> pixFieldDir(2);
-    dc.toPixel(pixFieldDir, fieldDir);
+    //no need to call toPix here as its been done already above in checkOFPB
+    //thus the values are still current.
+    pixFieldDir=thePix_p;
+    //toPix(pixFieldDir, vb);
+    MDirection fieldDir=direction1_p;
+    //cout << "PixelFieldDir " << pixFieldDir << endl;
+    //cout << "vb.nrow() "<< vb.nRow() << endl;
     //shift from center
     pixFieldDir(0)=pixFieldDir(0)- Double(nx / 2);
     pixFieldDir(1)=pixFieldDir(1)- Double(ny / 2);
     //phase gradient per pixel to apply
     pixFieldDir(0)=-pixFieldDir(0)*2.0*C::pi/Double(nx)/Double(convSampling);
     pixFieldDir(1)=-pixFieldDir(1)*2.0*C::pi/Double(ny)/Double(convSampling);
+
+    
 
 
     if(!doneMainConv_p){
@@ -215,6 +241,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       dc.setReferenceValue(fieldDir.getAngle().getValue());
       coords.replaceCoordinate(dc, directionIndex);
     
+
       IPosition pbShape(4, convSize_p, convSize_p, 1, 1);
       TempImage<Complex> twoDPB(pbShape, coords);    
     
@@ -236,28 +263,35 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	  screen=1.0;
 	  pBScreen.putSlice(screen, start);
 	  //one antenna 
-	  (antMath_p[k])->applyVP(pBScreen, pBScreen, vb.direction1()(0));
+	  (antMath_p[k])->applyVP(pBScreen, pBScreen, direction1_p);
 	  //Then the other
-	  (antMath_p[j])->applyVP(pBScreen, pBScreen, vb.direction2()(0));
-	  //*****************
-	  //if(0){
-	  //  ostringstream os1;
-	  //  os1 << "PB_field_" << vb.fieldId() << "_antpair_" << k <<"_"<<j ;
-	  //  PagedImage<Float> thisScreen(pbShape, coords, String(os1));
-	  //  LatticeExpr<Float> le(abs(pBScreen));
-	  //  thisScreen.copyData(le);
-	  //
+	  (antMath_p[j])->applyVP(pBScreen, pBScreen, direction2_p);
+	  /*****************
+	  if(0){
+	    ostringstream os1;
+	    os1 << "PB_field_" << Int(thePix_p[0]) << "_" << Int(thePix_p[1]) << "_antpair_" << k <<"_"<<j ;
+	    PagedImage<Float> thisScreen(pbShape, coords, String(os1));
+	    LatticeExpr<Float> le(abs(pBScreen));
+	    thisScreen.copyData(le);
+	  
 	  //	}
-	  //*****************
+	  *****************/
 	  Matrix<Complex> screenoo(convSize_p, convSize_p);
 	  screenoo.set(1.0);
 	  pB2Screen.putSlice(screenoo, start);
 	//one antenna 
-	  (antMath_p[k])->applyPB(pB2Screen, pB2Screen, vb.direction1()(0));
+	  (antMath_p[k])->applyPB(pB2Screen, pB2Screen, direction1_p);
 	  //Then the other
-	  (antMath_p[j])->applyPB(pB2Screen, pB2Screen, vb.direction2()(0));
+	  (antMath_p[j])->applyPB(pB2Screen, pB2Screen, direction2_p);
+	  
+
+	  pBScreen.copyData((LatticeExpr<Complex>) (iif(abs(pBScreen)> 5e-2, pBScreen, 0)));
+	  pB2Screen.copyData((LatticeExpr<Complex>) (iif(abs(pB2Screen)> 25e-4, pB2Screen, 0)));
+
 	  LatticeFFT::cfft2d(pBScreen);
 	  LatticeFFT::cfft2d(pB2Screen);
+	
+
 	  Int plane=0;
 	  for (uInt jj=0; jj < k; ++jj)
 	    plane=plane+ndish-jj-1;
@@ -265,11 +299,10 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 	  convFunc_p.xyPlane(plane)=pBScreen.get(True);
 	  weightConvFunc_p.xyPlane(plane)=pB2Screen.get(True);
-	  
 	  supportAndNormalize(plane, convSampling);
 	  
 	}
-      
+	
       }
 
 
@@ -373,18 +406,26 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	  if((maxAbsConvFunc-minAbsConvFunc) > (1.0e-2*maxAbsConvFunc)) 
 	  found=True;
 	  // if it drops by more than 2 magnitudes per pixel
-	  trial=3;
+	  trial=5;
 	}
 				 
 	if(found) {
 	  convSupport=Int(0.5+Float(trial)/Float(convSampling))+1;
+	  //support is really over the edge
+	  if( (convSupport*convSampling) >= convSize_p/2){
+	    convSupport=convSize_p/2/convSampling-1;
+	  }
 	}
 	else {
+	  /*
 	  os << "Convolution function is misbehaved - support seems to be zero\n"
 	     << "Reasons can be: \nThe image definition not covering one or more of the pointings selected \n"
          << "Or no unflagged data in a given pointing"
 	     
 	     << LogIO::EXCEPTION;
+	  */
+	  //OTF may have flagged stuff ...
+	  convSupport=0;
 	}
 	convSupport_p(plane)=convSupport;
 	Double pbSum=0.0;
@@ -401,20 +442,26 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	}
     
 	*/
-	IPosition blc(2, -convSupport*convSampling+convSize_p/2, -convSupport*convSampling+convSize_p/2);
-	IPosition trc(2, convSupport*convSampling+convSize_p/2, convSupport*convSampling+convSize_p/2);
-	
-	pbSum=real(sum(convFunc_p.xyPlane(plane)(blc,trc)));
-	if(pbSum>0.0) {
-	  (convFunc_p.xyPlane(plane))=convFunc_p.xyPlane(plane)*Complex(1.0/pbSum,0.0);
-	  (weightConvFunc_p.xyPlane(plane)) =(weightConvFunc_p.xyPlane(plane))*Complex(1.0/pbSum,0.0);
-	}
-	else {
-	  os << "Convolution function integral is not positive"
-	     << LogIO::EXCEPTION;
-	}
+	if(convSupport >0){
+	  IPosition blc(2, -convSupport*convSampling+convSize_p/2, -convSupport*convSampling+convSize_p/2);
+	  IPosition trc(2, convSupport*convSampling+convSize_p/2, convSupport*convSampling+convSize_p/2);
+	  
+	  pbSum=real(sum(convFunc_p.xyPlane(plane)(blc,trc)));
+	  if(pbSum>0.0) {
+	    (convFunc_p.xyPlane(plane))=convFunc_p.xyPlane(plane)*Complex(1.0/pbSum,0.0);
+	    (weightConvFunc_p.xyPlane(plane)) =(weightConvFunc_p.xyPlane(plane))*Complex(1.0/pbSum,0.0);
+	  }
+	  else {
+	    os << "Convolution function integral is not positive"
+	       << LogIO::EXCEPTION;
+	  }
 
-
+	}
+	else{
+	  //no valid convolution for this pointing
+	  convFunc_p.xyPlane(plane).set(0.0);
+	  weightConvFunc_p.xyPlane(plane).set(0.0);
+	}
 
   }
 
@@ -426,28 +473,71 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   }
 
 
-  Bool HetArrayConvFunc::checkPBOfField(const VisBuffer& vb, 
+  Int HetArrayConvFunc::checkPBOfField(const VisBuffer& vb, 
 					Vector<Int>& rowMap){
     
-    Int fieldid=vb.fieldId();
+    toPix(vb);
+    Vector<Int> pixdepoint(2);
+    convertArray(pixdepoint, thePix_p);
+    if((pixdepoint(0) < 0) ||  pixdepoint(0) >= nx_p || pixdepoint(1) < 0 || 
+       pixdepoint(1) >=ny_p){
+      //cout << "in pix de point off " << pixdepoint << endl;
+      return 2;
+    }
+    String pointingid=String::toString(pixdepoint(0))+"_"+String::toString(pixdepoint(1));
+    //Int fieldid=vb.fieldId();
     Int msid=vb.msId();
-    String mapid=String::toString(msid)+String("_")+String::toString(fieldid);
+    //If channel or pol length has changed underneath...then its time to 
+    //restart the map
+    /*
+    if(convFunctionMap_p.ndefined() > 0){
+      if ((fluxScale_p.shape()[3] != nchan_p) || (fluxScale_p.shape()[2] != npol_p)){
+	convFunctionMap_p.clear();
+      }
+    }
+
+    */
+    if(convFunctionMap_p.nelements() > 0){
+      if ((fluxScale_p.shape()[3] != nchan_p) || (fluxScale_p.shape()[2] != npol_p)){
+	convFunctionMap_p.resize();
+	nDefined_p=0;
+      }
+    }
+    String mapid=String::toString(msid)+String("_")+pointingid;
+    /*
     if(convFunctionMap_p.ndefined() == 0){
       convFunctionMap_p.define(mapid, 0);    
       actualConvIndex_p=0;
       fluxScale_p=TempImage<Float>(IPosition(4,nx_p,ny_p,npol_p,nchan_p), csys_p);
       filledFluxScale_p=False;
       fluxScale_p.set(0.0);
-      return False;
+      return -1;
     }
-    if(!convFunctionMap_p.isDefined(mapid)){
-      actualConvIndex_p=convFunctionMap_p.ndefined();
-      convFunctionMap_p.define(mapid, actualConvIndex_p);
-      return False;
+    */
+    if(convFunctionMap_p.nelements() == 0){
+      convFunctionMap_p.resize(nx_p*ny_p);
+      convFunctionMap_p.set(-1);
+      convFunctionMap_p[pixdepoint[1]*nx_p+pixdepoint[0]]=0;
+      nDefined_p=1;
+      actualConvIndex_p=0;
+      fluxScale_p=TempImage<Float>(IPosition(4,nx_p,ny_p,npol_p,nchan_p), csys_p);
+      filledFluxScale_p=False;
+      fluxScale_p.set(0.0);
+      return -1;
+    }
+    
+    // if(!convFunctionMap_p.isDefined(mapid)){
+    //  actualConvIndex_p=convFunctionMap_p.ndefined();
+    //  convFunctionMap_p.define(mapid, actualConvIndex_p);
+    if(convFunctionMap_p[pixdepoint[1]*nx_p+pixdepoint[0]] <0){
+      actualConvIndex_p=nDefined_p;
+      convFunctionMap_p[pixdepoint[1]*nx_p+pixdepoint[0]]=nDefined_p;
+      ++nDefined_p;
+      return -1;
     }
     else{
-      actualConvIndex_p=convFunctionMap_p(mapid);
 
+      actualConvIndex_p=convFunctionMap_p[pixdepoint[1]*nx_p+pixdepoint[0]]; 
       convFunc_p.resize(); // break any reference
       weightConvFunc_p.resize(); 
       convSupport_p.resize();
@@ -463,7 +553,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       makerowmap(vb, rowMap);
     }
 
-    return True;
+    return 1;
   
 
   }
@@ -489,7 +579,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
     }
 
-    //cout << "rowmap " << rowMap.nelements() << " min " << min(rowMap) << " max " << max(rowMap) << endl;
   }
 
   ImageInterface<Float>&  HetArrayConvFunc::getFluxScaleImage(){
@@ -516,7 +605,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	  }
 	}
       }
-
       filledFluxScale_p=True;  
     }
     
@@ -525,5 +613,25 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
   }
 
+void HetArrayConvFunc::sliceFluxScale(Int npol) {
+     IPosition fshp=fluxScale_p.shape();
+     if (fshp(2)>npol){
+       npol_p=npol;
+       // use first npol planes...
+       IPosition blc(4,0,0,0,0);
+       IPosition trc(4,fluxScale_p.shape()(0)-1, fluxScale_p.shape()(1)-1,npol-1,fluxScale_p.shape()(3)-1);
+       Slicer sl=Slicer(blc, trc, Slicer::endIsLast);
+       //writeable if possible
+       SubImage<Float> fluxScaleSub = SubImage<Float> (fluxScale_p, sl, True);
+       SubImage<Float> convWeightImageSub = SubImage<Float> (*convWeightImage_p, sl, True);
+       fluxScale_p = TempImage<Float>(fluxScaleSub.shape(),fluxScaleSub.coordinates());
+       TempImage<Float>* convWeightImage_p = new TempImage<Float> (convWeightImageSub.shape(),convWeightImageSub.coordinates());
+       LatticeExpr<Float> le(fluxScaleSub);
+       fluxScale_p.copyData(le);
+       LatticeExpr<Float> le2(convWeightImageSub);
+       convWeightImage_p->copyData(le2);
+     }
+  }
 
 } //# NAMESPACE CASA - END
+

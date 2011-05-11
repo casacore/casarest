@@ -13,9 +13,9 @@ namespace casa {
 
 // The UvwCoords ctor has lines for the antennas, antenna offsets, and station
 // positions.  This ctor assumes they're present in msc_p if present at all.
-  MSUVWGenerator::MSUVWGenerator(MS &ms_ref, const MBaseline::Types bltype,
+  MSUVWGenerator::MSUVWGenerator(MSColumns &msc_ref, const MBaseline::Types bltype,
 				 const Muvw::Types uvwtype) :
-  msc_p(ms_ref),				    	
+  msc_p(msc_ref),				    	
   bl_csys_p(MBaseline::Ref(bltype)), // MBaseline::J2000, ITRF, etc.
   uvw_csys_p(uvwtype),               // uvw_csys_p(Muvw::J2000, ITRF, etc.)
   antColumns_p(msc_p.antenna()),
@@ -26,15 +26,16 @@ namespace casa {
 {
   // It seems that using a String is the only safe way to go from say,
   // MPosition::ITRF to MBaseline::ITRF.
-  MBaseline::getType(refposref_p, MPosition::showType(refpos_p.getRef().getType()));
+  MBaseline::getType(refposref_p,
+                     MPosition::showType(refpos_p.getRef().getType()));
 
-  fill_bl_an(bl_an_p, ms_ref);		
+  fill_bl_an(bl_an_p);		
 }
 
 MSUVWGenerator::~MSUVWGenerator(){
 }
 
-void MSUVWGenerator::fill_bl_an(Vector<MVBaseline>& bl_an_p, const MS &ms_ref)
+void MSUVWGenerator::fill_bl_an(Vector<MVBaseline>& bl_an_p)
 {
   nant_p = antPositions_p.table().nrow();
   logSink() << LogIO::DEBUG1 << "nant_p: " << nant_p << LogIO::POST;
@@ -88,7 +89,8 @@ void MSUVWGenerator::fill_bl_an(Vector<MVBaseline>& bl_an_p, const MS &ms_ref)
     sqrt(smallestDiam * secondSmallestDiam) / max_baseline;
 }  
 
-void MSUVWGenerator::uvw_an(const MEpoch& timeCentroid, const Int fldID)
+void MSUVWGenerator::uvw_an(const MEpoch& timeCentroid, const Int fldID,
+                            const Bool WSRTConvention)
 {
   const MDirection& phasedir = msc_p.field().phaseDirMeas(fldID);
   MeasFrame  measFrame(refpos_p, timeCentroid, phasedir);
@@ -102,24 +104,34 @@ void MSUVWGenerator::uvw_an(const MEpoch& timeCentroid, const Int fldID)
 	    << LogIO::POST;
 
   MBaseline::Ref basref(refposref_p);
-  basMeas.set(mvbl, basref);
+  basMeas.set(mvbl, basref);            // in antenna frame
   basMeas.getRefPtr()->set(measFrame);
 
-  // convert from ITRF vector to baseline vector in bl_csys_p's frame
+  // Setup a machine for converting a baseline vector from the antenna frame to
+  // bl_csys_p's frame
   MBaseline::Convert elconv(basMeas, bl_csys_p);
 
-  Muvw          uvwMeas;
-  Muvw::Ref     uvwref(uvw_csys_p, measFrame);
-  Muvw::Convert uvwconv(uvwMeas, uvwref);
- 
   for(uInt i = 0; i < nant_p; ++i){
     //TODO: (Soon!) Antenna offsets are not handled yet.
     basMeas.set(bl_an_p[i], basref);
     MBaseline basOutFrame = elconv(basMeas);
+    //MBaseline::Types botype = MBaseline::castType(basOutFrame.getRef().getType());
     MVuvw uvwOutFrame(basOutFrame.getValue(), phasedir.getValue());
     
     antUVW_p[i] = uvwOutFrame.getValue();
   }
+
+  // Tony Willis supplied this crucial bit of history: the WSRT definition of
+  // phase is opposite to that of the VLA - the WSRT definition of the l,m
+  // direction cosines is that l increases toward decreasing RA, whereas the
+  // VLA definition is that l increases toward increasing RA.  AIPS seems to
+  // understand this.  (For a completely useless piece of trivia, the WSRT defn
+  // of phase is consistent with that of the Cambridge one-mile telescope as
+  // Wim Brouw set things up to be in agreement with the one-mile telescope ca
+  // 1968.)
+  // RR: It is not just l, v and w are flipped as well.
+  if(WSRTConvention)
+    antUVW_p = -antUVW_p;
 }
 
 // antUVW_p must be set up for the correct timeCentroid and phase direction by
@@ -142,6 +154,7 @@ Bool MSUVWGenerator::make_uvws(const Vector<Int> flds)
   const ROScalarColumn<Int> ant2(msc_p.antenna2());
   const ROScalarColumn<Int> feed1(msc_p.feed1());
   const ROScalarColumn<Int> feed2(msc_p.feed2());
+  const ROScalarColumn<Int> obsID(msc_p.observationId());
 
   // Use a time ordered index to minimize the number of calls to uvw_an.
   // TODO: use field as a secondary sort key.
@@ -161,21 +174,36 @@ Bool MSUVWGenerator::make_uvws(const Vector<Int> flds)
   logSink() << LogIO::DEBUG1 << "timeRes_p: " << timeRes_p << LogIO::POST;
 
   try{
+    Bool oldWsrtConvention = (msc_p.observation().telescopeName()(obsID(tOI[0])) ==
+                              "WSRT");
+
     // Ensure a call to uvw_an on the 1st iteration.
     const Unit sec("s");
     Double oldTime = timeCentMeas(tOI[0]).get(sec).getValue() - 2.0 * timeRes_p;
     Int    oldFld  = -2;
     for(uInt row = 0; row < msc_p.nrow(); ++row){
-      uInt toir = tOI[row];
+      uInt   toir = tOI[row];
       Double currTime = timeCentMeas(toir).get(sec).getValue();
       Int    currFld  = fieldID(toir);
+      Bool   newWsrtConvention = (msc_p.observation().telescopeName()(obsID(toir)) ==
+                                  "WSRT");
 
-      if(currTime - oldTime > timeRes_p || currFld != oldFld){
+      if(currTime - oldTime > timeRes_p || currFld != oldFld
+         || newWsrtConvention != oldWsrtConvention){
         oldTime = currTime;
         oldFld  = currFld;
+
+        if(newWsrtConvention != oldWsrtConvention){
+          logSink() << LogIO::WARN
+                    << "There is a switch to or from the WSRT convention at row "
+                    << toir << ".\nWatch for an inconsistency in the sign of UVW."
+                    << LogIO::POST;
+          oldWsrtConvention = newWsrtConvention;
+        }
+
         logSink() << LogIO::DEBUG1 << "currTime: " << currTime
                   << "\ncurrFld: " << currFld << LogIO::POST;
-        uvw_an(timeCentMeas(toir), currFld);
+        uvw_an(timeCentMeas(toir), currFld, newWsrtConvention);
       }
     
       if(flds[fieldID(toir)] > -1){

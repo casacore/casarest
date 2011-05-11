@@ -53,6 +53,7 @@
 #include <casa/Logging/LogMessage.h>
 #include <casa/Logging/LogSink.h>
 #include <casa/Logging/LogIO.h>
+#include <casa/BasicSL/Constants.h>
 
 #include <msvis/MSVis/StokesVector.h>
 #include <synthesis/MeasurementEquations/ConvolutionEquation.h>
@@ -105,13 +106,24 @@ Bool MFCleanImageSkyModel::addResidual(Int image,
 Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 
 
-  //blankOverlappingModels();
   LogIO os(LogOrigin("MFCleanImageSkyModel","solve"));
   Bool converged=True;
   //Make the PSFs, one per field
-  if(!donePSF_p){
+  /*back out for now
+  if(modified_p){ 
+      blankOverlappingModels();
+      makeNewtonRaphsonStep(se, False);
+  }
+  if(numberIterations() < 1){
+      // Why waste the time to set up
+      return True;
+  }
+  */
+
+  if(!donePSF_p) {
     makeApproxPSFs(se);
   }
+
   // Validate PSFs for each field
   Vector<Float> psfmax(numberOfModels()); psfmax=0.0;
   Vector<Float> psfmaxouter(numberOfModels()); psfmaxouter=0.0;
@@ -121,6 +133,7 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
   Int psfpatch=51;
   Float maxSidelobe=0.0;
   Int model;
+  os << LogIO::NORMAL1;   // Loglevel INFO
   for (model=0;model<numberOfModels();model++) {
     if(isSolveable(model)) {
       
@@ -156,7 +169,7 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 	CoordinateSystem cs=PSF(model).coordinates();
 	Vector<String> unitas=cs.worldAxisUnits();
 	unitas(0)="arcsec";
-	unitas(2)="arcsec";
+	unitas(1)="arcsec";
 	cs.setWorldAxisUnits(unitas);
 	//Get the minimum increment in arcsec
 	Double incr=abs(min(cs.increment()(0), cs.increment()(1)));
@@ -173,11 +186,13 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 	psfmaxouter(model) << endl;
       if(abs(psfmin(model))>maxSidelobe) maxSidelobe=abs(psfmin(model));
       if(psfmaxouter(model) > maxSidelobe) maxSidelobe= psfmaxouter(model );
+      //      os << "     : PSFPatch = " << psfpatch << LogIO::POST;
     }
   }
   os << LogIO::POST;
 	
   Float absmax=threshold();
+  Float oldabsmax=C::flt_max;
   Float cycleThreshold=0.0;
   Block< Vector<Int> > iterations(numberOfModels());
   Int maxIterations=0;
@@ -186,6 +201,7 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
   // Loop over major cycles
   Int cycle=0;
   Bool stop=False;
+  Bool diverging=False;
 
   if (displayProgress_p) {
     progress_p = new ClarkCleanProgress( pgplotter_p );
@@ -214,6 +230,9 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
     }
   }
 
+  //merge the overlapping part of the masks if any
+  mergeOverlappingMasks();
+  
 
   PtrBlock<Matrix<Float> *>  lmaskCube(nmodels*nchan);
 
@@ -300,27 +319,29 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 
     
   Float maxggS=0.0;
+  Bool lastCycleWriteModel=False;
 
-  while(absmax>=threshold()&&maxIterations<numberIterations()&&!stop) {
-
-    os << "*** Starting major cycle " << cycle << LogIO::POST;
+  while(absmax>=threshold()&&maxIterations<numberIterations()&&!stop && !diverging) {
+    os << LogIO::NORMAL
+       << "*** Starting major cycle " << cycle
+       << LogIO::POST; // Loglevel PROGRESS
     cycle++;
 
     // Make the residual images. We do an incremental update
     // for cycles after the first one. If we have only one
     // model then we use convolutions to speed the processing
-    os << "Making residual images for all fields" << LogIO::POST;
+    os << LogIO::NORMAL2 << "Making residual images for all fields" << LogIO::POST; // Loglevel PROGRESS
     if(modified_p){ 
+      blankOverlappingModels();
       makeNewtonRaphsonStep(se, False);
       //makeNewtonRaphsonStep(se, (cycle>1));
     }
 
-
     if(numberIterations() < 1){
       // Why waste the time to set up
       return True;
-
     }
+    
 
     if(0) {
       ostringstream name;
@@ -345,7 +366,8 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 	  thisImage.copyData(ggS(0));
 	}
       }
-      os << "Maximum sensitivity = " << 1.0/sqrt(maxggS)
+      os << LogIO::NORMAL1 // Loglevel INFO
+         << "Maximum sensitivity = " << 1.0/sqrt(maxggS)
 	 << " Jy/beam" << LogIO::POST;
     }
 
@@ -359,7 +381,18 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
     }
 
     absmax=maxField(resmax, resmin);
+    if(cycle >1){
+      //check if its 5% above previous value 
+      if(absmax < 1.000005*oldabsmax)
+	oldabsmax=absmax;
+      else{
+	diverging=True;
+	os << LogIO::WARN 
+         << "Clean not converging   "  << LogIO::POST;
+      }
+    }
 
+    os << LogIO::NORMAL1; // Loglevel INFO
     for (model=0;model<numberOfModels();model++) {
       os << "Model " << model << ": max, min (weighted) residuals = "
 	 << resmax(model) << ", " << resmin(model) << endl;
@@ -368,19 +401,40 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 
     // Can we stop?
     if(absmax<threshold()) {
-      os << "Reached stopping peak residual = " << absmax << LogIO::POST;
+      os << LogIO::NORMAL // Loglevel PROGRESS
+         << "Reached stopping peak residual = " << absmax << LogIO::POST;
       stop=True;
+      if(cycle >1)
+	lastCycleWriteModel=True;
     }
-    else {
+    else if(!diverging) {
+      
     
       // Calculate the threshold for this cycle. Add a safety factor
-      // This will be fixed someday by an option for an increasing threshold
-      Float fudge = cycleFactor_p * maxSidelobe;
-      if (fudge > 0.8) fudge = 0.8;   // painfully slow!
 
-      cycleThreshold=max(0.95*threshold(), fudge * absmax);
-      os << "Maximum residual = " << absmax << ", cleaning down to "
-	 << cycleThreshold << LogIO::POST;
+      // fractionOfPsf controls how deep the cleaning should go. 
+      // There are two user-controls.
+      //  cycleFactor_p : scale factor for the PSF sidelobe level. 
+      //                         1 : clean down to the psf sidelobe level
+      //                         <1 : go deeper
+      //                         >1 : shallower : stop sooner.
+      //                          Default : 1.5
+      //  cycleMaxPsfFraction_p : scale factor as a fraction of the PSF peak
+      //                                     must be 0.0 < xx < 1.0 (obviously)
+      //                                     Default : 0.8
+      Float fractionOfPsf = min(cycleMaxPsfFraction_p, cycleFactor_p * maxSidelobe);
+      if (fractionOfPsf > (Float)0.8) 
+	{
+	  //          os << LogIO::WARN << "PSF fraction for threshold computation is too high : " << fractionOfPsf << ".  Forcing to 0.8 to ensure that the threshold is smaller than the peak residual !" << LogIO::POST;
+          os << LogIO::NORMAL << "Current values of max-PSF-fraction, cycle-factor and max PSF sidelobe level result in a stopping threshold more than 80% of the peak residual. Forcing the maximum threshold to 80% of the peak." << LogIO::POST;
+          fractionOfPsf = 0.8;   // painfully slow!
+	}
+
+      os << LogIO::NORMAL << "The minor-cycle threshold is MAX[ 0.95 x " << threshold()  << "  ,   peak residual x " << fractionOfPsf  <<  " ] " << LogIO::POST;
+
+      cycleThreshold=max(0.95*threshold(), fractionOfPsf * absmax);
+      os << LogIO::NORMAL << "Maximum residual = " << absmax // Loglevel INFO
+         << ", cleaning down to " << cycleThreshold << LogIO::POST;
       
       for (model=0;model<numberOfModels();model++) {
 	
@@ -398,6 +452,7 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 	    iterations[model].resize(nchan);
 	  else
 	    iterations[model].resize(nchan*npol);
+	  iterations[model].resize(nchan*npol);
 	  iterations[model]=0;
 	}
 	  
@@ -411,7 +466,9 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
           if((abs(resmax(model))>cycleThreshold)||
 	     (abs(resmin(model))>cycleThreshold)) {
 
-	    os << "Processing model " << model << LogIO::POST;
+	    os << LogIO::NORMAL
+               << "Processing model " << model
+               << LogIO::POST; // Loglevel PROGRESS
 	    
 	    IPosition onePlane(4, nx, ny, 1, 1);
 	    IPosition oneCube(4, nx, ny, npolcube, 1);
@@ -455,13 +512,15 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 		   ggSli++,chan++) {
 	      if(!doPolJoint_p){
 		if(chan==0){
-		  os << "Doing stokes "<< stokesID(ipol) << " image" <<LogIO::POST;
+		  os << LogIO::NORMAL // Loglevel PROGRESS
+                     << "Doing stokes "<< stokesID(ipol) << " image" <<LogIO::POST;
 		}
 		if(chan==nchan){
 		  chan=0;
 		  psfli.reset();
 		  ++ipol;
-		  os << "Doing stokes "<< stokesID(ipol) << " image" <<LogIO::POST;
+		  os << LogIO::NORMAL2 // Loglevel PROGRESS
+                     << "Doing stokes "<< stokesID(ipol) << " image" <<LogIO::POST;
 		}
 	      }
 	      if(hasMask(model) && isCubeMask[model] && chan >0) {
@@ -471,7 +530,8 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 	      if(psfmax(model)>0.0) {
 
 		if(nchan>1) {
-		  os<<"Processing channel "<<chan<<" of "<<nchan<<LogIO::POST;
+		  os << LogIO::NORMAL // Loglevel PROGRESS
+                     << "Processing channel "<<chan<<" of "<<nchan<<LogIO::POST;
 		}
 
 		// Renormalize by the weights 
@@ -486,7 +546,7 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 		  for (Int ix=0;ix<nx;ix++) {
 		    for (Int pol=0;pol<npolcube;pol++) {
 		      //resid(ix,iy,pol)*=weight(ix,iy,pol);
-		      if(weight(ix,iy,pol)>0.0001) {
+		      if(weight(ix,iy,pol)>0.01) {
 			wmask(ix,iy)=1.0;
 		      }
 		    }
@@ -526,7 +586,8 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 			 (void*) &HogbomCleanImageSkyModelmsgput,
 			 (void*) &HogbomCleanImageSkyModelstopnow);
 
-		  os<<"Finished Hogbom clean inner cycle " << LogIO::POST;
+		  os << LogIO::NORMAL // Loglevel PROGRESS
+                     << "Finished Hogbom clean inner cycle " << LogIO::POST;
 		  
 		  imageStepli.rwCursor().putStorage (limageStep_data, delete_its);
 		  deltaimageli.rwCursor().putStorage (ldeltaimage_data, delete_itdi);
@@ -562,7 +623,7 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 		  // residual image and psf and then clean it
 		  ConvolutionEquation eqn(psfli.matrixCursor(),
 					  residu);
-		  deltaimageli.rwCursor()=Float(0.0);
+		  deltaimageli.rwCursor().set(Float(0.0));
 		  ClarkCleanModel cleaner(deltaimageli.rwCursor());
 		  cleaner.setMask(wmask);
 		  cleaner.setGain(gain());
@@ -579,33 +640,18 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 		  if ( displayProgress_p ) {
 		    cleaner.setProgress( *progress_p );
 		  }
-		  cleaner.solve(eqn);
+		  cleaner.singleSolve(eqn, residu);
 		  iterations[model](chan*npolcube+ipol)=cleaner.numberIterations();
 		  maxIterations=(iterations[model](chan*npolcube+ipol)>maxIterations) ?
 		    iterations[model](chan*npolcube+ipol) : maxIterations;
 		  modified_p=True;
 		  
 		  cleaner.getModel(deltaimageli.rwCursor());
-		  /////Need to go
-		  /*
-		  Cube<Float> step(deltaimageli.rwCursor().nonDegenerate(3));
-		  for (Int iy=0;iy<ny;iy++) {
-		    for (Int ix=0;ix<nx;ix++) {
-		      for (Int pol=0;pol<npol;pol++) {
-			if(weight(ix,iy,pol)>0.0) {
-			  step(ix,iy,pol)/=weight(ix,iy,pol);
-			}
-		      }
-		    }
-		  }
-		  
-		  deltaimageli.rwCursor()=step.addDegenerate(1);
-		  */	  
-		  /////
 		  //imageli.rwCursor()+=deltaimageli.cursor();
-		  eqn.residual(imageStepli.rwCursor(), cleaner);
+		  //eqn.residual(imageStepli.rwCursor(), cleaner);
 		  
-		  os<<"Finished Clark clean inner cycle " << LogIO::POST;
+		  os << LogIO::NORMAL // Loglevel PROGRESS
+                     <<"Finished Clark clean inner cycle " << LogIO::POST;
 		}
 		if(maxIterations==0) {
 		  stop=True;
@@ -613,32 +659,41 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
 		else{
 		  stop=False;
 		}
-		os << "Clean used " << iterations[model](chan*npolcube+ipol) << " iterations" 
-		   << " to approach a threshold of " << cycleThreshold
+                // Upped to NORMAL per CAS-2017.
+		// cerr << model << " " << chan << " " << npolcube << " " << ipol 
+		//      << " " << iterations.nelements() 
+		//      << " " << iterations[0].shape()
+		//      << endl;
+		os << LogIO::NORMAL << "Clean used " // Loglevel PROGRESS
+                   << iterations[model](chan*npolcube+ipol) << " iterations" 
+		   << " to approach a threshhold of " << cycleThreshold
 		   << LogIO::POST; 
 	      }
 	    }
 	  }
 	  else {
-	    os<<"No need to clean model "<<model<<" :peak residual below threshold"
-	      <<LogIO::POST;
+	    os << LogIO::NORMAL // Loglevel INFO
+               << "No need to clean model " << model
+               << ": peak residual below threshhold"
+               << LogIO::POST;
 	  }
 	}
       }
 
       if(maxIterations != oldMaxIterations){
 	oldMaxIterations=maxIterations;
-	blankOverlappingModels();
 	for(Int model=0; model < numberOfModels(); ++model){
 	  image(model).copyData( LatticeExpr<Float>((image(model))+(deltaImage(model))));
-	  os << LatticeExprNode(sum(image(model))).getFloat() 
-	     << " Jy is the sum of clean components of model " 
+	  os << LogIO::NORMAL << LatticeExprNode(sum(deltaImage(model))).getFloat()  // Loglevel INFO
+	     << " Jy <- cleaned in this cycle for  model " 
 	     << model << LogIO::POST;
 	}
 
       }
       else {
-	os << "No more clean occured in this major cycle - stopping now" << LogIO::POST;
+	os << LogIO::NORMAL
+           << "No more iterations left in this major cycle - stopping now"
+           << LogIO::POST;
 	stop=True;
 	converged=True;
       }
@@ -661,20 +716,25 @@ Bool MFCleanImageSkyModel::solve(SkyEquation& se) {
     }
   }
   
-  if(modified_p) {
-    os << "Finalizing residual images for all fields" << LogIO::POST;
+  if(modified_p || lastCycleWriteModel) {
+    os << LogIO::NORMAL2 // Loglevel PROGRESS
+       << "Finalizing residual images for all fields" << LogIO::POST;
+    blankOverlappingModels();
     makeNewtonRaphsonStep(se, False, True); //committing model to MS
+    restoreOverlappingModels();
     Float finalabsmax=maxField(resmax, resmin);
     
-    os << "Final maximum residual = " << finalabsmax << LogIO::POST;
+    os << LogIO::NORMAL << "Final maximum residual = " << finalabsmax << LogIO::POST; // Loglevel INFO
     converged=(finalabsmax < 1.05 * threshold());
+    os << LogIO::NORMAL; // Loglevel INFO
     for (model=0;model<numberOfModels();model++) {
       os << "Model " << model << ": max, min residuals = "
-	 << resmax(model) << ", " << resmin(model) << endl;
+	 << resmax(model) << ", " << resmin(model) << " clean flux " << LatticeExprNode(sum(image(model))).getFloat() << endl;
     }
   }
   else {
-    os << "Residual images for all fields are up-to-date" << LogIO::POST;
+    os << LogIO::NORMAL2 // Loglevel PROGRESS
+       << "Residual images for all fields are up-to-date" << LogIO::POST;
   }
 
   os << LogIO::POST;
@@ -689,7 +749,8 @@ void MFCleanImageSkyModel::blankOverlappingModels(){
   if(numberOfModels() == 1) 
     return;
   /////////////////////
-  /*  for (Int model=0;model<(numberOfModels()); ++model) {
+  /*
+   for (Int model=0;model<(numberOfModels()); ++model) {
 
     
       LatticeExprNode maxIm=max(deltaImage(model));
@@ -698,63 +759,142 @@ void MFCleanImageSkyModel::blankOverlappingModels(){
   */
   //////////////
   for (Int model=0;model<(numberOfModels()-1); ++model) {
-    CoordinateSystem cs0=deltaImage(model).coordinates();
-    IPosition iblc0(deltaImage(model).shape().nelements(),0);
+    CoordinateSystem cs0=image(model).coordinates();
+    IPosition iblc0(image(model).shape().nelements(),0);
       
-      IPosition itrc0(deltaImage(model).shape());
+      IPosition itrc0(image(model).shape());
       itrc0=itrc0-Int(1);
-      LCBox lbox0(iblc0, itrc0, deltaImage(model).shape());
+      LCBox lbox0(iblc0, itrc0, image(model).shape());
 
       ImageRegion imagreg0(WCBox(lbox0, cs0));
     for (Int nextmodel=model+1; nextmodel < numberOfModels(); ++nextmodel){
-      CoordinateSystem cs=deltaImage(nextmodel).coordinates();
-      IPosition iblc(deltaImage(nextmodel).shape().nelements(),0);
+      CoordinateSystem cs=image(nextmodel).coordinates();
+      IPosition iblc(image(nextmodel).shape().nelements(),0);
       
-      IPosition itrc(deltaImage(nextmodel).shape());
+      IPosition itrc(image(nextmodel).shape());
       itrc=itrc-Int(1);
       
-      LCBox lbox(iblc, itrc, deltaImage(nextmodel).shape());
+      LCBox lbox(iblc, itrc, image(nextmodel).shape());
 
       ImageRegion imagreg(WCBox(lbox, cs));
       try{
-	SubImage<Float> partToMerge(deltaImage(nextmodel), imagreg0, True);
-	SubImage<Float> partToMask(deltaImage(model), imagreg, True);
-	LatticeRegion latReg0=imagreg0.toLatticeRegion(deltaImage(nextmodel).coordinates(), deltaImage(nextmodel).shape());
-	ArrayLattice<Bool> pixmerge(latReg0.get());
-	LatticeRegion latReg=imagreg.toLatticeRegion(deltaImage(model).coordinates(), deltaImage(model).shape());
+	SubImage<Float> partToMask(image(model), imagreg, True);
+	LatticeRegion latReg=imagreg.toLatticeRegion(image(model).coordinates(), image(model).shape());
 	ArrayLattice<Bool> pixmask(latReg.get());
-	/////////////////
-	/*Array<Bool> testoo;
-	testoo.assign(pixmask.get());
-       	cout << "Images " << model << "  and " << nextmodel << " shape " << pixmask.shape() << "  " << pixmerge.shape() << " number of T " << ntrue(testoo) << endl;
-	*/
-	////////////////
-	//LatticeExpr<Float> myexpr0(iif((pixmerge && (abs(partToMask) > abs(partToMerge))), partToMask, partToMerge) );
-	//partToMerge.copyData(myexpr0);
 	LatticeExpr<Float> myexpr(iif(pixmask, 0.0, partToMask) );
 	partToMask.copyData(myexpr);
 
       }
       catch(...){
-	//most probably no overlap
+	//no overlap you think ?
+	//cout << "Did i fail " << endl;
 	continue;
       }
-      //////////
-      /*
-      {
-	LatticeExprNode maxIm=max(image(model));
-	cout << "MAX model " << model << "    " << maxIm.getFloat() << endl;
-      }
-      */
-      /////////
     
-    }
+    
+      }
     
     
     
   }
 }
-  
+
+// test method - reversing blanking of overlapped regions
+void MFCleanImageSkyModel::restoreOverlappingModels(){
+  LogIO os(LogOrigin("MFCleanImageSkyModel","restoreOverlappingModels"));
+  if(numberOfModels() == 1)
+    return;
+  for (Int model=0;model<(numberOfModels()-1); ++model) {
+    CoordinateSystem cs0=image(model).coordinates();
+    IPosition iblc0(image(model).shape().nelements(),0);
+    IPosition itrc0(image(model).shape());
+    itrc0=itrc0-Int(1);
+    LCBox lbox0(iblc0, itrc0, image(model).shape());
+    ImageRegion imagreg0(WCBox(lbox0, cs0));
+
+    for (Int nextmodel=model+1; nextmodel < numberOfModels(); ++nextmodel){
+      CoordinateSystem cs=image(nextmodel).coordinates();
+      IPosition iblc(image(nextmodel).shape().nelements(),0);
+
+      IPosition itrc(image(nextmodel).shape());
+      itrc=itrc-Int(1);
+
+      LCBox lbox(iblc, itrc, image(nextmodel).shape());
+
+      ImageRegion imagreg(WCBox(lbox, cs));
+      try{
+        SubImage<Float> partToMerge(image(nextmodel), imagreg0, True);
+        SubImage<Float> partToUnmask(image(model), imagreg, True);
+        
+        LatticeRegion latReg0=imagreg0.toLatticeRegion(image(nextmodel).coordinates(), image(nextmodel).shape());
+        LatticeRegion latReg=imagreg.toLatticeRegion(image(model).coordinates(), image(model).shape());
+        ArrayLattice<Bool> pixmask(latReg.get());
+        LatticeExpr<Float> myexpr0(iif(pixmask,partToMerge,partToUnmask));
+        partToUnmask.copyData(myexpr0);
+
+      }
+      catch(AipsError x){
+	/*
+           os << LogIO::WARN
+              << "no overlap or failure of copying the clean components"
+              << x.getMesg()
+              << LogIO::POST;
+	*/
+        continue;
+      }
+    }
+  }
+}
+
+void MFCleanImageSkyModel::mergeOverlappingMasks(){
+  LogIO os(LogOrigin("MFCleanImageSkyModel","restoreOverlappingModels"));
+  if(numberOfModels() == 1)
+    return;
+  for (Int model=0;model<(numberOfModels()-1); ++model) {
+    if(hasMask(model)){
+	CoordinateSystem cs0=mask(model).coordinates();
+	IPosition iblc0(mask(model).shape().nelements(),0);
+	
+	IPosition itrc0(mask(model).shape());
+	itrc0=itrc0-Int(1);
+	LCBox lbox0(iblc0, itrc0, mask(model).shape());
+	
+	ImageRegion imagreg0(WCBox(lbox0, cs0));
+	for (Int nextmodel=model+1; nextmodel < numberOfModels(); ++nextmodel){
+	  if(hasMask(nextmodel)){
+	    CoordinateSystem cs=mask(nextmodel).coordinates();
+	    IPosition iblc(mask(nextmodel).shape().nelements(),0);
+	    
+	    IPosition itrc(mask(nextmodel).shape());
+	    itrc=itrc-Int(1);
+	    
+	    LCBox lbox(iblc, itrc, image(nextmodel).shape());
+	    
+	    ImageRegion imagreg(WCBox(lbox, cs));
+	    try{
+	      SubImage<Float> partToMerge(mask(nextmodel), imagreg0, True);
+	      SubImage<Float> partToMask(mask(model), imagreg, True);
+	      LatticeExpr<Float> myexpr0(max(partToMerge,partToMask));	      
+	      partToMask.copyData(myexpr0);
+	      partToMerge.copyData(myexpr0);
+
+	    }
+	    catch(AipsError x){
+	      //most probably no overlap
+	      /*
+		os << LogIO::WARN
+		<< "no overlap or failure of copying the clean components"
+		<< x.getMesg()
+		<< LogIO::POST;
+	      */
+	      continue;
+	    }
+	  }
+	}
+    }//hasmask(model)
+  }
+}
+
 // Find maximum residual
 Float MFCleanImageSkyModel::maxField(Vector<Float>& imagemax,
 				     Vector<Float>& imagemin) {

@@ -233,7 +233,7 @@ void BJonesPoly::setApply(const Record& applypar)
 //  Gildas routines and grids each spectrum.  It also does more sanity
 //  checking, logging, and produces a nicer plot.
 
-void BJonesPoly::selfSolve (VisSet& vs, VisEquation& ve)
+void BJonesPoly::selfGatherAndSolve (VisSet& vs, VisEquation& ve)
 {
 // Solver for the polynomial bandpass solution
 // Input:
@@ -250,7 +250,7 @@ void BJonesPoly::selfSolve (VisSet& vs, VisEquation& ve)
 //
 
 
-  LogIO os (LogOrigin("BJonesPoly", "solve()", WHERE));
+  LogIO os (LogOrigin("BJonesPoly", "selfGatherAndSolve()", WHERE));
 
   os << LogIO::NORMAL
      << "Fitting bandpass amplitude and phase polynomials."
@@ -853,7 +853,7 @@ void BJonesPoly::selfSolve (VisSet& vs, VisEquation& ve)
   
 };
 
-void BJonesPoly::selfSolve2(VisBuffGroupAcc& vbga)
+void BJonesPoly::selfSolveOne(VisBuffGroupAcc& vbga)
 {
 // Solver for the polynomial bandpass solution
 
@@ -863,7 +863,7 @@ void BJonesPoly::selfSolve2(VisBuffGroupAcc& vbga)
 //
 
 
-  LogIO os (LogOrigin("BJonesPoly", "solve()", WHERE));
+  LogIO os (LogOrigin("BJonesPoly", "selfSolveOne()", WHERE));
 
   os << LogIO::NORMAL
      << "THIS IS THE NEW MULTI-SPW-FLEXIBLE VERSION"
@@ -1186,10 +1186,10 @@ void BJonesPoly::selfSolve2(VisBuffGroupAcc& vbga)
 	(*normVis[iph])(ibl)/=(static_cast<Complex>((*normWeight[iph])(ibl)));
       for (Int ichan=0;ichan<nFreqGrid;ichan++) {
 	Double &wt=(*accumWeight[iph])(ichan,ibl);
-	// insist at least 4 baselines with good data for these antennas in this channel
+	// insist at least 2 baselines with good data for these antennas in this channel
 	if (wt > 0 &&
-	    antOkChan(ichan,ant1idx(ibl)) > 3 &&   
-	    antOkChan(ichan,ant2idx(ibl)) > 3 ) {
+	    antOkChan(ichan,ant1idx(ibl)) > 1 &&   
+	    antOkChan(ichan,ant2idx(ibl)) > 1 ) {
 	  (*accumVis[iph])(ichan,ibl)/= (static_cast<Complex>(wt));
 	  
 	  // If requested, normalize the data, if possible

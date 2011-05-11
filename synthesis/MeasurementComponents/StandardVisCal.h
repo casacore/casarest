@@ -1,5 +1,5 @@
 //# StandardVisCal.h: Declaration of standard (Solvable)VisCal types
-//# Copyright (C) 1996,1997,2000,2001,2002,2003
+//# Copyright (C) 1996,1997,2000,2001,2002,2003,2011
 //# Associated Universities, Inc. Washington DC, USA.
 //#
 //# This library is free software; you can redistribute it and/or modify it
@@ -33,60 +33,13 @@
 #include <casa/BasicSL/Complex.h>
 #include <synthesis/MeasurementComponents/VisCal.h>
 #include <synthesis/MeasurementComponents/SolvableVisCal.h>
-// for simulation 
-#include <casa/BasicMath/Random.h>
-#include <scimath/Mathematics/FFTServer.h>
-
-using namespace std;
-
-#ifndef CASA_STANDALONE
-#include <ATMRefractiveIndexProfile.h>
-#include <ATMPercent.h>
-#include <ATMPressure.h>
-#include <ATMNumberDensity.h>
-#include <ATMMassDensity.h>
-#include <ATMTemperature.h>
-#include <ATMLength.h>
-#include <ATMInverseLength.h>
-#include <ATMOpacity.h>
-#include <ATMHumidity.h>
-#include <ATMFrequency.h>
-#include <ATMWaterVaporRadiometer.h>
-#include <ATMWVRMeasurement.h>
-#include <ATMAtmosphereType.h>
-#include <ATMType.h>
-#include <ATMProfile.h>
-#include <ATMSpectralGrid.h>
-#include <ATMRefractiveIndex.h>
-#include <ATMSkyStatus.h>
-#include <ATMTypeName.h>
-#include <ATMAngle.h>
-#else
-//#ATM Not available; mimic the classes and functions used
-namespace atm{
-class Angle
-{
-public:
-  double get(string) const {return 0.0;}
-};
-class RefractiveIndexProfile
-{
-public:
-  Angle getDispersiveWetPhaseDelay(int,int) const {return Angle();}
-};
-class AtmProfile;
-class SkyStatus;
-class SpectralGrid;
-
-}
-#endif
+#include <synthesis/MeasurementComponents/CalCorruptor.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
-// Forward declaration
+// Forward declarations
 class VisEquation;
-
-
+class TJonesCorruptor;
 
 
 // **********************************************************
@@ -155,50 +108,6 @@ private:
 //  TJones
 //
 
-class TJonesCorruptor : public CalCorruptor {
-
- public:
-   TJonesCorruptor(const Int nSim);
-   virtual ~TJonesCorruptor();
-
-   Float& pwv(const Int i); 
-   Vector<Float>* pwv();
-   void initAtm();
-   inline String& mode() { return mode_; };
-   inline Float& mean_pwv() { return mean_pwv_; };
-   inline Matrix<Float>& screen() { return *screen_p; };
-   inline Float screen(const Int i, const Int j) { 
-     // RI_TODO out of bounds check or is that done by Vector?
-     return screen_p->operator()(i,j); };
-   virtual void initialize();
-   void initialize(const Int Seed, const Float Beta, const Float scale);
-   void initialize(const Int Seed, const Float Beta, const Float scale,
-		   const ROMSAntennaColumns& antcols);
-   Complex gain(const Int islot);
-   Complex gain(const Int ix, const Int iy, const Int islot);
-   inline Vector<Float>& antx() { return antx_; };
-   inline Vector<Float>& anty() { return anty_; };
-   inline Float& windspeed() { return windspeed_; };
-   inline Float& pixsize() { return pixsize_; };
-
- protected:
-
- private:   
-   Float mean_pwv_,windspeed_,pixsize_;
-   String mode_; // general parameter for different kinds of corruptions
-   Matrix<Float>* screen_p; 
-
-   atm::AtmProfile *itsatm;
-   atm::RefractiveIndexProfile *itsRIP;
-   atm::SkyStatus *itsSkyStatus;
-   atm::SpectralGrid *itsSpecGrid;
-
-   PtrBlock<Vector<Float>*> pwv_p;
-   Vector<Float> antx_,anty_;   
-};
-
-
-
 class TJones : public SolvableVisJones {
 public:
 
@@ -227,12 +136,8 @@ public:
   // Hazard a guess at parameters
   virtual void guessPar(VisBuffer& vb);
 
-  // Set up simulated params
-  Int setupSim(VisSet& vs, const Record& simpar, Vector<Int>& nChunkPerSol, Vector<Double>& solTimes);
-//  virtual void setupSim(const Int& nSim, VisSet& vs, const Record& simpar);
-
-  // Simulate/calculate parameters for given sim interval
-  virtual Bool simPar(VisBuffGroupAcc& vbga);
+  // Set up corruptor
+  virtual void createCorruptor(const VisIter& vi, const Record& simpar, const Int nSim);
 
 protected:
 
@@ -250,37 +155,53 @@ protected:
 
 private:
 
-  // object that can simulate the corruption terms - internal to T, its
-  // a TJCorruptor, but public access is only to the CalCorruptor parts
-  TJonesCorruptor *tcorruptor_p;
+  // object that can simulate the corruption terms - internal to T;
+  // public access is only to the CalCorruptor parts
+  AtmosCorruptor *tcorruptor_p;
 
 };
 
 
 
-// this generates fractional brownian motion aka generalized 1/f noise
-// class fBM : public Array<Double> {
-class fBM {
-
- public:
-
-  fBM(uInt i1);
-  fBM(uInt i1, uInt i2);
-  fBM(uInt i1, uInt i2, uInt i3);
-  // virtual ~fBM(); // not ness if we don't derive from this
-  inline Bool& initialized() { return initialized_; };
-  void initialize(const Int seed, const Float beta);
-
-  inline Array<Float> data() { return *data_; };
-  inline Float data(uInt i1) { return data_->operator()(IPosition(1,i1)); };
-  inline Float data(uInt i1, uInt i2) { return data_->operator()(IPosition(2,i1,i2)); };
-  inline Float data(uInt i1, uInt i2, uInt i3) { return data_->operator()(IPosition(3,i1,i2,i3)); };
 
 
- private:
-  Bool initialized_;
-  Array<Float>* data_;
 
+
+
+
+
+// **********************************************************
+//  TfJones (freq-dep T)
+//
+
+class TfJones : public TJones {
+public:
+
+  // Constructor
+  TfJones(VisSet& vs);
+  TfJones(const Int& nAnt);
+
+  virtual ~TfJones();
+
+  // Return the type enum
+  virtual Type type() { return VisCal::T; };
+
+  // Return type name as string
+  virtual String typeName()     { return "Tf Jones"; };
+  virtual String longTypeName() { return "Tf Jones (frequency-dependent atmospheric complex gain"; };
+
+  // This is the freq-dep version of T
+  //   (this is the ONLY fundamental difference from T)
+  virtual Bool freqDepPar() { return True; };
+
+protected:
+
+  // <nothing>
+
+private:
+
+  // <nothing>
+  
 };
 
 
@@ -316,8 +237,13 @@ public:
   // This type is smoothable
   virtual Bool smoothable() { return True; };
 
+  // Nominally, we will only use parallel hands for now
+  virtual Bool phandonly() { return True; };
+
   // Hazard a guess at parameters
   virtual void guessPar(VisBuffer& vb);
+
+  virtual void createCorruptor(const VisIter& vi, const Record& simpar, const Int nSim);
 
 protected:
 
@@ -335,9 +261,11 @@ protected:
 
 private:
 
-  // <nothing>
+  GJonesCorruptor *gcorruptor_p;
   
 };
+
+
 
 // **********************************************************
 //  BJones  (freq-dep GJones)
@@ -415,14 +343,12 @@ public:
   virtual Type type() { return VisCal::D; };
 
   // Return type name as string
-  virtual String typeName()     { return "D Jones"; };
-  virtual String longTypeName() { return "D Jones (instrumental polarization"; };
+  virtual String typeName()     { return "Dgen Jones"; };
+  virtual String longTypeName() { return "Dgen Jones (instrumental polarization"; };
 
   // Type of Jones matrix according to nPar()
-  //  Work in linear approx for now
-  //  TBD: provide toggle to support choice of General (non-linear) option
-  virtual Jones::JonesType jonesType() { return Jones::GenLinear; };
-  //virtual Jones::JonesType jonesType() { return Jones::General; };
+  //   Do GENERAL matrix algebra
+  virtual Jones::JonesType jonesType() { return Jones::General; };
 
   // We can solve for polarization with D
   virtual Int solvePol() { return solvePol_; };
@@ -450,6 +376,9 @@ public:
   // Method to list the D results
   virtual void logResults();
 
+  virtual void createCorruptor(const VisIter& vi, 
+			       const Record& simpar, 
+			       const Int nSim);
 protected:
 
   // D has two Complex parameters
@@ -471,12 +400,14 @@ protected:
 private:
 
   Int solvePol_;
+  DJonesCorruptor *dcorruptor_p;
+  
 
   
 };
 
 // **********************************************************
-//  DfJones (freq-dep D)
+//  DfJones (freq-dep D)  (general)
 //
 
 class DfJones : public DJones {
@@ -488,8 +419,53 @@ public:
 
   virtual ~DfJones();
 
-  // Return the type enum
-  virtual Type type() { return VisCal::D; };
+  // Return type name as string
+  virtual String typeName()     { return "Dfgen Jones"; };
+  virtual String longTypeName() { return "Dfgen Jones (frequency-dependent instrumental polarization"; };
+
+  // This is the freq-dep version of D 
+  //   (this is the ONLY fundamental difference from D)
+  virtual Bool freqDepPar() { return True; };
+  
+};
+
+
+
+// **********************************************************
+//  DlinJones   (linearized DJones)
+//
+
+class DlinJones : public DJones {
+public:
+
+  // Constructor
+  DlinJones(VisSet& vs);
+  DlinJones(const Int& nAnt);
+
+  virtual ~DlinJones();
+
+  // Return type name as string
+  virtual String typeName()     { return "D Jones"; };
+  virtual String longTypeName() { return "D Jones (instrumental polarization"; };
+
+  // Type of Jones matrix according to nPar()
+  //  Do linearized matrix algebra
+  virtual Jones::JonesType jonesType() { return Jones::GenLinear; };
+
+};
+
+// **********************************************************
+//  DflinJones (freq-dep, linearized DJones)
+//
+
+class DflinJones : public DlinJones {
+public:
+
+  // Constructor
+  DflinJones(VisSet& vs);
+  DflinJones(const Int& nAnt);
+
+  virtual ~DflinJones();
 
   // Return type name as string
   virtual String typeName()     { return "Df Jones"; };
@@ -499,15 +475,8 @@ public:
   //   (this is the ONLY fundamental difference from D)
   virtual Bool freqDepPar() { return True; };
 
-protected:
-
-  // <nothing>
-
-private:
-
-  // <nothing>
-  
 };
+
 
 // **********************************************************
 //  JJones
@@ -568,6 +537,7 @@ private:
 //  M: baseline-based (closure) 
 //
 
+
 class MMueller : public SolvableVisMueller {
 public:
 
@@ -591,19 +561,23 @@ public:
   using SolvableVisCal::setApply;
   virtual void setApply(const Record& apply);
 
-  // M solves for itself
-  virtual Bool standardSolve() { return False; };
+  // M gathers/solves for itself
+  virtual Bool useGenericGatherForSolve() { return False; };
 
   // M solves for itself (by copying averaged data)
-  virtual void selfSolve(VisSet& vs, VisEquation& ve) { newselfSolve(vs,ve); };
+  virtual void selfGatherAndSolve(VisSet& vs, VisEquation& ve) { newselfSolve(vs,ve); };
   virtual void oldselfSolve(VisSet& vs, VisEquation& ve);  // old-fashioned iterator-driven
   virtual void newselfSolve(VisSet& vs, VisEquation& ve);  // new supports combine
 
   // Local M version only supports normalization
   virtual void globalPostSolveTinker();
 
+  // (At least?) one of the reasons it uses its own keep() is to store 0 to
+  // nChanPar() - 1 of solveCPar() on the channel axis, as opposed to just
+  // focusChan(). 
   virtual void keep(const Int& slot);
 
+  virtual void createCorruptor(const VisIter& vi, const Record& simpar, const Int nSim);
 protected:
 
   // M currently has just 2 complex parameters, i.e., both parallel hands
@@ -613,10 +587,14 @@ protected:
   virtual Bool trivialMuellerElem() { return True; };
 
 private:
-
-  // <nothing>
+  AtmosCorruptor *atmcorruptor_p;
 
 };
+
+
+
+
+
 
 // **********************************************************
 //  MfMueller (freq-dep MMueller)
@@ -717,6 +695,45 @@ private:
 
 
 // **********************************************************
+//  TfOpac (freq-dep TOpac)
+//
+
+class TfOpac : public TOpac {
+public:
+
+  // Constructor
+  TfOpac(VisSet& vs);
+  //  TfOpac(const Int& nAnt);
+
+  virtual ~TfOpac();
+
+  // Return the type enum
+  virtual Type type() { return VisCal::T; };
+
+  // Return type name as string
+  virtual String typeName()     { return "TfOpac"; };
+  virtual String longTypeName() { return "TfOpac (frequency-dependent opacity"; };
+
+  // This is the freq-dep version of TOpac
+  //   (this is the ONLY fundamental difference from TOpac)
+  virtual Bool freqDepPar() { return True; };
+
+protected:
+
+  // <nothing>
+
+private:
+
+  // <nothing>
+  
+};
+
+
+
+
+
+
+// **********************************************************
 //  X: position angle calibration (for circulars!)
 //    (rendered as a Mueller for now)
 
@@ -750,11 +767,11 @@ public:
   // Turn off normalization by model....
   virtual Bool normalizable() { return False; };
 
-  // X solves for itself
-  virtual Bool standardSolve() { return False; };
+  // X gathers/solves for itself
+  virtual Bool useGenericGatherForSolve() { return False; };
 
-  // X solves for itself 
-  virtual void selfSolve(VisSet& vs, VisEquation& ve) { newselfSolve(vs,ve); };
+  // X gathers/solves for itself 
+  virtual void selfGatherAndSolve(VisSet& vs, VisEquation& ve) { newselfSolve(vs,ve); };
   virtual void oldselfSolve(VisSet& vs, VisEquation& ve);  // old-fashioned iterator-driven
   virtual void newselfSolve(VisSet& vs, VisEquation& ve);  // new supports combine
 
@@ -772,13 +789,141 @@ protected:
   virtual void calcAllMueller();
 
   // Solve in one VB for the position angle
-  void solveOneVB(const VisBuffer& vb);
+  virtual void solveOneVB(const VisBuffer& vb);
 
 private:
 
   // <nothing>
 
 };
+
+
+
+// **********************************************************
+//  X: position angle calibration (for circulars!)
+//
+class XJones : public SolvableVisJones {
+public:
+
+  // Constructor
+  XJones(VisSet& vs);
+  XJones(const Int& nAnt);
+
+  virtual ~XJones();
+
+  // Return the type enum
+  virtual Type type() { return VisCal::X; };
+
+  // Return type name as string
+  virtual String typeName()     { return "X Jones"; };
+  virtual String longTypeName() { return "X Jones (antenna-based)"; };
+
+  // Type of Jones matrix according to nPar()
+  virtual Jones::JonesType jonesType() { return Jones::Diagonal; };
+
+  // Local setApply
+  using SolvableVisCal::setApply;
+  virtual void setApply(const Record& apply);
+
+  // Local setSolve
+  using SolvableVisCal::setSolve;
+  void setSolve(const Record& solvepar);
+
+  // X is normalizable by the model
+  virtual Bool normalizable() { return True; };
+
+  // X gathers/solves for itself
+  virtual Bool useGenericGatherForSolve() { return False; };
+
+  // X gathers/solves for itself 
+  virtual void selfGatherAndSolve(VisSet& vs, VisEquation& ve) { newselfSolve(vs,ve); };
+  virtual void newselfSolve(VisSet& vs, VisEquation& ve);  // new supports combine
+
+  virtual void keep(const Int& slot);
+
+protected:
+
+  // X has just 1 complex parameter, storing a phase
+  virtual Int nPar() { return 1; };
+
+  // Jones matrix elements are trivial
+  virtual Bool trivialJonesElem() { return False; };
+
+  // Calculate the X matrix for all ants
+  virtual void calcAllJones();
+
+  // Solve in one VB for the position angle
+  virtual void solveOneVB(const VisBuffer& vb);
+
+private:
+
+  // <nothing>
+
+};
+
+
+// **********************************************************
+//  Xf: position angle calibration (for circulars!)
+//     (channel-dependent)
+class XfJones : public XJones {
+public:
+
+  // Constructor
+  XfJones(VisSet& vs);
+  XfJones(const Int& nAnt);
+
+  virtual ~XfJones();
+
+  // Return the type enum
+  virtual Type type() { return VisCal::X; };
+
+  // Return type name as string
+  virtual String typeName()     { return "Xf Jones"; };
+  virtual String longTypeName() { return "Xf Jones (antenna-based)"; };
+
+  // This is the freq-dep version of X 
+  //   (this is the ONLY fundamental difference from X)
+  virtual Bool freqDepPar() { return True; };
+
+protected:
+
+  // Use nchan>=1 shaping
+  //  (TBD: this should be generalized!)
+  void initSolvePar();
+
+
+};
+
+
+
+// X-Y phase 
+class GlinXphJones : public GJones {
+public:
+
+  // Constructor
+  GlinXphJones(VisSet& vs);
+  GlinXphJones(const Int& nAnt);
+
+  virtual ~GlinXphJones();
+
+  // Return type name as string
+  virtual String typeName()     { return "GlinXph Jones"; };
+  virtual String longTypeName() { return "GlinXph Jones (X-Y phase)"; };
+
+  // Though derived from GJones, this type actually uses the cross-hands
+  virtual Bool phandonly() { return False; };
+
+  // GlinXphJones gathers/solves for itself
+  virtual Bool useGenericGatherForSolve() { return False; };
+  virtual void selfGatherAndSolve(VisSet& vs, VisEquation& ve);
+
+protected:
+
+  // FFT solver for on VB, that collapses baselines and cross-hands first
+  virtual void solveOneVB(const VisBuffer& vb);
+
+};
+
 
 
 } //# NAMESPACE CASA - END

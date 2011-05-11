@@ -88,10 +88,10 @@
 
 #include <casa/System/ProgressMeter.h>
 
-#define CONVSIZE (1024*4)
-#define CONVWTSIZEFACTOR 4.0
+#define CONVSIZE (1024*2)
+#define CONVWTSIZEFACTOR 1.0
 #define OVERSAMPLING 20
-#define THRESHOLD 1E-5
+#define THRESHOLD 1E-4
 #define USETABLES 0           // If equal to 1, use tabulated exp() and
 			      // complex exp() functions.
 #define MAXPOINTINGERROR 250.0 // Max. pointing error in arcsec used to
@@ -155,8 +155,9 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       mspc(0), msac(0), pointingToImage(0), usezero_p(usezero),
       doPBCorrection(doPBCorr),
       Second("s"),Radian("rad"),Day("d"), noOfPASteps(0),
-      pbNormalized(False),resetPBs(True),cfCache(), paChangeDetector(),
-      cfStokes(),Area(), avgPBSaved(False),avgPBReady(False)
+      pbNormalized(False),resetPBs(True), rotateAperture_p(True),
+      cfCache(), paChangeDetector(), cfStokes(),Area(), 
+      avgPBSaved(False),avgPBReady(False)
   {
     epJ=NULL;
     convSize=0;
@@ -180,7 +181,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     cfCache.initCache();
     convSampling=OVERSAMPLING;
     convSize=CONVSIZE;
-    Long hostRAM = (HostInfo::memoryTotal()*1024); // In bytes
+    Long hostRAM = (HostInfo::memoryTotal(true)*1024); // In bytes
     hostRAM = hostRAM/(sizeof(Float)*2); // In complex pixels
     if (cachesize > hostRAM) cachesize=hostRAM;
   }
@@ -205,38 +206,25 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     convSize=CONVSIZE;
   }
   //
+  //----------------------------------------------------------------------
+  //
+  nPBWProjectFT::nPBWProjectFT(const nPBWProjectFT& other):FTMachine()
+  {
+    operator=(other);
+  }
+  //
   //---------------------------------------------------------------
   //
   nPBWProjectFT& nPBWProjectFT::operator=(const nPBWProjectFT& other)
   {
     if(this!=&other) 
       {
-	nAntenna_p=other.nAntenna_p;
-	mLocation_p=other.mLocation_p;
-	distance_p=other.distance_p;
-	lastFieldId_p=other.lastFieldId_p;
-	lastMSId_p=other.lastMSId_p;
-	nx=other.nx;
-	ny=other.ny;
-	npol=other.npol;
-	nchan=other.nchan;
-	nvischan=other.nvischan;
-	nvispol=other.nvispol;
-	chanMap.resize();
-	chanMap=other.chanMap;
-	polMap.resize();
-	polMap=other.polMap;
-	doUVWRotation_p=other.doUVWRotation_p;
-	freqFrameValid_p=other.freqFrameValid_p;
-	selectedSpw_p.resize();
-	selectedSpw_p=other.selectedSpw_p;
-	multiChanMap_p=other.multiChanMap_p;
+	//Do the base parameters
+	FTMachine::operator=(other);
+
+	
 	padding_p=other.padding_p;
-	nVisChan_p.resize();
-	nVisChan_p=other.nVisChan_p;
-	spectralCoord_p=other.spectralCoord_p;
-	doConversion_p.resize();
-	doConversion_p=other.doConversion_p;
+	
 	nWPlanes_p=other.nWPlanes_p;
 	imageCache=other.imageCache;
 	cachesize=other.cachesize;
@@ -264,7 +252,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	pointingToImage=other.pointingToImage;
 	usezero_p=other.usezero_p;
 
-	uvwMachine_p=other.uvwMachine_p;
+	
 	padding_p=other.padding_p;
 	nWPlanes_p=other.nWPlanes_p;
 	imageCache=other.imageCache;
@@ -283,7 +271,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 	epJ=other.epJ;
 	convSize=other.convSize;
-	tangentSpecified_p=other.tangentSpecified_p;
 	lastIndex_p=other.lastIndex_p;
 	paChangeDetector=other.paChangeDetector;
 	pbLimit_p=other.pbLimit_p;
@@ -307,6 +294,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	resetPBs=other.resetPBs;
 	pbNormalized=other.pbNormalized;
 	currentCFPA=other.currentCFPA;
+	lastPAUsedForWtImg = other.lastPAUsedForWtImg;
 	cfStokes=other.cfStokes;
 	Area=other.Area;
 	avgPB = other.avgPB;
@@ -323,9 +311,9 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     Vector<String> telescopeNames=vb.msColumns().observation().telescopeName().getColumn();
     for(uInt nt=0;nt<telescopeNames.nelements();nt++)
       {
-	if (telescopeNames(nt) != "VLA")
+	if ((telescopeNames(nt) != "VLA") && (telescopeNames(nt) != "EVLA"))
 	  {
-	    String mesg="pbwproject algorithm can handle only VLA antennas for now.\n";
+	    String mesg="pbwproject algorithm can handle only (E)VLA antennas for now.\n";
 	    mesg += "Erroneous telescope name = " + telescopeNames(nt) + ".";
 	    SynthesisError err(mesg);
 	    throw(err);
@@ -340,21 +328,30 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       }
     //    ROMSSpWindowColumns mssp(vb.msColumns().spectralWindow());
     Freq = vb.msColumns().spectralWindow().refFrequency()(0);
-    Diameter_p = vb.msColumns().antenna().dishDiameter()(0);
+    Diameter_p=0;
     Nant_p     = vb.msColumns().antenna().nrow();
+    for (Int i=0; i < Nant_p; i++)
+      if (!vb.msColumns().antenna().flagRow()(i))
+	{
+	  Diameter_p = vb.msColumns().antenna().dishDiameter()(i);
+	  break;
+	}
+    if (Diameter_p == 0)
+      {
+	logIO() << LogOrigin("nPBWProjectFT", "getVisParams")
+		<< "No valid or finite sized antenna found in the antenna table. "
+		<< "Assuming diameter = 25m."
+		<< LogIO::WARN
+		<< LogIO::POST;
+	Diameter_p=25.0;
+      }
+    
     Double Lambda=C::c/Freq;
     HPBW = Lambda/(Diameter_p*sqrt(log(2.0)));
     sigma = 1.0/(HPBW*HPBW);
     nwEij.setSigma(sigma);
     Int bandID = getVLABandID(Freq,telescopeNames(0));
     return bandID;
-  }
-  //
-  //----------------------------------------------------------------------
-  //
-  nPBWProjectFT::nPBWProjectFT(const nPBWProjectFT& other)
-  {
-    operator=(other);
   }
   //
   //----------------------------------------------------------------------
@@ -513,9 +510,9 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   //---------------------------------------------------------------
   //
   MDirection::Convert nPBWProjectFT::makeCoordinateMachine(const VisBuffer& vb,
-							  const MDirection::Types& From,
-							  const MDirection::Types& To,
-							  MEpoch& last)
+							   const MDirection::Types& From,
+							   const MDirection::Types& To,
+							   MEpoch& last)
   {
     Double time = getCurrentTimeStamp(vb);
     
@@ -560,7 +557,9 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     Int NAnt = 0;
     MEpoch LAST;
     Double thisTime = getCurrentTimeStamp(vb);
-    Array<Float> pointingOffsets = epJ->nearest(thisTime);
+    //    Array<Float> pointingOffsets = epJ->nearest(thisTime);
+    if (epJ==NULL) return 0;
+    Array<Float> pointingOffsets; epJ->nearest(thisTime,pointingOffsets);
     NAnt=pointingOffsets.shape()(2);
     l_off.resize(IPosition(3,1,1,NAnt)); // Poln x NChan x NAnt 
     m_off.resize(IPosition(3,1,1,NAnt)); // Poln x NChan x NAnt 
@@ -569,10 +568,15 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     //
     //    l_off = pointingOffsets(Slicer(IPosition(4,0,0,0,0),IPosition(4,1,1,NAnt+1,0)));
     //    m_off = pointingOffsets(Slicer(IPosition(4,1,0,0,0),IPosition(4,1,1,NAnt+1,0)));
-    for(Int j=0;j<NAnt;j++)
+    IPosition tndx(3,0,0,0), sndx(4,0,0,0,0);
+    for(tndx(2)=0;tndx(2)<NAnt; tndx(2)++,sndx(2)++)
+      //    for(Int j=0;j<NAnt;j++)
       {
-	l_off(IPosition(3,0,0,j)) = pointingOffsets(IPosition(4,0,0,j,0));
-	m_off(IPosition(3,0,0,j)) = pointingOffsets(IPosition(4,1,0,j,0));
+	// l_off(IPosition(3,0,0,j)) = pointingOffsets(IPosition(4,0,0,j,0));
+	// m_off(IPosition(3,0,0,j)) = pointingOffsets(IPosition(4,1,0,j,0));
+
+	sndx(0)=0; l_off(tndx) = pointingOffsets(sndx);
+	sndx(0)=2; m_off(tndx) = pointingOffsets(sndx);
       }
     return NAnt;
     if (!Evaluate) return NAnt;
@@ -787,6 +791,71 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   //
   //---------------------------------------------------------------
   //
+  void nPBWProjectFT::makeSensitivityImage(Lattice<Complex>& wtImage,
+					   ImageInterface<Float>& sensitivityImage,
+					   const Matrix<Float>& sumWt,
+					   const Bool& doFFTNorm)
+  {
+    Bool doSumWtNorm=True;
+    if (sumWt.shape().nelements()==0) doSumWtNorm=False;
+
+    if ((sumWt.shape().nelements() < 2) || 
+	(sumWt.shape()(0) != wtImage.shape()(2)) || 
+	(sumWt.shape()(1) != wtImage.shape()(3)))
+      throw(AipsError("makeSensitivityImage(): "
+		      "Sum of weights per poln and chan required"));
+    Float sumWtVal=1.0;
+
+    LatticeFFT::cfft2d(wtImage,False);
+    Int sizeX=wtImage.shape()(0), sizeY=wtImage.shape()(1);
+    sensitivityImage.resize(wtImage.shape());
+    Array<Float> senBuf;
+    sensitivityImage.get(senBuf,False);
+    ArrayLattice<Float> senLat(senBuf, True);
+
+    //
+    // Copy one 2D plane at a time, normalizing by the sum of weights
+    // and possibly 2D FFT.
+    //
+    // Set up Lattice iteratos on wtImage and sensitivityImage
+    //
+    IPosition axisPath(4, 0, 1, 2, 3);
+    IPosition cursorShape(4, sizeX, sizeY, 1, 1);
+    LatticeStepper wtImStepper(wtImage.shape(), cursorShape, axisPath);
+    LatticeIterator<Complex> wtImIter(wtImage, wtImStepper);
+    LatticeStepper senImStepper(senLat.shape(), cursorShape, axisPath);
+    LatticeIterator<Float> senImIter(senLat, senImStepper);
+    //
+    // Iterate over channel and polarization axis
+    //
+    if (!doFFTNorm) sizeX=sizeY=1;
+    for(wtImIter.reset(),senImIter.reset();  !wtImIter.atEnd(); wtImIter++,senImIter++) 
+      {
+	Int pol=wtImIter.position()(2), chan=wtImIter.position()(3);
+	if (doSumWtNorm) sumWtVal=sumWt(pol,chan);
+	senImIter.rwCursor() = (real(wtImIter.rwCursor())
+				*Float(sizeX)*Float(sizeY)/sumWtVal);
+      }
+    //
+    // The following code is averaging RR and LL planes and writing
+    // the result to back to both planes.  This needs to be
+    // generalized for full-pol case.
+    //
+    IPosition start0(4,0,0,0,0), start1(4,0,0,1,0), length(4,sizeX,sizeY,1,1);
+    Slicer slicePol0(start0,length), slicePol1(start1,length);
+    Array<Float> polPlane0, polPlane1;
+    senLat.getSlice(polPlane0,slicePol0);
+    senLat.getSlice(polPlane1,slicePol1);
+    polPlane0=(polPlane0+polPlane1)/2.0;
+    polPlane1=polPlane0;
+    // senLat.putSlice(polPlane0,IPosition(4,0,0,0,0));
+    // senLat.putSlice(polPlane1,IPosition(4,0,0,1,0));
+    // cerr << "Pol0: " << polPlane0.shape() << " " << max(polPlane0) << endl;
+    // cerr << "Pol1: " << polPlane1.shape() << " " << max(polPlane1) << endl;
+  }
+  //
+  //---------------------------------------------------------------
+  //
   void nPBWProjectFT::normalizeAvgPB()
   {
     if (!pbNormalized)
@@ -809,24 +878,40 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	
 	Float pbMax = max(avgPBBuf);
 
+	ndx=0;
+	for(ndx(1)=0;ndx(1)<avgPBShape(1);ndx(1)++)
+	  for(ndx(0)=0;ndx(0)<avgPBShape(0);ndx(0)++)
+	    {
+	      IPosition plane1(ndx);
+	      plane1=ndx;
+	      plane1(2)=1; // The other poln. plane
+	      avgPBBuf(ndx) = (avgPBBuf(ndx) + avgPBBuf(plane1))/2.0;
+	    }
+	for(ndx(1)=0;ndx(1)<avgPBShape(1);ndx(1)++)
+	  for(ndx(0)=0;ndx(0)<avgPBShape(0);ndx(0)++)
+	    {
+	      IPosition plane1(ndx);
+	      plane1=ndx;
+	      plane1(2)=1; // The other poln. plane
+	      avgPBBuf(plane1) = avgPBBuf(ndx);
+	    }
 	if (fabs(pbMax-1.0) > 1E-3)
 	  {
-	avgPBBuf = avgPBBuf/noOfPASteps;
-	for(ndx(3)=0;ndx(3)<avgPBShape(3);ndx(3)++)
-	  for(ndx(2)=0;ndx(2)<avgPBShape(2);ndx(2)++)
-	    {
-	      peak(ndx(2)) = 0;
-	      for(ndx(1)=0;ndx(1)<avgPBShape(1);ndx(1)++)
-		for(ndx(0)=0;ndx(0)<avgPBShape(0);ndx(0)++)
-		  if (abs(avgPBBuf(ndx)) > peak(ndx(2)))
-		    peak(ndx(2)) = avgPBBuf(ndx);
+	    //	    avgPBBuf = avgPBBuf/noOfPASteps;
+	    for(ndx(3)=0;ndx(3)<avgPBShape(3);ndx(3)++)
+	      for(ndx(2)=0;ndx(2)<avgPBShape(2);ndx(2)++)
+		{
+		  peak(ndx(2)) = 0;
+		  for(ndx(1)=0;ndx(1)<avgPBShape(1);ndx(1)++)
+		    for(ndx(0)=0;ndx(0)<avgPBShape(0);ndx(0)++)
+		      if (abs(avgPBBuf(ndx)) > peak(ndx(2)))
+			peak(ndx(2)) = avgPBBuf(ndx);
 	      
-	      for(ndx(1)=0;ndx(1)<avgPBShape(1);ndx(1)++)
-		for(ndx(0)=0;ndx(0)<avgPBShape(0);ndx(0)++)
-		  avgPBBuf(ndx) *= (pbPeaks(ndx(2))/peak(ndx(2)));
-	    }
-	
-	if (isRefF) avgPB.put(avgPBBuf);
+		  for(ndx(1)=0;ndx(1)<avgPBShape(1);ndx(1)++)
+		    for(ndx(0)=0;ndx(0)<avgPBShape(0);ndx(0)++)
+		      avgPBBuf(ndx) *= (pbPeaks(ndx(2))/peak(ndx(2)));
+		}
+	    if (isRefF) avgPB.put(avgPBBuf);
 	  }
       }
     pbNormalized = True;
@@ -846,6 +931,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	    << LogIO::NORMAL;
     
     localPB.resize(image.shape()); localPB.setCoordinateInfo(image.coordinates());
+    localPB.setMaximumCacheSize(cachesize);
+    // cerr << "Max. cache size = " << localPB.maximumCacheSize() << " " << cachesize << endl;
     //
     // If this is the first time, resize the average PB
     //
@@ -875,7 +962,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     
     IPosition twoDPBShape(localPB.shape());
     TempImage<Complex> localTwoDPB(twoDPBShape,localPB.coordinates());
-    
+    localTwoDPB.setMaximumCacheSize(cachesize);
     Float peak=0;
     Int NAnt;
     noOfPASteps++;
@@ -950,6 +1037,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 				       const VisBuffer& vb, Float &pa)
   {
     Int i; Bool found;
+    Float dPA = paChangeDetector.getParAngleTolerance().getValue("rad");
     found = cfCache.searchConvFunction(vb,paChangeDetector,i,pa);
     if (found)
       {
@@ -1101,10 +1189,16 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     
     Float pa;
     Int cfSource=locateConvFunction(wConvSize, polInUse, vb, pa);
-    currentCFPA = pa;
+    // cerr << "CFS: " << cfSource << " " << PAIndex << " " 
+    // 	 << convFuncCache.nelements() << " " 
+    // 	 << convWeightsCache.nelements() << " " 
+    // 	 << endl;
+    lastPAUsedForWtImg = currentCFPA = pa;
+    
     Bool pbMade=False;
     if (cfSource==1) // CF found and loaded from the disk cache
       {
+	//	cout << "### New CFPA = " << currentCFPA << endl;
 	polInUse = convFunc.shape()(3);
 	wConvSize = convFunc.shape()(2);
 	try
@@ -1170,7 +1264,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 				  convSize, convSupport,convSampling);
 	Cube<Int> convWtSize=convSupport*CONVWTSIZEFACTOR;
 	cfCache.cacheConvFunction(PAIndex, pa, convWeights, coords, convFuncCS_p,
-				  convSize, convWtSize,convSampling,"WT");
+				  convSize, convWtSize,convSampling,"WT",False);
 	cfCache.finalize(); // Write the aux info file
 	if (pbMade) cfCache.finalize(avgPB); // Save the AVG PB and write the aux info.
       }
@@ -1190,7 +1284,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	// Compute the aggregate memory used by the cached convolution
 	// functions.
 	//
-	Int maxMemoryMB=HostInfo::memoryTotal()/1024;
+	Int maxMemoryMB=HostInfo::memoryTotal(true)/1024;
 	Float memoryKB=0;
 	String unit(" KB");
 	for(uInt iPA=0;iPA<convFuncCache.nelements();iPA++)
@@ -1241,7 +1335,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   //---------------------------------------------------------------
   //
   void nPBWProjectFT::makeConvFunction(const ImageInterface<Complex>& image,
-				      const VisBuffer& vb,Float pa)
+				       const VisBuffer& vb,Float pa)
   {
     if (bandID_p == -1) bandID_p=getVisParams(vb);
     Int NNN=0;
@@ -1310,9 +1404,13 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     directionCoord=coords.directionCoordinate(directionIndex);
     Vector<Double> sampling;
     sampling = dc.increment();
+    //    sampling /= Double(2.0);
 
     sampling*=Double(convSampling);
     sampling*=Double(nx)/Double(convSize);
+
+    // cerr << "Sampling on the sky = " << dc.increment() << " " << nx << "x" << ny << endl;
+    // cerr << "Sampling on the PB  = " << sampling << " " << convSize << "x" << convSize << endl;
     dc.setIncrement(sampling);
     
     Vector<Double> unitVec(2);
@@ -1341,7 +1439,18 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     //
     //------------------------------------------------------------------
     IPosition pbShape(4, convSize, convSize, polInUse, 1);
-    TempImage<Complex> twoDPB(pbShape, coords),twoDPBSq(pbShape,coords);
+    TempImage<Complex> twoDPB(pbShape, coords);
+
+    IPosition pbSqShp(pbShape);
+    //    pbSqShp[0] *= 2;    pbSqShp[1] *= 2;
+
+    unitVec=pbSqShp[0]/2;
+    dc.setReferencePixel(unitVec);
+    // sampling *= Double(2.0);
+    // dc.setIncrement(sampling);
+    coords.replaceCoordinate(dc, directionIndex);
+
+    TempImage<Complex> twoDPBSq(pbSqShp,coords);
     twoDPB.setMaximumCacheSize(cachesize);
     twoDPB.set(Complex(1.0,0.0));
     twoDPBSq.setMaximumCacheSize(cachesize);
@@ -1355,18 +1464,32 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     writeResults=False;
     
     Int inner=convSize/convSampling;
-    inner = convSize/2;
+    //    inner = convSize/2;
+
+    Vector<Double> cfUVScale(3,0),cfUVOffset(3,0);
+
+    cfUVScale(0)=Float(twoDPB.shape()(0))*sampling(0);
+    cfUVScale(1)=Float(twoDPB.shape()(1))*sampling(1);
+    cfUVOffset(0)=Float(twoDPB.shape()(0))/2;
+    cfUVOffset(1)=Float(twoDPB.shape()(1))/2;
+    // cerr << uvScale << " " << cfUVScale << endl;
+    // cerr << uvOffset << " " << cfUVOffset << endl;
     ConvolveGridder<Double, Complex>
+      //      ggridder(IPosition(2, inner, inner), cfUVScale, cfUVOffset, "SF");
       ggridder(IPosition(2, inner, inner), uvScale, uvOffset, "SF");
     
-    convFuncCache[PAIndex] = new Array<Complex>(IPosition(4,convSize/2,convSize/2,
+    // convFuncCache[PAIndex] = new Array<Complex>(IPosition(4,convSize/2,convSize/2,
+    // 							  wConvSize,polInUse));
+    // convWeightsCache[PAIndex] = new Array<Complex>(IPosition(4,convSize/2,convSize/2,
+    // 							     wConvSize,polInUse));
+    convFuncCache[PAIndex] = new Array<Complex>(IPosition(4,convSize,convSize,
 							  wConvSize,polInUse));
-    convWeightsCache[PAIndex] = new Array<Complex>(IPosition(4,convSize/2,convSize/2,
-							     wConvSize,polInUse));
+    convWeightsCache[PAIndex] = new Array<Complex>(IPosition(4,convSize,convSize,
+    							     wConvSize,polInUse));
     convFunc.reference(*convFuncCache[PAIndex]);
     convWeights.reference(*convWeightsCache[PAIndex]);
     convFunc=0.0;
-    
+    convWeights=0.0;
     
     IPosition start(4, 0, 0, 0, 0);
     IPosition pbSlice(4, convSize, convSize, 1, 1);
@@ -1380,23 +1503,31 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       {
 	screen = 1.0;
 
-// 	screen=0.0;
-// 	//
-// 	// First the spheroidal function
-// 	//
-// 	//      inner=convSize/2;
-// 	Vector<Complex> correction(inner);
-// 	for (Int iy=-inner/2;iy<inner/2;iy++) 
-// 	  {
-// 	    ggridder.correctX1D(correction, iy+inner/2);
-// 	    for (Int ix=-inner/2;ix<inner/2;ix++) 
-// 	      screen(ix+convSize/2,iy+convSize/2)=correction(ix+inner/2);
-// 	  }
+	/*
+	screen=0.0;
+	// First the spheroidal function
+	//
+	//      inner=convSize/2;
+	//	screen = 0.0;
+	Vector<Complex> correction(inner);
+	for (Int iy=-inner/2;iy<inner/2;iy++) 
+	  {
+	    ggridder.correctX1D(correction, iy+inner/2);
+	    for (Int ix=-inner/2;ix<inner/2;ix++) 
+	      screen(ix+convSize/2,iy+convSize/2)=correction(ix+inner/2);
+	    // if (iy==0)
+	    //   for (Int ii=0;ii<inner;ii++)
+	    // 	cout << ii << " " << correction(ii) << endl;
+	  }
+	*/
 	//
 	// Now the w term
 	//
 	if(wConvSize>1) 
 	  {
+	    logIO() << LogOrigin("nPBWProjectFT", "")
+		    << "Computing WPlane " << iw  << LogIO::POST;
+	    
 	    Double twoPiW=2.0*C::pi*Double(iw*iw)/uvScale(2);
 	    
 	    for (Int iy=-inner/2;iy<inner/2;iy++) 
@@ -1426,45 +1557,66 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	  {
 	    PolnPlane(2)=i;
 	    twoDPB.putSlice(screen, PolnPlane);
+	    twoDPBSq.putSlice(screen, PolnPlane);
 	  }
+	// {
+	//   Vector<IPosition> posMax(twoDPB.shape()(2));
+	//   posMax(0)(0)=pbShape(0)/2;
+	//   posMax(0)(1)=pbShape(1)/2;
+	//   posMax(1)(0)=pbShape(0)/2;
+	//   posMax(1)(1)=pbShape(1)/2;
+	//   getVisParams(vb);
+	//   applyAntiAliasingOp(twoDPB,posMax,0);
+	// }
 	//
 	// Apply the PB...
 	//
-	vlaPB.applyPB(twoDPB, vb, bandID_p);
-	vlaPB.applyPBSq(twoDPBSq, vb, bandID_p);
+	Bool doSquint=True;
+	vlaPB.applyPB(twoDPB, vb, bandID_p, doSquint);
+	doSquint = False;
+	//	vlaPB.applyPBSq(twoDPBSq, vb, bandID_p, doSquint);
+	vlaPB.applyPB(twoDPBSq, vb, bandID_p, doSquint);
 	/*
-	{
-	  String name("twoDPB.before.im");
-	  storeImg(name,twoDPB);
-	}
-	{
-	  //
-	  // Apply (multiply) by the Spheroidal functions
-	  //
-	  Vector<Float> maxVal(twoDPB.shape()(2));
-	  Vector<IPosition> posMax(twoDPB.shape()(2));
-	  
-	  SynthesisUtils::findLatticeMax(twoDPB,maxVal,posMax); 
-	  applyAntiAliasingOp(twoDPB,posMax,1);
+// 	twoDPB.put(abs(twoDPB.get()));
+// 	twoDPBSq.put(abs(twoDPBSq.get()));
+        */
 
-	  SynthesisUtils::findLatticeMax(twoDPBSq,maxVal,posMax); 
-	  applyAntiAliasingOp(twoDPBSq,posMax,1,True);
-	}
-	*/
+	// {
+	//   String name("twoDPB.before.im");
+	//   storeImg(name,twoDPB);
+	// }
+	// {
+	//   //
+	//   // Apply (multiply) by the Spheroidal functions
+	//   //
+	//   Vector<Float> maxVal(twoDPB.shape()(2));
+	//   Vector<IPosition> posMax(twoDPB.shape()(2));
+	  
+	//   SynthesisUtils::findLatticeMax(twoDPB,maxVal,posMax); 
+	//   posMax(0)(0)+=1;
+	//   posMax(0)(1)+=1;
+	//   posMax(1)(0)+=1;
+	//   posMax(1)(1)+=1;
+	//   //	  applyAntiAliasingOp(twoDPB,posMax,1);
+
+	//   SynthesisUtils::findLatticeMax(twoDPBSq,maxVal,posMax); 
+	//   posMax(0)(0)+=1;
+	//   posMax(0)(1)+=1;
+	//   posMax(1)(0)+=1;
+	//   posMax(1)(1)+=1;
+	//   //	  applyAntiAliasingOp(twoDPBSq,posMax,1,True);
+	// }
+
 	Complex cpeak=max(twoDPB.get());
 	twoDPB.put(twoDPB.get()/cpeak);
 	cpeak=max(twoDPBSq.get());
 	twoDPBSq.put(twoDPBSq.get()/cpeak);
-	/*
-	{
-	  String name("twoDPBSq.im");
-	  storeImg(name,twoDPBSq);
-	}
-	{
-	  String name("twoDPB.im");
-	  storeImg(name,twoDPB);
-	}
-	*/
+	//	twoDPBSq.set(1.0);
+	// {
+	//   String name("twoDPB.im");
+	//   storeImg(name,twoDPB);
+	// }
+
 	CoordinateSystem cs=twoDPB.coordinates();
 	Int index= twoDPB.coordinates().findCoordinate(Coordinate::SPECTRAL);
 	SpectralCoordinate SpCS = twoDPB.coordinates().spectralCoordinate(index);
@@ -1473,24 +1625,48 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	//
 	// Now FFT and get the result back
 	//
-
+	// {
+	//   String name("twoDPB.im");
+	//   storeImg(name,twoDPB);
+	// }
 	LatticeFFT::cfft2d(twoDPB);
 	LatticeFFT::cfft2d(twoDPBSq);
-
+	// {
+	//   String name("twoDPBFT.im");
+	//   storeImg(name,twoDPB);
+	// }
 	//
 	// Fill the convolution function planes with the result.
 	//
 	{
-	  IPosition start(4, convSize/4, convSize/4, 0, 0),
-	    pbSlice(4, convSize/2-1, convSize/2-1, polInUse, 1);
+	  // IPosition start(4, convSize/4, convSize/4, 0, 0),
+	  //   pbSlice(4, convSize/2-1, convSize/2-1, polInUse, 1);
+	  // IPosition sliceStart(4,0,0,iw,0), 
+	  //   sliceLength(4,convSize/2-1,convSize/2-1,1,polInUse);
 	  
+	  IPosition start(4, 0, 0, 0, 0),
+	    pbSlice(4, twoDPB.shape()[0]-1, twoDPB.shape()[1]-1, polInUse, 1);
 	  IPosition sliceStart(4,0,0,iw,0), 
-	    sliceLength(4,convSize/2-1,convSize/2-1,1,polInUse);
+	    sliceLength(4,convFunc.shape()[0]-1,convFunc.shape()[1]-1,1,polInUse);
 	  
 	  convFunc(Slicer(sliceStart,sliceLength)).nonDegenerate()
 	    =(twoDPB.getSlice(start, pbSlice, True));
-	  convWeights(Slicer(sliceStart,sliceLength)).nonDegenerate()
-	    =(twoDPBSq.getSlice(start, pbSlice, True));
+
+	  IPosition shp(twoDPBSq.shape());
+	  Int bufSize=convWeights.shape()[0], Org=shp[0]/2;
+	  // IPosition sqStart(4, Org-bufSize/2, Org-bufSize/2, 0, 0),
+	  //   pbSqSlice(4, bufSize-1, bufSize-1, polInUse, 1);
+	  // IPosition sqSliceStart(4,0,0,iw,0), 
+	  //   sqSliceLength(4,bufSize-1,bufSize-1,1,polInUse);
+
+	  IPosition sqStart(4, 0, 0, 0, 0),
+	    pbSqSlice(4, shp[0]-1, shp[1]-1, polInUse, 1);
+	  IPosition sqSliceStart(4,0,0,iw,0), 
+	    sqSliceLength(4,shp[0]-1,shp[1]-1,1,polInUse);
+	  
+	  convWeights(Slicer(sqSliceStart,sqSliceLength)).nonDegenerate()
+	    =(twoDPBSq.getSlice(sqStart, pbSqSlice, True));
+
 	}
       }
     
@@ -1503,7 +1679,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       convWeights/=cpeak;
       //      cout << "#### max(convWeights) = " << max(convWeights) << endl;
     }
-
     //
     // Find the convolution function support size.  No assumption
     // about the symmetry of the conv. func. can be made (except that
@@ -1519,7 +1694,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     // co-ordinates).  For large pointing offsets, this might not be
     // true.
     //
-    Int ConvFuncOrigin=convSize/4;  // Conv. Func. is half that size of convSize
+    //    Int ConvFuncOrigin=convSize/4;  // Conv. Func. is half that size of convSize
+    Int ConvFuncOrigin=convFunc.shape()[0]/2;  // Conv. Func. is half that size of convSize
     IPosition ndx(4,ConvFuncOrigin,0,0,0);
     //    Cube<Int> convWtSupport(convSupport.shape());
     convWtSupport.resize(convSupport.shape(),True);
@@ -1540,7 +1716,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	//
 	Int wtR;
 	found =findSupport(convWeights,threshold,ConvFuncOrigin,wtR);
-	//	cout << "Wts support = " << wtR << endl;
 	found = findSupport(convFunc,threshold,ConvFuncOrigin,R);
 	
 	//	R *=2.5;
@@ -1555,10 +1730,12 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	    for(Int ipol=0;ipol<polInUse;ipol++)
 	      {
 		convSupport(iw,ipol,lastPASlot)=Int(R/Float(convSampling));
-		convSupport(iw,ipol,lastPASlot) += (convSupport(iw,ipol,lastPASlot)+1)%2;
+		convSupport(iw,ipol,lastPASlot)=Int(0.5+Float(R)/Float(convSampling))+1;
+		//		convSupport(iw,ipol,lastPASlot) += (convSupport(iw,ipol,lastPASlot)+1)%2;
 		convWtSupport(iw,ipol,lastPASlot)=Int(R*CONVWTSIZEFACTOR/Float(convSampling));
+		convWtSupport(iw,ipol,lastPASlot)=Int(0.5+Float(R)*CONVWTSIZEFACTOR/Float(convSampling))+1;
 		//		convWtSupport(iw,ipol,lastPASlot)=Int(wtR/Float(convSampling));
-		convWtSupport(iw,ipol,lastPASlot) += (convWtSupport(iw,ipol,lastPASlot)+1)%2;
+		//		convWtSupport(iw,ipol,lastPASlot) += (convWtSupport(iw,ipol,lastPASlot)+1)%2;
 		if ((lastPASlot == 0) || (maxConvSupport == -1))
 		  if (convSupport(iw,ipol,lastPASlot) > maxConvSupport)
 		    maxConvSupport = convSupport(iw,ipol,lastPASlot);
@@ -1571,7 +1748,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       logIO() << "Convolution function is misbehaved - support seems to be zero"
 	      << LogIO::EXCEPTION;
     
-    logIO() << LogOrigin("nPBWProjectFT", "")
+    logIO() << LogOrigin("nPBWProjectFT", "makeConvFunction")
 	    << "Re-sizing the convolution functions"
 	    << LogIO::POST;
     
@@ -1579,7 +1756,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       supportBuffer = OVERSAMPLING;
       Int bot=ConvFuncOrigin-convSampling*maxConvSupport-supportBuffer,//-convSampling/2, 
       top=ConvFuncOrigin+convSampling*maxConvSupport+supportBuffer;//+convSampling/2;
-      
+      bot = max(0,bot);
+      top = min(top, convFunc.shape()(0)-1);
       {
 	Array<Complex> tmp;
 	IPosition blc(4,bot,bot,0,0), trc(4,top,top,wConvSize-1,polInUse-1);
@@ -1638,13 +1816,15 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	   
 	  ConvFuncOrigin = peakPix(0);
 	 //	  ConvFuncOrigin = convFunc.shape()(0)/2+1;
-	  Int thisConvSupport=convSampling*convSupport(nw,np,lastPASlot);
+	  //	  Int thisConvSupport=convSampling*convSupport(nw,np,lastPASlot);
+	  Int thisConvSupport=convSupport(nw,np,lastPASlot);
 	  pbSum=0.0;
 
-	  for(Int iy=-thisConvSupport;iy<thisConvSupport;iy+=convSampling)
-	    for(Int ix=-thisConvSupport;ix<thisConvSupport;ix+=convSampling)
+	  for(Int iy=-thisConvSupport;iy<thisConvSupport;iy++)
+	    for(Int ix=-thisConvSupport;ix<thisConvSupport;ix++)
 	      {
-		ndx(0)=ix+ConvFuncOrigin;ndx(1)=iy+ConvFuncOrigin;
+		ndx(0)=ix*convSampling+ConvFuncOrigin;
+		ndx(1)=iy*convSampling+ConvFuncOrigin;
 		pbSum += real(convFunc(ndx));
 	      }
 	  /*
@@ -1662,17 +1842,34 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	      //
 	      Nx = convFunc.shape()(0), Ny = convFunc.shape()(1);
 	      for (ndx(1)=0;ndx(1)<Ny;ndx(1)++) 
-		for (ndx(0)=0;ndx(0)<Nx;ndx(0)++) 
-		  convFunc(ndx) /= pbSum;
+	      	for (ndx(0)=0;ndx(0)<Nx;ndx(0)++) 
+	      	  {
+	      	    convFunc(ndx) /= pbSum;
+	      	  }
 
 	      Nx = convWeights.shape()(0); Ny = convWeights.shape()(1);
-	      for (ndx(1)=0;    ndx(1)<Ny;  ndx(1)++) 
+	      for (ndx(1)=0;  ndx(1)<Ny;  ndx(1)++) 
 		for (ndx(0)=0;  ndx(0)<Nx;  ndx(0)++) 
-		  convWeights(ndx) /= pbSum*pbSum;
+		  {
+		    convWeights(ndx) /= pbSum*pbSum;
+		    // if ((ndx(0)==Nx/2+1) && (ndx(1)==Ny/2+1))
+		    //   {
+		    // 	convWeights(ndx)=1.0;	
+		    // 	cout << ndx << " " << convWeights(ndx) << endl;
+		    //   }
+		    // else
+		    //   convWeights(ndx)=0.0;
+		  }
 	    }
 	  else 
 	    throw(SynthesisFTMachineError("Convolution function integral is not positive"));
+
+	  Vector<Float> maxVal(convWeights.shape()(2));
+	  Vector<IPosition> posMax(convWeights.shape()(2));
+	  SynthesisUtils::findLatticeMax(convWeights,maxVal,posMax); 
+	  //	  cout << "convWeights: " << maxVal << " " << posMax << endl;
 	}
+
   }
   //
   //------------------------------------------------------------------------------
@@ -1747,17 +1944,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     // Do the Grid-correction
     //
     {
-//     {
-//       ostringstream name;
-//       cout << image->shape() << endl;
-//       name << "theModel.im";
-//       PagedImage<Float> tmp(image->shape(), image->coordinates(), name);
-//       Array<Complex> buf;
-//       Bool isRef = lattice->get(buf);
-//       cout << "The model max. = " << max(buf) << endl;
-//       LatticeExpr<Float> le(abs((*lattice)));
-//       tmp.copyData(le);
-//     }
       normalizeAvgPB();
       
       IPosition cursorShape(4, nx, 1, 1, 1);
@@ -1766,6 +1952,10 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       LatticeIterator<Complex> lix(*lattice, lsx);
 	  
       verifyShapes(avgPB.shape(), image->shape());
+      Array<Float> avgBuf; avgPB.get(avgBuf);
+      if (max(avgBuf) < 1e-04)
+	throw(AipsError("Normalization by PB requested but either PB not found in the cache "
+			"or is ill-formed."));
 
       LatticeStepper lpb(avgPB.shape(),cursorShape,axisPath);
       LatticeIterator<Float> lipb(avgPB, lpb);
@@ -1784,7 +1974,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	  
 	  Vector<Float> PBCorrection(lipb.rwVectorCursor().shape());
 	  PBCorrection = lipb.rwVectorCursor();
-
 	  for(int ix=0;ix<nx;ix++) 
 	    {
 	      // PBCorrection(ix) = (FUNC(PBCorrection(ix)))/(sincConv(ix)*sincConv(iy));
@@ -1792,17 +1981,17 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	      //
 	      // This is with PS functions included
 	      //
-// 	      if (doPBCorrection)
-// 		{
-// 		  //		  PBCorrection(ix) = FUNC(PBCorrection(ix))/(sincConv(ix)*sincConv(iy));
-// 		  PBCorrection(ix) = FUNC(PBCorrection(ix))*(sincConv(ix)*sincConv(iy));
-//  		  if ((abs(PBCorrection(ix)*correction(ix))) >= pbLimit_p)
-// 		    {lix.rwVectorCursor()(ix) /= (PBCorrection(ix))*correction(ix);}
-//  		  else
-// 		    {lix.rwVectorCursor()(ix) *= (sincConv(ix)*sincConv(iy));}
-// 		}
-// 	      else 
-// 		lix.rwVectorCursor()(ix) /= (correction(ix)/(sincConv(ix)*sincConv(iy)));
+	      // if (doPBCorrection)
+	      // 	{
+	      // 	  PBCorrection(ix) = FUNC(PBCorrection(ix))/(sincConv(ix)*sincConv(iy));
+	      // 	  //PBCorrection(ix) = FUNC(PBCorrection(ix))*(sincConv(ix)*sincConv(iy));
+ 	      // 	  if ((abs(PBCorrection(ix)*correction(ix))) >= pbLimit_p)
+	      // 	    {lix.rwVectorCursor()(ix) /= (PBCorrection(ix))*correction(ix);}
+ 	      // 	  else
+	      // 	    {lix.rwVectorCursor()(ix) *= (sincConv(ix)*sincConv(iy));}
+	      // 	}
+	      // else 
+	      // 	lix.rwVectorCursor()(ix) /= (correction(ix)/(sincConv(ix)*sincConv(iy)));
 	      //
 	      // This without the PS functions
 	      //
@@ -1821,6 +2010,17 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	    }
 	}
     }
+    // {
+    //   ostringstream name;
+    //   cout << image->shape() << endl;
+    //   name << "theModel.im";
+    //   PagedImage<Float> tmp(image->shape(), image->coordinates(), name);
+    //   Array<Complex> buf;
+    //   Bool isRef = lattice->get(buf);
+    //   cout << "The model max. = " << max(buf) << endl;
+    //   LatticeExpr<Float> le(abs((*lattice)));
+    //   tmp.copyData(le);
+    // }
     //
     // Now do the FFT2D in place
     //
@@ -2136,7 +2336,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       CFMap = makeConjPolMap(vb);
     */
     Int N;
-    actualPA = getPA(vb);
+    actualPA = getVBPA(vb);
 
     N=polMap.nelements();
     CFMap = polMap; ConjCFMap = polMap;
@@ -2146,7 +2346,9 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 //     SynthesisUtils::rotateComplexArray(logIO(), convFunc, convFuncCS_p, 
 // 				       rotatedConvFunc,(currentCFPA-actualPA),"CUBIC");
     SynthesisUtils::rotateComplexArray(logIO(), convFunc, convFuncCS_p, 
-				       rotatedConvFunc,0.0,"LINEAR");
+    				       rotatedConvFunc,0.0,"LINEAR");
+    // SynthesisUtils::rotateComplexArray(logIO(), convFunc, convFuncCS_p, 
+    // 				       rotatedConvFunc,(currentCFPA-actualPA),"LINEAR");
 
     ConjCFMap = polMap;
     makeCFPolMap(vb,CFMap);
@@ -2289,7 +2491,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     Double actualPA;
 
     Vector<Int> ConjCFMap, CFMap;
-    actualPA = getPA(vb);
+    actualPA = getVBPA(vb);
     ConjCFMap = polMap;
     makeCFPolMap(vb,CFMap);
     makeConjPolMap(vb,CFMap,ConjCFMap);
@@ -2298,7 +2500,9 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 //     SynthesisUtils::rotateComplexArray(logIO(), convFunc, convFuncCS_p, 
 //  				       rotatedConvFunc,(currentCFPA-actualPA),"LINEAR");
     SynthesisUtils::rotateComplexArray(logIO(), convFunc, convFuncCS_p, 
-				       rotatedConvFunc,0.0);
+    				       rotatedConvFunc,0.0);
+    // SynthesisUtils::rotateComplexArray(logIO(), convFunc, convFuncCS_p, 
+    // 				       rotatedConvFunc,(currentCFPA-actualPA),"LINEAR");
 
     ConjCFMap_p     = ConjCFMap.getStorage(deleteThem(CONJCFMAP));
     CFMap_p         = CFMap.getStorage(deleteThem(CFMAP));
@@ -2444,7 +2648,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     const Complex *visdata_p=&visdata;
     
     Vector<Int> ConjCFMap, CFMap;
-    actualPA = getPA(vb);
+    actualPA = getVBPA(vb);
     ConjCFMap = polMap;
 
     Array<Complex> rotatedConvFunc;
@@ -2457,7 +2661,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     CFMap = polMap; ConjCFMap = polMap;
     CFMap = makeConjPolMap(vb);
     */
-    makeCFPolMap(vb,CFMap);
+     makeCFPolMap(vb,CFMap);
     makeConjPolMap(vb,CFMap,ConjCFMap);
 
     ConjCFMap_p     = ConjCFMap.getStorage(deleteThem(CONJCFMAP));
@@ -3432,19 +3636,19 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 		      //
 		      // This with the PS functions
 		      //
-// 		      PBCorrection(i)=FUNC(avgPBVec(i))*sincConv(i)*sincConv(iy);
-// 		      if ((abs(PBCorrection(i)*correction(i))) >= pbLimit_p)
-// 			lix.rwVectorCursor()(i) /= PBCorrection(i)*correction(i);
-//  		      else if (!makingPSF)
-//  			lix.rwVectorCursor()(i) /= correction(i)*sincConv(i)*sincConv(iy);
+		      // PBCorrection(i)=FUNC(avgPBVec(i))*sincConv(i)*sincConv(iy);
+		      // if ((abs(PBCorrection(i)*correction(i))) >= pbLimit_p)
+		      // 	lix.rwVectorCursor()(i) /= PBCorrection(i)*correction(i);
+ 		      // else if (!makingPSF)
+ 		      // 	lix.rwVectorCursor()(i) /= correction(i)*sincConv(i)*sincConv(iy);
 		      //
 		      // This without the PS functions
 		      //
  		      PBCorrection(i)=FUNC(avgPBVec(i))*sincConv(i)*sincConv(iy);
  		      if ((abs(PBCorrection(i))) >= pbLimit_p)
-			lix.rwVectorCursor()(i) /= PBCorrection(i);
+		      	lix.rwVectorCursor()(i) /= PBCorrection(i);
 	 	      else if (!makingPSF)
- 			lix.rwVectorCursor()(i) /= sincConv(i)*sincConv(iy);
+ 		      	lix.rwVectorCursor()(i) /= sincConv(i)*sincConv(iy);
 		    }
 
 		  if(normalize) 
@@ -3732,6 +3936,10 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   void nPBWProjectFT::setPAIncrement(const Quantity& paIncrement)
   {
     paChangeDetector.setTolerance(paIncrement);
+    rotateAperture_p = True;
+    if (paIncrement.getValue("rad") < 0)
+      rotateAperture_p = False;
+    logIO() << "Setting PA increment to " << paIncrement.getValue("deg") << " deg" << endl;
   }
 
   Bool nPBWProjectFT::verifyShapes(IPosition pbShape, IPosition skyShape)
@@ -3946,29 +4154,59 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   }
   */
 
-  void nPBWProjectFT::makeAntiAliasingOp(Vector<Complex>& op, const Int nx)
+  void nPBWProjectFT::makeAntiAliasingOp(Vector<Complex>& op, const Int nx_l)
   {
     MathFunc<Float> sf(SPHEROIDAL);
-    if (op.nelements() != (uInt)nx)
+    if (op.nelements() != (uInt)nx_l)
       {
-	op.resize(nx);
-	Float cfScale=uvScale(0)*30/(3.0*convSampling);
-	for(Int ix=-nx/4;ix<nx/4;ix++)
-	  op(ix+nx/2)=sf.value(abs((1-ix)*cfScale));
-// 	for(Int ix=-nx/2;ix<nx/2;ix++)
-// 	  cout << "SF: " << (1-ix)*cfScale << " " << real(op(ix+nx/2)) << " " << imag(op(ix+nx/2)) << endl;
+	op.resize(nx_l);
+	Int inner=nx_l/2, center=nx_l/2;
+	//
+	// The "complicated" equation below is worthy of a comment (as
+	// notes are called in program text).
+        //
+	// uvScale/nx == Size of a pixel size in the image in radians.
+	// Lets call it dx.  HPBW is the HPBW for the antenna at the
+	// centre freq. in use.  HPBW/dx == Pixel where the PB will be
+	// ~0.5x its peak value.  ((2*N*HPBW)/dx) == the pixel where
+	// the N th. PB sidelobe will be (rougly speaking).  When this
+	// value is equal to 3.0, the Spheroidal implemtation goes to
+	// zero!
+	//
+	Float dx=uvScale(0)*convSampling/nx;
+	Float MaxSideLobeNum = 3.0;
+	Float S=1.0*dx/(MaxSideLobeNum*2*HPBW),cfScale;
+	
+	cout << "UVSCALE = " << uvScale(0) << " " << convSampling << endl;
+	cout << "HPBW = " << HPBW 
+	     << " " << Diameter_p 
+	     << " " << uvScale(0)/nx 
+	     << " " << S 
+	     << " " << dx 
+	     << endl;
+	
+
+	cfScale=S=6.0/inner;
+	for(Int ix=-inner;ix<inner;ix++)	    op(ix+center)=sf.value(abs((ix)*cfScale));
+	// for(Int ix=-inner;ix<inner;ix++)
+	//   if (abs(op(ix+center)) > 1e-8) 
+	// 	    cout << "SF: " << ix 
+	// 		 << " " << (ix)*cfScale 
+	// 		 << " " << real(op(ix+center)) 
+	// 		 << " " << imag(op(ix+center))
+	// 		 << endl;
       }
   }
 
   void nPBWProjectFT::makeAntiAliasingCorrection(Vector<Complex>& correction, 
 						 const Vector<Complex>& op,
-						 const Int nx)
+						 const Int nx_l)
   {
-    if (correction.nelements() != (uInt)nx)
+    if (correction.nelements() != (uInt)nx_l)
       {
-	correction.resize(nx);
+	correction.resize(nx_l);
 	correction=0.0;
-	Int opLen=op.nelements(), orig=nx/2;
+	Int opLen=op.nelements(), orig=nx_l/2;
 	for(Int i=-opLen;i<opLen;i++)
 	  {
 	    correction(i+orig) += op(abs(i));
@@ -4021,25 +4259,25 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     IPosition ndx(shape);
     Vector<Double> refPixel=cf.coordinates().referencePixel();
     ndx=0;
-    Int nx=shape(0),posX,posY;
-    makeAntiAliasingOp(antiAliasingOp, nx);
+    Int nx_l=shape(0),posX,posY;
+    makeAntiAliasingOp(antiAliasingOp, nx_l);
 
     Complex tmp,gain;
 
     for(Int i=0;i<polInUse;i++)
       {
 	ndx(2)=i;
-	for (Int iy=-nx/2;iy<nx/2;iy++) 
+	for (Int iy=-nx_l/2;iy<nx_l/2;iy++) 
 	  {
-	    for (Int ix=-nx/2;ix<nx/2;ix++) 
+	    for (Int ix=-nx_l/2;ix<nx_l/2;ix++) 
 	      {
-		ndx(0)=ix+nx/2;
-		ndx(1)=iy+nx/2;
+		ndx(0)=ix+nx_l/2;
+		ndx(1)=iy+nx_l/2;
 		tmp = cf.getAt(ndx);
 		posX=ndx(0)+(Int)(refPixel(0)-maxPos(i)(0))+1;
 		posY=ndx(1)+(Int)(refPixel(1)-maxPos(i)(1))+1;
-		if ((posX > 0) && (posX < nx) &&
-		    (posY > 0) && (posY < nx))
+		if ((posX > 0) && (posX < nx_l) &&
+		    (posY > 0) && (posY < nx_l))
 		  gain = antiAliasingOp(posX)*antiAliasingOp(posY);
 		else
 		  if (op==2) gain = 1.0; else gain=0.0;
@@ -4071,25 +4309,25 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     IPosition ndx(shape);
     Vector<Double> refPixel=cf.coordinates().referencePixel();
     ndx=0;
-    Int nx=shape(0),posX,posY;
-    makeAntiAliasingOp(antiAliasingOp, nx);
+    Int nx_l=shape(0),posX,posY;
+    makeAntiAliasingOp(antiAliasingOp, nx_l);
 
     Float tmp,gain;
 
     for(Int i=0;i<polInUse;i++)
       {
 	ndx(2)=i;
-	for (Int iy=-nx/2;iy<nx/2;iy++) 
+	for (Int iy=-nx_l/2;iy<nx_l/2;iy++) 
 	  {
-	    for (Int ix=-nx/2;ix<nx/2;ix++) 
+	    for (Int ix=-nx_l/2;ix<nx_l/2;ix++) 
 	      {
-		ndx(0)=ix+nx/2;
-		ndx(1)=iy+nx/2;
+		ndx(0)=ix+nx_l/2;
+		ndx(1)=iy+nx_l/2;
 		tmp = cf.getAt(ndx);
 		posX=ndx(0)+(Int)(refPixel(0)-maxPos(i)(0))+1;
 		posY=ndx(1)+(Int)(refPixel(1)-maxPos(i)(1))+1;
-		if ((posX > 0) && (posX < nx) &&
-		    (posY > 0) && (posY < nx))
+		if ((posX > 0) && (posX < nx_l) &&
+		    (posY > 0) && (posY < nx_l))
 		  gain = real(antiAliasingOp(posX)*antiAliasingOp(posY));
 		else
 		  if (op==2) gain = 1.0; else gain=0.0;

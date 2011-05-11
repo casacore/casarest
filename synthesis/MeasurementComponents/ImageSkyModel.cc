@@ -55,7 +55,11 @@
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
-#define MEMFACTOR 4.0
+#define MEMFACTOR 8.0
+#if !(defined (AIPS_64B))
+#  undef  MEMFACTOR
+#  define MEMFACTOR 18.0
+#endif
 
 ImageSkyModel::ImageSkyModel(const Int maxNumModels) :
   maxnmodels_p(maxNumModels), 
@@ -65,8 +69,10 @@ ImageSkyModel::ImageSkyModel(const Int maxNumModels) :
   displayProgress_p(False),
   cycleFactor_p(4.0),
   cycleSpeedup_p(-1.0),
+  cycleMaxPsfFraction_p(0.8),
   donePSF_p(False),
-  modified_p(True)
+  modified_p(True),
+  dataPolRep_p(SkyModel::CIRCULAR)
  {}
 
 void ImageSkyModel::setMaxNumberModels(const Int maxNumModels) {
@@ -81,7 +87,30 @@ Bool ImageSkyModel::add(ComponentList& compList)
   }
   return False;
 }
- 
+
+Bool ImageSkyModel::updatemodel(ComponentList& compList)
+{
+  if(componentList_p!=0) {
+    delete componentList_p;
+    componentList_p=0;
+  }
+  
+  componentList_p=new ComponentList(compList);
+  modified_p=True; 
+  return True;
+}
+  
+
+Bool ImageSkyModel::updatemodel(const Int thismodel, ImageInterface<Float>& image){
+  if(nmodels_p < thismodel)
+    throw(AipsError("Programming error " + String::toString(thismodel) + " is larger than the number of models"));
+  image_p[thismodel]=&image;
+  AlwaysAssert(image_p[thismodel], AipsError);
+  image_p[thismodel]->setUnits(Unit("Jy/pixel"));
+  modified_p=True;
+  return True;
+}
+
 Int ImageSkyModel::add(ImageInterface<Float>& image, const Int maxNumXfr)
 {
   Int thismodel=nmodels_p;
@@ -214,11 +243,18 @@ void ImageSkyModel::makeApproxPSFs(SkyEquation& se) {
     }
     se.makeApproxPSF(psf_p);
     for (Int thismodel=0;thismodel<nmodels_p;thismodel++) {
-      beam(thismodel)=0.0;
+      beam(thismodel) = 0.0;
       if(!StokesImageUtil::FitGaussianPSF(PSF(thismodel),
 					  beam(thismodel))) {
 	os << "Beam fit failed: using default" << LogIO::POST;
       }
+      if(nmodels_p > 1)
+        os  << LogIO::NORMAL << "Model " << thismodel+1 << ": ";  // Loglevel INFO
+      os << LogIO::NORMAL                     // Loglevel INFO
+         << "bmaj: " << abs(beam(thismodel)[0])
+         << "\", bmin: " << abs(beam(thismodel)[1])
+         << "\", bpa: " << beam(thismodel)[2] << " deg"
+         << LogIO::POST;
     }
   }
   donePSF_p=True;
@@ -294,6 +330,8 @@ ImageInterface<Float>& ImageSkyModel::image(Int model)
   return *image_p[model];
 };
 
+
+
 ImageInterface<Complex>& ImageSkyModel::cImage(Int model) 
 {
   AlwaysAssert(nmodels_p>0, AipsError);
@@ -306,32 +344,27 @@ ImageInterface<Complex>& ImageSkyModel::cImage(Int model)
     Vector<Int> whichStokes(0);
     IPosition cimageShape;
     cimageShape=image_p[model]->shape();
-    
-    Int npol=cimageShape(2);
-    if(npol==3) cimageShape(2)=4;
-    if(npol==2){
-      // 2-pol pixels and having Q or U
-      Int stokesIndex=image_p[model]->coordinates().findCoordinate(Coordinate::STOKES);
-      StokesCoordinate sC=image_p[model]->coordinates().stokesCoordinate(stokesIndex);
-      if(Stokes::type(sC.stokes()[0])==Stokes::Q || 
-	 Stokes::type(sC.stokes()[0])==Stokes::U ||
-	 Stokes::type(sC.stokes()[1])==Stokes::Q ||
-	 Stokes::type(sC.stokes()[1])==Stokes::U){
-	cimageShape(2)=4;
-      }
-    }
+
     CoordinateSystem cimageCoord =
-      StokesImageUtil::CStokesCoord(cimageShape,
+      StokesImageUtil::CStokesCoord(//cimageShape,
 				    image_p[model]->coordinates(),
 				    whichStokes,
-				    SkyModel::CIRCULAR);
+				    dataPolRep_p);
+    //				    SkyModel::CIRCULAR);
+
+    /* STOKESDBG */ //cout << "ImageSkyModel::CImage : Correlation Planes 'whichStokes' : " << whichStokes << endl;
+    cimageShape(2)=whichStokes.nelements();
     
     // Now set up the tile size, here we guess only
-    IPosition tileShape(4, min(32, cimageShape(0)), min(32, cimageShape(1)),
-			min(4, cimageShape(2)), min(32, cimageShape(3)));
-    
+    //    IPosition tileShape(4, min(32, cimageShape(0)), min(32, cimageShape(1)),
+    //			min(4, cimageShape(2)), min(32, cimageShape(3)));
+
+    //If tempImage is going to use disk based image ...try to respect the tile shape of 
+    //of original model image
+
     TempImage<Complex>* cimagePtr = 
-      new TempImage<Complex> (cimageShape,
+      new TempImage<Complex> (TiledShape(cimageShape, 
+					 image_p[model]->niceCursorShape()),
 			      cimageCoord,
 			      memoryMB);
     AlwaysAssert(cimagePtr, AipsError);
@@ -412,11 +445,7 @@ ImageInterface<Float>& ImageSkyModel::PSF(Int model)
   Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
   if(psf_p[model]==0) {
     TempImage<Float>* psfPtr = 
-      new TempImage<Float> (IPosition(image_p[model]->ndim(),
-				      image_p[model]->shape()(0),
-				      image_p[model]->shape()(1),
-				      image_p[model]->shape()(2),
-				      image_p[model]->shape()(3)),
+      new TempImage<Float> (TiledShape(image_p[model]->shape(), image_p[model]->niceCursorShape()),
 			    image_p[model]->coordinates(),
 			    memoryMB);
     AlwaysAssert(psfPtr, AipsError);
@@ -439,7 +468,7 @@ ImageInterface<Float>& ImageSkyModel::residual(Int model) {
     if(residualImage_p[model]==0) {
       Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
       TempImage<Float>* tempImagePtr =
-	new TempImage<Float> (image_p[model]->shape(),
+	new TempImage<Float> (TiledShape(image_p[model]->shape(), image_p[model]->niceCursorShape()),
 			       image_p[model]->coordinates(), memoryMB);
       AlwaysAssert(tempImagePtr, AipsError);
       residualImage_p[model] = tempImagePtr;
@@ -458,7 +487,8 @@ ImageInterface<Float>& ImageSkyModel::gS(Int model)
   if(gS_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
     TempImage<Float>* gSPtr = 
-      new TempImage<Float> (image_p[model]->shape(),
+      new TempImage<Float> (TiledShape(image_p[model]->shape(), 
+				       image_p[model]->niceCursorShape()),
 			     image_p[model]->coordinates(), memoryMB);
     AlwaysAssert(gSPtr, AipsError);
     gS_p[model] = gSPtr;
@@ -475,7 +505,8 @@ ImageInterface<Float>& ImageSkyModel::ggS(Int model)
   if(ggS_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
     TempImage<Float>* ggSPtr = 
-      new TempImage<Float> (image_p[model]->shape(),
+      new TempImage<Float> (TiledShape(image_p[model]->shape(), 
+				       image_p[model]->niceCursorShape()),
 			    image_p[model]->coordinates(),
 			    memoryMB);
     AlwaysAssert(ggSPtr, AipsError);
@@ -494,7 +525,8 @@ ImageInterface<Float>& ImageSkyModel::fluxScale(Int model)
   if(fluxScale_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
     TempImage<Float>* fluxScalePtr = 
-      new TempImage<Float> (image_p[model]->shape(),
+      new TempImage<Float> (TiledShape(image_p[model]->shape(), 
+				       image_p[model]->niceCursorShape()),
 			    image_p[model]->coordinates(),
 			    memoryMB);
     AlwaysAssert(fluxScalePtr, AipsError);
@@ -517,7 +549,8 @@ ImageInterface<Float>& ImageSkyModel::work(Int model)
   if(work_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
     TempImage<Float>* workPtr = 
-      new TempImage<Float> (image_p[model]->shape(),
+      new TempImage<Float> (TiledShape(image_p[model]->shape(),
+				       image_p[model]->niceCursorShape()),
 			    image_p[model]->coordinates(),
 			    memoryMB);
     AlwaysAssert(workPtr, AipsError);
@@ -536,7 +569,8 @@ ImageInterface<Float>& ImageSkyModel::deltaImage(Int model)
   if(deltaimage_p[model]==0) {
     Double memoryMB=HostInfo::memoryFree()/1024/(MEMFACTOR*maxnmodels_p);
     TempImage<Float>* deltaimagePtr = 
-      new TempImage<Float> (image_p[model]->shape(),
+      new TempImage<Float> (TiledShape(image_p[model]->shape(),
+				       image_p[model]->niceCursorShape()),
 			    image_p[model]->coordinates(),
 			    memoryMB);
     AlwaysAssert(deltaimagePtr, AipsError);
@@ -621,7 +655,6 @@ ComponentList& ImageSkyModel::componentList()
   AlwaysAssert(componentList_p, AipsError);
   return *componentList_p;
 }
-
 
 } //# NAMESPACE CASA - END
 
