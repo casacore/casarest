@@ -58,12 +58,12 @@ class MutexLocker {
 
 public:
 
-    MutexLocker (Mutex & mutex);
+    MutexLocker (async::Mutex & mutex);
     virtual ~MutexLocker ();
 
 private:
 
-    Mutex & mutex_p;
+    async::Mutex & mutex_p;
 
     MutexLocker (const MutexLocker & other); // illegal operation: do not define
     MutexLocker operator= (const MutexLocker & other); // illegal operation: do not define
@@ -81,7 +81,7 @@ public:
 
     void broadcast ();
     void signal ();
-    void wait (Mutex & mutex);
+    void wait (async::Mutex & mutex);
     // Bool wait (Mutex & mutex, int milliseconds);
 
 private:
@@ -177,7 +177,7 @@ protected:
         String    logFilename_p;
         Condition loggerChanged_p;
         ostream * logStream_p;
-        Mutex mutex_p;
+        async::Mutex mutex_p;
         queue<string> outputQueue_p;
     };
 
@@ -192,7 +192,7 @@ private:
 
     LoggerThread * loggerThread_p;
     bool loggingStarted_p;
-    Mutex * nameMutex_p;
+    async::Mutex * nameMutex_p;
     ThreadNames threadNames_p;
 
     static Logger * singleton_p;
