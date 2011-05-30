@@ -212,6 +212,16 @@ rGridFT& rGridFT::operator=(const rGridFT& other)
   }
 
 //----------------------------------------------------------------------
+//  CountedPtr<rGridFT> rGridFT::clone()
+  rGridFT* rGridFT::clone()
+  {
+    rGridFT* newftm = new rGridFT(*this);
+     CountedPtr<VisibilityResamplerBase> newvisresampler = newftm->visResampler_p->clone();
+    newftm->visResampler_p = newvisresampler;
+    return newftm;
+  }
+
+//----------------------------------------------------------------------
 void rGridFT::init() {
 
   logIO() << LogOrigin("rGridFT", "init")  << LogIO::NORMAL;
@@ -489,7 +499,7 @@ Array<Complex>* rGridFT::getDataPointer(const IPosition& centerLoc2D,
 }
 
 void rGridFT::put(const VisBuffer& vb, Int row, Bool dopsf, 
-		 FTMachine::Type type, const Matrix<Float>& imwght)
+		 FTMachine::Type type)
 {
 
 
@@ -513,8 +523,7 @@ void rGridFT::put(const VisBuffer& vb, Int row, Bool dopsf,
   if(max(chanMap)==-1) return;
 
   const Matrix<Float> *imagingweight;
-  if(imwght.nelements()>0) imagingweight=&imwght;
-  else                     imagingweight=&(vb.imagingWeight());
+  imagingweight=&(vb.imagingWeight());
   
   if(dopsf) {type=FTMachine::PSF;}
 

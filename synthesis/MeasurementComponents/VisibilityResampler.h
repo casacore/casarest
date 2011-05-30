@@ -48,12 +48,16 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   public: 
     VisibilityResampler(): VisibilityResamplerBase() {};
     VisibilityResampler(const CFStore& cfs): VisibilityResamplerBase(cfs) {};
-    VisibilityResampler(const VisibilityResampler& other):VisibilityResamplerBase()    {copy(other);}
+    VisibilityResampler(const VisibilityResampler& other):VisibilityResamplerBase()
+    {copy(other);}
 
     //    {setConvFunc(cfs);};
     virtual ~VisibilityResampler() {};
 
     //    VisibilityResampler& operator=(const VisibilityResampler& other);
+
+    void copy(const VisibilityResampler& other)
+    {VisibilityResamplerBase::copy(other);}
 
     virtual VisibilityResamplerBase* clone() 
     {return new VisibilityResampler(*this);}

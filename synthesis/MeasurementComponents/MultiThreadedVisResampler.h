@@ -33,7 +33,8 @@
 #include <synthesis/MeasurementComponents/ResamplerWorklet.h>
 #include <synthesis/MeasurementComponents/CFStore.h>
 #include <synthesis/MeasurementComponents/VBStore.h>
-//#include <synthesis/Utilities/ThreadTimers.h>
+#include <synthesis/MeasurementComponents/MThWorkIDEnum.h>
+//#include <msvis/MSVis/UtilJ.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <casa/Arrays/Array.h>
 #include <casa/Arrays/Vector.h>
@@ -47,11 +48,11 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   class MultiThreadedVisibilityResampler: public VisibilityResamplerBase
   {
   public: 
-    enum VBLoader {NOONE=-1, DATATOGRID=0, GRIDTODATA, RESIDUALCALC};
+    //    enum VBLoader {NOONE=-1, DATATOGRID=0, GRIDTODATA, RESIDUALCALC};
      MultiThreadedVisibilityResampler():
       resamplers_p(), doubleGriddedData_p(), singleGriddedData_p(), 
       sumwt_p(), gridderWorklets_p(), vbsVec_p(), visResamplerCtor_p(), 
-      whoLoadedVB_p(NOONE), currentVBS_p(0)
+      whoLoadedVB_p(MThWorkID::NOONE), currentVBS_p(0)
     {
       nelements_p = SynthesisUtils::getenv(FTMachineNumThreadsEnvVar, 1);
       if (nelements_p < 0) nelements_p = 1;
@@ -72,9 +73,23 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     }
 
     MultiThreadedVisibilityResampler(const MultiThreadedVisibilityResampler& other){copy(other);};
-    MultiThreadedVisibilityResampler* clone(){return new MultiThreadedVisibilityResampler(*this);};
+
+    // This version will make a clone with shared data buffers (the
+    // complex grids and the sum-of-weights arrays).
+    MultiThreadedVisibilityResampler* clone()
+    {
+      //Allocate a new instance, and copy the internals.
+      MultiThreadedVisibilityResampler *clonedCopy;
+      clonedCopy = new MultiThreadedVisibilityResampler(*this);
+      // Now reset the data buffers with independent buffers (arrays of size 0)
+      clonedCopy->allocateDataBuffers();
+      return clonedCopy;
+    };
+
     MultiThreadedVisibilityResampler& operator=(const MultiThreadedVisibilityResampler& other);
+
     void cleanup();
+
     void copy(const MultiThreadedVisibilityResampler& other);
 
     virtual Int nelements() {return nelements_p;};
@@ -145,7 +160,10 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     // void initializeBuffers(const Array<T>& griddedData,
     // 			   const Matrix<Double>& sumwt);
 
-    void allocateBuffers();
+    void allocateBuffers(Bool newDataBuffers=True);
+    void makeInfrastructureContainers();
+    Double allocateDataBuffers();
+    void startThreads();
     void scatter(Matrix<VBStore>& vbsStores,const VBStore& vbs);
 
     Int nelements_p;
@@ -160,10 +178,10 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
     CountedPtr<ThreadCoordinator<Int> > threadClerk_p;
     Bool threadStarted_p;
-    // DT tSetupG, tSendDataG, tWaitForWorkG, tOutsideG;
-    // DT tSetupDG, tSendDataDG, tWaitForWorkDG, tOutsideDG;
-    // Timers t4G_p,t4DG_p;
-    async::Mutex *mutexForResamplers_p;
+     // DT tSetupG, tSendDataG, tWaitForWorkG, tOutsideG;
+     // DT tSetupDG, tSendDataDG, tWaitForWorkDG, tOutsideDG;
+     // Timers t4G_p,t4DG_p;
+    //    async::Mutex *mutexForResamplers_p;
     CountedPtr<VisibilityResamplerBase> visResamplerCtor_p;
     Int whoLoadedVB_p;
     Int currentVBS_p;

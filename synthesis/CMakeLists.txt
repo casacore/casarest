@@ -56,6 +56,7 @@ set(synthesis_LIB_SRCS
  MeasurementComponents/MosaicFT.cc
  MeasurementComponents/MSCleanImageSkyModel.cc
  MeasurementComponents/Mueller.cc
+ MeasurementComponents/MultiTermFT.cc
  MeasurementComponents/MultiThreadedVisResampler.cc
  MeasurementComponents/NNLSImageSkyModel.cc
  MeasurementComponents/nPBWProjectFT.cc
@@ -195,6 +196,7 @@ MeasurementComponents/AWConvFunc.h
 MeasurementComponents/AWProjectFT.h
 MeasurementComponents/AWProjectWBFT.h
 MeasurementComponents/AWVisResampler.h
+MeasurementComponents/AzElAperture.h
 MeasurementComponents/BPoly.h
 MeasurementComponents/BeamCalc.h
 MeasurementComponents/BeamCalcAntenna.h
@@ -239,9 +241,11 @@ MeasurementComponents/MFCEMemImageSkyModel.h
 MeasurementComponents/MFCleanImageSkyModel.h
 MeasurementComponents/MFMSCleanImageSkyModel.h
 MeasurementComponents/MSCleanImageSkyModel.h
+MeasurementComponents/MThWorkIDEnum.h
 MeasurementComponents/MakeApproxPSFAlgorithm.h
 MeasurementComponents/MosaicFT.h
 MeasurementComponents/Mueller.h
+MeasurementComponents/MultiTermFT.h
 MeasurementComponents/MultiThreadedVisResampler.h
 MeasurementComponents/NNLSImageSkyModel.h
 MeasurementComponents/PBMath.h
@@ -302,6 +306,7 @@ MeasurementComponents/XCorr.h
 MeasurementComponents/nPBWProjectFT.h
 MeasurementComponents/rGridFT.h
 MeasurementComponents/ImageSkyModel.tcc
+MeasurementComponents/AWProjectFT.FORTRANSTUFF.INC
 DESTINATION include/casarest/synthesis/MeasurementComponents
 )
 
@@ -366,6 +371,5 @@ DESTINATION include/casarest/synthesis/Parallel
 install (FILES
 Utilities/FixVis.h
 Utilities/ThreadCoordinator.h
-Utilities/ThreadTimers.h
 DESTINATION include/casarest/synthesis/Utilities
 )

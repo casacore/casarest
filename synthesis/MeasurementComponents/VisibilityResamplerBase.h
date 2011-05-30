@@ -61,7 +61,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     VisibilityResamplerBase& operator=(const VisibilityResamplerBase& other);
 
     virtual VisibilityResamplerBase* clone() = 0;
-    virtual void copy(const VisibilityResamplerBase& other);
+
+    void copy(const VisibilityResamplerBase& other);
     virtual void setParams(const Vector<Double>& uvwScale, 
 			   const Vector<Double>& offset,
 			   const Vector<Double>& dphase) = 0;
@@ -183,23 +184,23 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
     // Version that use internally cached inc_p
     //    template <class T>
-    inline void addTo4DArray(DComplex* __restrict__& store, const Int* __restrict__& iPos, 
+    inline void addTo4DArray(DComplex* __restrict__& store, Int* __restrict__& iPos, 
 			     Complex& nvalue, Double& wt) __restrict__ 
     {addTo4DArray(store, iPos, inc_p, nvalue, wt);}
 
-    inline void addTo4DArray(Complex* __restrict__& store, const Int* __restrict__& iPos, 
+    inline void addTo4DArray(Complex* __restrict__& store, Int* __restrict__& iPos, 
 			     Complex& nvalue, Double& wt) __restrict__ 
     {addTo4DArray(store, iPos, inc_p, nvalue, wt);}
 
     
     // Version where inc_p is supplied from outside
-    inline void addTo4DArray(DComplex* __restrict__& store, const Int* __restrict__& iPos, 
+    inline void addTo4DArray(DComplex* __restrict__& store, Int* __restrict__& iPos, 
 			     const Vector<Int>& inc, Complex& nvalue, Double& wt) __restrict__ 
-    {store[iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]] += (nvalue*wt);}
+    {store[iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]] += (nvalue*Complex(wt));}
 
-    inline void addTo4DArray(Complex* __restrict__& store, const Int* __restrict__& iPos, 
+    inline void addTo4DArray(Complex* __restrict__& store, Int* __restrict__& iPos, 
 			     const Vector<Int>& inc, Complex& nvalue, Double& wt) __restrict__ 
-    {store[iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]] += (nvalue*wt);}
+    {store[iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]] += (nvalue*Complex(wt));}
 
 
     // The following two methods are called in the innermost loop.
@@ -207,11 +208,14 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       __restrict__ 
     {return getFrom4DArray(store, iPos, inc_p);}
 
-    inline Complex getFrom4DArray(const Complex* __restrict__& store, const Int* __restrict__& iPos, const Vector<Int>& inc) 
+    inline Complex getFrom4DArray(const Complex* __restrict__& store, 
+				  const Int* __restrict__& iPos, 
+				  const Vector<Int>& inc) 
       __restrict__ 
     {return store[iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]];};
 
-    inline Complex getFrom4DArray(const Complex* __restrict__& store, const Vector<Int> iPos, const Vector<Int>& inc) 
+    inline Complex getFrom4DArray(const Complex* __restrict__& store, 
+				  const Vector<Int> iPos, const Vector<Int>& inc) 
       __restrict__ 
     {return store[iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]];};
 

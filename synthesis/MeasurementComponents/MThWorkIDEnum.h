@@ -1,5 +1,5 @@
 // -*- C++ -*-
-//# CFStore.cc: Implementation of the CFStore class
+//# MThWorkIDEnum.h: Definition of enumerations for multi-threading framework
 //# Copyright (C) 1997,1998,1999,2000,2001,2002,2003
 //# Associated Universities, Inc. Washington DC, USA.
 //#
@@ -25,49 +25,13 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //# $Id$
-#include <synthesis/MeasurementComponents/CFStore.h>
+#ifndef SYNTHESIS_MTHENUM_H
+#define SYNTHESIS_MTHENUM_H
+
 namespace casa{
-
-  CFStore& CFStore::operator=(const CFStore& other)
-  {
-    if (&other != this)
-      {
-	data=other.data; 
-	rdata=other.rdata; 
-	coordSys=other.coordSys; 
-	sampling.assign(other.sampling);
-	xSupport.assign(other.xSupport);
-	ySupport.assign(other.ySupport);
-	pa=other.pa;
-      }
-    return *this;
+  namespace MThWorkID { //# NAMESPACE CASA - BEGIN
+    enum  {NOONE=-1, DATATOGRID=0, GRIDTODATA, RESIDUALCALC};
   };
+};
 
-  void CFStore::show(const char *Mesg, ostream& os)
-  {
-    if (!null())
-      {
-	if (Mesg != NULL)
-	  os << Mesg << endl;
-	os << "Data Shape: " << data->shape() << endl;
-	os << "Sampling: " << sampling << endl;
-	os << "xSupport: " << xSupport << endl;
-	os << "ySupport: " << ySupport << endl;
-	os << "PA = " << pa.get("deg") << endl
-	  ;
-      }
-  };
-  
-  void CFStore::resize(Int nw,  Bool retainValues)
-  {
-    xSupport.resize(nw,retainValues); ySupport.resize(nw,retainValues);
-    sampling.resize(1);
-  }
-  void CFStore::resize(IPosition imShape, Bool retainValues)
-  {
-    if (imShape.nelements() > CFDefs::NWPOS)
-      resize(imShape(CFDefs::NWPOS), retainValues);
-    if ((imShape.nelements() > 0) && (!data.null()))
-      data->resize(imShape,retainValues);
-  }
-} // end casa namespace
+#endif

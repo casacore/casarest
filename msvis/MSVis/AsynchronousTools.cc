@@ -508,9 +508,13 @@ Semaphore::Semaphore (int initialValue)
 
         name_p = utilj::format ("/CasaAsync_%03d", i);
         impl_p->semaphore_p = sem_open (name_p.c_str(), O_CREAT | O_EXCL, 0700, initialValue);//new sem_t;
+#ifdef __APPLE__
         code = (size_t(impl_p->semaphore_p) == SEM_FAILED) ? errno : 0;
-
     } while (size_t(impl_p->semaphore_p) == SEM_FAILED && code == EEXIST);
+#else
+        code = (impl_p->semaphore_p == SEM_FAILED) ? errno : 0;
+    } while (impl_p->semaphore_p == SEM_FAILED && code == EEXIST);
+#endif
 
     ThrowIfError (code, "Semaphore::open: name='" + name_p + "'");
 }

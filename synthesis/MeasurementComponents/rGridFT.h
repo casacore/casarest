@@ -156,6 +156,9 @@ public:
   // Assignment operator
   rGridFT &operator=(const rGridFT &other);
 
+  // Clone
+  rGridFT* clone();
+
   ~rGridFT();
 
   // Initialize transform to Visibility plane using the image
@@ -184,8 +187,7 @@ public:
 
   // Put coherence to grid by gridding.
   void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False,
-	   FTMachine::Type type=FTMachine::OBSERVED, 
-	   const Matrix<Float>& imwght=Matrix<Float>(0,0));
+	   FTMachine::Type type=FTMachine::OBSERVED);
 
   
   // Make the entire image

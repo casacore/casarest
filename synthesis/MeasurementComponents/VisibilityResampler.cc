@@ -97,9 +97,10 @@ namespace casa{
     support(0) = convFuncStore_p.xSupport[0];
     support(1) = convFuncStore_p.ySupport[0];
 
-    Bool Dummy,gDummy;
+    Bool Dummy, gDummy;
     T __restrict__ *gridStore = grid.getStorage(gDummy);
-    const Int * __restrict__ iPosPtr = igrdpos.getStorage(Dummy);
+    Int * __restrict__ iPosPtr = igrdpos.getStorage(Dummy);
+    const Int * __restrict__ iPosPtrConst = iPosPtr;
     Double *__restrict__ convFunc=(*(convFuncStore_p.rdata)).getStorage(Dummy);
     Double * __restrict__ freq=vbs.freq_p.getStorage(Dummy);
     Bool * __restrict__ rowFlag=vbs.rowFlag_p.getStorage(Dummy);
@@ -115,6 +116,8 @@ namespace casa{
     Int * __restrict__ locPtr=loc.getStorage(Dummy);
     Int * __restrict__ offPtr=off.getStorage(Dummy);
     Double * __restrict__ sumwtPtr = sumwt.getStorage(Dummy);
+    Int * __restrict__ ilocPtr=iloc.getStorage(Dummy);
+    Int * __restrict__ supportPtr = support.getStorage(Dummy);
     Int nDim = vbs.uvw_p.shape()[0];
 
     //    cacheAxisIncrements(nx,ny,nGridPol, nGridChan);
@@ -128,7 +131,7 @@ namespace casa{
 	  
 	  //	  if (vbs.imagingWeight(ichan,irow)!=0.0) {  // If weights are not zero
 	  if (imagingWeight[ichan+irow*nDataChan]!=0.0) {  // If weights are not zero
-	    achan=chanMap_p[ichan];
+	    achan=chanMap_p(ichan);
 	    
 	    if((achan>=0) && (achan<nGridChan)) {   // If selected channels are valid
 	      
@@ -146,8 +149,8 @@ namespace casa{
 		  if((!flagCube[ipol+ichan*nDataPol+irow*nDataChan*nDataPol])){
 		    apol=polMap_p(ipol);
 		    if ((apol>=0) && (apol<nGridPol)) {
-		      igrdpos[2]=apol; igrdpos[3]=achan;
-		      
+		      //	      igrdpos(2)=apol; igrdpos(3)=achan;
+		      iPosPtr[2]=apol; iPosPtr[3]=achan;
 		      norm=0.0;
 
 		      imgWt=imagingWeight[ichan+irow*nDataChan];
@@ -156,16 +159,22 @@ namespace casa{
 				   // (vbs.visCube(ipol,ichan,irow)*phasor);
 				   (visCube[ipol+ichan*nDataPol+irow*nDataPol*nDataChan]*phasor);
 
-		      for(Int iy=-support[1]; iy <= support[1]; iy++) 
+		      for(Int iy=-supportPtr[1]; iy <= supportPtr[1]; iy++) 
 			{
-			  iloc(1)=abs((int)(sampling[1]*iy+off[1]));
-			  igrdpos[1]=loc[1]+iy;
-			  for(Int ix=-support[0]; ix <= support[0]; ix++) 
+			  ilocPtr[1]=abs((int)(samplingPtr[1]*iy+offPtr[1]));
+			  //			  igrdpos(1)=loc(1)+iy;
+			  iPosPtr[1]=locPtr[1]+iy;
+			  //		  wt = convFunc[ilocPtr[1]];
+			  for(Int ix=-supportPtr[0]; ix <= supportPtr[0]; ix++) 
 			    {
-			      iloc[0]=abs((int)(sampling[0]*ix+off[0]));
+			      ilocPtr[0]=abs((int)(samplingPtr[0]*ix+offPtr[0]));
 			      wt = convFunc[iloc[0]]*convFunc[iloc[1]];
+			      //wt *= convFunc[ilocPtr[0]];
 
-			      igrdpos[0]=loc[0]+ix;
+			      //igrdpos(0)=loc(0)+ix;
+			      iPosPtr[0]=locPtr[0]+ix;
+
+
 			      // grid(grdpos) += nvalue*wt;
 
 			      // The following uses raw index on the 4D grid
@@ -223,7 +232,8 @@ namespace casa{
     Bool Dummy,vbcDummy;
     const Complex *__restrict__ gridStore = grid.getStorage(Dummy);
     Vector<Int> igrdpos(4);
-    const Int *__restrict__ iPosPtr = igrdpos.getStorage(Dummy);
+    Int *__restrict__ iPosPtr = igrdpos.getStorage(Dummy);
+    const Int *__restrict__ iPosPtrConst = iPosPtr;
     Double *__restrict__ convFunc=(*(convFuncStore_p.rdata)).getStorage(Dummy);
     Double *__restrict__ freq=vbs.freq_p.getStorage(Dummy);
     Bool *__restrict__ rowFlag=vbs.rowFlag_p.getStorage(Dummy);
@@ -234,10 +244,12 @@ namespace casa{
     Complex * __restrict__ visCube = vbs.visCube_p.getStorage(vbcDummy);
     Double * __restrict__ scale = uvwScale_p.getStorage(Dummy);
     Double * __restrict__ offset = offset_p.getStorage(Dummy);
+    Int * __restrict__ supportPtr = support.getStorage(Dummy);
     Float * __restrict__ samplingPtr = sampling.getStorage(Dummy);
     Double * __restrict__ posPtr=pos.getStorage(Dummy);
     Int * __restrict__ locPtr=loc.getStorage(Dummy);
     Int * __restrict__ offPtr=off.getStorage(Dummy);
+    Int * __restrict__ ilocPtr=iloc.getStorage(Dummy);
     Int nDim = vbs.uvw_p.shape()(0);
 
     //    cacheAxisIncrements(nx,ny,nGridPol, nGridChan);
@@ -247,7 +259,7 @@ namespace casa{
       if(!rowFlag[irow]) {
 
 	for (Int ichan=0; ichan < nDataChan; ichan++) {
-	  achan=chanMap_p[ichan];
+	  achan=chanMap_p(ichan);
 
 	  if((achan>=0) && (achan<nGridChan)) {
 	    // sgrid(pos,loc,off,phasor,irow,vbs.uvw,
@@ -261,28 +273,31 @@ namespace casa{
 	      for(Int ipol=0; ipol < nDataPol; ipol++) {
 
 		if(!flagCube[ipol+ichan*nDataPol+irow*nDataChan*nDataPol]) { 
-		  apol=polMap_p[ipol];
+		  apol=polMap_p(ipol);
 		  
 		  if((apol>=0) && (apol<nGridPol)) {
-		    igrdpos[2]=apol; igrdpos[3]=achan;
+		    //		    igrdpos(2)=apol; igrdpos(3)=achan;
+		    iPosPtr[2]=apol; iPosPtr[3]=achan;
 		    nvalue=0.0;
 		    norm=0.0;
 
-		    for(Int iy=-support[1]; iy <= support[1]; iy++) 
+		    for(Int iy=-supportPtr[1]; iy <= supportPtr[1]; iy++) 
 		      {
-			iloc(1)=abs((Int)(sampling[1]*iy+off[1]));
-			igrdpos[1]=loc[1]+iy;
-			
-			for(Int ix=-support[0]; ix <= support[0]; ix++) 
+			ilocPtr[1]=abs((Int)(samplingPtr[1]*iy+offPtr[1]));
+			//			igrdpos(1)=loc(1)+iy;
+			iPosPtr[1]=locPtr[1]+iy;
+			//			wt = convFunc[ilocPtr[1]];
+			for(Int ix=-supportPtr[0]; ix <= supportPtr[0]; ix++) 
 			  {
-			    iloc(0)=abs((Int)(sampling[0]*ix+off[0]));
-			    igrdpos[0]=loc[0]+ix;
+			    ilocPtr[0]=abs((Int)(samplingPtr[0]*ix+offPtr[0]));
+			    //			    igrdpos(0)=loc(0)+ix;
+			    iPosPtr[0]=locPtr[0]+ix;
 			    
-			    wt=convFunc[iloc[1]]*convFunc[iloc[0]];
+			    wt=convFunc[ilocPtr[0]]*convFunc[ilocPtr[1]];
 			    norm+=wt;
 			    //			    nvalue+=wt*grid(grdpos);
 			    // The following uses raw index on the 4D grid
-			    nvalue+=wt*getFrom4DArray(gridStore,iPosPtr);
+			    nvalue+=wt*getFrom4DArray(gridStore,iPosPtrConst);
 			  }
 		      }
 		    visCube[ipol+ichan*nDataPol+irow*nDataChan*nDataPol]=(nvalue*conj(phasor))/norm;

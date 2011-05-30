@@ -146,7 +146,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     // size of the tile used in gridding (cannot be less than
     // 12, 16 works in most cases). 
     // <group>
-    AWProjectFT(Int nFacets, Long cachesize, 
+    AWProjectFT(Int nwPlanes, Long cachesize, 
 		CountedPtr<CFCache>& cfcache,
 		CountedPtr<ConvolutionFunction>& cf,
 		CountedPtr<VisibilityResamplerBase>& visResampler,
@@ -244,8 +244,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       //    throw(AipsError("AWProjectFT::put is not implemented"));
     }
     void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False,
-	     FTMachine::Type type=FTMachine::OBSERVED,
-	     const Matrix<Float>& wgt=Matrix<Float>(0,0));
+	     FTMachine::Type type=FTMachine::OBSERVED);
     
     // Make the entire image
     void makeImage(FTMachine::Type type,
@@ -413,7 +412,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     
     //    CountedPtr<ConvolutionFunction> telescopeConvFunc_p;
     //    CFStore cfs_p, cfwts_p;
-    Array<Complex> convFunc_p, convWeights_p;
+    // Array<Complex> convFunc_p, convWeights_p;
     //
     // Vector to hold the support size info. for the convolution
     // functions pointed to by the elements of convFunctions_p.  The
@@ -476,7 +475,9 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     CountedPtr<VisibilityResamplerBase> visResampler_p;
     Int sensitivityPatternQualifier_p;
     String sensitivityPatternQualifierStr_p;
-#include "AWProjectFT.FORTRANSTUFF.INC"
+    CFStore rotatedConvFunc_p;
+  Vector<Int> ConjCFMap_p, CFMap_p;
+#include "synthesis/MeasurementComponents/AWProjectFT.FORTRANSTUFF.INC"
   };
 } //# NAMESPACE CASA - END
     // void makeAntiAliasingOp(Vector<Complex>& val, const Int len, const Double HPBW);

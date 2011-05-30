@@ -41,7 +41,7 @@
 #include <coordinates/Coordinates/StokesCoordinate.h>
 #include <lattices/Lattices/LatticeFFT.h>
 #include <casa/Utilities/CompositeNumber.h>
-#include <ostream>
+#include <casa/ostream.h>
 namespace casa{
 
   AWConvFunc& AWConvFunc::operator=(const AWConvFunc& other)
@@ -673,5 +673,9 @@ namespace casa{
     theavgPB.setCoordinateInfo(localPB.coordinates());
     return True; // i.e., an average PB was made
   }
+  void AWConvFunc::prepareConvFunction(const VisBuffer& vb, CFStore& cfs)
+  {
+    ATerm_p->rotate(vb,cfs);
+  };
 
 };

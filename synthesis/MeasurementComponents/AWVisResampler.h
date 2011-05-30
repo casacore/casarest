@@ -44,28 +44,24 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   class AWVisResampler: public VisibilityResampler
   {
   public: 
-    AWVisResampler(): VisibilityResampler()  {};
-    AWVisResampler(const CFStore& cfs): VisibilityResampler(cfs) {}
-    virtual ~AWVisResampler() {};
+    AWVisResampler(): VisibilityResampler(),cfMap_p(), conjCFMap_p()  {};
+    AWVisResampler(const CFStore& cfs): VisibilityResampler(cfs)      {}
+    virtual ~AWVisResampler()                                         {};
 
-    virtual VisibilityResamplerBase* clone()     {return new AWVisResampler(*this);}
+    virtual VisibilityResamplerBase* clone()
+    {return new AWVisResampler(*this);}
     
-    AWVisResampler(const AWVisResampler& other): VisibilityResampler(other)
-    {copy(other);}
+    // AWVisResampler(const AWVisResampler& other): VisibilityResampler(other),cfMap_p(), conjCFMap_p()
+    // {copy(other);}
 
-    virtual void copy(const AWVisResampler& other) 
-    {
-      VisibilityResamplerBase::copy(other);
-      cfMap_p.assign(other.cfMap_p);
-      conjCFMap_p.assign(other.conjCFMap_p);
-    }
-    AWVisResampler& operator=(const AWVisResampler& other) {copy(other);return *this;}
+    void copy(const AWVisResampler& other) 
+    {VisibilityResampler::copy(other); setCFMaps(other.cfMap_p, other.conjCFMap_p);}
+
+    // AWVisResampler& operator=(const AWVisResampler& other) 
+    // {copy(other);return *this;}
 
     virtual void setCFMaps(const Vector<Int>& cfMap, const Vector<Int>& conjCFMap)
-    {
-      SETVEC(cfMap_p,cfMap);
-      SETVEC(conjCFMap_p,conjCFMap);
-    }
+    {SETVEC(cfMap_p,cfMap);SETVEC(conjCFMap_p,conjCFMap);}
 
     // virtual void setConvFunc(const CFStore& cfs) {convFuncStore_p = cfs;};
     //
@@ -116,13 +112,14 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     //----------------------------Private parts-------------------------------------
     //------------------------------------------------------------------------------
     //
-  private:
+  protected:
     // Vector<Double> uvwScale_p, offset_p, dphase_p;
     // Vector<Int> chanMap_p, polMap_p;
     // CFStore convFuncStore_p;
     // //    Int inc0_p, inc1_p, inc2_p, inc3_p;
     // Vector<Int> inc_p;
     Vector<Int> cfMap_p, conjCFMap_p;
+    Vector<Int> gridInc_p, cfInc_p;
     //
     // Re-sample the griddedData on the VisBuffer (a.k.a de-gridding).
     //
@@ -172,13 +169,13 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
     template <class T>
     void addTo4DArray(T *__restrict__& store,
-    		      const Int *__restrict__& iPos, const Vector<Int>& inc, Complex& nvalue, Complex& wt)
+    		      const Int *__restrict__& iPos, const Vector<Int>& inc, 
+		      Complex& nvalue, Complex& wt) __restrict__
     {
-      //      T *tmp=store+(iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]);
-      //      *tmp += nvalue*wt;
+      // T *tmp=store+(iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]);
+      // *tmp += nvalue*wt;
       store[iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]] += (nvalue*wt);
     }
-
 
     //
     // This rotates the convolution function by rotating the

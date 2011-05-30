@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 
-#include <calibration/CalTables/CalDescColumns.h>
+#include <calibration/CalTables/CalDescColumns2.h>
 //#include <ms/MeasurementSets/MSColumns.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisBuffGroupAcc.h>
