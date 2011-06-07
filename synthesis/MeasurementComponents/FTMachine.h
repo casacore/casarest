@@ -125,6 +125,10 @@ public:
 
   virtual ~FTMachine();
 
+  // Clone the (derived) FTMachine.
+  // For the time being the default implementation throws an exception.
+  virtual FTMachine* clone() const;
+
   // Initialize transform to Visibility plane
   virtual void initializeToVis(ImageInterface<Complex>& image, const VisBuffer& vb) = 0;
 

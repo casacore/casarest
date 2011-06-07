@@ -427,7 +427,12 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   {
     if(uvwMachine_p) delete uvwMachine_p; uvwMachine_p=0;
   }
-  
+
+  FTMachine* FTMachine::clone() const
+  {
+    throw AipsError ("FTMachine::clone not implemented in derived class");
+  }
+
   Bool FTMachine::interpolateFrequencyTogrid(const VisBuffer& vb,
 					     const Matrix<Float>& wt,
 					     Cube<Complex>& data, 

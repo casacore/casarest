@@ -249,6 +249,16 @@ void CubeSkyEquation::init(FTMachine& ft){
       iftm_p[k]->setMiscInfo(sm_->getTaylorIndex(k));
     }
   }
+  else if (ft.name() == "LofarFTMachine") {
+    ft_ = ft.clone();
+    ift_= ft.clone();
+    ftm_p[0]=ft_;
+    iftm_p[0]=ift_;
+    for (Int k=1; k < (nmod); ++k){ 
+      ftm_p[k] =ft.clone();
+      iftm_p[k]=ft.clone();
+    }
+  }
   else {
     ft_=new GridFT(static_cast<GridFT &>(ft));
     ift_=new GridFT(static_cast<GridFT &>(ft));
@@ -934,6 +944,7 @@ CubeSkyEquation::putSlice(VisBuffer & vb, Bool dopsf, FTMachine::Type col, Int c
     internalChangesPut_p=False;  // Does this VB change inside itself?
     firstOneChangesPut_p=False;  // Has this VB changed from the previous one?
     if((ftm_p[0]->name() != "MosaicFT")    && (ftm_p[0]->name() != "PBWProjectFT") &&
+       (ftm_p[0]->name() != "LofarFTMachine") &&
        (ftm_p[0]->name() != "AWProjectFT") && (ftm_p[0]->name() != "AWProjectWBFT")) {
         changedSkyJonesLogic(vb, firstOneChangesPut_p, internalChangesPut_p);
     }
@@ -1126,6 +1137,7 @@ VisBuffer& CubeSkyEquation::getSlice(VisBuffer& result,
   internalChangesGet_p=False;  // Does this VB change inside itself?
   firstOneChangesGet_p=False;  // Has this VB changed from the previous one?
   if((ftm_p[0]->name() != "MosaicFT")    && (ftm_p[0]->name() != "PBWProjectFT") &&
+     (ftm_p[0]->name() != "LofarFTMachine") &&
      (ftm_p[0]->name() != "AWProjectFT") && (ftm_p[0]->name() != "AWProjectWBFT")) {
     changedSkyJonesLogic(result, firstOneChangesGet_p, internalChangesGet_p);
   }
