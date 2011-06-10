@@ -235,6 +235,7 @@ traceEvent(1,"Entering imager::defaults",25);
   imageNchan_p=0;
   doVP_p=False;
   doDefaultVP_p = True;
+  squintType_p = BeamSquint::NONE;
   parAngleInc_p=Quantity(360.,"deg");
   skyPosThreshold_p=Quantity(180.,"deg");
   telescope_p="";
