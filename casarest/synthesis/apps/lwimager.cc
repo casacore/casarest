@@ -123,12 +123,21 @@ void readFilter (const String& filter,
   }
 }
 
+void makeEmpty (Imager& imager, const String& imgName, Int fieldid)
+{
+  CoordinateSystem coords;
+  AlwaysAssert (imager.imagecoordinates(coords), AipsError);
+  String name(imgName);
+  imager.makeEmptyImage(coords, name, fieldid);
+  imager.unlock();
+}
+
 int main (Int argc, char** argv)
 {
   try {
     Input inputs(1);
     // define the input structure
-    inputs.version("20091230-GvD");
+    inputs.version("20110628-GvD");
     inputs.create ("ms", "",
 		   "Name of input MeasurementSet",
 		   "string");
@@ -229,7 +238,7 @@ int main (Int argc, char** argv)
 		   "TaQL selection string for MS",
 		   "string");
     inputs.create ("operation", "image",
-		   "Operation (image,clark,hogbom,csclean,multiscale,entropy)",
+		   "Operation (empty,image,clark,hogbom,csclean,multiscale,entropy)",
 		   "string");
     inputs.create ("niter", "1000",
 		   "Number of clean iterations",
@@ -387,12 +396,13 @@ int main (Int argc, char** argv)
       phaseCenter = readDirection (phasectr);
     }
     operation.downcase();
-    AlwaysAssertExit (operation=="image" || operation=="hogbom" || operation=="clark" || operation=="csclean" || operation=="multiscale" || operation =="entropy");
+    AlwaysAssertExit (operation=="empty" || operation=="image" || operation=="hogbom" || operation=="clark" || operation=="csclean" || operation=="multiscale" || operation =="entropy");
     IPosition maskBlc, maskTrc;
     Quantity threshold;
     Quantity sigma;
     Quantity targetFlux;
-    if (operation != "image") {
+    Bool doClean = (operation != "empty"  &&  operation != "image");
+    if (doClean) {
       maskBlc = readIPosition (mstrBlc);
       maskTrc = readIPosition (mstrTrc);
       threshold = readQuantity (threshStr);
@@ -444,126 +454,132 @@ int main (Int argc, char** argv)
                         nfacet,                     // facets
                         Quantity(0, "m"));          // distance
 
-    if (weight != "default") {
-      imager.weight (weight,                        // type
-		     rmode,                         // rmode
-		     Quantity(noise, "Jy"),         // briggsabs noise
-		     robust,                        // robust
-		     Quantity(0, "rad"),            // fieldofview
-		     0);                            // npixels
-    }
-
-    // If multiscale, set its parameters.
-    if (operation == "multiscale") {
-      String scaleMethod;
-      Vector<Float> userVector(userScaleSizes.shape());
-      convertArray (userVector, userScaleSizes);
-      if (userScaleSizes.size() > 1) {
-        scaleMethod = "uservector";
-      } else {
-        scaleMethod = "nscales";
-      }
-      imager.setscales(scaleMethod, nscales, userVector);
-    }
-    if (! filter.empty()) {
-      imager.filter ("gaussian", bmajor, bminor, bpa);
-    }
-    String ftmachine("ft");
-    if (wplanes > 0) {
-      ftmachine = "wproject";
-    }
-    imager.setoptions(ftmachine,                    // ftmachine
-		      cachesize*1024*(1024/8),      // cache
-		      16,                           // tile
-		      "SF",                         // gridfunction
-		      MPosition(),                  // mLocation
-		      padding,                      // padding
-		      wplanes);                     // wprojplanes
-
-    // Do the imaging.
-    if (operation == "image") {
-      imager.makeimage (imageType, imgName);
-
-      // Convert result to fits if needed.
-      if (! fitsName.empty()) {
-	String error;
-	PagedImage<float> img(imgName);
-	if (! ImageFITSConverter::ImageToFITS (error,
-                                               img,
-                                               fitsName,
-                                               64,         // memoryInMB
-                                               preferVelocity)) {
-	  throw AipsError(error);
-	}
-      }
-
-      // Convert to HDF5 if needed.
-      if (! hdf5Name.empty()) {
-	PagedImage<float> pimg(imgName);
-	HDF5Image<float>  himg(pimg.shape(), pimg.coordinates(), hdf5Name);
-	himg.copyData (pimg);
-	himg.setUnits     (pimg.units());
-	himg.setImageInfo (pimg.imageInfo());
-	himg.setMiscInfo  (pimg.miscInfo());
-        // Delete PagedImage if HDF5 is used.
-        Table::deleteTable (imgName);
-      }
-
+    // Create empty image?
+    if (operation == "empty" ) {
+      makeEmpty (imager, imgName, fieldid);
     } else {
-    // Do the cleaning.
-      if (! maskName.empty()) {
-	if (maskValue >= 0) {
-	  PagedImage<float> pimg(imgName);
-	  maskBlc = handlePos (maskBlc, IPosition(pimg.ndim(), 0));
-	  maskTrc = handlePos (maskTrc, pimg.shape() - 1);
-	  imager.boxmask (maskName,
-			  maskBlc.asVector(),
-			  maskTrc.asVector(),
-			  maskValue);
-	}
+
+      // Define weighting.
+      if (weight != "default") {
+        imager.weight (weight,                      // type
+                       rmode,                       // rmode
+                       Quantity(noise, "Jy"),       // briggsabs noise
+                       robust,                      // robust
+                       Quantity(0, "rad"),          // fieldofview
+                       0);                          // npixels
       }
-      if (operation == "entropy") {
-        imager.mem(operation,                       // algorithm
-                   niter,                           // niter
-                   sigma,                           // sigma
-                   targetFlux,                      // targetflux
-                   constrainFlux,                   // constrainflux
-                   False,                           // displayProgress
-                   Vector<String>(1, modelName),    // model
-                   Vector<Bool>(1, fixed),          // fixed
-                   "",                              // complist
-                   Vector<String>(1, priorName),    // prior
-                   Vector<String>(1, maskName),     // mask
-                   Vector<String>(1, restoName),    // restored
-                   Vector<String>(1, residName));   // residual
+
+      // If multiscale, set its parameters.
+      if (operation == "multiscale") {
+        String scaleMethod;
+        Vector<Float> userVector(userScaleSizes.shape());
+        convertArray (userVector, userScaleSizes);
+        if (userScaleSizes.size() > 1) {
+          scaleMethod = "uservector";
+        } else {
+          scaleMethod = "nscales";
+        }
+        imager.setscales(scaleMethod, nscales, userVector);
+      }
+      if (! filter.empty()) {
+        imager.filter ("gaussian", bmajor, bminor, bpa);
+      }
+      String ftmachine("ft");
+      if (wplanes > 0) {
+        ftmachine = "wproject";
+      }
+      imager.setoptions(ftmachine,                    // ftmachine
+                        cachesize*1024*(1024/8),      // cache
+                        16,                           // tile
+                        "SF",                         // gridfunction
+                        MPosition(),                  // mLocation
+                        padding,                      // padding
+                        wplanes);                     // wprojplanes
+
+      // Do the imaging.
+      if (operation == "image") {
+        imager.makeimage (imageType, imgName);
+
+        // Convert result to fits if needed.
+        if (! fitsName.empty()) {
+          String error;
+          PagedImage<float> img(imgName);
+          if (! ImageFITSConverter::ImageToFITS (error,
+                                                 img,
+                                                 fitsName,
+                                                 64,         // memoryInMB
+                                                 preferVelocity)) {
+            throw AipsError(error);
+          }
+        }
+
+        // Convert to HDF5 if needed.
+        if (! hdf5Name.empty()) {
+          PagedImage<float> pimg(imgName);
+          HDF5Image<float>  himg(pimg.shape(), pimg.coordinates(), hdf5Name);
+          himg.copyData (pimg);
+          himg.setUnits     (pimg.units());
+          himg.setImageInfo (pimg.imageInfo());
+          himg.setMiscInfo  (pimg.miscInfo());
+          // Delete PagedImage if HDF5 is used.
+          Table::deleteTable (imgName);
+        }
 
       } else {
-        imager.clean(operation,                     // algorithm,
-                     niter,                         // niter
-                     gain,                          // gain
-                     threshold,                     // threshold
-                     False,                         // displayProgress
-                     Vector<String>(1, modelName),  // model
-                     Vector<Bool>(1, fixed),        // fixed
-                     "",                            // complist
-                     Vector<String>(1, maskName),   // mask
-                     Vector<String>(1, restoName),  // restored
-                     Vector<String>(1, residName)); // residual
-      }
-      // Convert result to fits if needed.
-      if (! fitsName.empty()) {
-	String error;
-	PagedImage<float> img(restoName);
-	if (! ImageFITSConverter::ImageToFITS (error,
-                                               img,
-                                               fitsName,
-                                               64,         // memoryInMB
-                                               preferVelocity)) {
-	  throw AipsError(error);
-	}
+        // Do the cleaning.
+        if (! maskName.empty()) {
+          if (maskValue >= 0) {
+            PagedImage<float> pimg(imgName);
+            maskBlc = handlePos (maskBlc, IPosition(pimg.ndim(), 0));
+            maskTrc = handlePos (maskTrc, pimg.shape() - 1);
+            imager.boxmask (maskName,
+                            maskBlc.asVector(),
+                            maskTrc.asVector(),
+                            maskValue);
+          }
+        }
+        if (operation == "entropy") {
+          imager.mem(operation,                       // algorithm
+                     niter,                           // niter
+                     sigma,                           // sigma
+                     targetFlux,                      // targetflux
+                     constrainFlux,                   // constrainflux
+                     False,                           // displayProgress
+                     Vector<String>(1, modelName),    // model
+                     Vector<Bool>(1, fixed),          // fixed
+                     "",                              // complist
+                     Vector<String>(1, priorName),    // prior
+                     Vector<String>(1, maskName),     // mask
+                     Vector<String>(1, restoName),    // restored
+                     Vector<String>(1, residName));   // residual
+
+        } else {
+          imager.clean(operation,                     // algorithm,
+                       niter,                         // niter
+                       gain,                          // gain
+                       threshold,                     // threshold
+                       False,                         // displayProgress
+                       Vector<String>(1, modelName),  // model
+                       Vector<Bool>(1, fixed),        // fixed
+                       "",                            // complist
+                       Vector<String>(1, maskName),   // mask
+                       Vector<String>(1, restoName),  // restored
+                       Vector<String>(1, residName)); // residual
+        }
+        // Convert result to fits if needed.
+        if (! fitsName.empty()) {
+          String error;
+          PagedImage<float> img(restoName);
+          if (! ImageFITSConverter::ImageToFITS (error,
+                                                 img,
+                                                 fitsName,
+                                                 64,         // memoryInMB
+                                                 preferVelocity)) {
+            throw AipsError(error);
+          }
+        }
       }
     }
-
   } catch (AipsError x) {
     cout << x.getMesg() << endl;
     return 1;
