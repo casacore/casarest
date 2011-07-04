@@ -27,6 +27,10 @@ set(MSVIS_LIBRARIES casa_msvis ${OTHER_LIBRARIES})
 
 install (FILES
 MSVis.h
+DESTINATION include/casarest/msvis
+)
+
+install (FILES
 MSVis/CalVisBuffer.h
 MSVis/MSCalEnums.h
 MSVis/MSContinuumSubtractor.h

@@ -144,12 +144,24 @@ DataSampling.h
 MeasurementComponents.h
 MeasurementEquations.h
 Parallel.h
+DESTINATION include/casarest/synthesis
+)
+
+install (FILES
 DataSampling/DataSampling.h
 DataSampling/ImageDataSampling.h
 DataSampling/PixonProcessor.h
 DataSampling/SDDataSampling.h
 DataSampling/SynDataSampling.h
+DESTINATION include/casarest/synthesis/DataSampling
+)
+
+install (FILES
 IDL/IDL.h
+DESTINATION include/casarest/synthesis/IDL
+)
+
+install (FILES
 MeasurementComponents/ACoh.h
 MeasurementComponents/AMueller.h
 MeasurementComponents/BPoly.h
@@ -238,6 +250,10 @@ MeasurementComponents/WPConvFunc.h
 MeasurementComponents/WProjectFT.h
 MeasurementComponents/XCorr.h
 MeasurementComponents/nPBWProjectFT.h
+DESTINATION include/casarest/synthesis/MeasurementComponents
+)
+
+install (FILES
 MeasurementEquations/ArrayModel.h
 MeasurementEquations/CCList.h
 MeasurementEquations/CEMemModel.h
@@ -280,10 +296,14 @@ MeasurementEquations/MaskedArrayModel.tcc
 MeasurementEquations/MaskedHogbomCleanModel.tcc
 MeasurementEquations/ResidualEquation.tcc
 MeasurementEquations/StokesUtil.tcc
+DESTINATION include/casarest/synthesis/MeasurementEquations
+)
+
+install (FILES
 Parallel/Algorithm.h
 Parallel/Applicator.h
 Parallel/MPIError.h
 Parallel/PTransport.h
 Parallel/PabloIO.h
-DESTINATION include/casarest/msvis/MSVis
+DESTINATION include/casarest/synthesis/Parallel
 )
