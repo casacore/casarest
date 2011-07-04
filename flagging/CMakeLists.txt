@@ -24,6 +24,11 @@ set(FLAGGING_LIBRARIES casa_flagging casa_msvis ${OTHER_LIBRARIES})
 
 
 install (FILES
+Flagging.h
+DESTINATION include/casarest/flagging
+)
+
+install (FILES
 Flagging/DDMapper.h
 Flagging/ExtendFlagger.h
 Flagging/Flagger.h
@@ -50,5 +55,5 @@ Flagging/RFATimeFreqCrop.tcc
 Flagging/RFChunkStats.tcc
 Flagging/RFCubeLattice.tcc
 Flagging/RFFlagCube.tcc
-DESTINATION include/casarest/synthesis/Utilities
+DESTINATION include/casarest/flagging/Flagging
 )

@@ -73,6 +73,11 @@ set(CALIBRATION_LIBRARIES casa_calibration casa_msvis ${OTHER_LIBRARIES})
 
 
 install (FILES
+CalTables.h
+DESTINATION include/casarest/calibration
+)
+
+install (FILES
 CalTables/BJonesDesc.h
 CalTables/BJonesMBuf.h
 CalTables/BJonesMCol.h

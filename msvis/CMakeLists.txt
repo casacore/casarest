@@ -36,6 +36,11 @@ set(MSVIS_LIBRARIES casa_msvis ${OTHER_LIBRARIES})
 
 
 install (FILES
+MSVis.h
+DESTINATION include/casarest/msvis
+)
+
+install (FILES
 MSVis/AsynchronousTools.h
 MSVis/CalVisBuffer.h
 MSVis/MSAnalysis.h

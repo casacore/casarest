@@ -172,6 +172,14 @@ endforeach(prog ${synthesis_PROGRAMS})
 
 
 install (FILES
+DataSampling.h
+MeasurementComponents.h
+MeasurementEquations.h
+Parallel.h
+DESTINATION include/casarest/synthesis
+)
+
+install (FILES
 DataSampling/DataSampling.h
 DataSampling/ImageDataSampling.h
 DataSampling/PixonProcessor.h
