@@ -321,11 +321,10 @@ Imager::Imager(MeasurementSet& theMS,  Bool compress, Bool useModel)
   ms_p=0;
   lockCounter_p=0;
   LogIO os(LogOrigin("Imager", "Imager(MeasurementSet &theMS)", WHERE));
+  defaults();
   if(!open(theMS, compress, useModel)) {
     os << LogIO::SEVERE << "Open of MeasurementSet failed" << LogIO::EXCEPTION;
   };
-
-  defaults();
   latestObsInfo_p=ObsInfo();
 }
 
