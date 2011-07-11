@@ -304,11 +304,10 @@ Imager::Imager(MeasurementSet& theMS,  Bool compress, Bool useModel)
 {
   lockCounter_p=0;
   LogIO os(LogOrigin("Imager", "Imager(MeasurementSet &theMS)", WHERE));
+  defaults();
   if(!open(theMS, compress, useModel)) {
     os << LogIO::SEVERE << "Open of MeasurementSet failed" << LogIO::EXCEPTION;
   };
-
-  defaults();
   latestObsInfo_p=ObsInfo();
 }
 
@@ -320,12 +319,10 @@ Imager::Imager(MeasurementSet& theMS, PGPlotter& thePlotter, Bool compress)
 {
   lockCounter_p=0;
   LogIO os(LogOrigin("Imager", "Imager(MeasurementSet &theMS)", WHERE));
+  defaults();
   if(!open(theMS, compress)) {
     os << LogIO::SEVERE << "Open of MeasurementSet failed" << LogIO::EXCEPTION;
   };
-
-  defaults();
-
   pgplotter_p=&thePlotter;
   latestObsInfo_p=ObsInfo();
 }
