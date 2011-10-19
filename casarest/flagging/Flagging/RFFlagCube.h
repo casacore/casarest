@@ -35,12 +35,12 @@
 #include <casa/Arrays/LogiMatrix.h>
 #include <casa/Arrays/LogiVector.h>
 #include <casa/Logging/LogIO.h>
+#include <boost/dynamic_bitset.hpp>
+#include <stdexcept>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 typedef RFCubeLatticeIterator<RFlagWord> FlagCubeIterator;
-
-class PGPlotterInterface;
 
 // special row flag masks. RowFlagged for flagged rows, 
 // RowAbsent for absent rows
@@ -71,6 +71,10 @@ template<class T> LogicalArray  maskBits  ( const Array<T> &,const T &);
 // (i.e. global) cube is used to hold the actual flags. Individual
 // instances (instantiated by flagging agents) have individual unique
 // bitmasks and, possibly, individual iterators.
+//
+// It was/is a design mistake to use a global/static buffer to hold the
+// shared flags. Instead, every agent should point to the unique dynamically
+// allocated buffer. 
 // </synopsis>
 //
 // <example>
@@ -88,261 +92,272 @@ template<class T> LogicalArray  maskBits  ( const Array<T> &,const T &);
 class RFFlagCube : public FlaggerEnums
 {
 public:
-// default log sink
+  // default log sink
   static LogIO default_sink;
     
-// constructor
+  // constructor
   RFFlagCube ( RFChunkStats &ch,Bool ignore=False,Bool reset=False,LogIO &os=default_sink );
   ~RFFlagCube ();
 
-// returns reference to logsink
+  // returns reference to logsink
   LogIO & logSink ();
-// returns estimated size of flag cube for a given chunk.
+
+  // returns estimated size of flag cube for a given chunk.
   static uInt estimateMemoryUse ( const RFChunkStats &ch );
-// creates flag cube for current chunk. name is name of agent.
-  void init ( RFlagWord polmsk,const String &name = "" );
-// cleans up at end of chunk
+
+  // creates flag cube for current chunk. name is name of agent.
+  // nAgent is total number of agents
+  void init ( RFlagWord polmsk, uInt nAgent, bool is_selector, const String &name = "" );
+
+  // cleans up at end of chunk
   void cleanup ();
 
-// returns summary of stats in text form
+  // returns summary of stats in text form
   String getSummary ();
-// prints flagging stats to stderr
+
+  // prints flagging stats to stderr
   void printStats ();
-// produces a plot of the flagging stats
-  void plotStats (PGPlotterInterface &pgp);
-// returns number of stat plots which will be done 
-  static Int numStatPlots (const RFChunkStats &chunk);
 
-// resets at start of pass
-  FlagMatrix * reset ();
+  // resets at start of pass
+  void reset ();
 
-// advances global flag iterator to time slot it (if required), sets
-// the flag cursor from the iterator (see below). If getflags is true,
-// also calls getDataFlags().
-  FlagMatrix * advance   ( uInt it,Bool getFlags=False );
-// fills global flag lattice with apriori flags from a VisBuffer (if required)
-  void getMSFlags  ();
-// transfers all flags from lattice into VisBuffer
+  // advances global flag iterator to time slot it (if required), sets
+  // the flag cursor from the iterator (see below). If getflags is true,
+  // also calls getDataFlags().
+  void advance   ( uInt it,Bool getFlags=False );
+
+  // fills global flag lattice with apriori flags from a VisBuffer (if required)
+  void getMSFlags  (uInt it);
+
+  // transfers all flags from lattice into VisBuffer
   void setMSFlags  (uInt itime);
 
-// creates a custom iterator
+  // creates a custom iterator
   FlagCubeIterator newCustomIter ();
 
-// Returns full flag matrix (i.e. cursor of global iterator)
+  // Returns full flag matrix (i.e. cursor of global iterator)
   const FlagMatrix & flagMatrix ();
   
-// Returns matrix of row flags
-  const FlagMatrix & rowFlagMatrix ();
-  
-// Returns boolean NIFRxNT map of row flags
-  const LogicalMatrix rowFlagMap () 
-        { return maskBits(rowFlagMatrix(),RowFlagged); }
-// Returns boolean NIFRxNT map of rows actually present in the data
-  const LogicalMatrix rowAvailabilityMap () 
-        { return !maskBits(rowFlagMatrix(),RowAbsent); }
-
-// sets or clears a flag at the given flag cursor
+  // sets or clears a flag at the given flag cursor
   Bool setFlag      ( uInt ich,uInt ifr,FlagCubeIterator &iter );
   Bool clearFlag    ( uInt ich,uInt ifr,FlagCubeIterator &iter );
-// Gets full flag word at the given flag cursor.
+
+  // Gets full flag word at the given flag cursor.
   RFlagWord getFlag ( uInt ich,uInt ifr,FlagCubeIterator &iter );
 
-// Versions of above that use global flag cursor
+  // Versions of above that use global flag cursor
   Bool setFlag      ( uInt ich,uInt ifr );
   Bool clearFlag    ( uInt ich,uInt ifr );
   RFlagWord getFlag ( uInt ich,uInt ifr );
   
-// the preFlagged() function uses the corr-mask to tell if any of this
-// agent's correlations are pre-flagged. Uses internal cursor.
+  // the preFlagged() function uses the corr-mask to tell if any of this
+  // agent's correlations are pre-flagged. Uses internal cursor.
   Bool preFlagged   ( uInt ich,uInt ifr );
-// The agentFlagged() uses the corr-flagmask to tell if any of my
-// correlations are flagged by any agent (including myself). 
-// (i.e. has anyone flagged my correlations?). Uses internal cursor.
-  Bool agentFlagged ( uInt ich,uInt ifr );
-// This corresponds to preFlagged OR agentFlagged. Uses internal cursor.
-  Bool anyFlagged   ( uInt ich,uInt ifr );
 
-// Sets or clears a row flag
+  // The anyFlagged() uses the corr-flagmask to tell if any of my
+  // correlations are flagged either by any agent or pre-flagged
+  // Uses internal cursor.
+  Bool anyFlagged   ( uInt ich,uInt ifr );
+  
+  // Sets or clears a row flag
   Bool setRowFlag      ( uInt ifr,uInt itime );
   Bool clearRowFlag    ( uInt ifr,uInt itime );
-// Gets full row flag word
+
+  // Gets full row flag word
   RFlagWord getRowFlag ( uInt ifr,uInt itime );
   
-// tells if a row is pre-flagged in the MS (or does not exist)
+  // tells if a row is pre-flagged in the MS (or does not exist)
   Bool rowPreFlagged   ( uInt ifr,uInt itime );  
-// tells if a row is flagged by any agent
+
+  // tells if a row is flagged by any agent
   Bool rowAgentFlagged ( uInt ifr,uInt itime );  
-// preFlagged OR agentFlagged  
+
+  // preFlagged OR agentFlagged  
   Bool rowFlagged      ( uInt ifr,uInt itime );
   
-// returns reference to internal iterator
+  // returns reference to internal iterator
   FlagCubeIterator &  iterator ();
   
-// returns flag mask for this agent
+  // returns flag mask for this agent
   RFlagWord flagMask ();      
-// returns correlations mask for this agent
+
+  // returns correlations mask for this agent
   RFlagWord corrMask ();
-// returns the checked-correlations mask for this agent
-// (=0 for RESET/IGNORE policies, or =corrMask() for HONOR policy).
+
+  // returns the checked-correlations mask for this agent
+  // (=0 for RESET/IGNORE policies, or =corrMask() for HONOR policy).
   RFlagWord checkCorrMask ();
-// returns mask of all correlations
+
+  // returns mask of all correlations
   static RFlagWord fullCorrMask ();
-// returns combination of flag masks corresponding to agents that operate
-// on correlations in this agent's corrmask (including myself).
-// (in essence, flag&corrFlagMask() == has anyone flagged my correlations)
-// Invalidated by init(), and only becomes valid at next reset()!
-  RFlagWord corrFlagMask ();
-// for the given corr-mask, returns the corrFlagMask
-  static RFlagWord corrFlagMask ( RFlagWord cmask );
-  
-// returns the number of instances of the flag cube
+
+  // returns the number of instances of the flag cube
   static Int numInstances ();
 
-// sets the maximum memory usage for the flag cube  
+  // sets the maximum memory usage for the flag cube  
   static void setMaxMem ( Int maxmem );
-// returns the current maximum memory usage
+  // returns the current maximum memory usage
   static int  getMaxMem ();
       
-protected:
-// helper methods for generating plots
-  void plotIfrMap  ( PGPlotterInterface &pgp,const Matrix<Float> &img,const LogicalVector &ifrvalid);
-  void plotAntAxis ( PGPlotterInterface &pgp,const Vector<uInt> &antnums,Bool yaxis );
-  void plotImage   ( PGPlotterInterface &pgp,const Matrix<Float> &img,
-                     const char *labelx,const char *labely,const char *labeltop,
-                     Bool wedge = True,Float xbox=0,Float ybox=0,Bool xfreq=False);
-    
-    
+ private:
   RFChunkStats &chunk;                  // chunk
+
+  bool kiss;  // do things simpler (faster) if there is nothing but RFAselector agents
+  bool kiss_flagrow;  // Use boost::dynamic_bitset for 'flagrow' if only RFA agents and
+                      // more than 32 (or so) agents
+
+  static Cube<Bool> in_flags;
+  static int in_flags_time;  //time stamp that in_flags has reached
+  static bool in_flags_flushed; // do we need to write the flags back for this time stamp?
+
   // shortcut to RFChunkStats::num
   uInt num ( StatEnums which ) { return chunk.num(which); }
       
   static RFCubeLattice<RFlagWord> flag; // global flag lattice
   static FlagMatrix flagrow;             // (nIfr,nTime) matrix of row flags
+  static Matrix<boost::dynamic_bitset<> > flagrow_kiss;
   static Int pos_get_flag,pos_set_flag; 
 
   static Bool reset_preflags; // flag: RESET policy specified for at least one instance
   
   static uInt npol,nchan;
   
-// Flag mask used by this instance. Each instance has a unique 1-bit mask.
-// This is assigned automatically in the constructor, by updating the 
-// instance count and the nextmask member.
-// Note that the low N bits of a mask are assigned to pre-flags (one per
-// each correlation in the MS); so the agents start at bit N+1.
+  // Flag mask used by this instance. Each instance has a unique 1-bit mask.
+  // This is assigned automatically in the constructor, by updating the 
+  // instance count and the nextmask member.
+  // Note that the low N bits of a mask are assigned to pre-flags (one per
+  // each correlation in the MS); so the agents start at bit N+1.
   RFlagWord flagmask,       // flagmask of this instance
-            corrmask,        // corrmask of this instance (corrs used/flagged by it)
-            check_corrmask,  // mask checked by preFlagged() & co. Set to 0 for
-                             // RESET or IGNORE policy, or to corrmask for HONOR
-            check_rowmask,   // same for row flags: 0 or RowFlagged
-            my_corrflagmask; // my corrFlagMask(), see above
+    corrmask,        // corrmask of this instance (corrs used/flagged by it)
+    check_corrmask,  // mask checked by preFlagged() & co. Set to 0 for
+    // RESET or IGNORE policy, or to corrmask for HONOR
+    check_rowmask,   // same for row flags: 0 or RowFlagged
+    my_corrflagmask; // see above
+  unsigned long flagmask_kiss; // represents a bitmask with only bit number <n> set where 
+                          // <n> is the value of this variable
   static Int agent_count;    // # of agents instantiated
   static RFlagWord base_flagmask, // flagmask of first agent instance
-      full_corrmask;          // bitmask for all correlations in MS (low N bits)
-// agent_corrmasks is an array of correlation masks for every object instance
-  static RFlagWord agent_corrmasks[sizeof(RFlagWord)*8];
-// corr_flagmask is a mapping from corrmasks into masks of agents that flag the
-// given corrmask
+    full_corrmask;          // bitmask for all correlations in MS (low N bits)
+
+  // corr_flagmask is a mapping from corrmasks into masks of agents that flag the
+  // given corrmask
   static Vector<RFlagWord> corr_flagmask;
   
-// log sink
+  // log sink
   LogIO os;
 
-// pre-flag policy (can be set on a per-instance basis)
+  // pre-flag policy (can be set on a per-instance basis)
   PreFlagPolicy pfpolicy;
   
-// flagging stats for this instance
+  // flagging stats for this instance
   uInt tot_fl_raised,fl_raised,fl_cleared,
-      tot_row_fl_raised,row_fl_raised,row_fl_cleared;
+    tot_row_fl_raised,row_fl_raised,row_fl_cleared;
     
-// local flag cursor used by this instance (setFlag and clearFlag). 
-// Normally, set to flag.cursor() in advance(), but can be overridden
-// by setFlagCursor();
+  // local flag cursor used by this instance (setFlag and clearFlag). 
+  // Normally, set to flag.cursor() in advance(), but can be overridden
+  // by setFlagCursor();
   FlagMatrix * flag_curs;
   uInt flag_itime;
   
-// members for managing flagging report plots
-  static PGPlotterInterface * report_plotted;
-  static String agent_names;
-  
-// number of instances in use
+  // number of instances in use
   static Int num_inst;
-// maximum memory size to use for the flag cube
-  static Int maxmemuse; 
 };
 
 inline RFlagWord RFFlagCube::flagMask ()
-{ return flagmask; }
-
+  { 
+     if (kiss) {
+       throw std::logic_error("Cannot do this in kiss mode (program bug, please report)");
+     }
+     return flagmask; 
+  }
+ 
 inline RFlagWord RFFlagCube::corrMask ()
-{ return corrmask; }
+   { 
+     return corrmask; 
+   }
 
 inline RFlagWord RFFlagCube::checkCorrMask ()
-{ return check_corrmask; }
+   { return check_corrmask; }
 
 inline RFlagWord RFFlagCube::fullCorrMask ()
-{ return full_corrmask; }
-
-inline RFlagWord RFFlagCube::corrFlagMask ()
-{ return my_corrflagmask; }
-
-inline RFlagWord RFFlagCube::corrFlagMask ( RFlagWord cmask )
-{ return corr_flagmask((uInt)cmask); }
+   { return full_corrmask; }
 
 inline RFlagWord RFFlagCube::getFlag ( uInt ich,uInt ifr,FlagCubeIterator &iter )
-{ return (*iter.cursor())(ich,ifr); }
+   { 
+     if (kiss) {
+       /* Create the bitmap (integer) from the correlation flags
+          relevant for this agent */
+       RFlagWord f = 0;
+       uInt c = 1;
+
+       for (uInt icorr = 0; icorr < num(CORR); icorr++, c<<=1) {
+         if ((c & corrmask) && 
+             in_flags(icorr, ich, ifr)) {
+           f |= c;
+         }
+       }
+       return f;
+     }
+     else {
+       return (iter)(ich,ifr); 
+     }
+   }
 
 inline Bool RFFlagCube::setFlag ( uInt ich,uInt ifr ) 
-{ return setFlag(ich,ifr,flag.iterator()); } 
+   { return setFlag(ich,ifr,flag.iterator()); } 
+
 inline Bool RFFlagCube::clearFlag ( uInt ich,uInt ifr ) 
-{ return clearFlag(ich,ifr,flag.iterator()); } 
+   { return clearFlag(ich,ifr,flag.iterator()); } 
+
 inline RFlagWord RFFlagCube::getFlag ( uInt ich,uInt ifr ) 
-{ return getFlag(ich,ifr,flag.iterator()); } 
+   { return getFlag(ich,ifr,flag.iterator()); } 
 
 inline FlagCubeIterator RFFlagCube::newCustomIter ()
-{ return flag.newIter(); }
+   { return flag.newIter(); }
 
 inline const FlagMatrix & RFFlagCube::flagMatrix ()
-{ return *flag_curs; }
-
-inline const FlagMatrix & RFFlagCube::rowFlagMatrix ()
-{ return flagrow; }
+   { return *flag_curs; }
 
 inline Bool RFFlagCube::preFlagged ( uInt ich,uInt ifr )
-{ return getFlag(ich,ifr)&check_corrmask != 0; }    
-
-inline Bool RFFlagCube::agentFlagged ( uInt ich,uInt ifr )
-{ return getFlag(ich,ifr)&my_corrflagmask != 0; }    
+   { return getFlag(ich,ifr)&check_corrmask != 0; }    
 
 inline Bool RFFlagCube::anyFlagged ( uInt ich,uInt ifr )
-{ return getFlag(ich,ifr)&(check_corrmask|my_corrflagmask) != 0; }
+   { 
+     if (kiss) {
+       throw std::logic_error("Cannot do this in kiss mode (program bug, please report)");
+     }
+     return getFlag(ich,ifr)&(check_corrmask|my_corrflagmask) != 0; 
+   }
 
 // Gets full row flag word
 inline RFlagWord RFFlagCube::getRowFlag ( uInt ifr,uInt itime )
-{ return flagrow(ifr,itime); }
+  {
+    if (kiss) {
+      throw std::logic_error("Cannot do this in kiss mode (program bug, please report)");
+    }
+    return flagrow(ifr,itime); 
+  }
+
 // tells if a row is pre-flagged in the MS (or does not exist)
 inline Bool RFFlagCube::rowPreFlagged   ( uInt ifr,uInt itime )
-{ return getRowFlag(ifr,itime)&check_rowmask; }
+   { return getRowFlag(ifr,itime)&check_rowmask; }
+
 // tells if a row is flagged by any agent
 inline Bool RFFlagCube::rowAgentFlagged ( uInt ifr,uInt itime )
-{ return getRowFlag(ifr,itime)&~(RowFlagged|RowAbsent); }
+   { return getRowFlag(ifr,itime)&~(RowFlagged|RowAbsent); }
+
 // preFlagged OR agentFlagged  
 inline Bool RFFlagCube::rowFlagged      ( uInt ifr,uInt itime )
-{ return getRowFlag(ifr,itime)&(check_rowmask?~0:~RowFlagged); }
+   { return getRowFlag(ifr,itime)&(check_rowmask?~0:~RowFlagged); }
 
 inline FlagCubeIterator & RFFlagCube::iterator ()
-{ return flag.iterator(); }
+   { return flag.iterator(); }
 
 inline int RFFlagCube::numInstances ()
-{ return num_inst; }
-
-inline void RFFlagCube::setMaxMem ( Int maxmem )
-{ maxmemuse=maxmem; }
-
-inline Int RFFlagCube::getMaxMem ()
-{ return maxmemuse; }
+   { return num_inst; }
 
 inline LogIO & RFFlagCube::logSink ()
-{ return os; }
+   { return os; }
 
 
 } //# NAMESPACE CASA - END

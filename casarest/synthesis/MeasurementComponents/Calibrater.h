@@ -65,6 +65,7 @@ class Calibrater
 		 const String& spw="",
 		 const String& scan="",
 		 const String& field="",
+		 const String& intent="",
 		 const String& baseline="",
 		 const String& uvrange="",
 		 const String& chanmode="none",
@@ -101,6 +102,7 @@ class Calibrater
 		 const Record& applypar);
 
   Bool setmodel(const String& modelImage);
+  Bool setModel(const Vector<Double>& stokes);
 
   //  Arrange to solve
   Bool setsolve (const String& type, 
@@ -117,17 +119,18 @@ class Calibrater
   Bool setsolve (const String& type, 
 		 const String& solint,
 		 const String& table,
-		 const Bool& append,
-		 const Double& preavg, 
+		 const Bool append,
+		 const Double preavg, 
 		 const String& apmode="AP",
-		 const Int& minblperant=4,
+		 const Int minblperant=4,
 		 const String& refant="",
-		 const Bool& solnorm=False,
-		 const Float& minsnr=0.0f,
+		 const Bool solnorm=False,
+		 const Float minsnr=0.0f,
 		 const String& combine="",
-		 const Int& fillgaps=0,
+		 const Int fillgaps=0,
 		 const String& cfcache="",
-		 const Double& painc=360.0);
+		 const Double painc=360.0,
+                 const Int fitorder=0);
 
   // Arrange to solve for BPOLY
   Bool setsolvebandpoly(const String& table,
@@ -259,6 +262,15 @@ class Calibrater
 		  const String& interp="linear",
 		  const Double& t=-1.0,
 		  const Vector<Int>& spwmap=Vector<Int>(1,-1));
+  
+  // Generate cal table from specified values
+  void specifycal(const String& type,
+		  const String& caltable,
+		  const String& time,
+		  const String& spw,
+		  const String& antenna,
+		  const String& pol,
+		  const Vector<Double>& parameter);
 
   // Smooth  calibration
   Bool smooth(const String& infile,
@@ -285,9 +297,10 @@ class Calibrater
 
   // Initialize the calibrator object from an input MeasurementSet.
   // Optional compression of the calibration columns (MODEL_DATA,
-  // CORRECTED_DATA and IMAGING_WEIGHT) is supported.
+  // and CORRECTED_DATA) is supported.
   Bool initialize(MeasurementSet& inputMS, 
-		  Bool compress=True);
+		  Bool compress=True,
+		  Bool addScratch=True);
 
   // Re-initialize the calibration scratch columns
   Bool initCalSet(const Int& calSet);
@@ -345,13 +358,17 @@ class Calibrater
   // Returns True if calibrator object is in a valid state
   Bool ok();
 
+  // Given a (supplied) list of uncalibrated spws, determines and returns if there were
+  // any, and if so sends them as a warning message to the logger.
+  Bool summarize_uncalspws(const Vector<Bool>& uncalspw, const String& origin);
+
   // Create a VisSet for raw phase transfer if needed
   void getRawPhaseVisSet(Vector<Int>& spwid); 
 
   // The standard solving mechanism
   Bool standardSolve();
   Bool standardSolve2();
-  Bool standardSolve3();
+  Bool genericGatherAndSolve();
 
   // Input MeasurementSet and derived selected MeasurementSet
   String msname_p;
@@ -363,6 +380,9 @@ class Calibrater
   VisSet* vs_p;
   VisSet* rawvs_p;
   VisEquation* ve_p;
+
+  // Do we have scr cols to work with?
+  Bool scrOk_p;
 
   // VisCals for applying and solving:
   PtrBlock<VisCal*> vc_p;

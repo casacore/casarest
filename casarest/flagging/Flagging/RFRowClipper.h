@@ -28,7 +28,6 @@
 #define FLAGGING_RFROWCLIPPER_H
 
 #include <flagging/Flagging/RFCommon.h>
-#include <flagging/Flagging/RFDebugPlot.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Arrays/Matrix.h>
     
@@ -36,7 +35,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 class RFFlagCube;
 class RFChunkStats;
-class RFDebugPlot;
     
 // <summary>
 // RFRowClipper: flags rows based on their noise level
@@ -64,7 +62,7 @@ class RFDebugPlot;
 //   <li> start discussion of this possible extension
 // </todo>
 
-class RFRowClipper : public PGPlotEnums,FlaggerEnums
+class RFRowClipper : public FlaggerEnums
 {
 public:
   // construct from a chunk accessor and flag cube. Clip is the clipping
@@ -89,18 +87,13 @@ public:
   void  markSigma ( uInt ifr );
 
   // recompute updated estimates and optionally do row flagging
-  Float updateSigma (uInt &ifrmax,uInt &itmax,Bool flagrows = True );
-  
-  // enables a debugging plot
-  void setDebug ( const RFDebugPlot &debug );
-      
+  Float updateSigma (uInt &ifrmax,uInt &itmax,Bool flagrows = True, bool clear_flags = true );
+        
 private:
   RFChunkStats &chunk;
   RFFlagCube   &flag;
   Float clip_level;
   uInt halfwin,maxpass;
-  
-  RFDebugPlot   debug;
   
   uInt nifr,ntime;
   Matrix<Float> sig,sig0;

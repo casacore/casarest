@@ -31,7 +31,10 @@
 #include <synthesis/MeasurementComponents/BPoly.h>
 #include <synthesis/MeasurementComponents/EJones.h>
 #include <synthesis/MeasurementComponents/EPJones.h>
+#include <synthesis/MeasurementComponents/KJones.h>
+#include <synthesis/MeasurementComponents/LJJones.h>
 #include <synthesis/MeasurementComponents/AMueller.h>
+#include <synthesis/MeasurementComponents/TsysGainCal.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -43,6 +46,9 @@ VisCal* createVisCal(const String& type, VisSet& vs) {
 
   if (uptype=="P" || uptype=="P JONES") 
     return new PJones(vs);
+
+  else if (uptype=="TFOPAC")  // Not yet solvable (even though an SVJ)
+    return new TfOpac(vs);
 
   else if (uptype=="TOPAC")  // Not yet solvable (even though an SVJ)
     return new TOpac(vs);
@@ -84,17 +90,30 @@ SolvableVisCal* createSolvableVisCal(const String& type, VisSet& vs) {
   else if (uptype=="GSPLINE") 
     return new GJonesSpline(vs);
   
-  else if (uptype=="T" || uptype=="T JONES") 
+  else if (uptype=="TF" || uptype=="TF JONES" || uptype=="TF NOISE") 
+    return new TfJones(vs);
+
+  else if (uptype=="T" || uptype=="T JONES" || uptype=="T NOISE") 
     return new TJones(vs);
 
   else if (uptype.before('+')=="DLIN" ||
 	   uptype.before('+')=="D" || 
 	   uptype=="D JONES") 
-    return new DJones(vs);
+    return new DlinJones(vs);
 
   else if (uptype.before('+')=="DFLIN" || 
 	   uptype.before('+')=="DF" || 
 	   uptype=="DF JONES") 
+    return new DflinJones(vs);
+
+  else if (uptype.before('+')=="DGEN" ||
+	   uptype.before('+')=="DGENERAL" || 
+	   uptype=="DGEN JONES") 
+    return new DJones(vs);
+
+  else if (uptype.before('+')=="DFGEN" || 
+	   uptype.before('+')=="DFGENERAL" || 
+	   uptype=="DFGEN JONES") 
     return new DfJones(vs);
 
   else if (uptype=="J" || uptype=="J JONES") 
@@ -103,17 +122,51 @@ SolvableVisCal* createSolvableVisCal(const String& type, VisSet& vs) {
   else if (uptype == "EP" || uptype == "EP JONES")
     return new EPJones(vs);
 
+  else if (uptype == "LJ" || uptype == "LJ JONES")
+    return new LJJones(vs);
+
   else if (uptype=="M" || uptype=="M MUELLER")
     return new MMueller(vs);
 
   else if (uptype=="A" || uptype=="A MUELLER")
     return new AMueller(vs);
 
+  else if (uptype=="N" || uptype=="A NOISE")
+    return new ANoise(vs);
+
   else if (uptype=="MF" || uptype=="MF MUELLER")
     return new MfMueller(vs);
      
   else if (uptype=="X" || uptype=="X MUELLER")
     return new XMueller(vs);
+
+  else if (uptype=="XJ" || uptype=="X JONES")
+    return new XJones(vs);
+
+  else if (uptype=="XF" || uptype=="XF JONES")
+    return new XfJones(vs);
+
+  else if (uptype=="K" || uptype=="K JONES")
+    return new KJones(vs);
+
+  else if (uptype=="KCROSS" || uptype=="KCROSS JONES")
+    return new KcrossJones(vs);
+
+  else if (uptype=="GLINXPH" || uptype=="GLINXPH JONES" ||
+	   uptype=="XY+QU")
+    return new GlinXphJones(vs);
+
+  else if (uptype=="KMBD" || uptype=="KMBD JONES")
+    return new KMBDJones(vs);
+
+  else if (uptype.contains("KANTPOS") || uptype.contains("KANTPOS JONES"))
+    return new KAntPosJones(vs);
+
+  else if (uptype.contains("TSYS"))
+    return new StandardTsys(vs);
+
+  else if (uptype.contains("EVLAGAIN"))
+    return new EVLAGainTsys(vs);
 
   else {
     cout << "attempted type = " << type << endl;

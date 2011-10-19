@@ -90,8 +90,7 @@ Bool RFANewMedianClip::newChunk (Int &maxmem)
     return active=False;
   }
 
-  if( !flag.getMaxMem() )
-    maxmem -= 2; 
+  maxmem -= 2; 
   uInt halfwin = num(TIME)/2;
   // reserve memory for our bunch of median sliders
   maxmem -= (num(CHAN)*num(IFR)*MedianSlider::objsize(halfwin))/(1024*1024)+1;
@@ -110,7 +109,7 @@ Bool RFANewMedianClip::newChunk (Int &maxmem)
     return active=False;
 
   // create temp lattice for evalues
-  evalue.init(num(CHAN),num(IFR),num(TIME), 0, mmdiff ,2);
+  evalue.init(num(CHAN),num(IFR),num(TIME), num(CORR), nAgent, 0, mmdiff ,2);
   //init stdev matrix
   stdev.resize(num(CHAN), num(IFR));
   stdev.set(0);
@@ -134,12 +133,12 @@ void RFANewMedianClip::endChunk ()
 
 // startData
 // create new median sliders at start of data pass
-void RFANewMedianClip::startData ()
+void RFANewMedianClip::startData (bool verbose)
 {
   //new added
   evalue.reset(False,True);
 
-  RFAFlagCubeBase::startData();
+  RFAFlagCubeBase::startData(verbose);
   flag_iter.reset();
 
   pflagiter = &flag.iterator();
@@ -214,10 +213,10 @@ RFA::IterMode RFANewMedianClip::endData ()
 }
 
 
-void RFANewMedianClip::startDry ()
+void RFANewMedianClip::startDry (bool verbose)
 {
   if(!stdeved) 
-    RFAFlagCubeBase::startDry();
+    RFAFlagCubeBase::startDry(verbose);
   // reset lattices to read-only
   evalue.reset(True,False);
   pflagiter = &flag.iterator();

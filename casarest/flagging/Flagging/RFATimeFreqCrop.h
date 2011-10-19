@@ -32,8 +32,6 @@
 #include <flagging/Flagging/RFDataMapper.h> 
 #include <flagging/Flagging/RFFlagCube.h> 
 #include <flagging/Flagging/RFRowClipper.h> 
-#include <flagging/Flagging/RFDebugPlot.h> 
-#include <flagging/Flagging/RFADiffBase.h> 
 #include <flagging/Flagging/RFABase.h>
 #include <casa/Arrays/Vector.h>
 #include <scimath/Functionals/Polynomial.h>
@@ -82,16 +80,16 @@ public:
 
   virtual Bool newChunk (Int &i);
   virtual void endChunk ();
-  virtual void startData ();
+  virtual void startData (bool verbose);
   virtual IterMode iterTime (uInt itime);
   virtual IterMode iterRow  (uInt irow);
   virtual IterMode endData  ();
+  virtual void startFlag (bool verbose);
   virtual void iterFlag(uInt itime);
   static const RecordInterface & getDefaults ();
   
 private:
   
-  void UPlot(Vector<Float> vect1,Vector<Float> vect2, uInt lim1, uInt lim2);
   Float UMean(Vector<Float> vect, Vector<Bool> flag);
   Float UStd(Vector<Float> vect, Vector<Bool> flag, Vector<Float> fit);
   Float UStd(Vector<Float> vect, Vector<Bool> flag, Float mean);
@@ -99,11 +97,22 @@ private:
   void PolyFit(Vector<Float> data,Vector<Bool> flag, Vector<Float> fit, uInt lim1, uInt lim2,uInt deg);
   void LineFit(Vector<Float> data,Vector<Bool> flag, Vector<Float> fit, uInt lim1, uInt lim2);
   void Ants(uInt bs, uInt *a1, uInt *a2);
+  uInt BaselineIndex(uInt row, uInt a1, uInt a2);
 
-  FILE *gnu;
-   
-  void Display_ds9(Int xdim, Int ydim, Float **data, Int frame);
-  
+  void Display_ds9(Int xdim, Int ydim, Matrix<Float> &data, Int frame);
+  void Plot_ds9(Int dim, Vector<Float> data1, Vector<Float> data2);
+
+  void AllocateMemory();  
+  void FlagZeros();
+  void RunTFCrop();
+  void FlagTimeSeries(uInt pl, uInt bs);
+  void FitCleanBandPass(uInt pl, uInt bs);
+  void FlagBandPass(uInt pl, uInt bs);
+  void GrowFlags(uInt pl, uInt bs);
+  RFA::IterMode ShowFlagPlots();
+  void ExtendFlags();
+  void FillChunkFlags();
+
   uInt itime;  
   VisibilityIterator &vi; 
   VisBuffer &vb;
@@ -119,6 +128,8 @@ private:
   Cube<Bool> flagc; 	// flagCube
   Cube<Float> meanBP; 	// mean bandpass - npol x nbaselines x nchannels
   Cube<Float> cleanBP; 	// cleaned bandpasses - npol x nbaselines x nchannels
+  Vector<Bool> rowflags; // rowflags from the MS - ntime x nbaselines
+  Vector<Bool> baselineflags; // flags for baselines - NumB (for internal use)
 
   Cube<Bool> chunkflags; // Flags for the entire chunk.
   
@@ -130,10 +141,13 @@ private:
   Vector<Float> fitTS; 	// temporary fit array - ntimes
  
   Float T_TOL,F_TOL,ANT_TOL,BASELN_TOL; // Input parameters
-  uInt FlagLevel,CorrChoice,StartChan,EndChan,NumTime;//Input parameters
-  Bool ShowPlots;
+  uInt FlagLevel,CorrChoice,NumTime,MaxNPieces;//Input parameters
+  Bool ShowPlots,DryRun,IgnorePreflags;
   uInt nPol;
   Bool FreqLineFit;
+  Bool StopAndExit;
+  String Column;
+  Vector<String> Expr;
  
   Matrix<Bool> RowFlags; // Row Flags
   
@@ -147,13 +161,17 @@ private:
   uInt NumT; // Number of timestamps in one block
   uInt NumB; // Number of baselines.
   uInt NumAnt; // Number of antennas.
+  uInt NumC; // Number of channels
+  uInt NumP; // Number of polarizations
  
   FlagCubeIterator flag_iter; // Local Flag Iterator
-  
 };
 
     
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <flagging/Flagging/RFATimeFreqCrop.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

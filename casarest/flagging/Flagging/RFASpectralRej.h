@@ -31,7 +31,6 @@
 #include <flagging/Flagging/RFDataMapper.h> 
 #include <flagging/Flagging/RFFlagCube.h> 
 #include <flagging/Flagging/RFRowClipper.h> 
-#include <flagging/Flagging/RFDebugPlot.h> 
 #include <scimath/Functionals/Polynomial.h>
 #include <scimath/Fitting/LinearFit.h>
 #include <casa/Containers/Queue.h>
@@ -66,7 +65,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 //   <li> start discussion of this possible extension
 // </todo>
 
-class RFASpectralRej : public RFAFlagCubeBase, public RFDataMapper, public PGPlotEnums
+class RFASpectralRej : public RFAFlagCubeBase, public RFDataMapper
 {
 public:
   RFASpectralRej  ( RFChunkStats &ch,const RecordInterface &parm ); 
@@ -75,7 +74,7 @@ public:
   virtual uInt estimateMemoryUse () { return RFAFlagCubeBase::estimateMemoryUse()+2; }
   virtual Bool newChunk (Int &maxmem);
   virtual void endChunk ();
-  virtual void startData ();
+  virtual void startData (bool verbose);
   virtual IterMode iterTime (uInt it);
   virtual IterMode iterRow  (uInt ir);
   virtual IterMode endData  ();
@@ -101,8 +100,6 @@ protected:
 
   Polynomial<AutoDiff<Float> > poly; // fitted polynomial
   LinearFit<Float> fitter;     // fitter object
-  
-  RFDebugPlot   debug;
   
   Double     xnorm;
 };

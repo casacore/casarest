@@ -50,7 +50,7 @@
       end
 
       complex function accumulate(doavgpb,area, grid,gridorigin,func,
-     $     nvalue, cnorm, rsupport,sampling, iloc,loc,off,offset, 
+     $     nvalue, cnorm, rsupport,sampling, off,
      $     cfscale,
      $     scale,lambda, sDPA,cDPA,currentCFPA,convOrigin,convSize,
      $     wconvsize, polused, dopointingcorrection, dograd,nant,
@@ -68,7 +68,7 @@
      $     ConjPlane, PolnPlane,apol,achan
       double precision offset(3),cfscale,lambda,sDPA,cDPA,currentCFPA,
      $     area
-      real raoff(nant), decoff(nant)
+      real raoff(2,1,nant), decoff(2,1,nant)
       double precision griduvw(2), scale(3),uvw(3,nrow),
      $     ra1,ra2,dec1,dec2
       complex cwt,pcwt,pdcwt1,pdcwt2,tcnorm
@@ -78,16 +78,25 @@
       logical opbmos,mreindex
       external gcppeij
       double precision ts,tc,tmpnorm
+      double precision scaledSampling
+      integer scaledSupport
+
+      scaledSampling=int(sampling*cfscale)
+      scaledSupport=int(rsupport/cfscale+0.5)
 
       origin(1)=gridorigin(1)
       origin(2)=gridorigin(2)
       origin(3)=gridorigin(3)
       tcnorm=0
-      do iy=-rsupport,rsupport
-         iloc(2)=(iy*sampling+off(2))* cfscale
+      iloc(3)=1
+
+      do iy=-scaledSupport,scaledSupport
+c         iloc(2)=(iy*sampling+off(2))* cfscale
+         iloc(2)=iy * scaledSampling + off(2)
          iv = iloc(2)
-         do ix=-rsupport,rsupport
-            iloc(1)=(ix*sampling+off(1)) * cfscale
+         do ix=-scaledSupport,scaledSupport
+c           iloc(1)=(ix*sampling+off(1))* cfscale
+            iloc(1)=ix * scaledSampling + off(1)
             iu = iloc(1)
             ts=sDPA
             tc=cDPA
@@ -96,18 +105,15 @@
                if (dopointingcorrection .eq. 1) then
                   griduvw(1)=(iloc(1)-convOrigin)/(scale(1)*sampling)
                   griduvw(2)=(iloc(2)-convOrigin)/(scale(2)*sampling)
-                  ra1 = raoff(ant1(irow)+1)
-                  ra2 = raoff(ant2(irow)+1)
-                  dec1= decoff(ant1(irow)+1)
-                  dec2= decoff(ant2(irow)+1)
+                  ra1 = raoff(apol,1,ant1(irow)+1)
+                  ra2 = raoff(apol,1,ant2(irow)+1)
+                  dec1= decoff(apol,1,ant1(irow)+1)
+                  dec2= decoff(apol,1,ant2(irow)+1)
                   call gfeij(griduvw,area,ra1,dec1,ra2,dec2,
      $                 dograd,pcwt,pdcwt1,pdcwt2,currentCFPA)
-c$$$                  call gcppeij(griduvw,area,ra1,dec1,ra2,dec2,
-c$$$     $                 dograd,pcwt,pdcwt1,pdcwt2,currentCFPA)
                else 
                   pcwt=cmplx(1.0,0.0)
                endif
-               
                if(uvw(3,irow).gt.0.0) then
                   cwt=conjg(func(iloc(1),iloc(2), iloc(3),
      $                 ConjPlane))
@@ -115,44 +121,43 @@ c$$$     $                 dograd,pcwt,pdcwt1,pdcwt2,currentCFPA)
                   cwt=(func(iloc(1),iloc(2), iloc(3),
      $                 PolnPlane))
                end if
-               cwt=(func(iloc(1),iloc(2), iloc(3),
-     $              PolnPlane))
+               cwt=(func(iloc(1),iloc(2), iloc(3), PolnPlane))
+               cwt = (cwt/cnorm)
 
-c$$$               if (doavgpb .gt. 0) then
-c$$$                  write(*,*) apol, PolnPlane, iloc(1),iloc(2),
-c$$$     $                 real(cwt), imag(cwt),ix,iy
-c$$$               endif
-               tcnorm = tcnorm + (cwt/cnorm)
-               tmpnorm = cnorm
-               if (doavgpb .gt. 0) then
-                  cwt = real(cwt)
-                  tmpnorm=real(tmpnorm)
-               endif
+c               tcnorm=tcnorm+cwt*nvalue
                grid(origin(1)+ix,origin(2)+iy,apol,achan)=
      $              grid(origin(1)+ix,origin(2)+iy,apol,achan)+
-     $              nvalue*cwt*conjg(pcwt)/tmpnorm
+     $              nvalue*cwt*(pcwt)
+c$$$               if ((doavgpb .ne. 0)) then
+c$$$                  write(*,*) cnorm,tcnorm,nvalue,cwt
+c$$$               endif
             endif
          end do
+c$$$         write(*,*)
       end do
-      accumulate = tcnorm
+c$$$      if ((doavgpb .eq. 1)) then
+c$$$         write(*,*) tcnorm,nvalue
+c$$$      endif
+      accumulate = cnorm
+c$$$      stop
       end
 C     
 C     Compute area under the function func
 C     
-      complex function getarea(func,area,rsupport, sampling, iloc,loc,
-     $     off, offset,
+      complex function getarea(doavgpb,func,area,rsupport, sampling, 
+     $     off, 
      $     cfscale,scale,lambda,sDPA, cDPA, currentCFPA, convOrigin, 
      $     convSize, wconvsize, polused,dopointingcorrection, dograd, 
      $     nant, raoff,decoff, ConjPlane, PolnPlane,ant1,ant2,uvw,
      $     nrow,irow)
       
-      integer nrow,irow
+      integer nrow,irow,doavgpb
       integer ant1(nrow),ant2(nrow)
       integer rsupport,sampling, off(3), convOrigin, convSize,wconvsize,
      $     polused
       integer dopointingcorrection, dograd,nant
       integer ix,iy,iloc(3),loc(3), ConjPlane, PolnPlane
-      real raoff(nant), decoff(nant)
+      real raoff(2,1,nant), decoff(2,1,nant)
       double precision ra1,ra2,dec1,dec2
       double precision offset(3),cfscale,lambda,sDPA,cDPA,currentCFPA,
      $     area
@@ -163,63 +168,34 @@ C
       logical opbmos,mreindex
       external gcppeij
       integer OMP_GET_THREAD_NUM,TID
-
-      double precision ts, tc
+      integer scaledSupport
+      double precision ts, tc, scaledSampling
       
       cnorm=0
-c !$OMP PARALLEL PRIVATE(ix,iloc,iu,iv,cwt,pcwt)
-c !$OMP+         PRIVATE(ra1,ra2,dec1,dec2,griduvw)
-c !$OMP+         SHARED(grid,cnorm)
-c !$OMP DO
-      do iy=-rsupport,rsupport
-         iloc(2)=(iy*sampling+off(2))*cfscale
+      iloc(3)=1
+      scaledSampling = int(sampling*cfscale);
+      scaledSupport = int(rsupport/cfscale + 0.5)
+
+      do iy=-scaledSupport,scaledSupport
+c         iloc(2)=(iy*sampling+off(2))*cfscale
+         iloc(2)=iy * scaledSampling + off(2)
          iv = iloc(2)
-         do ix=-rsupport,rsupport
-            iloc(1)=(ix*sampling+off(1))*cfscale
+         do ix=-scaledSupport,scaledSupport
+c            iloc(1)=(ix*sampling+off(1))*cfscale
+            iloc(1)=ix * scaledSampling + off(1)
             iu=iloc(1)
-c$$$            ixr = ix*sampling*cfscale
-c$$$            iyr = iy*sampling*cfscale
-c$$$            iu = nint(cDPA*ixr + sDPA*iyr)
-c$$$            iv = nint(-sDPA*ixr + cDPA*iyr)
-c$$$            iu=ixr
-c$$$            iv=iyr
-c$$$            iu=iu+off(1)*cfscale
-c$$$            iv=iv+off(2)*cfscale
             ts = sDPA
             tc = cDPA
-c$$$	    ts=0.0
-c$$$            tc=1.0
             if (mreindex(iu,iv,iloc(1),iloc(2), ts,tc,
      $           convOrigin, convSize)) then
-               if (dopointingcorrection .eq. 1) then
-                  griduvw(1)=(iloc(1)-convOrigin)/(scale(1)*sampling)
-                  griduvw(2)=(iloc(2)-convOrigin)/(scale(2)*sampling)
-                  ra1 = raoff(ant1(irow)+1)
-                  ra2 = raoff(ant2(irow)+1)
-                  dec1= decoff(ant1(irow)+1)
-                  dec2= decoff(ant2(irow)+1)
-                  call gfeij(griduvw,area,ra1,dec1,ra2,dec2,dograd,
-     $                 pcwt,pdcwt1,pdcwt2,currentCFPA)
-c$$$                  call gcppeij(griduvw,area,ra1,dec1,ra2,dec2,dograd,
-c$$$     $                 pcwt,pdcwt1,pdcwt2,currentCFPA)
-               else 
-                  pcwt=cmplx(1.0,0.0)
-               endif
                if(uvw(3,irow).gt.0.0) then
                   cwt=conjg(func(iloc(1),iloc(2), iloc(3),
      $                 ConjPlane))
-c                  pcwt=conjg(pcwt)
                else
                   cwt=(func(iloc(1),iloc(2),iloc(3),PolnPlane))
                end if
                cwt=(func(iloc(1),iloc(2),iloc(3),PolnPlane))
-C !$OMP MASTER
                cnorm=cnorm+cwt
-c$$$               write(*,*)ix,iy,iloc(1),iloc(2),iloc(3),cnorm,cwt,
-c$$$     $              OMP_GET_THREAD_NUM()
-C !$OMP END MASTER
-c     *pcwt
-c               norm=norm+weight(ichan,irow)*abs(cwt)*conjg(pcwt)
             endif
          enddo
       enddo
@@ -237,7 +213,8 @@ C
      $     chanmap, polmap,polused,sumwt,
      $     ant1, ant2, nant, scanno, sigma,raoff, decoff,area,
      $     dograd,dopointingcorrection,npa,paindex,cfmap,conjcfmap,
-     $     currentCFPA,actualPA,doavgpb,avgpb,cfRefFreq,convWts)
+     $     currentCFPA,actualPA,doavgpb,avgpb,cfRefFreq,convWts,
+     $     wtsupport)
       
       
       implicit none
@@ -274,6 +251,7 @@ C
       
       real pos(3)
       integer loc(3), pboff(3), off(3), iloc(3),iu,iv,lloc(3)
+      double precision pboffset(3)
       integer rbeg, rend
       integer ix, iy, ipol, ichan, tx,ty
       integer apol, achan, irow, PolnPlane, ConjPlane
@@ -316,9 +294,9 @@ c      dPA = 0
       enddo
 
       convOrigin = (convsize-1)/2
-c      convwtsize=2*wtsupport*10+1
       convWtOrigin = (convwtsize-1)/2
       accumPB=1
+      tcnorm=0.0
       do irow=rbeg, rend
          if(rflag(irow).eq.0) then 
             do ichan=1, nvischan
@@ -326,7 +304,9 @@ c      convwtsize=2*wtsupport*10+1
                
                lambda = c/freq(ichan)
                cfscale = cfRefFreq/freq(ichan)
-               
+c$$$               uvw(1,irow)=0
+c$$$               uvw(2,irow)=0
+c$$$               uvw(3,irow)=0
                if((achan.ge.1).and.(achan.le.nchan).and.
      $              (weight(ichan,irow).ne.0.0)) then
                   call spbmos(uvw(1,irow), dphase(irow), 
@@ -334,18 +314,13 @@ c      convwtsize=2*wtsupport*10+1
      $                 pos, loc, off, phasor)
                   iloc(3)=max(1, min(wconvsize, loc(3)))
                   rsupport=support(iloc(3),1,paindex)
-		  rsupport = nint( (rsupport / cfscale)+0.5 )
-                  wtsupport=nint(rsupport*4.0)
+
+c                  wtsupport=rsupport
+
                   cfOK=opbmos(nx, ny, wconvsize, loc, rsupport)
                   cfwtOK=opbmos(nx, ny, wconvsize, loc, wtsupport)
                   if (cfOK .or. cfwtOK) then
                      PolnPlane=polused+1
-c$$$!$OMP PARALLEL PRIVATE(ipol,apol,nvalue,norm,cnorm,tcnorm,cnorm2)
-c$$$!$OMP+         PRIVATE(tmpvalue,ConjPlane,PolnPlane)
-c$$$!$OMP+         PRIVATE(TID)
-c$$$!$OMP+         SHARED(avgpb,grid,sumwt)
-c$$$!$OMP DO
-
                      do ipol=1, nvispol
                         apol=polmap(ipol)+1
 
@@ -353,7 +328,7 @@ c$$$!$OMP DO
      $                       (apol.ge.1).and.(apol.le.npol)) then
                            ConjPlane = cfmap(ipol)+1
                            PolnPlane = conjcfmap(ipol)+1
-                           
+
                            if(dopsf.eq.1) then
                               nvalue=cmplx(weight(ichan,irow))
                            else
@@ -362,29 +337,28 @@ c$$$!$OMP DO
                            end if
                            
                            norm=0.0
-                           cnorm=cmplx(1.0,0.0)
                            cnorm=0.0
                            tcnorm=0.0
 			   cnorm2=0.0
-                           
-c$$$                           TID=OMP_GET_THREAD_NUM()
-c$$$                           write(*,*) TID,nvalue,apol,ipol,ichan,irow
-
+c                           accumPB=1
                            if ((doavgpb .gt. 0) .and. (cfwtOK) .and.
      $                          (accumPB .eq. 1)) then
 C
-C This is the center of the WT image is 
+C This is the center of the WT image is.  Weight functions are
+C accumulated at the origin of the UV-grid.
 C
                               lloc(1)=(nx)/2+1
                               lloc(2)=(ny)/2+1
+                              lloc(3)=0
                               pboff(1)=0
                               pbOff(2)=0
                               pboff(3)=off(3)
+                              convWtOrigin=convwtsize/2+1
+c                              tmpvalue=cmplx(1,0)
                               tmpvalue=cmplx(weight(ichan,irow))
-                              tmpvalue=cmplx(1,0)
-
-                              cnorm2 = getarea(convWts,area,wtsupport,
-     $                             sampling,iloc,loc,pboff, offset, 
+                              cnorm2 = getarea(doavgpb,convWts,area,
+c                              cnorm2 = getarea(doavgpb,convfunc,area,
+     $                             wtsupport, sampling,pboff, 
      $                             cfscale,scale,lambda, sDPA, cDPA,
      $                             currentCFPA, convWtOrigin, 
      $                             convwtsize,
@@ -392,9 +366,10 @@ C
      $                             dopointingcorrection,dograd, 
      $                             nant,raoff,decoff,ConjPlane,
      $                             PolnPlane,ant1,ant2,uvw,nrow,irow)
-                              tcnorm=accumulate(doavgpb,area,avgpb,lloc,
+                              cnorm2=accumulate(doavgpb,area,avgpb,lloc,
      $                             convWts,tmpvalue,cnorm2,wtsupport,
-     $                             sampling,iloc,loc,pboff,offset,
+c     $                             convfunc,tmpvalue,cnorm2,wtsupport,
+     $                             sampling,pboff,
      $                             cfscale,scale,lambda,sDPA,cDPA, 
      $                             currentCFPA,convWtOrigin,convwtsize,
      $                             wconvsize,polused,
@@ -404,12 +379,25 @@ C
      $                             ant1,ant2,uvw,nrow,irow)
                               chansDone(ichan)=.true.
                               polsDone(PolnPlane) = .true.
-                           endif
+                              tcnorm=tcnorm+weight(ichan,irow)
+c$$$                              write(*,*)'PB: ',irow,tcnorm,ichan,apol
+c$$$                              if (irow .eq. 1) then
+c$$$                                 write(*,*) 'PB:',ichan,PolnPlane,lloc,
+c$$$     $                                pboff,cnorm2
+c$$$                              endif
+                          endif
                            if (cfOK) then
-                              convOrigin = (convSize-1)/2
-                              cnorm = getarea(convfunc,area,rsupport,
-     $                             sampling, iloc,loc,
-     $                             off, offset, cfscale,scale,lambda, 
+                              convOrigin = convSize/2+1
+c$$$                              nvalue=cmplx(1,0)
+c$$$                              loc(1)=(nx)/2+1
+c$$$                              loc(2)=(ny)/2+1
+c$$$                              loc(3)=0
+c$$$                              off(1)=0
+c$$$                              off(2)=0
+                              nodoavgpb=0
+                              cnorm = getarea(nodoavgpb,convfunc,area,
+     $                             rsupport, sampling, 
+     $                             off, cfscale,scale,lambda, 
      $                             sDPA, cDPA,currentCFPA, 
      $                             convOrigin, convSize,
      $                             wconvsize, polused,
@@ -417,11 +405,10 @@ C
      $                             dograd, nant,raoff,decoff,
      $                             ConjPlane,PolnPlane,ant1,ant2,
      $                             uvw,nrow,irow)
-                              nodoavgpb=0
-                              tcnorm=accumulate(nodoavgpb,area,grid,loc,
+                              cnorm=accumulate(nodoavgpb,area,grid,loc,
      $                             convfunc,nvalue,
      $                             cnorm,rsupport,
-     $                             sampling,iloc,loc,off,offset,cfscale,
+     $                             sampling,off,cfscale,
      $                             scale,lambda,
      $                             sDPA,cDPA,currentCFPA,convOrigin,
      $                             convSize,wconvsize,polused,
@@ -429,42 +416,34 @@ C
      $                             raoff,decoff,ConjPlane,PolnPlane,
      $                             nx,ny,npol,nchan,apol,achan,
      $                             ant1,ant2,uvw,nrow,irow)
-
+c$$$                              write(*,*)'V: ',irow,weight(ichan,irow),
+c$$$     $                             ichan,apol,nvalue
+c$$$                              if (irow .eq. 1) then
+c$$$                                 write(*,*)'Vis:',ichan,PolnPlane,loc,
+c$$$     $                                off,cnorm
+c$$$                              endif
                               sumwt(apol,achan)=sumwt(apol,achan)+
-     $                             weight(ichan,irow)*real(tcnorm)
+     $                             weight(ichan,irow)
+c*real(cnorm)
                            endif
 C     
-C     Use the following for PBMOS
-C     
-c$$$  sumwt(apol,achan)=sumwt(apol,achan)+
-c$$$  $                          weight(ichan,irow)
                         end if
+C                     stop
                      end do
-c                     stop
-C!$OMP ENDDO
-C!$OMP END PARALLEL
-                             
-c     else
                   end if
                end if
             end do
             chanPolPB=0
-            do ichan=1,nvischan
-               if (chansDone(ichan) .eqv. .true.) chanPolPB=chanPolPB+1
-            enddo
             do ichan=1,npol
                if (polsDone(ichan) .eqv. .true.) chanPolPB=chanPolPB+1
             enddo
-c            write(*,*)npol,nvischan,chanPolPB,accumPB
-            if (chanPolPB .lt. nvischan+npol) then
+            if (chanPolPB .lt. npol) then
                accumPB=1
             else 
                accumPB=0
             endif
-c            accumPB=1
          end if
       end do
-cccc  write(*,*) sumwt(1,1),norm,cnorm
       return
       end
 C     
@@ -664,7 +643,7 @@ C
       
       integer nant, scanno, ant1(nrow), ant2(nrow),dograd,
      $     dopointingcorrection
-      real raoff(nant), decoff(nant)
+      real raoff(2,1,nant), decoff(2,1,nant)
       double precision sigma,area,lambda,cfscale
       
       complex nvalue,ngazvalue,ngelvalue
@@ -686,10 +665,10 @@ C
       integer convOrigin
       integer apol, achan, irow
       real wt, wtx, wty
-      double precision pi
+      double precision pi, scaledSampling
       data pi/3.14159265358979323846/
       integer ii,jj,iu,iv
-      
+      integer scaledSupport
       complex tmp
       
       irow=rownum
@@ -706,7 +685,8 @@ C
 c      dPA = 0
       cDPA = cos(dPA)
       sDPA = sin(dPA)
-      convOrigin = (convsize-1)/2
+c      convOrigin = (convsize-1)/2
+      convOrigin = (convsize)/2
       
       do irow=rbeg, rend
          if(rflag(irow).eq.0) then
@@ -715,13 +695,15 @@ c      dPA = 0
                
                lambda = c/freq(ichan)
                cfscale = cfRefFreq/freq(ichan)
-               
+               scaledSampling = int(sampling*cfscale)
+
                if((achan.ge.1).and.(achan.le.nchan)) then
                   call spbmos(uvw(1,irow), dphase(irow), freq(ichan), c,
      $                 scale, offset, sampling, pos, loc, off, phasor)
                   iloc(3)=max(1, min(wconvsize, loc(3)))
                   rsupport=support(iloc(3),1,paindex)
-		  rsupport = nint( (rsupport / cfscale)+0.5 )
+                  scaledSupport = int(rsupport/cfscale+0.5)
+c		  rsupport = nint( (rsupport / cfscale)+0.5 )
                   if (opbmos(nx, ny, wconvsize, loc, rsupport)) then
                      do ipol=1, nvispol
                         apol=polmap(ipol)+1
@@ -741,14 +723,16 @@ c      dPA = 0
                            gradelnorm(apol)=cmplx(0.0,0.0)
                            pcwt=cmplx(1.0,0.0)
                            
-                           do iy=-rsupport,rsupport
-
-			      iloc(2) = (iy*sampling+off(2)) * cfscale
-                              iv=iloc(2)
-
-                              do ix=-rsupport,rsupport
-                                 iloc(1) = (ix*sampling+off(1))*cfscale
-                                 iu=iloc(1)
+                           do iy=-scaledSupport,scaledSupport
+c			      iloc(2) = (iy*sampling+off(2)) * cfscale
+                              iloc(2) = (1+(iy*sampling+off(2)))
+     $                             *cfscale + convOrigin
+                              iv=iy*scaledSampling+off(2)
+                              do ix=-scaledSupport,scaledSupport
+c                                 iloc(1) = (ix*sampling+off(1))*cfscale
+                                 iloc(1) = (1+(ix*sampling+off(1)))
+     $                                *cfscale + convOrigin
+                                 iu=ix*scaledSampling+off(1)
                                    
                                  if(mreindex(iu,iv,iloc(1),iloc(2),
      $                                sDPA,cDPA, convOrigin, convSize)) 
@@ -760,14 +744,19 @@ c$$$     $                                        /lambda
 c$$$                                         griduvw(2)=(loc(2)-offset(2)
 c$$$     $                                       +iy-1)/scale(2)-uvw(2,irow)
 c$$$     $                                        /lambda
-                                       griduvw(1)=(iloc(1)-convOrigin)/
-     $                                      (scale(1)*sampling)
-                                       griduvw(2)=(iloc(2)-convOrigin)/
-     $                                      (scale(2)*sampling)
-                                       ra1 = raoff(ant1(irow)+1)
-                                       ra2 = raoff(ant2(irow)+1)
-                                       dec1= decoff(ant1(irow)+1)
-                                       dec2= decoff(ant2(irow)+1)
+                                       iu=iloc(1)-convOrigin
+                                       iv=iloc(2)-convOrigin
+                                       griduvw(1)=iu/(scale(1)*sampling)
+                                       griduvw(2)=iv/(scale(2)*sampling)
+                                       ii=apol
+                                       ra1 = raoff(ii,1,ant1(irow)+1)
+c     $                                      *cfscale
+                                       ra2 = raoff(ii,1,ant2(irow)+1)
+c     $                                      *cfscale
+                                       dec1= decoff(ii,1,ant1(irow)+1)
+c     $                                      *cfscale
+                                       dec2= decoff(ii,1,ant2(irow)+1)
+c     $                                      *cfscale
                                        call gfeij(griduvw,area,
      $                                      ra1,dec1,ra2,dec2,
      $                                      dograd,pcwt,pdcwt1,pdcwt2,
@@ -777,16 +766,18 @@ c$$$     $                                        ra1,dec1,ra2,dec2,
 c$$$     $                                        dograd,pcwt,pdcwt1,pdcwt2,
 c$$$     $                                        currentCFPA)
                                     endif
-                                    if(uvw(3,irow).gt.0.0) then
-                                       cwt=conjg(convfunc(iloc(1),
-     $                                      iloc(2), iloc(3),ConjPlane))
-                                       pcwt = conjg(pcwt)
-                                       pdcwt1 = conjg(pdcwt1)
-                                       pdcwt2 = conjg(pdcwt2)
-                                    else
-                                       cwt=(convfunc(iloc(1),
-     $                                      iloc(2), iloc(3),PolnPlane))
-                                    endif
+c$$$                                    if(uvw(3,irow).gt.0.0) then
+c$$$                                       cwt=conjg(convfunc(iloc(1),
+c$$$     $                                      iloc(2), iloc(3),ConjPlane))
+c$$$                                       pcwt = conjg(pcwt)
+c$$$                                       pdcwt1 = conjg(pdcwt1)
+c$$$                                       pdcwt2 = conjg(pdcwt2)
+c$$$                                    else
+c$$$                                       cwt=(convfunc(iloc(1),
+c$$$     $                                      iloc(2), iloc(3),PolnPlane))
+c$$$                                    endif
+                                    cwt=(convfunc(iloc(1),
+     $                                   iloc(2), iloc(3),PolnPlane))
                                     cwt = cwt*pcwt
                                     nvalue=nvalue+(cwt)*
      $                                   grid(loc(1)+ix,loc(2)+iy,apol,
@@ -864,7 +855,7 @@ C
       
       integer nant, scanno, ant1(nrow), ant2(nrow),dograd,
      $     dopointingcorrection
-      real raoff(nant), decoff(nant)
+      real raoff(2,1,nant), decoff(2,1,nant)
       double precision sigma,area,lambda,cfscale
       
       complex nvalue, junk
@@ -888,10 +879,10 @@ c     external nwcppEij
       integer convOrigin
       integer apol, achan, irow
       real wt, wtx, wty
-      double precision pi
+      double precision pi, scaledSampling
       data pi/3.14159265358979323846/
       integer ii,jj,iu,iv
-      
+      integer scaledSupport
       complex tmp
       
       irow=rownum
@@ -906,10 +897,11 @@ c     external nwcppEij
 C     
       
       dPA = -(currentCFPA - actualPA)
-C      dPA = 0
+c      dPA = 0
       cDPA = cos(dPA)
       sDPA = sin(dPA)
       convOrigin = (convsize-1)/2
+c      convOrigin = (convsize)/2
       
       do irow=rbeg, rend
          if(rflag(irow).eq.0) then
@@ -918,13 +910,16 @@ C      dPA = 0
                
                lambda = c/freq(ichan)
                cfscale = cfRefFreq/freq(ichan)
-               
+               scaledSampling = int(sampling*cfscale)
+
                if((achan.ge.1).and.(achan.le.nchan)) then
                   call spbmos(uvw(1,irow), dphase(irow), freq(ichan), c,
      $                 scale, offset, sampling, pos, loc, off, phasor)
                   iloc(3)=max(1, min(wconvsize, loc(3)))
                   rsupport=support(iloc(3),1,paindex)
-		  rsupport = nint( (rsupport / cfscale)+0.5 )
+                  scaledSupport = int(rsupport/cfscale+0.5)
+c		  rsupport = nint( (rsupport / cfscale)+0.5 )
+
                   if (opbmos(nx, ny, wconvsize, loc, rsupport)) then
                      PolnPlane=0
                      do ipol=1, nvispol
@@ -942,12 +937,12 @@ C     The following after feed_x -> -feed_x and PA -> PA + PI/2
                            norm(apol)=cmplx(0.0,0.0)
                            pcwt=cmplx(1.0,0.0)
                            
-                           do iy=-rsupport,rsupport
+                           do iy=-scaledSupport,scaledSupport
 c     iloc(2)=1+(iy*sampling+off(2))+convOrigin
-                              iv = (iy*sampling+off(2))*cfscale
-                              do ix=-rsupport,rsupport
+                              iv = iy*scaledSampling+off(2)
+                              do ix=-scaledSupport,scaledSupport
 c     iloc(1)=1+(ix*sampling+off(1))+convOrigin
-                                 iu = (ix*sampling+off(1))*cfscale
+                                 iu = ix*scaledSampling+off(1)
                                  
                                  if(mreindex(iu,iv,iloc(1),iloc(2),
      $                                sDPA,cDPA, convOrigin, convSize))
@@ -970,10 +965,11 @@ C
      $                                      (scale(1)*sampling)
                                        griduvw(2)=(iloc(2)-convOrigin)/
      $                                      (scale(2)*sampling)
-                                       ra1 = raoff(ant1(irow)+1)
-                                       ra2 = raoff(ant2(irow)+1)
-                                       dec1= decoff(ant1(irow)+1)
-                                       dec2= decoff(ant2(irow)+1)
+                                       ii=apol
+                                       ra1 = raoff(ii,1,ant1(irow)+1)
+                                       ra2 = raoff(ii,1,ant2(irow)+1)
+                                       dec1= decoff(ii,1,ant1(irow)+1)
+                                       dec2= decoff(ii,1,ant2(irow)+1)
                                        call gfeij(griduvw,area,
      $                                      ra1,dec1,ra2,dec2,
      $                                      dograd,pcwt,pdcwt1,pdcwt2,
@@ -984,33 +980,36 @@ c$$$     $                                      dograd,pcwt,pdcwt1,pdcwt2,
 c$$$     $                                      currentCFPA)
                                     endif
                                     
-                                    if(uvw(3,irow).lt.0.0) then
-                                       cwt=conjg(convfunc(iloc(1),
-     $                                      iloc(2), iloc(3),ConjPlane))
-                                    else
+                                    if(uvw(3,irow).gt.0.0) then
                                        cwt=(convfunc(iloc(1),
      $                                      iloc(2), iloc(3),PolnPlane))
+                                    else
+                                       cwt=conjg(convfunc(iloc(1),
+     $                                      iloc(2), iloc(3),ConjPlane))
                                     endif
+C New code start
                                     cwt=(convfunc(iloc(1),
      $                                   iloc(2), iloc(3),PolnPlane))
-
-                                    nvalue=nvalue+(cwt)*conjg(pcwt)
+                                    cwt=cwt*pcwt;
+                                    nvalue=nvalue+(cwt)
      $                                   *grid(loc(1)+ix,loc(2)+iy,
      $                                   apol,achan)
-
+C New code end
 
 c                                    norm(apol)=norm(apol)+(pcwt*cwt)
                                     norm(apol)=norm(apol)+cwt
-c$$$                                    junk=exp(cmplx(0,3.1415926*
-c$$$     $                                   griduvw(1)*(ra1+ra2)))
-c                                       write(*,*)nvalue,
-c     $                                      abs(grid(loc(1)+ix,
-c     $                                      loc(2)+iy,
-c     $                                      apol,achan)),ix,iy,apol,
-c     $                                      iloc(1), iloc(2),
-c     $                                      abs(cwt),iu,iv,
-c     $                                      cfscale
-c     norm(apol)=norm(apol)+cwt
+
+c$$$                                    junk=grid(loc(1)+ix,loc(2)+iy,
+c$$$     $                                   apol,achan)
+c$$$                                       write(*,*)nvalue,
+c$$$     $                                   abs(junk),
+c$$$     $                                   atan2(imag(junk),
+c$$$     $                                   real(junk))*57.29563,
+c$$$     $                                   ix,iy,apol,loc(1),loc(2),
+c$$$     $                                   iloc(1), iloc(2),
+c$$$     $                                   (cwt),iu,iv,
+c$$$     $                                   norm(apol)
+
 c$$$  write(*,*)abs(grid(loc(1)+ix,loc(2)+iy
 c$$$  $                                ,apol,achan)),ix,iy,apol,abs(cwt),
 c$$$  $                                (pcwt),dopointingcorrection
@@ -1018,17 +1017,23 @@ c$$$  $                                (pcwt),dopointingcorrection
                               end do
 c     write(*,*)
                            end do
+c                           stop
 c     norm(apol) = norm(apol)/abs(norm(apol))
                            values(ipol,ichan,irow)=
      $                          nvalue*conjg(phasor)
      $                          /norm(apol)
-c$$$                           if ((ant1(irow)+1 .eq. 1) .and.
-c$$$     $                          (ant2(irow)+1 .eq. 2)) then
+c$$$                           if ((ant1(irow)+1 .eq. 2) .and.
+c$$$     $                          (ant2(irow)+1 .eq. 4)) then
 c$$$                              write (*,*) ant1(irow)+1, ant2(irow)+1,
 c$$$     $                             ipol,ichan,irow,
-c$$$     $                             values(ipol,ichan,irow),
-c$$$     $                             real(nvalue),imag(nvalue),
-c$$$     $                             real(norm(apol)),imag(norm(apol))
+c$$$     $                             abs(values(ipol,ichan,irow)),
+c$$$     $                             atan2(imag(values(ipol,ichan,irow)),
+c$$$     $                             real(values(ipol,ichan,irow))),
+c$$$     $                             abs(nvalue),
+c$$$     $                             atan2(imag(nvalue),real(nvalue)),
+c$$$     $                             abs(norm(apol)),
+c$$$     $                             atan2(imag(norm(apol)),
+c$$$     $                             real(norm(apol)))
 c$$$                           endif
 c                           stop
                         end if
@@ -1087,8 +1092,13 @@ C
       double precision sinDPA, cosDPA
       integer ix,iy
       
-      ix = nint(cosDPA*inx + sinDPA*iny+1)
-      iy = nint(-sinDPA*inx + cosDPA*iny+1)
+      if (sinDPA .eq. 0) then
+         ix = inx
+         iy = iny
+      else
+         ix = nint(cosDPA*inx + sinDPA*iny)
+         iy = nint(-sinDPA*inx + cosDPA*iny)
+      endif
 
       outx = ix+Origin
       outy = iy+Origin

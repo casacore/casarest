@@ -28,6 +28,7 @@
 #define SYNTHESIS_CUBESKYEQUATION_H
 
 #include <synthesis/MeasurementEquations/SkyEquation.h>
+//#include <synthesis/Utilities/ThreadTimers.h>
 
 
 namespace casa { //# NAMESPACE CASA - BEGIN
@@ -50,11 +51,11 @@ class CubeSkyEquation : public SkyEquation {
   CubeSkyEquation(SkyModel& sm, ROVisibilityIterator& vi, FTMachine& ft, ComponentFTMachine& cft, Bool noModelCol=False);
 
   virtual ~CubeSkyEquation();
-  virtual void predict(Bool incremental=False);
+  virtual void predict(Bool incremental=False, MS::PredefinedColumns Type=MS::MODEL_DATA);
   virtual void gradientsChiSquared(Bool incremental, Bool commitModel=False);
   
   virtual void initializePutSlice(const VisBuffer& vb, Int cubeSlice=0, Int nCubeSlice=1);
-  virtual void putSlice(const VisBuffer& vb, Bool dopsf, 
+  virtual void putSlice(VisBuffer& vb, Bool dopsf, 
 			FTMachine::Type col,Int cubeSlice=0, 
 			Int nCubeSlice=1);
   virtual void finalizePutSlice(const VisBuffer& vb,  
@@ -93,15 +94,12 @@ class CubeSkyEquation : public SkyEquation {
   Bool getFreqRange(ROVisibilityIterator& vi, const CoordinateSystem& coords,
 		  Int slice, Int nslice);
 
-  //Bool resizeWorkArrays(Bool add);
-  Bool calcVisWeights(const VisBuffer& vb, Int modelindex);
-  Bool modifySpecModelVis(VisBuffer& vb, Int modelindex);
-  Matrix<Float> visweights_p;
-
  private:
   // if skyjones changed in get or put we need to tell put or get respectively
   // about it
   void init(FTMachine& ft);
+
+  Bool destroyVisibilityIterator_p;
 
   Bool internalChangesPut_p;
   Bool internalChangesGet_p;
@@ -113,6 +111,8 @@ class CubeSkyEquation : public SkyEquation {
   Block<Vector<Int> > blockSpw_p;
   Block<CountedPtr<FTMachine> > ftm_p;
   Block<CountedPtr<FTMachine> > iftm_p;
+
+  // DT aInitGrad, aGetChanSel, aCheckVisRows, aGetFreq, aOrigChunks, aVBInValid, aInitGetSlice, aInitPutSlice, aPutSlice, aFinalizeGetSlice, aFinalizePutSlice, aChangeStokes, aInitModel, aGetSlice, aSetModel, aGetRes, aExtra;
 
 };
 

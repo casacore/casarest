@@ -119,7 +119,6 @@ c$$$     $     convfunc(convOrigin,convOrigin,1,1)
                lambda = c/freq(ichan)
 
                if((achan.ge.1).and.(achan.le.nchan).and.
-c     $              (weight(ichan,irow).gt.0.0)) then
      $              (weight(ichan,irow).ne.0.0)) then
                   call spbwproj(uvw(1,irow), dphase(irow), 
      $                 freq(ichan), c, scale, offset, sampling, 
@@ -424,6 +423,7 @@ c      dPA=0
       sDPA = sin(dPA)
       convOrigin = (convsize+1)/2
       convOrigin = (convsize-1)/2
+      convOrigin = (convsize)/2
 
       do irow=rbeg, rend
          if(rflag(irow).eq.0) then
@@ -651,6 +651,7 @@ c      dPA = 0
       sDPA = sin(dPA)
 c      convOrigin = (convsize+1)/2
       convOrigin = (convsize-1)/2
+      convOrigin = (convsize)/2
 
       do irow=rbeg, rend
          if(rflag(irow).eq.0) then
@@ -713,7 +714,7 @@ C
                                     griduvw(1)=(iu)/(scale(1)*sampling)
                                     griduvw(2)=(iv)/(scale(2)*sampling)
                                     ii = PolnPlane
-                                    ii=apol
+c                                    ii=apol
                                     ra1 = raoff(ii,1,ant1(irow)+1)
                                     ra2 = raoff(ii,1,ant2(irow)+1)
                                     dec1= decoff(ii,1,ant1(irow)+1)

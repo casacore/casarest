@@ -52,8 +52,11 @@ VisEquation::VisEquation() :
   napp_(0),
   lfd_(-1),
   rfd_(9999),
+  freqAveOK_(False),
   svc_(NULL),
+  pivot_(VisCal::ALL),  // at the sky
   spwOK_(),
+  useInternalModel_(False),
   prtlev_(VISEQPRTLEV)
 {
   if (prtlev()>0) cout << "VE::VE()" << endl;
@@ -160,6 +163,30 @@ void VisEquation::setsolve(SolvableVisCal& svc) {
 
 
 //----------------------------------------------------------------------
+void VisEquation::setPivot(VisCal::Type pivot) {
+
+  if (prtlev()>0) cout << "VE::setPivot()" << endl;
+  
+  pivot_ = pivot;
+
+}
+  
+
+//----------------------------------------------------------------------
+void VisEquation::setModel(const Vector<Float>& stokes) {
+
+  if (prtlev()>0) cout << "VE::setModel()" << endl;
+
+  // Set the internal point source model
+  useInternalModel_=True;
+  stokesModel_.resize(4);
+  stokesModel_.set(0.0);
+  stokesModel_(Slice(0,stokes.nelements(),1))=stokes;
+
+}
+
+
+//----------------------------------------------------------------------
 // Correct in place the OBSERVED visibilities in a VisBuffer
 void VisEquation::correct(VisBuffer& vb) {
 
@@ -174,8 +201,10 @@ void VisEquation::correct(VisBuffer& vb) {
   vb.sortCorr();
 
   // Apply each VisCal in left-to-right order 
+  //  ACs will NOT be corrected (avoidACs=True)
+  //  TBD: move AC handling up to Calibrater
   for (Int iapp=0;iapp<napp_;iapp++)
-    vc()[iapp]->correct(vb);
+    vc()[iapp]->correct(vb,True);
 
   // Ensure correlations restored to original order
   // (this is a no-op if no sort necessary)
@@ -213,24 +242,17 @@ void VisEquation::collapse(VisBuffer& vb) {
   if (prtlev()>0) cout << "VE::collapse()" << endl;
 
   // Handle origin of model data here:
-
-  /*
-  if (doaltmodel)
-    if (!skytype)
-      vb.setModel(model);;
-    // else skytype will originate model when encountered
+  if (useInternalModel_)
+    vb.setModelVisCube(stokesModel_);
   else
-    // force I/O from MS
-    vb.modelVisCube()
-  */
+    vb.modelVisCube();
 
   // Ensure required columns are present!
-  vb.modelVisCube();
   vb.visCube();
   vb.weightMat();
   
   // Re-calculate weights from sigma column
-  // TBD: somehow avoid is not necessary?
+  // TBD: somehow avoid if not necessary?
   vb.resetWeightMat();
 
   // Ensure correlations in canonical order
@@ -250,10 +272,11 @@ void VisEquation::collapse(VisBuffer& vb) {
   // initialize LHS/RHS indices
   Int lidx=0;
   Int ridx=napp_-1;
-  
-  // If solve NOT freqDep, and data is, must freqAve before solve;
+
+  // If solve NOT freqDep, and data is, we want
+  //  to freqAve as soon as possible before solve;
   //   apply any freqDep cal first
-  if ( !svc().freqDepMat() && vb.nChannel()>1 ) {
+  if ( freqAveOK_ && !svc().freqDepMat() && vb.nChannel()>1 ) {
     
     // Correct OBSERVED data up to last freqDep term on LHS
     //  (type(lfd_) guaranteed < type(svc))
@@ -288,9 +311,98 @@ void VisEquation::collapse(VisBuffer& vb) {
   
 }
 
+//----------------------------------------------------------------------
+void VisEquation::collapseForSim(VisBuffer& vb) {
+
+  if (prtlev()>0) cout << "VE::collapseforSim()" << endl;
+
+  // Handle origin of model data here (?):
+
+  // Ensure correlations in canonical order
+  // (this is a no-op if no sort necessary)
+  // TBD: optimize in combo with model origination?
+  vb.sortCorr();
+
+  // initialize LHS/RHS indices
+  Int lidx=0;
+  Int ridx=napp_-1;
+
+#ifdef RI_DEBUG
+  cout << "vb.visCube    original: " << vb.visCube()(0,0,500) <<  vb.visCube()(0,0,1216) <<  vb.visCube()(0,0,1224) << endl;
+  cout << "vb.model      original: " << vb.modelVisCube()(0,0,500) <<  vb.modelVisCube()(0,0,1216) <<  vb.modelVisCube()(0,0,1224) << endl;
+#endif
+
+  // copy data to model, to be corrupted in place there.
+  // 20091030 RI changed skyequation to use Observed.  the below 
+  // should not require scratch columns 
+  vb.setModelVisCube(vb.visCube());
+
+  // zero the data. correct will operate in place on data, so 
+  // if we don't have an AMueller we don't get anything from this.  
+  vb.setVisCube(0.0);
+   
+#ifdef RI_DEBUG
+  cout << "vb.visCube before crct: " << vb.visCube()(0,0,500) <<  vb.visCube()(0,0,1216) <<  vb.visCube()(0,0,1224) << endl;
+#endif
+
+  // Correct DATA up to pivot 
+  while (lidx<napp_ && vc()[lidx]->type() < pivot_) {
+    if (prtlev()>2) cout << vc()[lidx]->typeName();
+    if (vc()[ridx]->extraTag()!="NoiseScale" or vc()[lidx]->type()!=VisCal::T) {
+      vc()[lidx]->correct(vb);
+      if (prtlev()>2) cout << " -> correct";
+    }
+    if (prtlev()>2) cout << endl;
+    lidx++;
+  }
+
+#ifdef RI_DEBUG
+  cout << "vb.visCube  after crct: " << vb.visCube()(0,0,500) <<  vb.visCube()(0,0,1216) <<  vb.visCube()(0,0,1224) << endl;
+  cout << "vb.model   before crpt: " << vb.modelVisCube()(0,0,500) <<  vb.modelVisCube()(0,0,1216) <<  vb.modelVisCube()(0,0,1224) << endl;
+#endif
+
+  // Corrupt Model down to (and including) the pivot
+  while (ridx>-1    && vc()[ridx]->type() >= pivot_) {
+    if (prtlev()>2) cout << vc()[lidx]->typeName();
+    // manually pick off a T intended to be noise scaling T:
+    if (pivot_ <= VisCal::T and vc()[ridx]->type()==VisCal::T) {
+      if (vc()[ridx]->extraTag()=="NoiseScale") {
+	vc()[ridx]->correct(vb);  // correct DATA
+	if (prtlev()>2) cout << " -> correct";
+      } else {
+	vc()[ridx]->corrupt(vb);
+	if (prtlev()>2) cout << " -> corrupt";
+      }
+    } else { 
+      vc()[ridx]->corrupt(vb);
+      if (prtlev()>2) cout << " -> corrupt";
+    }
+    if (prtlev()>2) cout << endl;
+    ridx--;
+  }
+  
+#ifdef RI_DEBUG
+  cout << "vb.model    after crpt: " << vb.modelVisCube()(0,0,500) <<  vb.modelVisCube()(0,0,1216) <<  vb.modelVisCube()(0,0,1224) << endl;
+  cout << "vb.visCube  after crpt: " << vb.visCube()(0,0,500) <<  vb.visCube()(0,0,1216) <<  vb.visCube()(0,0,1224) << endl << endl;
+#endif
+
+  // add corrected/scaled data (e.g. noise) to corrupted model
+  // vb.modelVisCube()+=vb.visCube();
+
+  // add corrupted Model to corrected/scaled data (i.e.. noise)
+  vb.visCube()+=vb.modelVisCube();
+
+  // Put correlations back in original order
+  //  (~no-op if already canonical)
+  vb.unSortCorr();
+
+}
+
 void VisEquation::state() {
 
   if (prtlev()>0) cout << "VE::state()" << endl;
+
+  cout << boolalpha;
 
   // Order in which DATA is corrected
   cout << "Correct order:" << endl;
@@ -316,13 +428,23 @@ void VisEquation::state() {
     cout << " <none>" << endl;
   
   cout << endl;
+
+  cout << "Source model:" << endl;
+  cout << "  useInternalModel_ = " << useInternalModel_ << endl;
+  if (useInternalModel_)
+    cout << "  Stokes = " << stokesModel_ << endl;
+  else
+    cout << "  <using MODEL_DATA column>" << endl;
+  cout << endl;
+
   cout << "Collapse order:" << endl;
+  cout << "  freqAveOK_ = " << freqAveOK_ << endl;
   
   if (svc_) {
     Int lidx=0;
     Int ridx=napp_-1;
 
-    if ( !svc().freqDepMat() ) {
+    if ( freqAveOK_ && !svc().freqDepMat() ) {
       // Correct DATA up to last freqDep term on LHS
       cout << " LHS (pre-freqAve):" << endl;
       if (lidx <= lfd_) 
@@ -393,10 +515,15 @@ void VisEquation::state() {
 // Determine residuals of VisBuffer data w.r.t. svc_
 void VisEquation::residuals(VisBuffer& vb,
 			    Cube<Complex>& R,
-			    const Int& chan) {
+			    const Int chan) {
 
 
   if (prtlev()>3) cout << "VE::residuals()" << endl;
+  if (prtlev()>13)                              // Here only to shush a
+    cout << "vb.nRow(): " << vb.nRow()          // compiler warning about
+         << "\nR.shape(): " << R.shape()        // unused variables.
+         << "\nchan: " << chan
+         << endl;
 
   // Trap unspecified solvable term
   if (!svc_)
@@ -537,6 +664,10 @@ void VisEquation::setFreqDep() {
   lfd_=-1;      // right-most freq-dep term on LHS
   rfd_=napp_;   // left-most freq-dep term on RHS
 
+  // Nominally averaging in frequency before normalization is NOT OK
+  //  (we will revise this when we can assert constant MODEL_DATA)
+  freqAveOK_=False;
+
   // Only if there are both apply-able and solve-able terms
   if (svc_ && napp_>0) {
 
@@ -546,10 +677,16 @@ void VisEquation::setFreqDep() {
     
     // freqdep to RIGHT of solvable type
     for (Int idx=(napp_-1); (idx>-1    && vc()[idx]->type()>=svc().type()); idx--)
-      if (vc()[idx]->freqDepMat()) rfd_=idx;
+      if (vc()[idx]->freqDepMat()) {
+	rfd_=idx;
+	// If we will corrupt the model with something freqdep, we can't
+	//  frequency average in collapse
+	freqAveOK_=False;
+      }
 
   }
   
+
 }
 
 Bool VisEquation::ok() {

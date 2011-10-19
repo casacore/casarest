@@ -1,4 +1,3 @@
-
 //# RFAFlagExaminer.h: this defines RFAFlagExaminer
 //# Copyright (C) 2000,2001
 //# Associated Universities, Inc. Washington DC, USA.
@@ -72,17 +71,14 @@ public:
   RFAFlagExaminer ( RFChunkStats &ch,const RecordInterface &parm ); 
   virtual ~RFAFlagExaminer ();
   
-  /*
-  virtual uInt estimateMemoryUse () { return RFAFlagCubeBase::estimateMemoryUse()+2; }
-  virtual Bool newChunk ( Int &maxmem );
-//  virtual IterMode iterTime ( uInt it );
-//  virtual IterMode iterRow  ( uInt ir );
-*/
-  virtual void iterFlag ( uInt it );
+  virtual void iterFlag( uInt it );
+  virtual IterMode iterRow( uInt irow );
+  virtual Bool newChunk(Int &maxmem);
+  virtual void endChunk();
 
-  virtual void startData(){RFAFlagCubeBase::startData();return;};
-  virtual void startFlag();
-    //virtual void iterFlag( uInt it , Bool resetFlags=True);
+
+  virtual void startData(bool verbose){RFAFlagCubeBase::startData(verbose);return;};
+  virtual void startFlag(bool verbose);
   virtual void endFlag();
   virtual void finalize();
   virtual void initialize();
@@ -95,23 +91,40 @@ public:
 //  virtual String getDesc ();
 //  static const RecordInterface & getDefaults ();
 
-protected:
+private:
     void processRow  ( uInt ifr,uInt it ) ;
-    Int totalflags,totalcount;
-    Int totalrowflags,totalrowcount;
+    uInt64 totalflags,totalcount;
+    uInt64 totalrowflags,totalrowcount;
 
     // accumulated over all chunks
-    Int 
+    uInt64 
       accumTotalFlags, accumTotalCount, accumRowFlags, 
       accumTotalRowCount, accumTotalRowFlags;
 
-    Int inTotalFlags, inTotalCount, inTotalRowFlags, inTotalRowCount;
-    Int outTotalFlags, outTotalCount, outTotalRowFlags, outTotalRowCount;
-};
+    // per chunk
+    uInt64 inTotalFlags, inTotalCount, inTotalRowFlags, inTotalRowCount;
+    uInt64 outTotalFlags, outTotalCount, outTotalRowFlags, outTotalRowCount;
+    
+    // Statistics per antenna, baseline, spw, etc.
+    // These maps of maps is used e.g. like:
+    //
+    //        accumflags["baseline"]["2&&7"] == 42
+    //        accumflags["spw"     ]["0"   ] == 17
+    //
+    // which means that there were 42 flags on baseline 2 - 7, etc.
+    std::map<std::string, std::map<std::string, uInt64> > accumflags;
+    std::map<std::string, std::map<std::string, uInt64> > accumtotal;
+    
+    std::vector<uInt64> accumflags_channel;
+    std::vector<uInt64> accumtotal_channel;
+    std::vector<uInt64> accumflags_correlation;
+    std::vector<uInt64> accumtotal_correlation;
 
-    
-    
+};
 
 } //# NAMESPACE CASA - END
 
+#ifndef AIPS_NO_TEMPLATE_SRC
+#include <flagging/Flagging/RFAFlagExaminer.tcc>
+#endif //# AIPS_NO_TEMPLATE_SRC
 #endif

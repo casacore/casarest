@@ -47,12 +47,12 @@ template<class T> class LatticeConvolver;
 template<class T> class ResidualEquation;
 template<class T> class SubImage;
 
+
 class File;
 class CEMemModel;
 class ClarkCleanLatModel;
-class PGPlotter;
 class LatConvEquation;
-
+class ImageMSCleaner;
 
 // <summary> A simple deconvolver operating on images (no SkyEquation) </summary>
 
@@ -135,7 +135,9 @@ public:
   ~Deconvolver();
 
   // Open the given dirty image and psf
-  Bool open(const String& dirty, const String& psf);
+  // If warn is true,  print warnings about there being
+  // no psf if one is not supplied.
+  Bool open(const String& dirty, const String& psf, Bool warn=True);
 
   // After some cleaning, the dirty image is replaced with the
   // residual image in the deconvolver tool.  reopen reinstates
@@ -179,6 +181,14 @@ public:
 	     const Int niter, const Float gain, const Quantity& threshold, 
 	     const Bool displayProgress,
              const String& model, const String& mask);
+
+  //Clark Clean but image, psf, mask has to be 4-axes in the canonical casa order.
+  //Useful for cleaning dirty images made in CASA
+  //if mask is larger than a quarter of the image it will do a full image clean ...unlike the one below
+  Bool clarkclean(const Int niter, 
+		  const Float gain, const Quantity& threshold, 
+		  const String& model, const String& maskName, 
+		  Float cycleFactor=1.5);
 
   // Clark Clean algorithm
   Bool clarkclean(const Int niter, 
@@ -263,7 +273,6 @@ public:
   Bool makegaussian(const String& gaussianimage, Quantity& mbmaj, Quantity& mbmin,
 	      Quantity& mbpa, Bool normalizeVolume);
 
-  void setPGPlotter(PGPlotter& thePlotter);
   
 
 private:
@@ -298,7 +307,7 @@ private:
   LatticeConvolver<Float>* convolver_p;
   ResidualEquation<Lattice<Float> >* residEqn_p;
   LatConvEquation* latConvEqn_p;
-  CountedPtr <LatticeCleaner<Float> > cleaner_p;
+  CountedPtr <ImageMSCleaner> cleaner_p;
 
   Bool scalesValid_p;
 
@@ -316,7 +325,6 @@ private:
   Vector<Float> scaleSizes_p;
 
 
-  PGPlotter* pgplotter_p;
 
   // Set the defaults
   void defaults();
@@ -330,7 +338,6 @@ private:
 
   Bool valid() const;
 
-  PGPlotter& getPGPlotter(Bool newPlotter=True);
 };
 
 } //# NAMESPACE CASA - END

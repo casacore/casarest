@@ -58,7 +58,7 @@ ClarkCleanAlgorithm::ClarkCleanAlgorithm() : model_sl_p(0),
 {
 // Default constructor
 //
-  cache_p = HostInfo::memoryTotal()*1024/(16*16);
+  cache_p = HostInfo::memoryTotal(true)*1024/(16*16);
 };
 
 ClarkCleanAlgorithm::~ClarkCleanAlgorithm() 
@@ -141,7 +141,8 @@ void ClarkCleanAlgorithm::task()
     cleaner.setMaxNumPix(32*1024);
     cleaner.solve(eqn);
     cleaner.setChoose(False);
-    os << "Clean used " << cleaner.numberIterations() << " iterations" 
+    os << LogIO::NORMAL    // Loglevel INFO
+       << "Clean used " << cleaner.numberIterations() << " iterations" 
        << " to get to a max residual of " << cleaner.threshold() 
        << LogIO::POST;
     // cleaner.getModel(image);

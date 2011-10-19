@@ -42,6 +42,7 @@
 #include <scimath/Mathematics/ConvolveGridder.h>
 #include <lattices/Lattices/LatticeCache.h>
 #include <lattices/Lattices/ArrayLattice.h>
+//#include <synthesis/MeasurementComponents/SynthesisPeek.h>
 
 
 namespace casa { //# NAMESPACE CASA - BEGIN
@@ -133,14 +134,16 @@ public:
   // that location iso the image center.
   // <group>
   GridFT(Long cachesize, Int tilesize, String convType="SF",
-	 Float padding=1.0, Bool usezero=True);
+	 Float padding=1.0, Bool usezero=True, Bool useDoublePrec=False);
   GridFT(Long cachesize, Int tilesize, String convType,
-	 MPosition mLocation, Float padding=1.0, Bool usezero=True);
+	 MPosition mLocation, Float padding=1.0, Bool usezero=True, 
+	 Bool useDoublePrec=False);
   GridFT(Long cachesize, Int tilesize, String convType,
-	 MDirection mTangent, Float padding=1.0, Bool usezero=True);
+	 MDirection mTangent, Float padding=1.0, Bool usezero=True,
+	 Bool useDoublePrec=False);
   GridFT(Long cachesize, Int tilesize, String convType,
 	 MPosition mLocation, MDirection mTangent, Float passing=1.0,
-	 Bool usezero=True);
+	 Bool usezero=True, Bool useDoublePrec=False);
   // </group>
 
   // Construct from a Record containing the GridFT state
@@ -180,9 +183,7 @@ public:
 
   // Put coherence to grid by gridding.
   void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False,
-	   FTMachine::Type type=FTMachine::OBSERVED, 
-	   const Matrix<Float>& imwght=Matrix<Float>(0,0));
-
+	   FTMachine::Type type=FTMachine::OBSERVED);
   
   // Make the entire image
   void makeImage(FTMachine::Type type,
@@ -193,7 +194,12 @@ public:
   // Get the final image: do the Fourier transform and
   // grid-correct, then optionally normalize by the summed weights
   ImageInterface<Complex>& getImage(Matrix<Float>&, Bool normalize=True);
- 
+  virtual void normalizeImage(Lattice<Complex>& skyImage,
+			      const Matrix<Double>& sumOfWts,
+			      Lattice<Float>& sensitivityImage,
+			      Bool fftNorm)
+    {throw(AipsError("GridFT::normalizeImage() called"));}
+
   // Get the final weights image
   void getWeightImage(ImageInterface<Float>&, Matrix<Float>&);
 
@@ -208,6 +214,9 @@ public:
   virtual void setNoPadding(Bool nopad){noPadding_p=nopad;};
 
   virtual String name();
+  virtual void setMiscInfo(const Int qualifier){(void)qualifier;};
+  virtual void ComputeResiduals(VisBuffer&vb, Bool useCorrected) {};
+
 protected:
 
 
@@ -273,6 +282,8 @@ protected:
 
   //machine name
   String machineName_p;
+
+  //  casa::async::SynthesisAsyncPeek *peek;
 };
 
 } //# NAMESPACE CASA - END

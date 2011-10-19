@@ -81,29 +81,31 @@
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 WProjectFT::WProjectFT( Int nWPlanes, Long icachesize, Int itilesize, 
-		   Bool usezero)
+			Bool usezero, Bool useDoublePrec)
   : FTMachine(), padding_p(1.0), nWPlanes_p(nWPlanes),
     imageCache(0), cachesize(icachesize), tilesize(itilesize),
     gridder(0), isTiled(False), 
     maxAbsData(0.0), centerLoc(IPosition(4,0)), offsetLoc(IPosition(4,0)),
-    pointingToImage(0), usezero_p(usezero),machineName_p("WProjectFT")
+    pointingToImage(0), usezero_p(usezero), 
+    machineName_p("WProjectFT")
 {
   convSize=0;
   tangentSpecified_p=False;
   lastIndex_p=0;
-
+  useDoubleGrid_p=useDoublePrec;
   wpConvFunc_p=new WPConvFunc();
 
 }
 WProjectFT::WProjectFT(Int nWPlanes, 
 		       MPosition mLocation, 
 		       Long icachesize, Int itilesize, 
-		       Bool usezero, Float padding)
+		       Bool usezero, Float padding, Bool useDoublePrec)
   : FTMachine(), padding_p(padding), nWPlanes_p(nWPlanes),
     imageCache(0), cachesize(icachesize), tilesize(itilesize),
     gridder(0), isTiled(False),  
     maxAbsData(0.0), centerLoc(IPosition(4,0)), offsetLoc(IPosition(4,0)),
-    pointingToImage(0), usezero_p(usezero), machineName_p("WProjectFT")
+    pointingToImage(0), usezero_p(usezero),  
+    machineName_p("WProjectFT")
 {
   convSize=0;
   savedWScale_p=0.0;
@@ -111,18 +113,19 @@ WProjectFT::WProjectFT(Int nWPlanes,
   mLocation_p=mLocation;
   lastIndex_p=0;
   wpConvFunc_p=new WPConvFunc();
-  
+  useDoubleGrid_p=useDoublePrec;
 }
 WProjectFT::WProjectFT(
 		       Int nWPlanes, MDirection mTangent, 
 		       MPosition mLocation, 
 		       Long icachesize, Int itilesize, 
-		       Bool usezero, Float padding)
+		       Bool usezero, Float padding, Bool useDoublePrec)
   : FTMachine(), padding_p(padding), nWPlanes_p(nWPlanes),
     imageCache(0), cachesize(icachesize), tilesize(itilesize),
     gridder(0), isTiled(False),  
     maxAbsData(0.0), centerLoc(IPosition(4,0)), offsetLoc(IPosition(4,0)),
-    pointingToImage(0), usezero_p(usezero),machineName_p("WProjectFT")
+    pointingToImage(0), usezero_p(usezero), 
+    machineName_p("WProjectFT")
 {
   convSize=0;
   savedWScale_p=0.0;
@@ -131,6 +134,7 @@ WProjectFT::WProjectFT(
   mLocation_p=mLocation;
   lastIndex_p=0;
   wpConvFunc_p=new WPConvFunc();
+  useDoubleGrid_p=useDoublePrec;
 }
 
 WProjectFT::WProjectFT(const RecordInterface& stateRec)
@@ -146,32 +150,11 @@ WProjectFT::WProjectFT(const RecordInterface& stateRec)
 WProjectFT& WProjectFT::operator=(const WProjectFT& other)
 {
   if(this!=&other) {
-    nAntenna_p=other.nAntenna_p;
-    mLocation_p=other.mLocation_p;
-    distance_p=other.distance_p;
-    lastFieldId_p=other.lastFieldId_p;
-    lastMSId_p=other.lastMSId_p;
-    nx=other.nx;
-    ny=other.ny;
-    npol=other.npol;
-    nchan=other.nchan;
-    nvischan=other.nvischan;
-    nvispol=other.nvispol;
-    chanMap.resize();
-    chanMap=other.chanMap;
-    polMap.resize();
-    polMap=other.polMap;
-    doUVWRotation_p=other.doUVWRotation_p;
-    freqFrameValid_p=other.freqFrameValid_p;
-    selectedSpw_p.resize();
-    selectedSpw_p=other.selectedSpw_p;
-    multiChanMap_p=other.multiChanMap_p;
+    //Do the base parameters
+    FTMachine::operator=(other);
+    
+    
     padding_p=other.padding_p;
-    nVisChan_p.resize();
-    nVisChan_p=other.nVisChan_p;
-    spectralCoord_p=other.spectralCoord_p;
-    doConversion_p.resize();
-    doConversion_p=other.doConversion_p;
     nWPlanes_p=other.nWPlanes_p;
     imageCache=other.imageCache;
     cachesize=other.cachesize;
@@ -201,7 +184,6 @@ WProjectFT& WProjectFT::operator=(const WProjectFT& other)
     usezero_p=other.usezero_p;
     machineName_p=other.machineName_p;
     wpConvFunc_p=other.wpConvFunc_p;
-    freqInterpMethod_p=other.freqInterpMethod_p;
   };
   return *this;
 };
@@ -497,6 +479,10 @@ void WProjectFT::initializeToSky(ImageInterface<Complex>& iimage,
     IPosition gridShape(4, nx, ny, npol, nchan);
     griddedData.resize(gridShape);
     griddedData=Complex(0.0);
+    if(useDoubleGrid_p){
+      griddedData2.resize(gridShape);
+      griddedData2=DComplex(0.0);
+    }
     //if(arrayLattice) delete arrayLattice; arrayLattice=0;
     arrayLattice = new ArrayLattice<Complex>(griddedData);
     lattice=arrayLattice;
@@ -536,11 +522,42 @@ Array<Complex>* WProjectFT::getDataPointer(const IPosition& centerLoc2D,
 
 #define NEED_UNDERSCORES
 #if defined(NEED_UNDERSCORES)
+#define gwgrid gwgrid_
 #define gwproj gwproj_
 #define dwproj dwproj_
 #endif
 
 extern "C" { 
+  //Double precision gridding
+  void gwgrid(const Double*,
+	      Double*,
+	      const Complex*,
+	      Int*,
+	      Int*,
+	      Int*,
+	      const Int*,
+	      const Int*,
+	      const Float*,
+	      Int*,
+	      Int*,
+	      Double*,
+	      Double*,
+	      DComplex*,
+	      Int*,
+	      Int*,
+	      Int *,
+	      Int *,
+	      const Double*,
+	      const Double*,
+	      Int*,
+	      Int*,
+	      Int*,
+	      Int*,
+	      const Complex*,
+	      Int*,
+	      Int*,
+	      Double*);
+  //Single precision gridding
   void gwproj(const Double*,
 	      Double*,
 	      const Complex*,
@@ -596,7 +613,7 @@ extern "C" {
 	      Int*);
 }
 void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
-		     FTMachine::Type type, const Matrix<Float>& imwght )
+		     FTMachine::Type type)
 {
   
 
@@ -621,10 +638,7 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 
 
   const Matrix<Float> *imagingweight;
-  if(imwght.nelements()>0)
-    imagingweight=&imwght;
-  else
-    imagingweight=&(vb.imagingWeight());
+  imagingweight=&(vb.imagingWeight());
 
   if(dopsf) type=FTMachine::PSF;
 
@@ -694,86 +708,17 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
     }
   }
   
- 
-  if(isTiled) {
-    
-    Double invLambdaC=vb.frequency()(0)/C::c;
-    Vector<Double> uvLambda(2);
-    Vector<Int> centerLoc2D(2);
-    centerLoc2D=0;
-    
-    // Loop over all rows
-    for (Int rownr=startRow; rownr<=endRow; rownr++) {
-      
-      // Calculate uvw for this row at the center frequency
-      uvLambda(0)=uvw(0,rownr)*invLambdaC;
-      uvLambda(1)=uvw(1,rownr)*invLambdaC;
-      centerLoc2D=gridder->location(centerLoc2D, uvLambda);
-      
-      // Is this point on the grid?
-      if(gridder->onGrid(centerLoc2D)) {
-	
-	// Get the tile
-	Array<Complex>* dataPtr=getDataPointer(centerLoc2D, False);
-	Int aNx=dataPtr->shape()(0);
-	Int aNy=dataPtr->shape()(1);
-	
-	// Now use FORTRAN to do the gridding. Remember to 
-	// ensure that the shape and offsets of the tile are 
-	// accounted for.
-	Bool del;
-	Vector<Double> actualOffset(3);
-	for (Int i=0;i<2;i++) {
-	  actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
-	}
-	actualOffset(2)=uvOffset(2);
-	//	IPosition s(flags.shape());
-	const IPosition& fs=flags.shape();
-	std::vector<Int> s(fs.begin(), fs.end());
-	// Now pass all the information down to a 
-	// FORTRAN routine to do the work
-	gwproj(uvw.getStorage(del),
-	       dphase.getStorage(del),
-	       datStorage,
-	       &s[0],
-	       &s[1],
-	       &idopsf,
-	       flags.getStorage(del),
-	       rowFlags.getStorage(del),
-	       wgtStorage,
-	       &s[2],
-	       &rownr,
-	       uvScale.getStorage(del),
-	       actualOffset.getStorage(del),
-	       dataPtr->getStorage(del),
-	       &aNx,
-	       &aNy,
-	       &npol,
-	       &nchan,
-	       vb.frequency().getStorage(del),
-	       &C::c,
-	       convSupport.getStorage(del),
-	       &convSize,
-	       &convSampling,
-	       &wConvSize,
-	       convFunc.getStorage(del),
-	       chanMap.getStorage(del),
-	       polMap.getStorage(del),
-	       sumWeight.getStorage(del));
-      }
-    }
-  }
-  else {
-    Bool del;
-    Bool uvwcopy; 
-    const Double *uvwstor=uvw.getStorage(uvwcopy);
-    Bool gridcopy;
+  
+  Bool del;
+  Bool uvwcopy; 
+  const Double *uvwstor=uvw.getStorage(uvwcopy);
+  Bool gridcopy;
+  Bool convcopy;
+  const Complex *convstor=convFunc.getStorage(convcopy);
+  Vector<Int> s(flags.shape().nelements());
+  convertArray(s, flags.shape().asVector());
+  if(!useDoubleGrid_p){
     Complex *gridstor=griddedData.getStorage(gridcopy);
-    Bool convcopy;
-    const Complex *convstor=convFunc.getStorage(convcopy);
-    //    IPosition s(flags.shape());
-    const IPosition& fs=flags.shape();
-    std::vector<Int> s(fs.begin(), fs.end());
     gwproj(uvwstor,
 	   dphase.getStorage(del),
 	   datStorage,
@@ -802,10 +747,44 @@ void WProjectFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 	   chanMap.getStorage(del),
 	   polMap.getStorage(del),
 	   sumWeight.getStorage(del));
-    uvw.freeStorage(uvwstor, uvwcopy);
+    
     griddedData.putStorage(gridstor, gridcopy);
-    convFunc.freeStorage(convstor, convcopy);
+    
   }
+  else{
+    DComplex *gridstor=griddedData2.getStorage(gridcopy);
+    gwgrid(uvwstor,
+	   dphase.getStorage(del),
+	   datStorage,
+	   &s(0),
+	   &s(1),
+	   &idopsf,
+	   flags.getStorage(del),
+	   rowFlags.getStorage(del),
+	   wgtStorage,
+	   &s(2),
+	   &row,
+	   uvScale.getStorage(del),
+	   uvOffset.getStorage(del),
+	   gridstor,
+	   &nx,
+	   &ny,
+	   &npol,
+	   &nchan,
+	   interpVisFreq_p.getStorage(del),
+	   &C::c,
+	   convSupport.getStorage(del),
+	   &convSize,
+	   &convSampling,
+	   &wConvSize,
+	   convstor,
+	   chanMap.getStorage(del),
+	   polMap.getStorage(del),
+	   sumWeight.getStorage(del));
+    griddedData2.putStorage(gridstor, gridcopy);
+  }
+  uvw.freeStorage(uvwstor, uvwcopy);
+  convFunc.freeStorage(convstor, convcopy);
   
   if(!dopsf)
     data.freeStorage(datStorage, isCopy);
@@ -884,116 +863,47 @@ void WProjectFT::get(VisBuffer& vb, Int row)
   }
   
 
-  if(isTiled) {
-    
-    Double invLambdaC=vb.frequency()(0)/C::c;
-    Vector<Double> uvLambda(2);
-    Vector<Int> centerLoc2D(2);
-    centerLoc2D=0;
-    
-    // Loop over all rows
-    for (Int rownr=startRow; rownr<=endRow; rownr++) {
-      
-      // Calculate uvw for this row at the center frequency
-      uvLambda(0)=uvw(0, rownr)*invLambdaC;
-      uvLambda(1)=uvw(1, rownr)*invLambdaC;
-      centerLoc2D=gridder->location(centerLoc2D, uvLambda);
-
-      // Is this point on the grid?
-      if(gridder->onGrid(centerLoc2D)) {
-	
-	// Get the tile
-	Array<Complex>* dataPtr=getDataPointer(centerLoc2D, True);
-	gridder->setOffset(IPosition(2, offsetLoc(0), offsetLoc(1)));
-	Int aNx=dataPtr->shape()(0);
-	Int aNy=dataPtr->shape()(1);
-	
-	// Now use FORTRAN to do the gridding. Remember to 
-	// ensure that the shape and offsets of the tile are 
-	// accounted for.
-	Bool del;
-	Vector<Double> actualOffset(3);
-	for (Int i=0;i<2;i++) {
-	  actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
-	}
-	actualOffset(2)=uvOffset(2);
-	//	IPosition s(data.shape());
-	const IPosition& fs=data.shape();
-	std::vector<Int> s(fs.begin(), fs.end());
-
-	dwproj(uvw.getStorage(del),
-	       dphase.getStorage(del),
-	       datStorage,
-	       &s[0],
-	       &s[1],
-	       flags.getStorage(del),
-	       rowFlags.getStorage(del),
-	       &s[2],
-	       &rownr,
-	       uvScale.getStorage(del),
-	       actualOffset.getStorage(del),
-	       dataPtr->getStorage(del),
-	       &aNx,
-	       &aNy,
-
-	       &npol,
-	       &nchan,
-	       vb.frequency().getStorage(del),
-	       &C::c,
-	       convSupport.getStorage(del),
-	       &convSize,
-	       &convSampling,
-	       &wConvSize,
-	       convFunc.getStorage(del),
-	       chanMap.getStorage(del),
-	       polMap.getStorage(del));
-      }
-    }
-  }
-  else {
-    Bool del;
-    Bool uvwcopy; 
-    const Double *uvwstor=uvw.getStorage(uvwcopy);
-    Bool gridcopy;
-    const Complex *gridstor=griddedData.getStorage(gridcopy);
-    Bool convcopy;
-    const Complex *convstor=convFunc.getStorage(convcopy);
-    //    IPosition s(vb.modelVisCube().shape());
-    const IPosition& fs=vb.modelVisCube().shape();
-    std::vector<Int> s(fs.begin(), fs.end());
-    dwproj(uvwstor,
-	   dphase.getStorage(del),
-	   datStorage,
-	   &s[0],
-	   &s[1],
-	   flags.getStorage(del),
-	   rowFlags.getStorage(del),
-	   &s[2],
-	   &row,
-	   uvScale.getStorage(del),
-	   uvOffset.getStorage(del),
-	   gridstor,
-	   &nx,
-	   &ny,
-	   &npol,
-	   &nchan,
-	   interpVisFreq_p.getStorage(del),
-	   &C::c,
-	   convSupport.getStorage(del),
-	   &convSize,
-	   &convSampling,
-	   &wConvSize,
-	   convstor,
-	   chanMap.getStorage(del),
-	   polMap.getStorage(del));
-    data.putStorage(datStorage, isCopy);
-    uvw.freeStorage(uvwstor, uvwcopy);
-    griddedData.freeStorage(gridstor, gridcopy);
-    convFunc.freeStorage(convstor, convcopy);
-  }
+  Bool del;
+  Bool uvwcopy; 
+  const Double *uvwstor=uvw.getStorage(uvwcopy);
+  Bool gridcopy;
+  const Complex *gridstor=griddedData.getStorage(gridcopy);
+  Bool convcopy;
+  const Complex *convstor=convFunc.getStorage(convcopy);
+  Vector<Int> s(data.shape().nelements());
+  convertArray(s,data.shape().asVector());
+  dwproj(uvwstor,
+	 dphase.getStorage(del),
+	 datStorage,
+	 &s[0],
+	 &s[1],
+	 flags.getStorage(del),
+	 rowFlags.getStorage(del),
+	 &s[2],
+	 &row,
+	 uvScale.getStorage(del),
+	 uvOffset.getStorage(del),
+	 gridstor,
+	 &nx,
+	 &ny,
+	 &npol,
+	 &nchan,
+	 interpVisFreq_p.getStorage(del),
+	 &C::c,
+	 convSupport.getStorage(del),
+	 &convSize,
+	 &convSampling,
+	 &wConvSize,
+	 convstor,
+	 chanMap.getStorage(del),
+	 polMap.getStorage(del));
+  data.putStorage(datStorage, isCopy);
+  uvw.freeStorage(uvwstor, uvwcopy);
+  griddedData.freeStorage(gridstor, gridcopy);
+  convFunc.freeStorage(convstor, convcopy);
+  
 
   interpolateFrequencyFromgrid(vb, data, FTMachine::MODEL);
- 
 }
 
 
@@ -1027,7 +937,10 @@ ImageInterface<Complex>& WProjectFT::getImage(Matrix<Float>& weights,
     }
   }
   else {
-    
+    if(useDoubleGrid_p){
+      convertArray(griddedData, griddedData2);
+      griddedData2.resize();
+    }
     const IPosition latticeShape = lattice->shape();
     
     logIO() << LogIO::DEBUGGING
@@ -1061,7 +974,7 @@ ImageInterface<Complex>& WProjectFT::getImage(Matrix<Float>& weights,
       for(lix.reset();!lix.atEnd();lix++) {
 	Int pol=lix.position()(2);
 	Int chan=lix.position()(3);
-	if(weights(pol, chan)>0.0) {
+	if(weights(pol, chan)!=0.0) {
 	  Int iy=lix.position()(1);
 	  gridder->correctX1D(correction,iy);
 	  for (Int ix=0;ix<nx;ix++) {
