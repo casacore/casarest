@@ -40,7 +40,7 @@
 #include <ms/MeasurementSets/MeasurementSet.h>
 #include <ms/MeasurementSets/MSDataDescColumns.h>
 #include <ms/MeasurementSets/MSColumns.h>
-
+#include <msvis/MSVis/SimpleSubMS.h>
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <casa/Arrays/Matrix.h>
@@ -76,6 +76,44 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     
   }
 
+  Bool ImagerMultiMS::setDataToMemory(const String& msname, const String& mode, 
+				   const Vector<Int>& nchan, 
+				   const Vector<Int>& start,
+				   const Vector<Int>& step,
+				   const Vector<Int>& spectralwindowids,
+				   const Vector<Int>& fieldids,
+				   const String& msSelect,
+				   const String& timerng,
+				   const String& fieldnames,
+				   const Vector<Int>& antIndex,
+				   const String& antnames,
+				   const String& spwstring,
+				   const String& uvdist,
+				      const String& scan){
+    useModelCol_p=False;
+    LogIO os(LogOrigin("imager", "setDataPerMS()"), logSink_p);
+    if(!Table::isReadable(msname)){
+      os << LogIO::SEVERE << "MeasurementSet " 
+	 << msname << " does not exist  " 
+	 << LogIO::POST;
+      return False;
+    }
+    MeasurementSet thisms(msname, TableLock(TableLock::AutoNoReadLocking), 
+			      Table::Old);
+    SimpleSubMS splitter(thisms);
+    splitter.setmsselect(spwstring, fieldnames, antnames, scan, uvdist, 
+			 msSelect, nchan, start, step, "");
+    splitter.selectCorrelations("");
+    splitter.selectTime(-1.0, timerng);
+    MS::PredefinedColumns whichCol=MS::DATA;
+    if(thisms.tableDesc().isColumn("CORRECTED_DATA"))
+      whichCol=MS::CORRECTED_DATA;
+    CountedPtr<MeasurementSet> subMS(splitter.makeMemSubMS(whichCol), True);
+    return setDataOnThisMS(*subMS);
+
+  }
+
+
   Bool ImagerMultiMS::setDataPerMS(const String& msname, const String& mode, 
 				   const Vector<Int>& nchan, 
 				   const Vector<Int>& start,
@@ -89,8 +127,50 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 				   const String& antnames,
 				   const String& spwstring,
 				   const String& uvdist,
-                                   const String& scan, const Bool useModel) {
-    LogIO os(LogOrigin("imager", "setDataPerMS()"), logSink_p);  
+                                   const String& scan, const Bool useModel){
+    useModelCol_p=useModel;
+    LogIO os(LogOrigin("imager", "setDataPerMS()"), logSink_p);
+    if(!Table::isReadable(msname)){
+      os << LogIO::SEVERE << "MeasurementSet " 
+	 << msname << " does not exist  " 
+	 << LogIO::POST;
+      return False;
+    }
+    else{
+      MeasurementSet thisms;
+      if(useModelCol_p)
+	thisms=MeasurementSet(msname, TableLock(TableLock::AutoNoReadLocking), 
+			      Table::Update);
+      else
+	//thisms=MeasurementSet(msname, TableLock(TableLock::AutoNoReadLocking), 
+	//		      Table::Old);
+	thisms=MeasurementSet(msname, TableLock(), 
+			      Table::Old);
+      
+      return setDataOnThisMS(thisms, mode, nchan, start, step, spectralwindowids, fieldids, msSelect, timerng, 
+			     fieldnames, antIndex, antnames, spwstring, uvdist, scan);  
+      
+    }
+    
+  }
+
+
+
+  Bool ImagerMultiMS::setDataOnThisMS(MeasurementSet& thisms, const String& mode, 
+				   const Vector<Int>& nchan, 
+				   const Vector<Int>& start,
+				   const Vector<Int>& step,
+				   const Vector<Int>& spectralwindowids,
+				   const Vector<Int>& fieldids,
+				   const String& msSelect,
+				   const String& timerng,
+				   const String& fieldnames,
+				   const Vector<Int>& antIndex,
+				   const String& antnames,
+				   const String& spwstring,
+				   const String& uvdist,
+                                   const String& scan) {
+    LogIO os(LogOrigin("imager", "setDataOnThisMS()"), logSink_p);  
 
 
     dataMode_p=mode;
@@ -104,43 +184,28 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     dataspectralwindowids_p=spectralwindowids;
     datafieldids_p.resize(fieldids.nelements());
     datafieldids_p=fieldids;
-    useModelCol_p=useModel;
     
 
 
     //make ms
     // auto lock for now
     // make ms and visset
-    MeasurementSet thisms;
-    if(!Table::isWritable(msname)){
-      os << LogIO::SEVERE << "MeasurementSet " 
-	 << msname << " does not exist or is not writable " 
-	 << LogIO::POST;
-      return False;
-    }
-    else{
-      ++numMS_p;
-      blockMSSel_p.resize(numMS_p);
-      blockNChan_p.resize(numMS_p);
-      blockStart_p.resize(numMS_p);
-      blockStep_p.resize(numMS_p);
-      blockSpw_p.resize(numMS_p);
-      //Using autolocking here 
-      //Will need to rethink this when in parallel mode with multi-cpu access
-      if(useModelCol_p)
-	thisms=MeasurementSet(msname, TableLock(TableLock::AutoNoReadLocking), 
-			      Table::Update);
-      else
-	thisms=MeasurementSet(msname, TableLock(TableLock::AutoNoReadLocking), 
-			      Table::Old);
-      blockMSSel_p[numMS_p-1]=thisms;
-      //breaking reference
-      if(ms_p == 0)
-	ms_p=new MeasurementSet();
-      else
-	(*ms_p)=MeasurementSet();
-      (*ms_p)=thisms;
-    }
+    ++numMS_p;
+    blockMSSel_p.resize(numMS_p);
+    blockNChan_p.resize(numMS_p);
+    blockStart_p.resize(numMS_p);
+    blockStep_p.resize(numMS_p);
+    blockSpw_p.resize(numMS_p);
+    //Using autolocking here 
+    //Will need to rethink this when in parallel mode with multi-cpu access
+    blockMSSel_p[numMS_p-1]=thisms;
+    //breaking reference
+    if(ms_p.null())
+      ms_p=new MeasurementSet();
+    else
+      (*ms_p)=MeasurementSet();
+    (*ms_p)=thisms;
+    
     
 
     openSubTables();
@@ -163,7 +228,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       //if(vs_p) delete vs_p; vs_p=0;
       if(rvi_p) delete rvi_p;
       rvi_p=0; wvi_p=0;
-      if(mssel_p) delete mssel_p; mssel_p=0;
+      //if(mssel_p) delete mssel_p; 
+      mssel_p=0;
       
       // check that sorted table exists (it should), if not, make it now.
       //this->makeVisSet(thisms);
@@ -233,13 +299,82 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       if((numMS_p > 1) || datafieldids_p.nelements() > 1)
 	multiFields_p= True;
        //Now lets see what was selected as spw and match it with datadesc
+      //dataspectralwindowids_p.resize();
+      //dataspectralwindowids_p=thisSelection.getSpwList();
+      Matrix<Int> chansels=thisSelection.getChanList(NULL, 1, True);
+      uInt nms = numMS_p;
+      uInt nrow = chansels.nrow();
       dataspectralwindowids_p.resize();
-      dataspectralwindowids_p=thisSelection.getSpwList();
+      const ROMSSpWindowColumns spwc(thisms.spectralWindow());
+      uInt nspw = spwc.nrow();
+      const ROScalarColumn<Int> spwNchans(spwc.numChan());
+      Vector<Int> nchanvec = spwNchans.getColumn();
+      //cout<<"SetDataOnThisMS::numMS_p="<<numMS_p<<" nchanvec="<<nchanvec<<endl;
+      //cout<<"chansels="<<chansels<<" nrow for chansels="<<nrow<<endl;
+      Int maxnchan = 0;
+
+      for (uInt i=0;i<nchanvec.nelements();i++) {
+          maxnchan=max(nchanvec[i],maxnchan);
+      }
+      //cout<<"spwchansels_p.shape()="<<spwchansels_p.shape()<<endl;
+      uInt maxnspw = 0;
+      if (numMS_p ==1) {
+        maxnspw=nspw;
+      }
+      else {
+        for (uInt i=0;i<numMS_p-1;i++) {
+          maxnspw=max(maxnspw,blockSpw_p[i].nelements());
+        }
+        maxnspw=max(nspw,maxnspw);
+      }
+      spwchansels_p.resize(nms,maxnspw,maxnchan,True);
+      //cout<<"After resize: spwchansels_p.shape()="<<spwchansels_p.shape()<<endl;
+      uInt nselspw=0;
+      if (nrow==0) {
+        //no channel selection, select all channels
+        spwchansels_p.yzPlane(numMS_p-1)=1; 
+        dataspectralwindowids_p=thisSelection.getSpwList();
+      }
+      else {
+        spwchansels_p.yzPlane(numMS_p-1)=0; 
+        Int prvspwid=-1;
+        Vector<Int> selspw;
+	for (uInt i=0;i<nrow;i++) {
+	  Vector<Int> sel = chansels.row(i);
+	  Int spwid = sel[0];
+	  if (spwid != prvspwid){
+	    nselspw++;
+	    selspw.resize(nselspw,True);
+	    selspw[nselspw-1]=spwid;
+	  }
+	  uInt minc= sel[1];
+	  uInt maxc = sel[2];
+	  uInt step = sel[3];
+	  // step as the same context as in im.selectvis
+	  // select channels
+	  for (uInt k=minc;k<(maxc+1);k+=step) {
+	    spwchansels_p(numMS_p-1,spwid,k)=1;
+	  }
+	  prvspwid=spwid;
+	}
+	dataspectralwindowids_p=selspw;
+      }
+
+      //cout<<"spwchansels_p(before shifting)="<<spwchansels_p<<endl;
       if(dataspectralwindowids_p.nelements()==0){
-	Int nspwinms=thisms.spectralWindow().nrow();
+        Int nspwinms=thisms.spectralWindow().nrow();
+        dataspectralwindowids_p.resize(nspwinms);
+        indgen(dataspectralwindowids_p);
+      }
+
+      // old code
+      /***
+      if(dataspectralwindowids_p.nelements()==0){
+      	Int nspwinms=thisms.spectralWindow().nrow();
 	dataspectralwindowids_p.resize(nspwinms);
 	indgen(dataspectralwindowids_p);
       }
+      ***/
 
       // Map the selected spectral window ids to data description ids
       MSDataDescIndex msDatIndex(thisms.dataDescription());
@@ -249,21 +384,56 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
       if(mode=="none"){
 	//check if we can find channel selection in the spw string
-	Matrix<Int> chanselmat=thisSelection.getChanList();
-	if(chanselmat.nrow()==dataspectralwindowids_p.nelements()){
+	//Matrix<Int> chanselmat=thisSelection.getChanList();
+	//if(chanselmat.nrow()==dataspectralwindowids_p.nelements()){
+	if(nselspw==dataspectralwindowids_p.nelements()){
 	  dataMode_p="channel";
 	  dataStep_p.resize(dataspectralwindowids_p.nelements());
 	  dataStart_p.resize(dataspectralwindowids_p.nelements());
 	  dataNchan_p.resize(dataspectralwindowids_p.nelements());
+          Cube<Int> spwchansels_tmp=spwchansels_p;
 	  for (uInt k =0 ; k < dataspectralwindowids_p.nelements(); ++k){
-	    dataStep_p[k]=chanselmat.row(k)(3);
-	    if(dataStep_p[k] < 1)
-	      dataStep_p[k]=1;
-	    dataStart_p[k]=chanselmat.row(k)(1);
-	    dataNchan_p[k]=Int(ceil(Double(chanselmat.row(k)(2)-dataStart_p[k]))/Double(dataStep_p[k]))+1;
-	    if(dataNchan_p[k]<1)
-	      dataNchan_p[k]=1;	  
-	  }
+            uInt curspwid=dataspectralwindowids_p[k];
+	    //dataStep_p[k]=chanselmat.row(k)(3);
+	    dataStep_p[k]=chansels.row(k)(3);
+	    //if(dataStep_p[k] < 1)
+	    //  dataStep_p[k]=1;
+            dataStart_p[k]=0;
+            dataNchan_p[k]=nchanvec(curspwid);
+            //cout<<"SetDataOnThisMS: initial setting dataNchan_p["<<k<<"]="<<dataNchan_p[k]<<endl;
+            //find start
+            Bool first = True;
+            uInt nchn = 0;
+            uInt lastchan = 0;
+            for (uInt j=0 ; j < nchanvec(curspwid); j++) {
+              if (spwchansels_p(numMS_p-1,curspwid,j)==1) {
+                if(first) {
+                  dataStart_p[k]=j;
+                  first = False;
+                }
+                lastchan=j;
+                nchn++;
+              }
+            }
+	    //dataStart_p[k]=chanselmat.row(k)(1);
+	    //dataNchan_p[k]=Int(ceil(Double(chanselmat.row(k)(2)-dataStart_p[k]))/Double(dataStep_p[k]))+1;
+            dataNchan_p[k]=Int(ceil(Double(lastchan-dataStart_p[k])/Double(dataStep_p[k])))+1;
+            //cout<<"SetDataOnThisMS: after recalc. of nchan dataNchan_p["<<k<<"]="<<dataNchan_p[k]<<endl;
+	    //if(dataNchan_p[k]<1)
+	    //  dataNchan_p[k]=1;
+	    // 
+	    //Since msselet will be applied to the data before flags from spwchansels_p
+	    //are applied to the data in FTMachine, shift spwchansels_p by dataStart_p
+	    for (uInt j=0  ; j < nchanvec(curspwid); j++){
+              if (j<nchanvec(curspwid)-dataStart_p[k]) {
+                spwchansels_tmp(numMS_p-1,curspwid,j) = spwchansels_p(numMS_p-1,curspwid,j+dataStart_p[k]);
+              }
+              else {
+                spwchansels_tmp(numMS_p-1,curspwid,j) = 0;
+              }
+            }
+          }
+        spwchansels_p=spwchansels_tmp;
 	}
       }
 
@@ -277,9 +447,10 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 	// Null take all the ms ...setdata() blank means that
 	mssel_p = new MeasurementSet(thisms);
       } 
-      AlwaysAssert(mssel_p, AipsError);
+      AlwaysAssert(!mssel_p.null(), AipsError);
       if(mssel_p->nrow()==0) {
-	delete mssel_p; mssel_p=0;
+	//delete mssel_p; 
+	mssel_p=0;
 	//Ayeee...lets back out of this one
 	--numMS_p;
 	blockMSSel_p.resize(numMS_p, True);
@@ -317,13 +488,17 @@ namespace casa { //# NAMESPACE CASA - BEGIN
       //vs_p= new VisSet(blockMSSel_p, sort, noChanSel, useModelCol_p);
       if(!useModelCol_p){
 	rvi_p=new ROVisibilityIterator(blockMSSel_p, sort);
+	
       }
       else{
 	wvi_p=new VisibilityIterator(blockMSSel_p, sort);
 	rvi_p=wvi_p;    
       }
   
-
+      if(imwgt_p.getType()=="none")
+	  imwgt_p=VisImagingWeight("natural");
+      rvi_p->useImagingWeight(imwgt_p);
+      //rvi_p->slurp();
 
       selectDataChannel();
       dataSet_p=True;
@@ -350,7 +525,7 @@ Bool ImagerMultiMS::setimage(const Int nx, const Int ny,
 {
 
   if(!dataSet_p){
-    LogIO os(LogOrigin("imager", "setimage()"), logSink_p);  
+    LogIO os(LogOrigin("imagerMultiMS", "setimage()"), logSink_p);  
     os << LogIO::SEVERE 
        << "Please use setdata before setimage as imager need one ms at least " 
        << LogIO::POST;
@@ -511,65 +686,68 @@ Bool ImagerMultiMS::setimage(const Int nx, const Int ny,
 
   Bool ImagerMultiMS::openSubTables(){
 
-    antab_p=Table(ms_p->antennaTableName(),
-		  TableLock(TableLock::AutoNoReadLocking));
-    datadesctab_p=Table(ms_p->dataDescriptionTableName(),
-			TableLock(TableLock::AutoNoReadLocking));
-    feedtab_p=Table(ms_p->feedTableName(),
-		    TableLock(TableLock::AutoNoReadLocking));
-    fieldtab_p=Table(ms_p->fieldTableName(),
-		     TableLock(TableLock::AutoNoReadLocking));
-    obstab_p=Table(ms_p->observationTableName(),
-		   TableLock(TableLock::AutoNoReadLocking));
-    poltab_p=Table(ms_p->polarizationTableName(),
-		   TableLock(TableLock::AutoNoReadLocking));
-    proctab_p=Table(ms_p->processorTableName(),
-		    TableLock(TableLock::AutoNoReadLocking));
-    spwtab_p=Table(ms_p->spectralWindowTableName(),
-		   TableLock(TableLock::AutoNoReadLocking));
-    statetab_p=Table(ms_p->stateTableName(),
-		     TableLock(TableLock::AutoNoReadLocking));
-    
-    if(Table::isReadable(ms_p->dopplerTableName()))
-      dopplertab_p=Table(ms_p->dopplerTableName(),
-			 TableLock(TableLock::AutoNoReadLocking));
-    
-    if(Table::isReadable(ms_p->flagCmdTableName()))
-      flagcmdtab_p=Table(ms_p->flagCmdTableName(),
-			 TableLock(TableLock::AutoNoReadLocking));
-    if(Table::isReadable(ms_p->freqOffsetTableName()))
-      freqoffsettab_p=Table(ms_p->freqOffsetTableName(),
-			    TableLock(TableLock::AutoNoReadLocking));
-    
-    if(ms_p->isWritable()){
-      if(!(Table::isReadable(ms_p->historyTableName()))){
-	// setup a new table in case its not there
-	TableRecord &kws = ms_p->rwKeywordSet();
-	SetupNewTable historySetup(ms_p->historyTableName(),
-				   MSHistory::requiredTableDesc(),Table::New);
-	kws.defineTable(MS::keywordName(MS::HISTORY), Table(historySetup));
-	
+    //If its a memory table who cares 
+    if((ms_p->tableType()) != Table::Memory){
+      antab_p=Table(ms_p->antennaTableName(),
+		    TableLock());
+      datadesctab_p=Table(ms_p->dataDescriptionTableName(),
+			  TableLock());
+      feedtab_p=Table(ms_p->feedTableName(),
+		      TableLock());
+      fieldtab_p=Table(ms_p->fieldTableName(),
+		       TableLock());
+      obstab_p=Table(ms_p->observationTableName(),
+		     TableLock());
+      poltab_p=Table(ms_p->polarizationTableName(),
+		     TableLock());
+      proctab_p=Table(ms_p->processorTableName(),
+		      TableLock());
+      spwtab_p=Table(ms_p->spectralWindowTableName(),
+		     TableLock());
+      statetab_p=Table(ms_p->stateTableName(),
+		       TableLock());
+      
+      if(Table::isReadable(ms_p->dopplerTableName()))
+	dopplertab_p=Table(ms_p->dopplerTableName(),
+			   TableLock());
+      
+      if(Table::isReadable(ms_p->flagCmdTableName()))
+	flagcmdtab_p=Table(ms_p->flagCmdTableName(),
+			   TableLock());
+      if(Table::isReadable(ms_p->freqOffsetTableName()))
+	freqoffsettab_p=Table(ms_p->freqOffsetTableName(),
+			      TableLock());
+      
+      if(ms_p->isWritable()){
+	if(!(Table::isReadable(ms_p->historyTableName()))){
+	  // setup a new table in case its not there
+	  TableRecord &kws = ms_p->rwKeywordSet();
+	  SetupNewTable historySetup(ms_p->historyTableName(),
+				     MSHistory::requiredTableDesc(),Table::New);
+	  kws.defineTable(MS::keywordName(MS::HISTORY), Table(historySetup));
+	  
+	}
+	historytab_p=Table(ms_p->historyTableName(),
+			   TableLock(), Table::Update);
       }
-      historytab_p=Table(ms_p->historyTableName(),
-			 TableLock(TableLock::AutoNoReadLocking), Table::Update);
-    }
-    if(Table::isReadable(ms_p->pointingTableName()))
-      pointingtab_p=Table(ms_p->pointingTableName(), 
-			  TableLock(TableLock::AutoNoReadLocking));
+      if(Table::isReadable(ms_p->pointingTableName()))
+	pointingtab_p=Table(ms_p->pointingTableName(), 
+			    TableLock());
+      
+      if(Table::isReadable(ms_p->sourceTableName()))
+	sourcetab_p=Table(ms_p->sourceTableName(),
+			  TableLock());
+      
+      if(Table::isReadable(ms_p->sysCalTableName()))
+	syscaltab_p=Table(ms_p->sysCalTableName(),
+			  TableLock());
+      if(Table::isReadable(ms_p->weatherTableName()))
+	weathertab_p=Table(ms_p->weatherTableName(),
+			 TableLock());
     
-    if(Table::isReadable(ms_p->sourceTableName()))
-      sourcetab_p=Table(ms_p->sourceTableName(),
-			TableLock(TableLock::AutoNoReadLocking));
-
-    if(Table::isReadable(ms_p->sysCalTableName()))
-      syscaltab_p=Table(ms_p->sysCalTableName(),
-			TableLock(TableLock::AutoNoReadLocking));
-    if(Table::isReadable(ms_p->weatherTableName()))
-      weathertab_p=Table(ms_p->weatherTableName(),
-			 TableLock(TableLock::AutoNoReadLocking));
-    
-    if(ms_p->isWritable()){
-      hist_p= new MSHistoryHandler(*ms_p, "imager");
+      if(ms_p->isWritable()){
+	hist_p= new MSHistoryHandler(*ms_p, "imager");
+      }
     }
     
 return True;

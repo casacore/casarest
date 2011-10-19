@@ -125,16 +125,8 @@ SDGrid::SDGrid(MPosition &mLocation, Int icachesize, Int itilesize,
 SDGrid& SDGrid::operator=(const SDGrid& other)
 {
   if(this!=&other) {
-    distance_p=other.distance_p;
-    lastFieldId_p=other.lastFieldId_p;
-    lastMSId_p=other.lastMSId_p;
-    nx=other.nx;
-    ny=other.ny;
-    npol=other.npol;
-    nchan=other.nchan;
-    freqFrameValid_p=other.freqFrameValid_p;
-    selectedSpw_p=other.selectedSpw_p;
-    multiChanMap_p=other.multiChanMap_p;
+     //Do the base parameters
+    FTMachine::operator=(other);
     sj_p=other.sj_p;
     imageCache=other.imageCache;
     wImage=other.wImage;
@@ -150,10 +142,6 @@ SDGrid& SDGrid::operator=(const SDGrid& other)
     pointingToImage=other.pointingToImage;
     userSetSupport_p=other.userSetSupport_p;
     xyPosMovingOrig_p=other.xyPosMovingOrig_p;
-    movingDir_p=other.movingDir_p;
-    fixMovingSource_p=other.fixMovingSource_p;
-    firstMovingDir_p=other.firstMovingDir_p;
-    freqInterpMethod_p=other.freqInterpMethod_p;
     pointingDirCol_p=other.pointingDirCol_p;
 
   };
@@ -211,7 +199,7 @@ void SDGrid::init() {
   if(imageCache) delete imageCache; imageCache=0;
 
   convType=downcase(convType);
-  logIO() << "Convolution function : " << convType << LogIO::POST;
+  logIO() << "Convolution function : " << convType << LogIO::DEBUG1;
   if(convType=="pb") {
   }
   else if(convType=="box") {
@@ -635,7 +623,7 @@ extern "C" {
 }
 
 void SDGrid::put(const VisBuffer& vb, Int row, Bool dopsf, 
-		 FTMachine::Type type,const Matrix<Float>& imwght )
+		 FTMachine::Type type)
 {
   LogIO os(LogOrigin("SDGrid", "put"));
   
@@ -661,10 +649,7 @@ void SDGrid::put(const VisBuffer& vb, Int row, Bool dopsf,
     return;
 
   const Matrix<Float> *imagingweight;
-  if(imwght.nelements()>0)
-    imagingweight=&imwght;
-  else
-    imagingweight=&(vb.imagingWeight());
+  imagingweight=&(vb.imagingWeight());
 
 
   if(dopsf) type=FTMachine::PSF;

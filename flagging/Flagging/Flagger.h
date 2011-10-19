@@ -28,28 +28,24 @@
 #define FLAGGING_FLAGGER_H
 
 #include <flagging/Flagging/RFCommon.h>
+#include <flagging/Flagging/RFABase.h>
+#include <tableplot/TablePlot/FlagVersion.h>
 
-#include <flagging/Flagging/FlagIndex.h>
-
-#include <casa/System/PGPlotter.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Containers/Record.h>
 #include <ms/MeasurementSets/MeasurementSet.h>
 #include <ms/MeasurementSets/MSSelection.h>
-#include <casa/Logging/LogIO.h>
-
-#include <casa/Quanta/Quantum.h>
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
 #include <measures/Measures/MRadialVelocity.h>
+#include <casa/Logging/LogIO.h>
+#include <casa/Arrays/Vector.h>
+#include <casa/Containers/Record.h>
+#include <casa/Quanta/Quantum.h>
 
+#include <boost/smart_ptr.hpp>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 class VisSet;
-class RFABase;
-class PGPlotter;
-class PGPlotterInterface;
 class RFChunkStats;
         
 // <summary>
@@ -66,8 +62,7 @@ class RFChunkStats;
 // </prerequisite>
 //
 // <etymology>
-// If it flags, why not red? Plus MSFlagger and plain flagger were already
-// taken.
+// MSFlagger and plain flagger were already taken.
 // </etymology>
 //
 // <synopsis>
@@ -108,33 +103,25 @@ class Flagger : public FlaggerEnums
 {
 protected:
 // creates an agent by name
-  RFABase * createAgent ( const String &name,RFChunkStats &chunk,const RecordInterface &parms );
+  boost::shared_ptr<RFABase> createAgent ( const String &name,RFChunkStats &chunk,const RecordInterface &parms, bool &only_selector );
 
 // sets up record of agents and default parameters
   const RecordInterface & setupAgentDefaults ();
 
-// sets up debug and report plotting objects
-  void setupPlotters     ( const RecordInterface &opt );
-
-// detaches from all active plotters
-  void cleanupPlotters   ();
-
-// plots flagging reports from individual agents
-  void plotAgentReports  ( PGPlotterInterface &pgp);
+// print flagging reports from individual agents
   void printAgentReports  ( );
 
-// plots a flagging summary
-  void plotSummaryReport ( PGPlotterInterface &pgp,RFChunkStats &chunk,const RecordInterface &opt );
-  void printSummaryReport ( RFChunkStats &chunk,const RecordInterface &opt );
+  void printSummaryReport ( RFChunkStats &chunk );
   Bool selectDataChannel();
  
   MeasurementSet   ms;
   MeasurementSet   originalms;
-  Block<RFABase*> acc;
+  std::vector<boost::shared_ptr<RFABase> > acc;
 
   //new added
   MeasurementSet *mssel_p;
   VisSet *vs_p;
+  bool scan_looping;     /* Is scan number part of visiter looping? */
   String msname_p;
   Bool nullSelect_p;
   Bool setdata_p;
@@ -152,14 +139,11 @@ protected:
   MRadialVelocity mDataStep_p;
 
   //
-  uInt nant,nifr,ntime,nfeed,nfeedcorr;
+  uInt nant,nifr,nfeed,nfeedcorr;
   Vector<Int> ifr2ant1,ifr2ant2;
   Vector<String> antnames;
   Vector<Double> spwfreqs;
-  
-  PGPlotter pgp_report,pgp_screen;
-  Int pgprep_nx,pgprep_ny;
-  
+    
   Record agent_defaults;
 
   static LogIO os;
@@ -179,12 +163,12 @@ public:
   Bool selectdata(Bool useoriginalms=False, 
                   String field="", String spw="", String array="", String feed="", String scan="",
 	          String baseline="", String uvrange="", String time="",
-	          String correlation="");
+	          String correlation="", String intent="");
 
   // Make a data selection
   Bool setdata(String field, String spw, String array, String feed, String scan,
 	       String baseline, String uvrange, String time,
-	       String correlation);
+	       String correlation, String intent);
   
   // Make a selection for manual flagging
   Bool setmanualflags(Bool autocorr,
@@ -193,13 +177,14 @@ public:
                       Vector<Double> cliprange, 
                       String clipcolumn, 
                       Bool outside, 
+                      Bool channel_average,
                       Double quackinterval=0.0, 
                       String quackmode=String("beg"),
                       Bool quackincrement=Bool(false),
                       String opmode=String("flag"),
-                      Double diameter = -1.0);
-
-  Bool applyFlags(const std::vector<FlagIndex> &fi);
+                      Double diameter = -1.0,
+                      Double lowerlimit = -1.0,
+                      Double upperlimit = 91.0);
 
   // Clean up all agents of type "select".
   //Bool clearflagselections(Vector<Int> &recordlist,Vector<String> &agentlist);
@@ -222,7 +207,7 @@ public:
   
   Record run(Bool trial, Bool reset);    
 
-  void summary ( const RecordInterface &agents,const RecordInterface &opt ); 
+  void summary ( const RecordInterface &agents ); 
 
     // flag version support.
   Bool  saveFlagVersion(String versionname, String comment, String merge);
@@ -250,10 +235,6 @@ public:
   uInt numFeedCorr    () const 
       { return nfeedcorr; };
 
-// number of time slots in MS
-  uInt numTime   () const 
-      { return ntime; };
-
 // names of antennas
   const Vector<String> & antNames() const 
       { return antnames; };
@@ -277,24 +258,11 @@ public:
 // returns the log sink 
   static LogIO & logSink ()       { return os; }
 
-// returns the flag report plotter
-  PGPlotterInterface & pgprep ()   { return pgp_report; }
-
-// returns the screen ("debug") plotter
-  PGPlotterInterface & pgpscr ()   { return pgp_screen; }
-
-// Uses SUBP to divide the flag report PGPlotter into subpanes.
-// Keeps track of the current setting, so no extra pagebreaks are produced
-  void setReportPanels ( Int nx,Int ny );
-
-// Utility function to do channel selection
-  /*
-  Bool selectDataChannel(Vector<Int>& spwidnchans,
-                         Vector<Int>& spectralwindowids, 
-			 Vector<Int>& dataStart, 
-			 Vector<Int>& dataEnd, Vector<Int>& dataStep);
-*/			 
+  /* Get rid of negative indices (meaning negation of antenna) in baselinelist */
+  static void reform_baselinelist(Matrix<Int> &baselinelist, unsigned nant);
   
+  static int my_aipspp_sum(const Array<Bool> &a);
+
 private:
     
   Flagger( const Flagger & )          {};
@@ -311,6 +279,7 @@ private:
   
   // MS Selection
   MSSelection *msselection_p;
+  bool spw_selection;  //non-trivial spw-selection
 
   // List of Agents
   Record *agents_p;
@@ -320,8 +289,10 @@ private:
   Record *opts_p;
 
   // Debug Message flag
-  Bool dbg;
+  static const bool dbg;
 
+  Bool quack_agent_exists;
+  /* More initialization is required, if there exists a quacking agent */
 };
 
 

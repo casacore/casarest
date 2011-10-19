@@ -42,6 +42,8 @@
 #include <images/Images/TempImage.h>
 #include <coordinates/Coordinates/SpectralCoordinate.h>
 #include <scimath/Mathematics/InterpolateArray1D.h>
+#include <synthesis/MeasurementComponents/CFCache.h>
+#include <synthesis/MeasurementComponents/ConvolutionFunction.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -115,20 +117,24 @@ public:
 
   FTMachine();
 
+  FTMachine(CountedPtr<CFCache>& cfcache,CountedPtr<ConvolutionFunction>& cfctor);
+
   FTMachine(const FTMachine& other);
 
   FTMachine& operator=(const FTMachine& other);
 
   virtual ~FTMachine();
 
+  // Clone the (derived) FTMachine.
+  // For the time being the default implementation throws an exception.
+  virtual FTMachine* clone() const;
+
   // Initialize transform to Visibility plane
   virtual void initializeToVis(ImageInterface<Complex>& image, const VisBuffer& vb) = 0;
 
 
 
-  virtual void initializeToVis(ImageInterface<Complex>& image,
-		       const VisBuffer& vb, Array<Complex>& griddedVis,
-		       Vector<Double>& uvscale, UVWMachine* &uvwMachine){};
+  
 
   // Finalize transform to Visibility plane
   virtual void finalizeToVis() = 0;
@@ -136,46 +142,39 @@ public:
   // Initialize transform to Sky plane
   virtual void initializeToSky(ImageInterface<Complex>& image,
 			       Matrix<Float>& weight, const VisBuffer& vb) = 0;
-  virtual void initializeToSky(ImageInterface<Complex>& image,
-			       Matrix<Float>& weight, const VisBuffer& vb,
-			       Vector<Double>& uvscale,
-			       UVWMachine* &uvwmachine){}; 
+  
   // Finalize transform to Sky plane
   virtual void finalizeToSky() = 0;
 
-  virtual void finalizeToSky(ImageInterface<Complex>& iimage){};
+  virtual void finalizeToSky(ImageInterface<Complex>& iimage){(void)iimage;};
 
   // Get actual coherence from grid
   virtual void get(VisBuffer& vb, Int row=-1) = 0;
 
-  // Get the coherence from modelImage return it in the degrid cube. 
-  // Is to be used especially when scratch columns are not 
-  // present in ms and/or if memory is available to support such non
-  // non-disk operations.
-  virtual void get(VisBuffer& vb, Cube<Complex>& degrid, 
-		   Array<Complex>& griddedVis, Vector<Double>& scale, 
-		   UVWMachine *uvwMachine,
-		   Int row=-1){ };
 
   // Put coherence to grid
   virtual void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False, 
-		   FTMachine::Type type= FTMachine::OBSERVED, 
-		   const Matrix<Float>& imweight = Matrix<Float>(0,0)) = 0;
+		   FTMachine::Type type= FTMachine::OBSERVED)=0;
 
-  virtual void put(const VisBuffer& vb, TempImage<Complex>& image,
-		   Vector<Double>& scale,
-		   Int row=-1, UVWMachine *uvwMachine=0, 
-		   Bool dopsf=False){ };
+  // Non const vb version - so that weights can be modified in-place
+  // Currently, used only by MultiTermFT
+  virtual void put(VisBuffer& vb, Int row=-1, Bool dopsf=False, 
+  	           FTMachine::Type type= FTMachine::OBSERVED)
+                    {put((const VisBuffer&)vb,row,dopsf,type);};
 
   // Get the final image
   virtual ImageInterface<Complex>& getImage(Matrix<Float>&, Bool normalize=True) = 0;
+  virtual void normalizeImage(Lattice<Complex>& skyImage,
+			      const Matrix<Double>& sumOfWts,
+			      Lattice<Float>& sensitivityImage,
+			      Bool fftNorm) = 0;
 
   // Get the final weights image
   virtual void getWeightImage(ImageInterface<Float>&, Matrix<Float>&) = 0;
 
   // Get a flux (divide by this to get a flux density correct image) 
   // image if there is one
-  virtual void getFluxImage(ImageInterface<Float>& image){};
+  virtual void getFluxImage(ImageInterface<Float>& image){(void)image;};
 
   // Make the entire image
   virtual void makeImage(FTMachine::Type type,
@@ -211,8 +210,11 @@ public:
   //set  spw for cube that will be used;
   Bool setSpw(Vector<Int>& spw, Bool validFrame);
 
+  //return whether the ftmachine is using a double precision grid
+  virtual Bool doublePrecGrid();
+
   // To make sure no padding is used in certain gridders
-  virtual void setNoPadding(Bool nopad){};
+  virtual void setNoPadding(Bool nopad){(void)nopad;};
   
   // Return the name of the machine
 
@@ -239,7 +241,20 @@ public:
 
   virtual String getPointingDirColumnInUse();
 
+  virtual void setSpwChanSelection(const Cube<Int>& spwchansels);
 
+  // set the order of the Taylor term for MFS this is to tell
+  // A-Projection to qualify the accumulated avgPB for each Taylor
+  // term in the CFCache.
+  virtual void setMiscInfo(const Int qualifier)=0;
+
+  virtual void setCanComputeResiduals(Bool& b) {canComputeResiduals_p=b;};
+  virtual Bool canComputeResiduals() {return canComputeResiduals_p;};
+  //
+  // Make the VB and VBStore interefaces for the interim re-factoring
+  // work.  Finally removed the VB interface.
+  virtual void ComputeResiduals(VisBuffer&vb, Bool useCorrected) = 0;
+  //virtual void ComputeResiduals(VBStore& vb)=0;
 protected:
 
   LogIO logIO_p;
@@ -270,13 +285,15 @@ protected:
 
   Int lastFieldId_p;
   Int lastMSId_p;
+  //Use douple precision grid in gridding process
+  Bool useDoubleGrid_p;
 
   void initMaps(const VisBuffer& vb);
-
+  virtual void initPolInfo(const VisBuffer& vb);
 
 
   // Sum of weights per polarization and per chan
-  Matrix<Double> sumWeight;
+  Matrix<Double> sumWeight, sumCFWeight;
 
   // Sizes
   Int nx, ny, npol, nchan, nvischan, nvispol;
@@ -329,14 +346,25 @@ protected:
 				    Cube<Complex>& data, Cube<Int>& flag);
 
 
+  void setSpectralFlag(const VisBuffer& vb, Cube<Bool>& modflagcube); 
+
   // Private variables needed for spectral frame conversion 
   SpectralCoordinate spectralCoord_p;
   Vector<Bool> doConversion_p;
   Bool freqFrameValid_p;
-  Vector<Float> imageFreq_p;
+  Vector<Double> imageFreq_p;
+  //Vector of float lsrfreq needed for regridding
+  Vector<Double> lsrFreq_p;
   Vector<Double> interpVisFreq_p;
-  InterpolateArray1D<Float,Complex>::InterpolationMethod freqInterpMethod_p;
+  InterpolateArray1D<Double,Complex>::InterpolationMethod freqInterpMethod_p;
   String pointingDirCol_p;
+  Cube<Int> spwChanSelFlag_p;
+  Vector<Int> cfStokes_p;
+  Int polInUse_p;
+  CountedPtr<CFCache> cfCache_p;
+  CFStore cfs_p, cfwts_p;
+  CountedPtr<ConvolutionFunction> convFuncCtor_p;
+  Bool canComputeResiduals_p;
  private:
   //Some temporary wasteful function for swapping axes because we don't 
   //Interpolation along the second axis...will need to implement 

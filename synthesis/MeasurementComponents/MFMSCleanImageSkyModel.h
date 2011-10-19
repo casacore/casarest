@@ -36,7 +36,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 //forward
 class SkyEquation;
-template <class T> class LatticeCleaner;
 
 // <summary> Image Sky Model implementing the MultiScale, MultiField Clean algorithm </summary>
 
@@ -111,14 +110,16 @@ public:
   virtual Bool solve (SkyEquation& me);
 
 private:
+  // Chattily get the scales into userScaleSizes_p, doing some calculation if necessary.
+  void getScales();
 
   // set the scales
-  void setScales(LatticeCleaner<Float>& cleaner);
+  //  void setScales(LatticeCleaner<Float>& cleaner);
 
   enum Scale_Method{NSCALES, USERVECTOR};
   Scale_Method method_p;
 
-  Int nscales_p;
+  uInt nscales_p;
   Vector<Float> userScaleSizes_p;
 
   LatticeCleanProgress *progress_p;

@@ -38,6 +38,7 @@
 #include <casa/BasicSL/Constants.h>
 #include <scimath/Mathematics/FFTServer.h>
 #include <synthesis/MeasurementComponents/GridFT.h>
+#include <synthesis/MeasurementComponents/Utils.h>
 #include <scimath/Mathematics/RigidVector.h>
 #include <msvis/MSVis/StokesVector.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
@@ -72,19 +73,21 @@
 #include <casa/sstream.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
-
+  //  using namespace casa::async;
 GridFT::GridFT(Long icachesize, Int itilesize, String iconvType, Float padding,
-	       Bool usezero)
+	       Bool usezero, Bool useDoublePrec)
 : FTMachine(), padding_p(padding), imageCache(0), cachesize(icachesize), tilesize(itilesize),
   gridder(0), isTiled(False), convType(iconvType),
   maxAbsData(0.0), centerLoc(IPosition(4,0)), offsetLoc(IPosition(4,0)),
   usezero_p(usezero), noPadding_p(False), usePut2_p(False), 
   machineName_p("GridFT")
 {
+  useDoubleGrid_p=useDoublePrec;  
+  //  peek=NULL;
 }
 
 GridFT::GridFT(Long icachesize, Int itilesize, String iconvType,
-	       MPosition mLocation, Float padding, Bool usezero)
+	       MPosition mLocation, Float padding, Bool usezero, Bool useDoublePrec)
 : FTMachine(), padding_p(padding), imageCache(0), cachesize(icachesize),
   tilesize(itilesize), gridder(0), isTiled(False), convType(iconvType), maxAbsData(0.0), centerLoc(IPosition(4,0)),
   offsetLoc(IPosition(4,0)), usezero_p(usezero), noPadding_p(False), 
@@ -92,10 +95,12 @@ GridFT::GridFT(Long icachesize, Int itilesize, String iconvType,
 {
   mLocation_p=mLocation;
   tangentSpecified_p=False;
+  useDoubleGrid_p=useDoublePrec;
+  //  peek=NULL;
 }
 
 GridFT::GridFT(Long icachesize, Int itilesize, String iconvType,
-	       MDirection mTangent, Float padding, Bool usezero)
+	       MDirection mTangent, Float padding, Bool usezero, Bool useDoublePrec)
 : FTMachine(), padding_p(padding), imageCache(0), cachesize(icachesize),
   tilesize(itilesize), gridder(0), isTiled(False), convType(iconvType), maxAbsData(0.0), centerLoc(IPosition(4,0)),
   offsetLoc(IPosition(4,0)), usezero_p(usezero), noPadding_p(False), 
@@ -103,11 +108,13 @@ GridFT::GridFT(Long icachesize, Int itilesize, String iconvType,
 {
   mTangent_p=mTangent;
   tangentSpecified_p=True;
+  useDoubleGrid_p=useDoublePrec;
+  //  peek=NULL;
 }
 
 GridFT::GridFT(Long icachesize, Int itilesize, String iconvType,
 	       MPosition mLocation, MDirection mTangent, Float padding,
-	       Bool usezero)
+	       Bool usezero, Bool useDoublePrec)
 : FTMachine(), padding_p(padding), imageCache(0), cachesize(icachesize),
   tilesize(itilesize), gridder(0), isTiled(False), convType(iconvType), maxAbsData(0.0), centerLoc(IPosition(4,0)),
   offsetLoc(IPosition(4,0)), usezero_p(usezero), noPadding_p(False), 
@@ -116,6 +123,8 @@ GridFT::GridFT(Long icachesize, Int itilesize, String iconvType,
   mLocation_p=mLocation;
   mTangent_p=mTangent;
   tangentSpecified_p=True;
+  useDoubleGrid_p=useDoublePrec;
+  //  peek=NULL;
 }
 
 GridFT::GridFT(const RecordInterface& stateRec)
@@ -126,48 +135,28 @@ GridFT::GridFT(const RecordInterface& stateRec)
   if (!fromRecord(error, stateRec)) {
     throw (AipsError("Failed to create gridder: " + error));
   };
+  //  peek=NULL;
 }
 
 //---------------------------------------------------------------------- 
 GridFT& GridFT::operator=(const GridFT& other)
 {
   if(this!=&other) {
-    nAntenna_p=other.nAntenna_p;
-    distance_p=other.distance_p;
-    lastFieldId_p=other.lastFieldId_p;
-    lastMSId_p=other.lastMSId_p;
-    nx=other.nx;
-    ny=other.ny;
-    npol=other.npol;
-    nchan=other.nchan;
-    nvischan=other.nvischan;
-    nvispol=other.nvispol;
-    chanMap.resize();
-    chanMap=other.chanMap;
-    polMap.resize();
-    polMap=other.polMap;
-    mLocation_p=other.mLocation_p;
-    doUVWRotation_p=other.doUVWRotation_p;
-    freqFrameValid_p=other.freqFrameValid_p;
-    selectedSpw_p.resize();
-    selectedSpw_p=other.selectedSpw_p;
-    multiChanMap_p=other.multiChanMap_p;
-    nVisChan_p.resize();
-    nVisChan_p=other.nVisChan_p;
-    spectralCoord_p=other.spectralCoord_p;
-    doConversion_p.resize();
-    doConversion_p=other.doConversion_p;
+    //Do the base parameters
+    FTMachine::operator=(other);
+    
+    //private params
     imageCache=other.imageCache;
     cachesize=other.cachesize;
     tilesize=other.tilesize;
     convType=other.convType;
+    uvScale.resize();
+    uvOffset.resize();
+    uvScale=other.uvScale;
+    uvOffset=other.uvOffset;
     if(other.gridder==0)
       gridder=0;
-    else{
-      uvScale.resize();
-      uvOffset.resize();
-      uvScale=other.uvScale;
-      uvOffset=other.uvOffset;
+    else{  
       gridder = new ConvolveGridder<Double, Complex>(IPosition(2, nx, ny),
 						     uvScale, uvOffset,
 						     convType);
@@ -175,7 +164,6 @@ GridFT& GridFT::operator=(const GridFT& other)
     isTiled=other.isTiled;
     //lattice=other.lattice;
     lattice=0;
-    cachesize=other.cachesize;
     tilesize=other.tilesize;
     arrayLattice=0;
     maxAbsData=other.maxAbsData;
@@ -183,8 +171,8 @@ GridFT& GridFT::operator=(const GridFT& other)
     offsetLoc=other.offsetLoc;
     padding_p=other.padding_p;
     usezero_p=other.usezero_p;
-    noPadding_p=other.noPadding_p;
-    freqInterpMethod_p=other.freqInterpMethod_p;
+    noPadding_p=other.noPadding_p;	
+    //    peek = other.peek;
   };
   return *this;
 };
@@ -201,6 +189,12 @@ void GridFT::init() {
   logIO() << LogOrigin("GridFT", "init")  << LogIO::NORMAL;
 
   ok();
+  // if (peek == NULL) 
+  //   {
+  //     // peek = new SynthesisAsyncPeek();
+  //     // peek->reset();
+  //     // peek->startThread();
+  //   }
 
   /* hardwiring isTiled is False
   // Padding is possible only for non-tiled processing
@@ -289,7 +283,7 @@ void GridFT::initializeToVis(ImageInterface<Complex>& iimage,
   ok();
 
   init();
-
+  //  peek->reset();
   // Initialize the maps for polarization and channel. These maps
   // translate visibility indices into image indices
   initMaps(vb);
@@ -311,8 +305,8 @@ void GridFT::initializeToVis(ImageInterface<Complex>& iimage,
      //griddedData can be a reference of image data...if not using model col
      //hence using an undocumented feature of resize that if 
      //the size is the same as old data it is not changed.
-     if(!usePut2_p) griddedData.set(0);
-     
+     //if(!usePut2_p) griddedData.set(0);
+     griddedData.set(Complex(0.0));
 
      IPosition stride(4, 1);
      IPosition blc(4, (nx-image->shape()(0)+(nx%2==0))/2, (ny-image->shape()(1)+(ny%2==0))/2, 0, 0);
@@ -403,16 +397,18 @@ void GridFT::initializeToSky(ImageInterface<Complex>& iimage,
   }
   else {
     IPosition gridShape(4, nx, ny, npol, nchan);
-    griddedData2.resize(gridShape);
     griddedData.resize(gridShape);
-    griddedData2=DComplex(0.0);
+    griddedData=Complex(0.0);
+    if(useDoubleGrid_p){
+      griddedData2.resize(gridShape);
+      griddedData2=DComplex(0.0);
+    }
     //iimage.get(griddedData, False);
     //if(arrayLattice) delete arrayLattice; arrayLattice=0;
     arrayLattice = new ArrayLattice<Complex>(griddedData);
     lattice=arrayLattice;
   }
   //AlwaysAssert(lattice, AipsError);
-
 }
 
 
@@ -432,6 +428,8 @@ void GridFT::finalizeToSky()
     imageCache->showCacheStatistics(o);
     logIO() << o.str() << LogIO::POST;
   }
+  //  peek->terminate();
+  //  peek->reset();
 }
 
 
@@ -451,6 +449,7 @@ Array<Complex>* GridFT::getDataPointer(const IPosition& centerLoc2D,
 #if defined(NEED_UNDERSCORES)
 #define ggrid ggrid_
 #define dgrid dgrid_
+#define ggrids ggrids_
 #endif
 
 extern "C" { 
@@ -480,6 +479,33 @@ extern "C" {
 		Int*,
 		Int*,
 		Double*);
+  void ggrids(Double*,
+                Double*,
+		const Complex*,
+                Int*,
+                Int*,
+                Int*,
+		const Int*,
+		const Int*,
+		const Float*,
+		Int*,
+		Int*,
+		Double*,
+		Double*,
+		Complex*,
+                Int*,
+		Int*,
+		Int *,
+		Int *,
+		const Double*,
+		const Double*,
+                Int*,
+		Int*,
+		Double*,
+		Int*,
+		Int*,
+		Double*);
+
    void dgrid(Double*,
                 Double*,
 		Complex*,
@@ -505,11 +531,11 @@ extern "C" {
 		Int*);
 }
 void GridFT::put(const VisBuffer& vb, Int row, Bool dopsf, 
-		 FTMachine::Type type, const Matrix<Float>& imwght)
+		 FTMachine::Type type)
 {
 
-
   gridOk(gridder->cSupport()(0));
+  //  peek->setVBPtr(&vb);
 
   //Check if ms has changed then cache new spw and chan selection
   if(vb.newMS())
@@ -528,22 +554,21 @@ void GridFT::put(const VisBuffer& vb, Int row, Bool dopsf,
 
   //No point in reading data if its not matching in frequency
   if(max(chanMap)==-1)
-    return;
+    {
+      //      peek->reset();
+      return;
+    }
 
   const Matrix<Float> *imagingweight;
-  if(imwght.nelements()>0)
-    imagingweight=&imwght;
-  else
-    imagingweight=&(vb.imagingWeight());
+  imagingweight=&(vb.imagingWeight());
   
-  if(dopsf) type=FTMachine::PSF;
+  if(dopsf) {type=FTMachine::PSF;}
 
   Cube<Complex> data;
   //Fortran gridder need the flag as ints 
   Cube<Int> flags;
   Matrix<Float> elWeight;
   interpolateFrequencyTogrid(vb, *imagingweight,data, flags, elWeight, type);
-
 
 
   Bool iswgtCopy;
@@ -605,114 +630,78 @@ void GridFT::put(const VisBuffer& vb, Int row, Bool dopsf,
   
 
 
-  if(isTiled) {
-    cout << "Should not reach here " << endl;
-    //should remove the istiled mode all together
-    /*
-      
-    Double invLambdaC=vb.frequency()(nvischan/2)/C::c;
-    Vector<Double> uvLambda(2);
-    Vector<Int> centerLoc2D(2);
-    centerLoc2D=0;
-    
-    // Loop over all rows
-    for (Int rownr=startRow; rownr<=endRow; rownr++) {
-      
-      // Calculate uvw for this row at the center frequency
-      uvLambda(0)=uvw(0,rownr)*invLambdaC;
-      uvLambda(1)=uvw(1,rownr)*invLambdaC;
-      centerLoc2D=gridder->location(centerLoc2D, uvLambda);
-      
-      // Is this point on the grid?
-      if(gridder->onGrid(centerLoc2D)) {
-	
-        // Get the tile
-	Array<Complex>* dataPtr=getDataPointer(centerLoc2D, False);
-	Int aNx=dataPtr->shape()(0);
-	Int aNy=dataPtr->shape()(1);
-	
-	// Now use FORTRAN to do the gridding. Remember to 
-	// ensure that the shape and offsets of the tile are 
-	// accounted for.
-	Bool del;
-        Vector<Double> actualOffset(2);
-        for (Int i=0;i<2;i++) {
-          actualOffset(i)=uvOffset(i)-Double(offsetLoc(i));
-	}
-	IPosition s(flags.shape());
-        // Now pass all the information down to a 
-	// FORTRAN routine to do the work
-	ggridft(uvw.getStorage(del),
-		dphase.getStorage(del),
-		datStorage,
-                &s(0),
-		&s(1),
-		&idopsf,
-		flags.getStorage(del),
-		rowFlags.getStorage(del),
-		wgtStorage,
-		&s(2),
-		&rownr,
-		uvScale.getStorage(del),
-		actualOffset.getStorage(del),
-		dataPtr->getStorage(del),
-		&aNx,
-		&aNy,
-		&npol,
-		&nchan,
-		vb.frequency().getStorage(del),
-		&C::c,
-		&(gridder->cSupport()(0)),
-		&(gridder->cSampling()),
-		gridder->cFunction().getStorage(del),
-		chanMap.getStorage(del),
-		polMap.getStorage(del),
-		sumWeight.getStorage(del));
-      }
-    }
-    */
-  }
-  else {
-    Bool del;
-    //    IPosition s(flags.shape());
-    const IPosition &fs=flags.shape();
-    std::vector<Int> s(fs.begin(),fs.end());
-    
-    Bool gridcopy;
+  Bool del;
+  //    IPosition s(flags.shape());
+  const IPosition &fs=flags.shape();
+  std::vector<Int> s(fs.begin(),fs.end());
+  
+  Bool gridcopy;
+  if(useDoubleGrid_p){
     DComplex *gridstor=griddedData2.getStorage(gridcopy);
     ggrid(uvw.getStorage(del),
-	    dphase.getStorage(del),
-	    datStorage,
-	    &s[0],
-	    &s[1],
-	    &idopsf,
-	    flags.getStorage(del),
-	    rowFlags.getStorage(del),
-	    wgtStorage,
-	    &s[2],
-	    &row,
-	    uvScale.getStorage(del),
-	    uvOffset.getStorage(del),
-	    gridstor,
-	    &nx,
-	    &ny,
-	    &npol,
-	    &nchan,
-	    interpVisFreq_p.getStorage(del),
-	    &C::c,
-	    &(gridder->cSupport()(0)),
-	    &(gridder->cSampling()),
-	    gridder->cFunction().getStorage(del),
-	    chanMap.getStorage(del),
-	    polMap.getStorage(del),
-	    sumWeight.getStorage(del));
+	  dphase.getStorage(del),
+	  datStorage,
+	  &s[0],
+	  &s[1],
+	  &idopsf,
+	  flags.getStorage(del),
+	  rowFlags.getStorage(del),
+	  wgtStorage,
+	  &s[2],
+	  &row,
+	  uvScale.getStorage(del),
+	  uvOffset.getStorage(del),
+	  gridstor,
+	  &nx,
+	  &ny,
+	  &npol,
+	  &nchan,
+	  interpVisFreq_p.getStorage(del),
+	  &C::c,
+	  &(gridder->cSupport()(0)),
+	  &(gridder->cSampling()),
+	  gridder->cFunction().getStorage(del),
+	  chanMap.getStorage(del),
+	  polMap.getStorage(del),
+	  sumWeight.getStorage(del));
     griddedData2.putStorage(gridstor, gridcopy);
   }
+  else{
+    Complex *gridstor=griddedData.getStorage(gridcopy);
+    ggrids(uvw.getStorage(del),
+	   dphase.getStorage(del),
+	   datStorage,
+	   &s[0],
+	   &s[1],
+	   &idopsf,
+	   flags.getStorage(del),
+	   rowFlags.getStorage(del),
+	   wgtStorage,
+	   &s[2],
+	   &row,
+	    uvScale.getStorage(del),
+	   uvOffset.getStorage(del),
+	   gridstor,
+	   &nx,
+	   &ny,
+	   &npol,
+	   &nchan,
+	   interpVisFreq_p.getStorage(del),
+	   &C::c,
+	   &(gridder->cSupport()(0)),
+	   &(gridder->cSampling()),
+	   gridder->cFunction().getStorage(del),
+	   chanMap.getStorage(del),
+	   polMap.getStorage(del),
+	   sumWeight.getStorage(del));
+    griddedData.putStorage(gridstor, gridcopy);
+  }
+ 
 
   if(!dopsf)
     data.freeStorage(datStorage, isCopy);
   elWeight.freeStorage(wgtStorage,iswgtCopy);
-
+  //  peek->reset();
 }
 
 
@@ -914,13 +903,29 @@ ImageInterface<Complex>& GridFT::getImage(Matrix<Float>& weights, Bool normalize
     
 
   
-    convertArray(griddedData, griddedData2);
-    //Don't need the double-prec grid anymore...
-    griddedData2.resize();
+    // if(useDoubleGrid_p){
+    //   convertArray(griddedData, griddedData2);
+    //   //Don't need the double-prec grid anymore...
+    //   griddedData2.resize();
+    // }
+
     // x and y transforms
-    LatticeFFT::cfft2d(*lattice,False);
-    
-    
+    //    LatticeFFT::cfft2d(*lattice,False);
+    //
+    // Retain the double precision grid for FFT as well.  Convert it
+    // to single precision just after (since images are still single
+    // precision).
+    //
+    if(useDoubleGrid_p)
+      {
+	ArrayLattice<DComplex> darrayLattice(griddedData2);
+	LatticeFFT::cfft2d(darrayLattice,False);
+	convertArray(griddedData, griddedData2);
+	//Don't need the double-prec grid anymore...
+	griddedData2.resize();
+      }
+    else
+      LatticeFFT::cfft2d(*lattice,False);
 
     {
       Int inx = lattice->shape()(0);
@@ -935,7 +940,7 @@ ImageInterface<Complex>& GridFT::getImage(Matrix<Float>& weights, Bool normalize
       for(lix.reset();!lix.atEnd();lix++) {
 	Int pol=lix.position()(2);
 	Int chan=lix.position()(3);
-	if(weights(pol, chan)>0.0) {
+	if(weights(pol, chan)!=0.0) {
 	  gridder->correctX1D(correction, lix.position()(1));
 	  lix.rwVectorCursor()/=correction;
 	  if(normalize) {

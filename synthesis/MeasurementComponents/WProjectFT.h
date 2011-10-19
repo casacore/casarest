@@ -138,16 +138,16 @@ public:
   // <group>
   WProjectFT(
 	   Int nFacets, Long cachesize, Int tilesize=16, 
-	   Bool usezero=True);
+	   Bool usezero=True, Bool useDoublePrec=False);
   //Constructor without tangent direction
   WProjectFT(Int nFacets, MPosition mLocation,
 	     Long cachesize, Int tilesize=16, 
-	     Bool usezero=True, Float padding=1.0);
+	     Bool usezero=True, Float padding=1.0, Bool useDoublePrec=False);
   //Deprecated no longer need ms in constructor
   WProjectFT(
 	     Int nFacets, MDirection mTangent, MPosition mLocation,
 	     Long cachesize, Int tilesize=16, 
-	   Bool usezero=True, Float padding=1.0);
+	     Bool usezero=True, Float padding=1.0, Bool useDoublePrec=False);
   // </group>
 
   // Construct from a Record containing the WProjectFT state
@@ -186,8 +186,7 @@ public:
 
   // Put coherence to grid by gridding.
   void put(const VisBuffer& vb, Int row=-1, Bool dopsf=False,
-	   FTMachine::Type type=FTMachine::OBSERVED,
-	   const Matrix<Float>& wgt=Matrix<Float>(0,0));
+	   FTMachine::Type type=FTMachine::OBSERVED);
 
   // Make the entire image
   void makeImage(FTMachine::Type type,
@@ -198,6 +197,11 @@ public:
   // Get the final image: do the Fourier transform and
   // grid-correct, then optionally normalize by the summed weights
   ImageInterface<Complex>& getImage(Matrix<Float>&, Bool normalize=True);
+  virtual void normalizeImage(Lattice<Complex>& skyImage,
+			      const Matrix<Double>& sumOfWts,
+			      Lattice<Float>& sensitivityImage,
+			      Bool fftNorm)
+    {throw(AipsError("WProjectFT::normalizeImage() called"));}
  
   // Get the final weights image
   void getWeightImage(ImageInterface<Float>&, Matrix<Float>&);
@@ -220,7 +224,8 @@ public:
 
   void setConvFunc(CountedPtr<WPConvFunc>& pbconvFunc);
   CountedPtr<WPConvFunc>& getConvFunc();
-
+  virtual void setMiscInfo(const Int qualifier){(void)qualifier;};
+  virtual void ComputeResiduals(VisBuffer&vb, Bool useCorrected) {};
 
 protected:
 
@@ -277,7 +282,7 @@ protected:
 
   // Array for non-tiled gridding
   Array<Complex> griddedData;
-
+  Array<DComplex> griddedData2;
 
   DirectionCoordinate directionCoord;
 

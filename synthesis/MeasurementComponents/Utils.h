@@ -1,3 +1,30 @@
+// -*- C++ -*-
+//# Utils.h: Definition of global functions in Utils.cc
+//# Copyright (C) 1997,1998,1999,2000,2001,2002,2003
+//# Associated Universities, Inc. Washington DC, USA.
+//#
+//# This library is free software; you can redistribute it and/or modify it
+//# under the terms of the GNU Library General Public License as published by
+//# the Free Software Foundation; either version 2 of the License, or (at your
+//# option) any later version.
+//#
+//# This library is distributed in the hope that it will be useful, but WITHOUT
+//# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+//# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Library General Public
+//# License for more details.
+//#
+//# You should have received a copy of the GNU Library General Public License
+//# along with this library; if not, write to the Free Software Foundation,
+//# Inc., 675 Massachusetts Ave, Cambridge, MA 02139, USA.
+//#
+//# Correspondence concerning AIPS++ should be addressed as follows:
+//#        Internet email: aips2-request@nrao.edu.
+//#        Postal address: AIPS++ Project Office
+//#                        National Radio Astronomy Observatory
+//#                        520 Edgemont Road
+//#                        Charlottesville, VA 22903-2475 USA
+//#
+//# $Id$
 #include <casa/aips.h>
 #include <casa/Exceptions/Error.h>
 #include <msvis/MSVis/VisBuffer.h>
@@ -24,8 +51,11 @@ namespace casa
   Double getCurrentTimeStamp(const VisBuffer& vb);
   void makeStokesAxis(Int npol_p, Vector<String>& polType, Vector<Int>& whichStokes);
   Double getPA(const VisBuffer& vb);
-  void storeImg(String& fileName,ImageInterface<Complex>& theImg);
-  void storeImg(String& fileName,ImageInterface<Float>& theImg);
+  void storeImg(String fileName,ImageInterface<Complex>& theImg, Bool writeReIm=False);
+  void storeImg(String fileName,ImageInterface<Float>& theImg);
+  void storeArrayAsImage(String fileName, const CoordinateSystem& coords, const Array<Complex>& cf);
+  void storeArrayAsImage(String fileName, const CoordinateSystem& coords, const Array<Float>& cf);
+			 
   Bool isVBNaN(const VisBuffer& vb, String& mesg);
   namespace SynthesisUtils
   {
@@ -33,13 +63,34 @@ namespace casa
 			    CoordinateSystem& inCS,
 			    Array<Complex>& outArray, 
 			    Double dAngleRad, 
-			    String interpMathod=String("CUBIC"));
+			    String interpMathod=String("CUBIC"),
+			    Bool modifyInCS=True);
+    void findLatticeMax(const Array<Complex>& lattice,
+			Vector<Float>& maxAbs,
+			Vector<IPosition>& posMaxAbs) ;
     void findLatticeMax(const ImageInterface<Complex>& lattice,
 			Vector<Float>& maxAbs,
 			Vector<IPosition>& posMaxAbs) ;
     void findLatticeMax(const ImageInterface<Float>& lattice,
 			Vector<Float>& maxAbs,
 			Vector<IPosition>& posMaxAbs) ;
+    inline  Int nint(const Double& v) {return (Int)std::floor(v+0.5);}
+    inline  Int nint(const Float& v) {return (Int)std::floor(v+0.5);}
+    inline  Bool near(const Double& d1, const Double& d2, 
+		      const Double EPS=1E-6) 
+    {
+      Bool b1=(fabs(d1-d2) < EPS)?True:False;
+      return b1;
+    }
+    template <class T>
+    inline void SETVEC(Vector<T>& lhs, const Vector<T>& rhs)
+    {lhs.resize(rhs.shape()); lhs = rhs;};
+    template <class T>
+    inline void SETVEC(Array<T>& lhs, const Array<T>& rhs)
+    {lhs.resize(rhs.shape()); lhs = rhs;};
+
+    template <class T>
+    T getenv(const char *name, const T defaultVal);
   }
 
   void getHADec(MeasurementSet& ms, const VisBuffer& vb, Double &HA, Double& RA, Double& Dec);

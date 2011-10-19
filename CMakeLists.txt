@@ -27,6 +27,7 @@ find_package(CfitsIO REQUIRED)
 find_package(WcsLib REQUIRED)
 find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
+find_package(Boost REQUIRED COMPONENTS thread)
 find_package(HDF5)
 if(NOT HDF5_FOUND)
     message(STATUS "  HDF5 not used")
@@ -44,7 +45,8 @@ if(NOT INCLUDE_INSTALL_DIR )
     set( INCLUDE_INSTALL_DIR "include/casarest" )
 endif(NOT INCLUDE_INSTALL_DIR )
 
-add_definitions(-DAIPS_NO_TEMPLATE_SRC -DCASA_STANDALONE)
+#add_definitions(-DAIPS_NO_TEMPLATE_SRC -DCASA_STANDALONE)
+add_definitions(-DCASA_STANDALONE)
 
 
 # -------- library building ----------------------------
@@ -52,6 +54,7 @@ INCLUDE_DIRECTORIES(${CASACORE_INCLUDE_DIR}
     ${CASACORE_INCLUDE_DIR}/casacore
     ${CFITSIO_INCLUDE_DIR}
     ${WCSLIB_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
@@ -59,6 +62,7 @@ set(OTHER_LIBRARIES ${CASACORE_LIBRARIES}
     ${WCSLIB_LIBRARIES}
     ${CFITSIO_LIBRARIES}
     ${HDF5_LIBRARIES}
+    ${Boost_LIBRARIES}
 )
 
 add_subdirectory(msvis)

@@ -103,10 +103,17 @@ public:
   
   // Zero selected planes of a Stokes image
   static void Zero(ImageInterface<Float>& image, Vector<Bool>& mask);
-  
+
+  // Mask mask iif(image > threshhold), where threshhold is in image's units.
+  static void MaskFrom(ImageInterface<Float>& mask,
+		       ImageInterface<Float>& image,
+		       const Double threshhold);
+
+  // This version uses threshold.get("Jy").getValue().
   static void MaskFrom(ImageInterface<Float>& mask,
 		       ImageInterface<Float>& image,
 		       const Quantity& threshold);
+  
 
   // Zero pixels where Stokes I < some value
   static void MaskOnStokesI(ImageInterface<Float>& image, const Quantity& threshold);
@@ -162,19 +169,23 @@ public:
 					    Int feedID=0);
   
   // Create a CoordinateSystem 
-  static CoordinateSystem CStokesCoord(const IPosition& shape,
+  static CoordinateSystem CStokesCoord(//const IPosition& shape,
 				       const CoordinateSystem& coord, 
 				       Vector<Int>& whichStokes,
-				       SkyModel::PolRep
-				       polRep=SkyModel::CIRCULAR);
+				       SkyModel::PolRep  polRep=SkyModel::CIRCULAR);
+  /*
   static CoordinateSystem
   CStokesCoordFromImage(const ImageInterface<Complex>& image,
 			Vector<Int>& whichStokes,
 			SkyModel::PolRep polRep);
-
+  */
   // Change the stokes representation (but not the data!)
   static void changeCStokesRep(ImageInterface<Complex>& image,
 			       SkyModel::PolRep polRep);
+
+  static void changeLabelsStokesToCorrStokes(StokesCoordinate &stokesCoord, 
+					                             SkyModel::PolRep polRep,
+                                                                     Vector<Int>&whichStokes);
 
   // check to see if Image coordinates have the standard order:
   // Direction, Stokes, Spectral.  Returns false if this is not

@@ -62,7 +62,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     pointPar_(),
     ms_p(0), vs_p(&vs),
     maxTimePerSolution(0), minTimePerSolution(10000000), avgTimePerSolution(0),
-    timer(), polMap_p(), tolerance_p(1e-12), gain_p(0.1), niter_p(500)
+    timer(), polMap_p(), tolerance_p(1e-9), gain_p(0.01), niter_p(250)
   {
     if (prtlev()>2) cout << "EP::EP(vs)" << endl;
     pbwp_p = NULL;
@@ -77,7 +77,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     pointPar_(),
     ms_p(&ms), vs_p(&vs),
     maxTimePerSolution(0), minTimePerSolution(10000000), avgTimePerSolution(0),
-    timer(), polMap_p(), tolerance_p(1e-12), gain_p(0.1), niter_p(500)
+    timer(), polMap_p(), tolerance_p(1e-12), gain_p(0.01), niter_p(500)
   {
     if (prtlev()>2) cout << "EP::EP(vs)" << endl;
     pbwp_p = NULL;
@@ -100,15 +100,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 				VisBuffer& vb)
   {
     Vector<Int> whichStokes(0);
-    IPosition cimageShape;
-    cimageShape=ModelImage.shape();
-    
-    //    Array<Int> corrType = vb.msColumns().polarization().corrType().getColumn();
-    
-    Int npol=cimageShape(2);
-    if(npol==3) cimageShape(2)=4;
     CoordinateSystem cimageCoord =
-      StokesImageUtil::CStokesCoord(cimageShape,
+      StokesImageUtil::CStokesCoord(//cimageShape,
 				    ModelImage.coordinates(),
 				    whichStokes,
 				    SkyModel::CIRCULAR);
@@ -153,7 +146,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     Int nFacets=1; Long cachesize=200000000;
     Float paInc=1.0; // 1 deg.
     String cfCacheDirName("tmpCFCache.dir");
-    Bool doPBCorr=False, applyPointingOffsets=True;
+    Bool doPBCorr=True, applyPointingOffsets=True;
     if (solve.isDefined("cfcache"))
       cfCacheDirName=solve.asString("cfcache");
     if (solve.isDefined("painc"))
@@ -164,20 +157,35 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     if (pbwp_p) delete pbwp_p;
     
     pbwp_p = new nPBWProjectFT(//*ms_p, 
-			       nFacets, 
-			       cachesize,
-			       cfCacheDirName,
-			       applyPointingOffsets,  
-			       doPBCorr,   //Bool do PB correction before prediction
-			       16,         //Int tilesize=16 
-			       paInc       //Float paSteps=1.0
-			       );
+    			       nFacets, 
+    			       cachesize,
+    			       cfCacheDirName,
+    			       applyPointingOffsets,  
+    			       doPBCorr,   //Bool do PB correction before prediction
+    			       16,         //Int tilesize=16 
+    			       paInc       //Float paSteps=1.0
+    			       );
+    logSink() << LogOrigin("EPJones","setSolve") 
+    	      << "Using nPBWProjectFT for residual and derivative computations"
+    	      << LogIO::POST;
+
+    // pbwp_p = new PBMosaicFT(*ms_p, 
+    // 			    nFacets, 
+    // 			    cachesize,
+    // 			    cfCacheDirName,
+    // 			    applyPointingOffsets,  
+    // 			    doPBCorr,   //Bool do PB correction before prediction
+    // 			    16,         //Int tilesize=16 
+    // 			    paInc);     //Float paSteps=1.0
+    // logSink() << LogOrigin("EPJones","setSolve") 
+    // 	      << "Using PBMosaicFT for residual and derivative computations"
+    // 	      << LogIO::POST;
     casa::Quantity patol(paInc,"deg");
     logSink() << LogOrigin("EPJones","setSolve") 
 	      << "Parallactic Angle tolerance set to " << patol.getValue("deg") << " deg" 
 	      << LogIO::POST;
     pbwp_p->setPAIncrement(patol);
-    pbwp_p->setEPJones(this);
+    pbwp_p->setEPJones((SolvableVisJones *)this);
     
     //    pbwp_p->setPAIncrement(paInc);
     //
@@ -787,18 +795,20 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   //
   //-----------------------------------------------------------------------
   //  
-  void EPJones::selfSolve(VisSet& vs, VisEquation& ve)
+  void EPJones::selfGatherAndSolve(VisSet& vs, VisEquation& ve)
   {
     //
     // Create the solver
     //
     SteepestDescentSolver sds(nPar(),polMap_p,niter_p,tolerance_p);
+    logSink() << LogOrigin("EPJones","selfGatherAndSolve")
+	      << "Pol map = " << polMap_p << endl;
     sds.setGain(gain_p);
     //sds.setGain(1);
     //
     // Inform logger/history
     //
-    logSink() << LogOrigin("EPJones", "selfSolve") << "Solving for " << typeName()
+    logSink() << LogOrigin("EPJones", "selfGatherAndSolve") << "Solving for " << typeName()
 	      << LogIO::POST;
     //
     // Arrange for iteration over data - set up the VisIter and the VisBuffer
@@ -1105,7 +1115,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   // Quick-n-dirty implementation - to be replaced by use of CalInterp
   // class if-and-when that's ready for use
   //
-  Array<Float>  EPJones::nearest(const Double thisTime)
+  void  EPJones::nearest(const Double thisTime, Array<Float>& vals)
   {
     Array<Float>  par  = getOffsets(currSpw());
     Vector<Double> time = getTime(currSpw());
@@ -1124,8 +1134,8 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     if (slot >= nTimes) throw(AipsError("EPJones::nearest(): Internal problem - "
 					"nearest slot is out of range"));
     Array<Float> tmp=par(IPosition(4,0,0,0,slot), IPosition(4,shp[0]-1,shp[1]-1,shp[2]-1,slot));
-
-    return tmp;
+    vals.resize();
+    vals = tmp;
   }
 
 void EPJones::printRPar()

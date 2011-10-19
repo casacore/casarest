@@ -123,6 +123,7 @@ ExtendFlagger::ExtendFlagger()
    cliprange.resize(0);
    clipcolumn = "DATA";
    outside = False;
+   channelavg = False;
    quackinterval = 0.0;
    opmode = "flag";
    extendCorr = "";
@@ -143,6 +144,7 @@ ExtendFlagger::ExtendFlagger(MeasurementSet& ms, const String& exchan,
    cliprange.resize(0);
    clipcolumn = "DATA";
    outside = False;
+   channelavg = False;
    quackinterval = 0.0;
    opmode = "flag";
    extendCorr = excorr;
@@ -176,7 +178,7 @@ Bool ExtendFlagger::initdata(const String& field, const String& spw,
             const String& array, const String& feed, 
             const String& scan, const String& baseline,
             const String& uvrange, const String& time, 
-            const String& correlation) {
+            const String& correlation, const String& intent) {
 
    this->field = field;
    this->spw = spw;
@@ -187,6 +189,7 @@ Bool ExtendFlagger::initdata(const String& field, const String& spw,
    this->uvrange = uvrange;
    this->time = time;
    this->correlation = correlation;
+   this->intent = intent;
    return True;
 
 }
@@ -194,7 +197,7 @@ Bool ExtendFlagger::initdata(const String& field, const String& spw,
 // set flagging selection string 
 Bool ExtendFlagger::setdata() {
    return flagger.setdata(field, spw, array,
-         feed, scan, baseline, uvrange, time, correlation); 
+         feed, scan, baseline, uvrange, time, correlation, intent); 
 }
 
 // make data selection 
@@ -207,7 +210,7 @@ Bool ExtendFlagger::selectdata(Bool useoriginalms) {
    //     << " correlation=" << correlation << endl;
    //useoriginalms = False;
    return flagger.selectdata(useoriginalms, field, spw, array,
-         feed, scan, baseline, uvrange, time, correlation); 
+         feed, scan, baseline, uvrange, time, correlation, intent); 
 }
 
 // 
@@ -219,7 +222,7 @@ Bool ExtendFlagger::setmanualflags(Bool unflag, Bool autocorr) {
    //     << " quackinterval=" << quackinterval << " opmode=" << opmode
    //     << endl;
    return flagger.setmanualflags(autocorr, unflag, clipexpr, 
-        cliprange, clipcolumn, outside, quackinterval, "beg", false, opmode);
+        cliprange, clipcolumn, outside, channelavg, quackinterval, "beg", false, opmode);
 }
 
 Bool ExtendFlagger::run(Bool trial, Bool reset) {
@@ -512,6 +515,10 @@ void ExtendFlagger::setTime(const String& time) {
 
 void ExtendFlagger::setCorrelation(const String& correlation) {
    this->correlation = correlation;
+}
+
+void ExtendFlagger::setIntent(const String& intent) {
+   this->intent = intent;
 }
 
 void ExtendFlagger::setExtendChan(const String& exchan) {

@@ -31,8 +31,11 @@
 #include <casa/aips.h>
 #include <casa/BasicSL/Complex.h>
 #include <synthesis/MeasurementComponents/StandardVisCal.h>
+#include <synthesis/MeasurementComponents/CalCorruptor.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
+
+class VisBuffGroupAcc;
 
 class AMueller : public MMueller {
 public:
@@ -54,17 +57,96 @@ public:
   //  (this is the key distinguishing characteristic)
   virtual Mueller::MuellerType muellerType() { return Mueller::AddDiag2; };
 
+  // Local setsolve (overrides preavg)
+  using SolvableVisCal::setSolve;
+  // Parameters particular to this class:
+  //    fitorder: Order of the polynomial fit.  If 0, it is just an average.
+  virtual void setSolve(const Record& solvepar);
+
+  // AMueller's caltables have polynomial orders where channels would normally
+  // go.  setSolve() above sets the number of "channels", but
+  // SolvableVisCal::setSolveChannelization() would just reset it to 1 if it
+  // was not overrode here.
+  virtual void setSolveChannelization(VisSet& vs);
+
+  // Size up the solving arrays, etc.  (supports combine)
+  virtual Int sizeUpSolve(VisSet& vs, Vector<Int>& nChunkPerSol);
+
+  // The fitorder = 0 version (in M) skips LinearFitSVD by just averaging.
+  virtual Bool useGenericGatherForSolve() {return fitorder_p != 0;}
+
+  // Only called if useGenericGatherForSolve() == True.  If
+  // useGenericGatherForSolve() == True, then genericGatherAndSolve() will call
+  // AMueller's selfSolveOne().  Otherwise MMueller's selfGatherAndSolve() will
+  // do everything.
+  virtual Bool useGenericSolveOne() {return False;}
+
+  // Per-solution self-solving inside generic gather.  Flexible enough for
+  // fitorder != 0, but overkill otherwise.
+  virtual void selfSolveOne(VisBuffGroupAcc& vbga);
+
+  virtual void store();
+
+  virtual void setApply() {SolvableVisCal::setApply();}
+  virtual void setApply(const Record& applypar);
+
+  // Apply this calibration to vb.  AMueller does NOT support avoidACs,
+  // and ignores it!
+  virtual void applyCal(VisBuffer& vb, Cube<Complex>& Vout, Bool avoidACs);
+
+  // Freq dependence
+  virtual Bool freqDepPar() { return False; };
+  virtual Bool freqDepMat() {
+    return fitorder_p != 0 || nChanPar() > 1; // The latter is for applying.
+  }
+
   // We do not normalize by the model, since we are estimating
   //  directly from the data  (we should optimize here by avoiding 
   //  the model I/O)
   virtual Bool normalizable() {return False;};
 
   // Specialize corrupt to pre-zero model for corruption
-  virtual void corrupt(VisBuffer& vb);
   using VisMueller::corrupt;
+  virtual void corrupt(VisBuffer& vb);
 
+  // Set (repeatedly, unfortunately) whether or not subtraction is being done,
+  // and IF fitorder == 0, sync matrices for current meta data (VisMueller
+  // override).  (Mueller matrices aren't used for fitorder != 0.)
+  void syncCalMat(const Bool& doInv)
+  {
+    doSub_p = doInv;
+    if(fitorder_p == 0)
+      VisMueller::syncCalMat(doInv);
+  }
+
+protected:
+  virtual Int nPar() {
+    if(nCorr_p < 0)
+      hurl("nPar()", "nPar() called before being set.");
+    return nCorr_p;
+  }
+
+private:
+  void init();  // Common code for the c'tors.
+
+  // Logs and throws msg as an exception from origin.
+  void hurl(const String& origin, const String& msg);
+
+  // Initialized to 0 in the initialization lists of the c'tors.
+  Int fitorder_p;  // Stores the order of the fitted polynomials.
+
+  Bool doSub_p; // For apply, whether or not to subtract or give the continuum
+                // estimate.
+  Int  nCorr_p; // # of correlations.  -1 if not yet known.
+
+  // Resized and set to impossible values in init().
+  Vector<Double> lofreq_p; // Lowest and highest frequencies (Hz) used
+  Vector<Double> hifreq_p; // to make the fit.
+  Vector<uInt> totnumchan_p; // The total number of input channels that will be
+                             // looked at (including masked ones!)
+  Vector<Bool> spwApplied_p;  // Just keeps track of which spws have been
+                              // applied to.
 };
-
 
 // Additive noise
 // In practice, this is not really solvable, but it
@@ -87,18 +169,33 @@ public:
 
   // Algebraic type of Mueller matrix 
   //  (this is the key distinguishing characteristic)
-  virtual Mueller::MuellerType muellerType() { return Mueller::AddDiag; };
+  virtual Mueller::MuellerType muellerType() { return Mueller::AddDiag2; };
 
   // Overide solvability
   virtual Bool isSolvable() { return False; };
 
-  // Insert noise generation method (per VisBuffer?) here, and
-  //   implement it in AMueller.cc
-  //   Is this simPar?
+  // this is inherently freqdep:
+  virtual Bool freqDepPar() { return True; };
 
-  // Also need setSimPar, etc., I think
+  virtual void createCorruptor(const VisIter& vi, const Record& simpar, const Int nSim);
 
-  //  Not clear to me if we also need an "ANoiseCorruptor"....?  Probably do.
+protected:
+  // umm... 2 for each of parallel hands?
+  virtual Int nPar() { return 2; };
+
+  // Jones matrix elements are trivial
+  virtual Bool trivialMuellerElem() { return (!simOnTheFly()); };
+
+  // override VC default of timeDepMat=F for OTF simulatio:
+  virtual Bool timeDepMat() { return simOnTheFly(); };
+
+  // Calculate a single Mueller matrix by some means
+  // override SolvableVisMueller::calcOneMueller
+  virtual void calcOneMueller(Vector<Complex>& mat, Vector<Bool>& mOk,
+			      const Vector<Complex>& par, const Vector<Bool>& pOk);
+
+private:
+  ANoiseCorruptor *acorruptor_p;
 
 };
 

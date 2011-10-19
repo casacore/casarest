@@ -33,6 +33,7 @@
 #include <casa/BasicSL/Complex.h>
 #include <casa/BasicSL/Constants.h>
 #include <synthesis/MeasurementComponents/VisCal.h>
+#include <synthesis/MeasurementComponents/CalCorruptor.h>
 #include <synthesis/MeasurementComponents/Mueller.h>
 #include <synthesis/MeasurementComponents/Jones.h>
 #include <synthesis/MeasurementComponents/VisVector.h>
@@ -59,52 +60,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
 // Forward
 class VisEquation;
-
-// for simulating corruptions
-class CalCorruptor {
-  
- public:
-  
-  CalCorruptor(const Int nSim);
-  virtual ~CalCorruptor();
-  inline Int& nSim() { return nSim_; };
-  inline Bool& initialized() { return initialized_; };
-  inline Int& prtlev() { return prtlev_; };
-  inline Int& curr_slot() { return curr_slot_; };
-  inline Double& curr_time() { return curr_time_; };
-  inline Double& startTime() { return starttime_; };
-  inline Double& stopTime() { return stoptime_; };
-  inline Double& slot_time(const Int i) { return slot_times_(i); };
-  inline Double& slot_time() { return slot_times_(curr_slot()); };
-  inline Int& currAnt() { return curr_ant_; };
-  inline Int& currSpw() { return curr_spw_; };
-  inline Int& nAnt() { return nAnt_; };
-  inline Int& nSpw() { return nSpw_; };  
-  inline Int& currChan() { return curr_chan_; };  
-  inline Int& nChan() { return fnChan_[currSpw()]; };  
-  inline Vector<Float>& fRefFreq() { return fRefFreq_; };
-  inline Vector<Float>& fWidth() { return fWidth_; };
-  inline Vector<Int>& fnChan() { return fnChan_; };
-  virtual void initialize()=0;
- 
- protected:
-   
-   Int nSim_;
-   Bool initialized_;
-   Int prtlev_;
-   Int curr_slot_;
-   Int nAnt_,curr_ant_;
-   Int nSpw_,curr_spw_,curr_chan_;
-   Double curr_time_,starttime_,stoptime_;
-   Vector<Double> slot_times_;   
-   Vector<Float> fRefFreq_,fWidth_; // for each spw
-   Vector<Int> fnChan_;
-
- private:
-
-};
-
-
 
 class SolvableVisCal : virtual public VisCal {
 public:
@@ -144,8 +99,16 @@ public:
   virtual Vector<Bool> spwOK() { 
     return cint_ ? ci().spwOK() : Vector<Bool>(nSpw(),True); };
 
-  // Use standard VisCal solving mechanism?
-  virtual Bool standardSolve() { return True; };
+  void setSpwOK() {
+    if (cs_) cs().setSpwOK();
+    if (cint_) ci().setSpwOK(); }
+
+  // Use generic data gathering mechanism for solve
+  virtual Bool useGenericGatherForSolve() { return True; };
+
+  // Use generic solution engine for a single solve
+  //  (usually inside the generic gathering mechanism)
+  virtual Bool useGenericSolveOne() { return useGenericGatherForSolve(); };
 
   // Solve for point-source X or Q,U?
   //  nominally no (0)
@@ -161,6 +124,12 @@ public:
   // Is this type capable of smoothing?  (nominally no)
   virtual Bool smoothable() { return False; };
 
+  // Should only parallel-hands be used in solving?
+  //  (generally no (default=False), but GJones and related
+  //   will override, and eventually this will be a user-set-able
+  //   parameter)
+  virtual Bool phandonly() { return False; }
+
   // Access to focus channel
   inline Int&         focusChan()      { return focusChan_; };
 
@@ -173,7 +142,7 @@ public:
   // Set the application parameters 
   virtual void setApply();
   virtual void setApply(const Record& apply);
-  virtual void setModel(const String& modelImage) 
+  virtual void setModel(const String& )
   {throw(SynthesisError("Internal error: setModel() not yet supported for non EPJones type."));};
 
   // Report apply info/params, e.g. for logging
@@ -193,8 +162,17 @@ public:
 			     const Double& t,
 			     const Int& refAnt=-1);
 
+  // Default value for parameters
+  virtual Complex defaultPar() { return Complex(1.0); };
+
+  // Arrange to build a cal table from specified values
+  virtual void setSpecify(const Record& specify);
+
+  // Fill a caltable with specified values
+  virtual void specify(const Record& specify);
+
   // Size up the solving arrays, etc.  (supports combine)
-  Int sizeUpSolve(VisSet& vs, Vector<Int>& nChunkPerSol);
+  virtual Int sizeUpSolve(VisSet& vs, Vector<Int>& nChunkPerSol);
 
   // Initialize internal shapes for solving
   void initSolve(VisSet& vs);
@@ -225,16 +203,20 @@ public:
   Bool syncSolveMeta(VisBuffer& vb, const Int& fieldId);
   Bool syncSolveMeta(VisBuffGroupAcc& vbga);
 
-  // Make vb phase-only
+  // If apmode() is "A", convert vb's visibilities to amp + 0i.
+  // If it is "P", convert them to phase + 0i.
+  // Otherwise (i.e. "AP"), leave them alone.
   virtual void enforceAPonData(VisBuffer& vb);
 
   // Verify VisBuffer data sufficient for solving (wts, etc.)
   virtual Bool verifyConstraints(VisBuffGroupAcc& vbag);
   virtual Bool verifyForSolve(VisBuffer& vb);
   
-  // Self-solving mechanism
-  virtual void selfSolve(VisSet& vs, VisEquation& ve);
-  virtual void selfSolve2(VisBuffGroupAcc& vs);
+  // Self- gather and/or solve prototypes
+  //  (triggered by useGenericGatherForSolve=F or useGenericSolveOne=F; 
+  //   must be overridden in derived specializations)
+  virtual void selfGatherAndSolve(VisSet& vs, VisEquation& ve);
+  virtual void selfSolveOne(VisBuffGroupAcc& vs);
 
   // Set up data and model for pol solve
   void setUpForPolSolve(VisBuffer& vb);
@@ -245,10 +227,10 @@ public:
 			     Cube<Complex>& V,     
 			     Array<Complex>& dV,
 			     Matrix<Bool>& Vflg)=0;
-  virtual void differentiate(VisBuffer& vb,          // vb.visCube() has the obs. data.  vb.modelVisCube() will receive the residuals
-                             VisBuffer& dV0  ,       // 1st. Derivative w.r.t. first parameter
-                             VisBuffer& dV1,         // 1st. Derivative w.r.t. second parameter
-                             Matrix<Bool>& Vflg){ throw(AipsError("Invalid use of differentiate(vb,dV0,dv1)")); };
+  virtual void differentiate(VisBuffer& ,          // vb.visCube() has the obs. data.  vb.modelVisCube() will receive the residuals
+                             VisBuffer&   ,       // 1st. Derivative w.r.t. first parameter
+                             VisBuffer& ,         // 1st. Derivative w.r.t. second parameter
+                             Matrix<Bool>& ){ throw(AipsError("Invalid use of differentiate(vb,dV0,dv1)")); };
 
 
   // Differentiate VB model w.r.t. Source parameters
@@ -298,7 +280,7 @@ public:
 			 Matrix<Double>& fluxScaleFactor)=0;
 
   // Tell the CalSet to write a CalTable
-  void store();
+  virtual void store();
   void store(const String& tableName,const Bool& append);
 
   // Report state:
@@ -331,13 +313,10 @@ public:
 
   // -------------
   // Set the simulation parameters
-  virtual void setSimulate(const Record& simpar);
+  virtual void setSimulate(VisSet& vs, Record& simpar, Vector<Double>& solTimes);
 
-  // Set up simulated params wrt visset
-  virtual Int setupSim(VisSet& vs, const Record& simpar, Vector<Int>& nChunkPerSol, Vector<Double>& solTimes);
-
-  // Calculate simulated parameters by some means 
-  virtual Bool simPar(VisBuffGroupAcc& vbga);
+  // make a corruptor in a VC-specific way
+  virtual void createCorruptor(const VisIter& vi,const Record& simpar, const int nSim);
 
   // access to simulation variables that are general to all VisCals
   inline String& simint() { return simint_; };
@@ -351,11 +330,8 @@ public:
   // object that can simulate the corruption terms
   CalCorruptor *corruptor_p;
 
-  // RI TODO simplify? i.e. do we need full comb machinery?
+  // calculate # required slots to simulate this SVC
   Int sizeUpSim(VisSet& vs, Vector<Int>& nChunkPerSol, Vector<Double>& solTimes);
-  //inline virtual Int sizeUpSim(VisSet& vs, Vector<Int>& nChunkPerSol) {
-  //  return sizeUpSolve(vs,nChunkPerSol) ; }
- 
 
 protected:
 
@@ -378,7 +354,7 @@ protected:
   void syncPar(const Int& spw, const Int& slot);
 
   // Set matrix channelization according to a VisSet
-  void setSolveChannelization(VisSet& vs);
+  virtual void setSolveChannelization(VisSet& vs);
 
   // Fill CalSet meta-data according to a VisSet
   void fillMetaData(VisSet& vs);
@@ -407,9 +383,12 @@ protected:
   LogIO& logSink() { return logsink_p; };
 
   void makeCalSet();
+  void makeCalSet(Bool newtable);
 
   // Check if a cal table is appropriate
   void verifyCalTable(const String& caltablename);
+
+  void sortVisSet(VisSet& vs, const Bool verbose=False);
 
   Int parType_;
   // Solution/Interpolation 
@@ -425,6 +404,12 @@ protected:
 
   // Set state flag to simulate cal terms
   inline void setSimulated(const Bool& flag) {simulated_=flag;};
+
+  // RI todo implement calcOneJones like calcAllMueller
+  // calculate terms during apply, or up front during setSim?
+  inline Bool& simOnTheFly() { 
+    //    cout << "simOTF=" << onthefly_ << endl;
+    return onthefly_; };
 
 
 
@@ -509,6 +494,7 @@ private:
   // simulation interval
   String simint_;
 
+  Bool onthefly_;  
 
 };
 
@@ -537,43 +523,43 @@ public:
   virtual Bool normalizable() { return (this->muellerType() < Mueller::General); };
 
   // Hazard a guess at the parameters (solvePar) given the data
-  virtual void guessPar(VisBuffer& vb) { throw(AipsError("NYI")); };
+  virtual void guessPar(VisBuffer& ) { throw(AipsError("NYI")); };
 
   // Differentiate VB model w.r.t. Mueller parameters (no 2nd derivative yet)
-  virtual void differentiate(CalVisBuffer& cvb) {throw(AipsError("NYI")); };
-  virtual void differentiate(VisBuffer& vb,          // input data
-			     Cube<Complex>& V,       // trial apply (nCorr,nChan,nRow)
-			     Array<Complex>& dV,     // 1st deriv   (nCorr,nPar,nChan,nRow)
-			     Matrix<Bool>& Vflg) { throw(AipsError("NYI")); };
+  virtual void differentiate(CalVisBuffer& ) {throw(AipsError("NYI")); };
+  virtual void differentiate(VisBuffer& ,          // input data
+			     Cube<Complex>& ,       // trial apply (nCorr,nChan,nRow)
+			     Array<Complex>& ,     // 1st deriv   (nCorr,nPar,nChan,nRow)
+			     Matrix<Bool>& ) { throw(AipsError("NYI")); };
   using SolvableVisCal::differentiate;
 
   // Differentiate VB model w.r.t. Source parameters
-  virtual void diffSrc(VisBuffer& vb,        
-		       Array<Complex>& dV) {throw(AipsError("NYI")); };
+  virtual void diffSrc(VisBuffer& ,
+		       Array<Complex>& ) {throw(AipsError("NYI")); };
 
   // Apply refant (no-op for Muellers)
   virtual void reReference() {};
 
   // Accumulate another VisCal onto this one
-  virtual void accumulate(SolvableVisCal* incr,
-			  const Vector<Int>& fields) { throw(AipsError("NYI")); };
+  virtual void accumulate(SolvableVisCal* ,
+			  const Vector<Int>& ) { throw(AipsError("NYI")); };
 
   // Scale solutions
-  virtual void fluxscale(const Vector<Int>& refFieldIn,
-			 const Vector<Int>& tranFieldIn,
-			 const Vector<Int>& inRefSpwMap,
-			 const Vector<String>& fldNames,
-			 Matrix<Double>& fluxScaleFactor) { throw(AipsError("NYI")); };
+  virtual void fluxscale(const Vector<Int>& ,
+			 const Vector<Int>& ,
+			 const Vector<Int>& ,
+			 const Vector<String>& ,
+			 Matrix<Double>& ) { throw(AipsError("NYI")); };
 
   // Report state:
   inline virtual void state() { stateSVM(True); };
 
   // List calibration solutions in tabular form.
-  virtual void listCal(const Vector<Int> ufldids, 
-                       const Vector<Int> uantids,
-                       const Matrix<Int> uchanids,
-   		               const String& listfile = "",
-                       const Int& pagerows = 50) 
+  virtual void listCal(const Vector<Int> ,
+                       const Vector<Int> ,
+                       const Matrix<Int> ,
+   		               const String& ,
+                       const Int& )
   { throw(AipsError(String("Calibration listing not supported for "+typeName()))); };
 
 protected:
@@ -623,6 +609,7 @@ protected:
 
   // SVM-specific state
   virtual void stateSVM(const Bool& doVC);
+
 
 private:
 
@@ -707,6 +694,8 @@ public:
                   const uInt numAnts,
                   const uInt iElem);
 
+  virtual void nearest(const Double , Array<Float>& ) {};
+  virtual void nearest(const Double , Array<Complex>& ) {};
 protected:
  
   // Number of Cal Matrices to form on baseline axis

@@ -1,67 +1,68 @@
 set(calibration_LIB_SRCS
-    CalTables/BJonesDesc.cc
-    CalTables/BJonesMBuf.cc
-    CalTables/BJonesMCol.cc
-    CalTables/BJonesMRec.cc
-    CalTables/BJonesTable.cc
-    CalTables/CalBuffer.cc
-    CalTables/CalDescBuffer.cc
-    CalTables/CalDescColumns.cc
-    CalTables/CalDescColumns2.cc
-    CalTables/CalDescRecord.cc
-    CalTables/CalHistoryBuffer.cc
-    CalTables/CalHistoryColumns.cc
-    CalTables/CalHistRecord.cc
-    CalTables/CalInterp.cc
-    CalTables/CalInterpolation.cc
-    CalTables/CalInterpolator.cc
-    CalTables/CalIntpMatch.cc
-    CalTables/CalIter.cc
-    CalTables/CalMainBuffer.cc
-    CalTables/CalMainColumns.cc
-    CalTables/CalMainRecord.cc
-    CalTables/CalSet2.cc
-    CalTables/CalSetMetaInfo.cc
-    CalTables/CalTable.cc
-    CalTables/CalTable2.cc
-    CalTables/CalTableDesc.cc
-    CalTables/CalTableDesc2.cc
-    CalTables/EPointDesc.cc
-    CalTables/EPointMBuf.cc
-    CalTables/EPointMCol.cc
-    CalTables/EPointTable.cc
-    CalTables/EPointVJMRec.cc
-    CalTables/FVisJonesDesc.cc
-    CalTables/FVisJonesMRec.cc
-    CalTables/GJonesDesc.cc
-    CalTables/GJonesMBuf.cc
-    CalTables/GJonesMCol.cc
-    CalTables/GJonesTable.cc
-    CalTables/MJonesDesc.cc
-    CalTables/MJonesMRec.cc
-    CalTables/SolvableMJDesc.cc
-    CalTables/SolvableMJMRec.cc
-    CalTables/SolvableVJDesc.cc
-    CalTables/SolvableVJMBuf.cc
-    CalTables/SolvableVJMCol.cc
-    CalTables/SolvableVJMRec.cc
-    CalTables/SolvableVJTable.cc
-    CalTables/TimeVarMJDesc.cc
-    CalTables/TimeVarMJMRec.cc
-    CalTables/TimeVarVJDesc.cc
-    CalTables/TimeVarVJMBuf.cc
-    CalTables/TimeVarVJMCol.cc
-    CalTables/TimeVarVJMRec.cc
-    CalTables/TimeVarVJTable.cc
-    CalTables/TJonesDesc.cc
-    CalTables/TJonesMBuf.cc
-    CalTables/TJonesMCol.cc
-    CalTables/TJonesTable.cc
-    CalTables/VisJonesDesc.cc
-    CalTables/VisJonesMBuf.cc
-    CalTables/VisJonesMCol.cc
-    CalTables/VisJonesMRec.cc
-    CalTables/VisJonesTable.cc
+  CalTables/BJonesDesc.cc
+  CalTables/BJonesMBuf.cc
+  CalTables/BJonesMCol.cc
+  CalTables/BJonesMRec.cc
+  CalTables/BJonesTable.cc
+  CalTables/CalBuffer.cc
+  CalTables/CalDescBuffer.cc
+  CalTables/CalDescColumns2.cc
+  CalTables/CalDescColumns.cc
+  CalTables/CalDescRecord.cc
+  CalTables/CalHistoryBuffer.cc
+  CalTables/CalHistoryColumns.cc
+  CalTables/CalHistRecord.cc
+  CalTables/CalInterp.cc
+  CalTables/CalInterpolation.cc
+  CalTables/CalInterpolator.cc
+  CalTables/CalIntpMatch.cc
+  CalTables/CalIter.cc
+  CalTables/CalMainBuffer.cc
+  CalTables/CalMainColumns.cc
+  CalTables/CalMainRecord.cc
+  CalTables/CalSet2.cc
+  CalTables/CalSetMetaInfo.cc
+  CalTables/CalTable2.cc
+  CalTables/CalTable.cc
+  CalTables/CalTableDesc2.cc
+  CalTables/CalTableDesc.cc
+  CalTables/EPointDesc.cc
+  CalTables/EPointMBuf.cc
+  CalTables/EPointMCol.cc
+  CalTables/EPointTable.cc
+  CalTables/EPointVJMRec.cc
+  CalTables/FVisJonesDesc.cc
+  CalTables/FVisJonesMRec.cc
+  CalTables/GJonesDesc.cc
+  CalTables/GJonesMBuf.cc
+  CalTables/GJonesMCol.cc
+  CalTables/GJonesTable.cc
+  CalTables/MJonesDesc.cc
+  CalTables/MJonesMRec.cc
+#  CalTables/PlotCal.cc
+  CalTables/SolvableMJDesc.cc
+  CalTables/SolvableMJMRec.cc
+  CalTables/SolvableVJDesc.cc
+  CalTables/SolvableVJMBuf.cc
+  CalTables/SolvableVJMCol.cc
+  CalTables/SolvableVJMRec.cc
+  CalTables/SolvableVJTable.cc
+  CalTables/TimeVarMJDesc.cc
+  CalTables/TimeVarMJMRec.cc
+  CalTables/TimeVarVJDesc.cc
+  CalTables/TimeVarVJMBuf.cc
+  CalTables/TimeVarVJMCol.cc
+  CalTables/TimeVarVJMRec.cc
+  CalTables/TimeVarVJTable.cc
+  CalTables/TJonesDesc.cc
+  CalTables/TJonesMBuf.cc
+  CalTables/TJonesMCol.cc
+  CalTables/TJonesTable.cc
+  CalTables/VisJonesDesc.cc
+  CalTables/VisJonesMBuf.cc
+  CalTables/VisJonesMCol.cc
+  CalTables/VisJonesMRec.cc
+  CalTables/VisJonesTable.cc
 )
 
 
@@ -106,6 +107,7 @@ CalTables/CalTable.h
 CalTables/CalTable2.h
 CalTables/CalTableDesc.h
 CalTables/CalTableDesc2.h
+CalTables/CalTableFromAIPS.h
 CalTables/EPointDesc.h
 CalTables/EPointMBuf.h
 CalTables/EPointMCol.h
@@ -119,6 +121,8 @@ CalTables/GJonesMCol.h
 CalTables/GJonesTable.h
 CalTables/MJonesDesc.h
 CalTables/MJonesMRec.h
+CalTables/PlotCal.h
+CalTables/PlotCalHooks.h
 CalTables/ROCalMainColumns2.h
 CalTables/SkyJonesDesc.h
 CalTables/SolvableCalSetMCol.h

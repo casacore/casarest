@@ -33,6 +33,7 @@
 
 #include <casa/Arrays/ArrayUtil.h>
 #include <casa/Arrays/ArrayLogical.h>
+//#include <casa/Arrays/ArrayMath.h>
 #include <ms/MeasurementSets/MSColumns.h>
 #include <ms/MeasurementSets/MSFieldIndex.h>
 #include <ms/MeasurementSets/MSSelection.h>
@@ -61,6 +62,7 @@ Calibrater::Calibrater():
   mssel_p(0), 
   vs_p(0), 
   ve_p(0),
+  scrOk_p(False),
   vc_p(),
   svc_p(0),
   histLockCounter_p(), 
@@ -79,6 +81,7 @@ Calibrater &Calibrater::operator=(const Calibrater & other)
   mssel_p=other.mssel_p;
   vs_p=other.vs_p;
   ve_p=other.ve_p;
+  scrOk_p=other.scrOk_p;
   histLockCounter_p=other.histLockCounter_p;
   hist_p=other.hist_p;
   historytab_p=other.historytab_p;
@@ -105,7 +108,9 @@ String Calibrater::timerString() {
   return o;
 };
 
-Bool Calibrater::initialize(MeasurementSet& inputMS, Bool compress)  {
+Bool Calibrater::initialize(MeasurementSet& inputMS, 
+			    Bool compress,
+			    Bool addScratch)  {
   
   logSink() << LogOrigin("Calibrater","") << LogIO::NORMAL3;
   
@@ -135,9 +140,9 @@ Bool Calibrater::initialize(MeasurementSet& inputMS, Bool compress)  {
     hist_p= new MSHistoryHandler(*ms_p, "calibrater");
 
 
-    // Recognize if we'll need to initialize the imaging weights
-    //  TBD: should Calibrater care?  (Imager doesn't know how to verify)
-    Bool needWeights=(!ms_p->tableDesc().isColumn("CORRECTED_DATA"));
+    // // Recognize if we'll need to initialize the imaging weights
+    // //  TBD: should Calibrater care?  (Imager doesn't know how to verify)
+    // Bool hadScratch=(ms_p->tableDesc().isColumn("CORRECTED_DATA"));
 
     msname_p=ms_p->tableName();
 
@@ -158,17 +163,10 @@ Bool Calibrater::initialize(MeasurementSet& inputMS, Bool compress)  {
     Block<Int> nosort(0);
     Matrix<Int> noselection;
     Double timeInterval=0;
-    vs_p=new VisSet(*ms_p,nosort,noselection,timeInterval,compress);
+    vs_p=new VisSet(*ms_p,nosort,noselection,addScratch,timeInterval,compress);
 
     // Size-up the chanmask PB
     initChanMask();
-
-    // Initialize the weights if the scratch columns
-    // were just created
-    if(needWeights) {
-      Double sumwt=0.0;
-      VisSetUtil::WeightNatural(*vs_p, sumwt);
-    }
 
     // Create the associated VisEquation
     //  TBD: move to ctor and make it non-pointer
@@ -180,6 +178,9 @@ Bool Calibrater::initialize(MeasurementSet& inputMS, Bool compress)  {
 
     // Reset the apply/solve VisCals
     reset(True,True);
+
+    // Do we have the scratch columns (either previously, or created here)?
+    scrOk_p = addScratch || ms_p->tableDesc().isColumn("CORRECTED_DATA");
 
     return True;
 
@@ -230,6 +231,7 @@ void Calibrater::selectvis(const String& time,
 			   const String& spw,
 			   const String& scan,
 			   const String& field,
+			   const String& intent,
 			   const String& baseline,
 			   const String& uvrange,
 			   const String& chanmode,
@@ -246,6 +248,7 @@ void Calibrater::selectvis(const String& time,
 //    spw
 //    scan
 //    field
+//    intent
 //    baseline
 //    uvrange
 //    chanmode     const String&            Frequency/velocity selection mode
@@ -275,7 +278,7 @@ void Calibrater::selectvis(const String& time,
     logSink() << "Selecting data" << LogIO::POST;
     
     // Apply selection to the original MeasurementSet
-    logSink() << "Performing selection on MeasurementSet" << LogIO::POST;
+    logSink() << "Performing selection on MeasurementSet" << endl;
     
     // Delete VisSet and selected MS
     if (vs_p) {
@@ -303,19 +306,37 @@ void Calibrater::selectvis(const String& time,
     }
     Table sorted=ms_p->keywordSet().asTable("SORTED_TABLE");
     
+    // Report non-trivial user selections
+    if (time!="")
+      logSink() << " Selecting on time: '" << time << "'" << endl;
+    if (spw!="")
+      logSink() << " Selecting on spw: '" << spw << "'" << endl;
+    if (scan!="")
+      logSink() << " Selecting on scan: '" << scan << "'" << endl;
+    if (field!="")
+      logSink() << " Selecting on field: '" << field << "'" << endl;
+    if (intent!="")
+      logSink() << " Selecting on intent: '" << intent << "'" << endl;
+    if (baseline!="")
+      logSink() << " Selecting on antenna/baseline: '" << baseline << "'" << endl;
+    if (uvrange!="")
+      logSink() << " Selecting on uvrange: '" << uvrange << "'" << endl;
+    if (msSelect!="")
+      logSink() << " Selecting with TaQL: '" << msSelect << "'" << endl;
+    logSink() << LogIO::POST;
 
-    Bool nontrivsel=False;
 
     // Assume no selection, for starters
     mssel_p = new MeasurementSet(sorted);
 
     // Apply user-supplied selection
+    Bool nontrivsel=False;
     nontrivsel= mssSetData(MeasurementSet(sorted),
 			   *mssel_p,"",
 			   time,baseline,
 			   field,spw,
 			   uvrange,msSelect,
-			   "",scan);
+			   "",scan,"",intent);
 
     // If non-trivial MSSelection invoked and nrow reduced:
     if(nontrivsel && mssel_p->nrow()<ms_p->nrow()) {
@@ -390,7 +411,9 @@ Bool Calibrater::setapply(const String& type,
 {
   //                           const Vector<Int>& rawspw)
 
-  logSink() << LogOrigin("Calibrater", "setapply") << LogIO::NORMAL;
+  logSink() << LogOrigin("Calibrater",
+                         "setapply(type, t, table, interp, select, calwt, spwmap, opacity)")
+            << LogIO::NORMAL;
  
   // Set record format for calibration table application information
   RecordDesc applyparDesc;
@@ -434,7 +457,9 @@ Bool Calibrater::setapply(const String& type,
 {
   //                           const Vector<Int>& rawspw)
 
-  logSink() << LogOrigin("Calibrater", "setapply") << LogIO::NORMAL;
+  logSink() << LogOrigin("Calibrater",
+                         "setapply(type, t, table, spw, field, interp, calwt, spwmap, opacity)")
+            << LogIO::NORMAL;
  
   // Set record format for calibration table application information
   RecordDesc applyparDesc;
@@ -471,7 +496,9 @@ Bool Calibrater::setapply(const String& type,
 }
 
 Bool Calibrater::setapply (const String& type, 
-			   const Record& applypar) {
+			   const Record& applypar)
+{
+  logSink() << LogOrigin("Calibrater", "setapply(type, applypar)");
 
   // First try to create the requested VisCal object
   VisCal *vc(NULL);
@@ -538,6 +565,20 @@ Bool Calibrater::setmodel(const String& modelImage)
   return True;
 }
 
+Bool Calibrater::setModel(const Vector<Double>& stokes) {
+
+  if (ve_p) {
+    Vector<Float> fstokes(stokes.shape());
+    convertArray(fstokes,stokes);
+    ve_p->setModel(fstokes);
+  }
+  else
+    throw(AipsError("Error in Calibrater::setModel: no VisEquation."));
+
+  return True;
+
+}
+
 
 Bool Calibrater::setsolve (const String& type, 
 			   const Double& t,
@@ -582,17 +623,18 @@ Bool Calibrater::setsolve (const String& type,
 Bool Calibrater::setsolve (const String& type, 
 			   const String& solint,
 			   const String& table,
-                           const Bool& append,
-                           const Double& preavg, 
+                           const Bool append,
+                           const Double preavg, 
 			   const String& apmode,
-			   const Int& minblperant,
+			   const Int minblperant,
                            const String& refant,
-			   const Bool& solnorm,
-			   const Float& minsnr,
+			   const Bool solnorm,
+			   const Float minsnr,
 			   const String& combine,
-			   const Int& fillgaps,
+			   const Int fillgaps,
 			   const String& cfcache,
-			   const Double& painc)
+			   const Double painc,
+                           const Int fitorder)
 {
   
   logSink() << LogOrigin("Calibrater","setsolve") << LogIO::NORMAL3;
@@ -613,6 +655,7 @@ Bool Calibrater::setsolve (const String& type,
   solveparDesc.addField ("maxgap", TpInt);
   solveparDesc.addField ("cfcache", TpString);
   solveparDesc.addField ("painc", TpDouble);
+  solveparDesc.addField ("fitorder", TpInt);
   
   // Create a solver record with the requisite field values
   Record solvepar(solveparDesc);
@@ -637,9 +680,9 @@ Bool Calibrater::setsolve (const String& type,
   solvepar.define("maxgap",fillgaps);
   solvepar.define ("cfcache", cfcache);
   solvepar.define ("painc", painc);
+  solvepar.define("fitorder", fitorder);
 
   return setsolve(type,solvepar);
-
 }
 
 Bool Calibrater::setsolvebandpoly(const String& table,
@@ -1020,10 +1063,18 @@ Bool Calibrater::correct() {
   
   logSink() << LogOrigin("Calibrater","correct") << LogIO::NORMAL;
   
+  Bool retval = true;
+
   try {
 
     if (!ok())
       throw(AipsError("Calibrater not prepared for correct!"));
+
+    // Nominally, we write out to the CORRECTED_DATA, unless absent
+    VisibilityIterator::DataColumn whichOutCol(VisibilityIterator::Corrected);
+    if (!scrOk_p)
+      // read from and write to DATA column (no going back!)
+      whichOutCol = VisibilityIterator::Observed;
 
     // Ensure apply list non-zero and properly sorted
     ve_p->setapply(vc_p);
@@ -1046,9 +1097,11 @@ Bool Calibrater::correct() {
     
     // Pass each timestamp (VisBuffer) to VisEquation for correction
     Bool calwt(calWt());
+    Vector<Bool> uncalspw(vi.numberSpw());	// Used to accumulate error messages
+    uncalspw.set(False);		        // instead of bombing the user
+						// in a loop.
     for (vi.originChunks(); vi.moreChunks(); vi.nextChunk()) {
-
-
+      uInt spw = vi.spectralWindow();
       //      Vector<Int> scans;
       //      vi.scan(scans);
       //      cout << " scan = " << scans(0)
@@ -1056,9 +1109,8 @@ Bool Calibrater::correct() {
       //	   << " fld = " << vi.fieldId() 
       //	   << endl;
 
-      // Only procede if spw can be calibrated
-      if (ve_p->spwOK(vi.spectralWindow())) {
-
+      // Only proceed if spw can be calibrated
+      if (ve_p->spwOK(spw)) {
 	for (vi.origin(); vi.more(); vi++) {
 	  
 	  // If we are going to update the weights, reset them first
@@ -1066,43 +1118,51 @@ Bool Calibrater::correct() {
 	  if (calwt) vb.resetWeightMat();
 	  
 	  ve_p->correct(vb);    // throws exception if nothing to apply
-	  vi.setVis(vb.visCube(),VisibilityIterator::Corrected);
+	  vi.setVis(vb.visCube(),whichOutCol);
 	  vi.setFlag(vb.flag());
 	  
 	  // Write out weight col, if it has changed
 	  if (calwt) vi.setWeightMat(vb.weightMat()); 
 	}
       }
-      else 
-	cout << "Encountered data spw for which there no calibration." << endl;
-      
+      else
+	uncalspw[spw] = true;      
     }
     // Flush to disk
     vs_p->flush();
 
-    return True;  
-
-  } catch (AipsError x) {
+    // Now that we're out of the loop, summarize any errors.
+    retval = summarize_uncalspws(uncalspw, "correct");
+  }
+  catch (AipsError x) {
     logSink() << LogIO::SEVERE << "Caught exception: " << x.getMesg() 
 	      << LogIO::POST;
 
-    logSink() << "Reseting all calibration application settings." << LogIO::POST;
+    logSink() << "Resetting all calibration application settings." << LogIO::POST;
     unsetapply();
 
     throw(AipsError("Error in Calibrater::correct."));
-    return False;
+    retval = False;         // Not that it ever gets here...
   } 
-  return False;
+  return retval;
 }
 
 Bool Calibrater::corrupt() {
   
   logSink() << LogOrigin("Calibrater","corrupt") << LogIO::NORMAL;
-  
+  Bool retval = true;
+
   try {
 
     if (!ok())
       throw(AipsError("Calibrater not prepared for corrupt!"));
+
+    // Nominally, we write out to the MODEL_DATA, unless absent
+    VisibilityIterator::DataColumn whichOutCol(VisibilityIterator::Model);
+    if (!scrOk_p)
+      // write to DATA column (no going back!)
+      // NB: this depends on overide by AMueller::corrupt below!!
+      whichOutCol = VisibilityIterator::Observed;
 
     // Ensure apply list non-zero and properly sorted
     ve_p->setapply(vc_p);
@@ -1123,41 +1183,71 @@ Bool Calibrater::corrupt() {
     VisIter& vi(vs_p->iter());
     VisBuffer vb(vi);
     
-    // Pass each timestamp (VisBuffer) to VisEquation for correction
+    // Pass each timestamp (VisBuffer) to VisEquation for corruption.
+    Vector<Bool> uncalspw(vi.numberSpw());	// Used to accumulate error messages
+    uncalspw.set(False);		        // instead of bombing the user
+						// in a loop.
     for (vi.originChunks(); vi.moreChunks(); vi.nextChunk()) {
+      Int spw = vi.spectralWindow();
 
-      // Only procede if spw can be calibrated
-      if (ve_p->spwOK(vi.spectralWindow())) {
+      // Only proceed if spw can be calibrated
+      if (ve_p->spwOK(spw)) {
 
 	for (vi.origin(); vi.more(); vi++) {
 	  
 	  // Corrupt the MODEL_DATA
 	  //  (note we are not treating weights and flags)
 	  ve_p->corrupt(vb);    // throws exception if nothing to apply
-	  vi.setVis(vb.modelVisCube(),VisibilityIterator::Model);
+	  vi.setVis(vb.modelVisCube(),whichOutCol);
 
 	}
       }
       else 
-	cout << "Encountered data spw for which there no calibration." << endl;
-      
+	uncalspw[spw] = true;
     }
     // Flush to disk
     vs_p->flush();
 
-    return True;  
-
-  } catch (AipsError x) {
+    // Now that we're out of the loop, summarize any errors.
+    retval = summarize_uncalspws(uncalspw, "corrupt");
+  }
+  catch (AipsError x) {
     logSink() << LogIO::SEVERE << "Caught exception: " << x.getMesg() 
 	      << LogIO::POST;
 
-    logSink() << "Reseting all calibration application settings." << LogIO::POST;
+    logSink() << "Resetting all calibration application settings." << LogIO::POST;
     unsetapply();
 
-    throw(AipsError("Error in Calibrater::correct."));
-    return False;
+    throw(AipsError("Error in Calibrater::corrupt."));
+    retval = False;  // Not that it ever gets here...
   } 
-  return False;
+  return retval;
+}
+
+Bool Calibrater::summarize_uncalspws(const Vector<Bool>& uncalspw,
+				     const String& origin)
+{
+  Bool hadprob = false;
+  uInt totNspw = uncalspw.nelements();
+
+  for(uInt i = 0; i < totNspw; ++i){
+    if(uncalspw[i]){
+      hadprob = true;
+      break;
+    }
+  }
+  if(hadprob){
+    logSink() << LogIO::WARN
+	      << "Spectral window(s) ";
+    for(uInt i = 0; i < totNspw; ++i){
+      if(uncalspw[i]){
+	logSink() << i << ", ";
+      }
+    }
+    logSink() << "\n  are not calibrated and could not be " << origin << "ed!"
+	      << LogIO::POST;
+  }
+  return !hadprob;
 }
 
 Bool Calibrater::solve() {
@@ -1173,6 +1263,31 @@ Bool Calibrater::solve() {
     if (!svc_p)
       throw(AipsError("Please run setsolve before attempting to solve."));
 
+    // Handle specified caltable
+    if (False && svc_p) {
+      
+      /*      
+      cout << "name: " << svc_p->calTableName() << endl;
+      cout << boolalpha;
+      cout << "append?   " << svc_p->append() << endl;
+      cout << "opened?   " << Table::isOpened(svc_p->calTableName()) << endl;
+      cout << "readable? " << Table::isReadable(svc_p->calTableName()) << endl;
+      cout << "writable? " << Table::isWritable(svc_p->calTableName()) << endl;
+      cout << "canDelete? " << Table::canDeleteTable(svc_p->calTableName(),True) << endl;
+      */
+
+
+      // If we are not appending, and the cal table exists,
+      //   then it better be deletable
+      if (!svc_p->append() &&
+	  Table::isReadable(svc_p->calTableName()) &&
+	  !Table::canDeleteTable(svc_p->calTableName()) ) {
+	//cout << "Table CAN'T be deleted!!!!!" << endl;
+	
+	throw(AipsError("Specified caltable ("+svc_p->calTableName()+") exists and\n cannot be replaced because it appears to be open somewhere."));
+      }
+    }
+
     // Arrange VisEquation for solve
     ve_p->setsolve(*svc_p);
 
@@ -1183,18 +1298,21 @@ Bool Calibrater::solve() {
     applystate();
     solvestate();
 
+
+    // Report correct/corrupt apply order
+    //    ve_p->state();
+
     // Set the channel mask
     svc_p->setChanMask(chanmask_);
 
     // Generally use standard solver
-    if (svc_p->standardSolve())
-      //      standardSolve();   // old way
-      //      standardSolve2();        // new way: supports combine
-      standardSolve3();          // newer way: supports combine,
-                                 // using VisBuffGroupAcc
-    else
-      svc_p->selfSolve(*vs_p,*ve_p);
-
+    if (svc_p->useGenericGatherForSolve())
+      genericGatherAndSolve();   // using VisBuffGroupAcc
+    else {
+      //cout << "Fully self-directed data gather and solve" << endl;
+      // Fully self-directed data gather and solve
+      svc_p->selfGatherAndSolve(*vs_p,*ve_p);
+    }
 
     svc_p->clearChanMask();
 
@@ -1212,7 +1330,9 @@ Bool Calibrater::solve() {
 
 }
 
-Bool Calibrater::standardSolve3() {
+Bool Calibrater::genericGatherAndSolve() {
+
+  //cout << "Generic gather and solve." << endl;
 
   // Create the solver
   VisCalSolver vcs;
@@ -1259,6 +1379,7 @@ Bool Calibrater::standardSolve3() {
 	// Apply the channel mask (~no-op, if unnecessary)
 	svc_p->applyChanMask(vb);
 
+
 	// This forces the data/model/wt I/O, and applies
 	//   any prior calibrations
 	ve_p->collapse(vb);
@@ -1266,9 +1387,22 @@ Bool Calibrater::standardSolve3() {
 	// If permitted/required by solvable component, normalize
 	if (svc_p->normalizable()) 
 	  vb.normalize();
+
+	// If this solve not freqdep, and channels not averaged yet, do so
+	if (!svc_p->freqDepMat() && vb.nChannel()>1)
+	  vb.freqAveCubes();
 	
+
+
+
+
+
+
+
 	// Accumulate collapsed vb in a time average
-	vbga.accumulate(vb);
+	//  (only if the vb contains any unflagged data)
+	if (nfalse(vb.flag())>0)
+	  vbga.accumulate(vb);
 
       }
       // Advance the VisIter, if possible
@@ -1279,70 +1413,86 @@ Bool Calibrater::standardSolve3() {
     // Finalize the averged VisBuffer
     vbga.finalizeAverage();
 
-    // Make data amp- or phase-only, if needed
-    vbga.enforceAPonData(svc_p->apmode());
-
     // Establish meta-data for this interval
     //  (some of this may be used _during_ solve)
     //  (this sets currSpw() in the SVC)
-    Bool vbOk=svc_p->syncSolveMeta(vbga);
+    Bool vbOk=(vbga.nBuf()>0 && svc_p->syncSolveMeta(vbga));
 
-    // Use spw of first VB in vbga
-    Int thisSpw=svc_p->spwMap()(vbga(0).spectralWindow());
-    slotidx(thisSpw)++;
 
     if (vbOk) {
 
-      if (svc_p->typeName()=="BPOLY") {
 
-	//	cout << "Delegating directly to BPoly." << endl;
+      // Use spw of first VB in vbga
+      // TBD: (currSpw==thisSpw) here??  (I.e., use svc_p->currSpw()?  currSpw is prot!)
+      Int thisSpw=svc_p->spwMap()(vbga(0).spectralWindow());
+      slotidx(thisSpw)++;
+      
+      // Make data amp- or phase-only, if needed
+      vbga.enforceAPonData(svc_p->apmode());
+      
+      // Select on correlation via weights, according to the svc
+      vbga.enforceSolveCorrWeights(svc_p->phandonly());
 
-	svc_p->selfSolve2(vbga);
-	nGood++;
+      if (svc_p->useGenericSolveOne()) {
+	// generic individual solve
+
+	//cout << "Generic individual solve: isol=" << isol << endl;
+
+	// First guess
+	svc_p->guessPar(vbga(0));
+	
+	// Solve for each parameter channel (in curr Spw)
+	
+	// (NB: force const version of nChanPar()  [why?])
+	//	for (Int ich=0;ich<((const SolvableVisCal*)svc_p)->nChanPar();++ich) {
+	Bool totalGoodSol(False);
+	for (Int ich=((const SolvableVisCal*)svc_p)->nChanPar()-1;ich>-1;--ich) {
+	  // for (Int ich=0;ich<((const SolvableVisCal*)svc_p)->nChanPar();++ich) {
+	  
+	  // If pars chan-dep, SVC mechanisms for only one channel at a time
+	  svc_p->markTimer();
+	  svc_p->focusChan()=ich;
+	  
+	  // Pass VE, SVC, VB to solver
+	  Bool goodSoln=vcs.solve(*ve_p,*svc_p,vbga);
+	  
+	  // If good... 
+	  if (goodSoln) {
+	    totalGoodSol=True;
+	    
+	    svc_p->formSolveSNR();
+	    svc_p->applySNRThreshold();
+	    
+	    // ..and file this solution in the correct slot
+	    svc_p->keep(slotidx(thisSpw));
+	    Int n=svc_p->nSlots(thisSpw);
+	    svc_p->printActivity(n,slotidx(thisSpw),vi.fieldId(),thisSpw,nGood);	      
+	    
+	  }
+	  else 
+	    // report where this failure occured
+	    svc_p->currMetaNote();
+	  
+	} // parameter channels
+	
+	// Count good solutions.
+	if (totalGoodSol)	nGood++;
+	
       }
       else {
+	//cout << "Self-directed individual solve: isol=" << isol << endl;
+	// self-directed individual solve
+	// TBD: selfSolveOne should return T/F for "good"
+	svc_p->selfSolveOne(vbga);
 
+	// File this solution in the correct slot of the CalSet
+	svc_p->keep(slotidx(thisSpw));
 
-      svc_p->guessPar(vbga(0));
-      
-      // Solve for each parameter channel (in curr Spw)
-      
-      // (NB: force const version of nChanPar()  [why?])
-      //	for (Int ich=0;ich<((const SolvableVisCal*)svc_p)->nChanPar();++ich) {
-      Bool totalGoodSol(False);
-      for (Int ich=((const SolvableVisCal*)svc_p)->nChanPar()-1;ich>-1;--ich) {
+	nGood++;
+      } 
 
-	// If pars chan-dep, SVC mechanisms for only one channel at a time
-	svc_p->markTimer();
-	svc_p->focusChan()=ich;
-	
-	// Pass VE, SVC, VB to solver
-	Bool goodSoln=vcs.solve(*ve_p,*svc_p,vbga);
-
-	// If good... 
-	if (goodSoln) {
-	  totalGoodSol=True;
-
-	  svc_p->formSolveSNR();
-	  svc_p->applySNRThreshold();
-
-	  // ..and file this solution in the correct slot
-	  svc_p->keep(slotidx(thisSpw));
-	  Int n=svc_p->nSlots(thisSpw);
-	  svc_p->printActivity(n,slotidx(thisSpw),vi.fieldId(),thisSpw,nGood);	      
-
-	}
-	else 
-	  // report where this failure occured
-	  svc_p->currMetaNote();
-	
-      } // parameter channels
-
-      // Cound good solutions.
-      if (totalGoodSol)	nGood++;
-      }
     } // vbOK
-    
+
   } // isol
 
   logSink() << "  Found good " 
@@ -1351,11 +1501,13 @@ Bool Calibrater::standardSolve3() {
 	    << LogIO::POST;
   
   // Store whole of result in a caltable
-  if (nGood==0)
+  if (nGood==0) {
     logSink() << "No output calibration table written."
 	      << LogIO::POST;
+  }
   else {
 
+    // TBD: Remove BPOLY specificity here
     if (svc_p->typeName()!="BPOLY") {
       // Do global post-solve tinkering (e.g., phase-only, normalization, etc.)
       svc_p->globalPostSolveTinker();
@@ -1419,6 +1571,10 @@ Bool Calibrater::standardSolve2() {
 	if (svc_p->normalizable()) 
 	  vb.normalize();
 	
+	// If this solve not freqdep, and channels not averaged yet, do so
+	if (!svc_p->freqDepMat() && vb.nChannel()>1)
+	  vb.freqAveCubes();
+
 	// Accumulate collapsed vb in a time average
 	vba.accumulate(vb);
 
@@ -1571,6 +1727,10 @@ Bool Calibrater::standardSolve() {
       if (svc_p->normalizable()) 
 	vb.normalize();
 
+      // If this solve not freqdep, and channels not averaged yet, do so
+      if (!svc_p->freqDepMat() && vb.nChannel()>1)
+	vb.freqAveCubes();
+      
       // Accumulate collapsed vb in a time average
       vba.accumulate(vb);
     }
@@ -2169,6 +2329,90 @@ void Calibrater::accumulate(const String& intab,
     if (incrcal_) delete incrcal_;
     
     throw(AipsError("Error in Calibrater::accumulate."));
+    return;
+  }
+  return;
+
+}
+
+void Calibrater::specifycal(const String& type,
+			    const String& caltable,
+			    const String& time,
+			    const String& spw,
+			    const String& antenna,
+			    const String& pol,
+			    const Vector<Double>& parameter) {
+
+  logSink() << LogOrigin("Calibrater","specifycal") << LogIO::NORMAL;
+
+  // SVJ objects:
+  SolvableVisCal *cal_(NULL);
+
+  try {
+ 			    
+    // Set record format for calibration table application information
+    RecordDesc specifyDesc;
+    specifyDesc.addField ("caltable", TpString);
+    specifyDesc.addField ("time", TpString);
+    specifyDesc.addField ("spw", TpArrayInt);
+    specifyDesc.addField ("antenna", TpArrayInt);
+    specifyDesc.addField ("pol", TpString);
+    specifyDesc.addField ("parameter", TpArrayDouble);
+    specifyDesc.addField ("caltype",TpString);
+
+    // Create record with the requisite field values
+    Record specify(specifyDesc);
+    specify.define ("caltable", caltable);
+    specify.define ("time", time);
+    if (spw=="*")
+      specify.define ("spw",Vector<Int>(1,-1));
+    else
+      specify.define ("spw",getSpwIdx(spw));
+    if (antenna=="*")
+      specify.define ("antenna",Vector<Int>(1,-1) );
+    else
+      specify.define ("antenna",getAntIdx(antenna));
+    specify.define ("pol",pol);
+    specify.define ("parameter",parameter);
+    specify.define ("caltype",type);
+
+    // Now do it
+    String utype=upcase(type);
+    if (utype=="G" || utype.contains("AMP") || utype.contains("PH"))
+      cal_ = createSolvableVisCal("G",*vs_p);
+    else if (utype=='K' || utype.contains("SBD") || utype.contains("DELAY"))
+      cal_ = createSolvableVisCal("K",*vs_p);
+    else if (utype.contains("MBD"))
+      cal_ = createSolvableVisCal("KMBD",*vs_p);
+    else if (utype.contains("ANTPOS"))
+      cal_ = createSolvableVisCal("KANTPOS",*vs_p);
+    else if (utype.contains("TSYS"))
+      cal_ = createSolvableVisCal("TSYS",*vs_p);
+    else if (utype.contains("EVLAGAIN"))
+      cal_ = createSolvableVisCal("EVLAGAIN",*vs_p);
+    else
+      throw(AipsError("Unrecognized caltype."));
+
+    // set up for specification (set up the CalSet)
+    cal_->setSpecify(specify);
+
+    // fill with specified values
+    cal_->specify(specify);
+
+    // Store result
+    cal_->store();
+
+    delete cal_;
+
+  } catch (AipsError x) {
+    logSink() << LogIO::SEVERE
+	      << "Caught Exception: "
+	      << x.getMesg()
+	      << LogIO::POST;
+
+    if (cal_) delete cal_;
+    
+    throw(AipsError("Error in Calibrater::specifycal."));
     return;
   }
   return;

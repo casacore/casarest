@@ -24,45 +24,56 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 #include <msvis/MSVis/SubMS.h>
+#include <casa/Arrays/Array.h>
+#include <casa/BasicSL/String.h>
+#include <casa/Logging/LogIO.h>
+#include <tables/Tables/ArrayColumn.h>
 #include <tables/Tables/Table.h>
 #include <tables/Tables/TableDesc.h>
-#include <casa/BasicSL/String.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
   // Add optional columns to outTab if present in inTab and possColNames.
   // Returns the number of added columns.
   template<class M>
-  uInt SubMS::addOptionalColumns(const M& inTab, M& outTab,
-				 const Vector<String>& possColNames,
-				 const Bool beLazy)
+  uInt SubMS::addOptionalColumns(const M& inTab, M& outTab, const Bool beLazy)
   {
-    uInt nAdded = 0;
-    uInt nPossOpts = possColNames.nelements();
-    
+    uInt nAdded = 0;    
     const TableDesc& inTD = inTab.actualTableDesc();
-
+    
     // Only rely on the # of columns if you are sure that inTab and outTab
     // can't have the same # of columns without having _different_ columns,
-    // i.e. use beLazy if outTD is in its default state.
+    // i.e. use beLazy if outTab.actualTableDesc() is in its default state.
     uInt nInCol = inTD.ncolumn();
     if(!beLazy || nInCol > outTab.actualTableDesc().ncolumn()){
-      Vector<String> oldColNames = inTD.columnNames();
+      LogIO os(LogOrigin("SubMS", "addOptionalColumns()"));
 
+      Vector<String> oldColNames = inTD.columnNames();
+      
       for(uInt k = 0; k < nInCol; ++k){
-	for (uInt j = 0; j < nPossOpts; ++j){
-	  if(oldColNames[k].contains(possColNames[j])){
-	    TableDesc tabDesc;
-	    M::addColumnToDesc(tabDesc, M::columnType(possColNames[j]));
-	    outTab.addColumn(tabDesc[0]);
-	    ++nAdded;
-	  }
+        if(!outTab.actualTableDesc().isColumn(oldColNames[k])){
+          //TableDesc tabDesc;
+          try{
+            //M::addColumnToDesc(tabDesc, M::columnType(oldColNames[k]));
+            //if(tabDesc.ncolumn())                 // The tabDesc[0] is too 
+            //  outTab.addColumn(tabDesc[0]);       // dangerous otherwise - it 
+            //else                                  // can dump core without
+            //  throw(AipsError("Unknown column")); // throwing an exception.
+	    outTab.addColumn(inTD.columnDesc(k), false);
+            ++nAdded;
+          }
+          catch(...){   // NOT AipsError x
+            os << LogIO::WARN 
+               << "Could not add column " << oldColNames[k] << " to "
+               << outTab.tableName()
+               << LogIO::POST;
+          }
 	}
       }
     }
     return nAdded;
   }
-  
+
 } //# NAMESPACE CASA - END
 
 

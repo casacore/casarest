@@ -33,16 +33,20 @@
 #include <ms/MeasurementSets/MeasurementSet.h>
 #include <casa/Arrays/IPosition.h>
 #include <casa/Quanta/Quantum.h>
+#include <components/ComponentModels/ConstantSpectrum.h>
 
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
 #include <measures/Measures/MRadialVelocity.h>
 
 #include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
+#include <synthesis/MeasurementComponents/EVLAAperture.h>
 #include <synthesis/MeasurementComponents/BeamSquint.h>
 #include <synthesis/MeasurementComponents/WFCleanImageSkyModel.h>
 #include <synthesis/MeasurementComponents/ClarkCleanImageSkyModel.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
+#include <synthesis/MeasurementComponents/ATerm.h>
+
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -55,8 +59,8 @@ class MeasurementSet;
 class MFrequency;
 class File;
 class VPSkyJones;
-class PGPlotter;
 class EPJones;
+class ViewerProxy;
 template<class T> class ImageInterface;
 
 // <summary> Class that contains functions needed for imager </summary>
@@ -70,7 +74,6 @@ class Imager
   Imager();
 
   Imager(MeasurementSet& ms, Bool compress=False, Bool useModel=False);
-  Imager(MeasurementSet& ms, PGPlotter& pgplotter, Bool compress=False);
 
   // Copy constructor and assignment operator
   Imager(const Imager&);
@@ -100,8 +103,8 @@ class Imager
 				 MRadialVelocity& mDataStep);
   //Utility function to check coordinate match with existing image
 
-  virtual Bool checkCoord(CoordinateSystem& coordsys, 
-			  String& imageName); 
+  virtual Bool checkCoord(const CoordinateSystem& coordsys, 
+			  const String& imageName); 
 
   virtual void setImageParam(Int& nx, Int& ny, Int& npol, Int& nchan); 
 
@@ -175,8 +178,10 @@ class Imager
 			   const MRadialVelocity& mStart, 
 			   const Quantity& qStep,
 			   const Vector<Int>& spectralwindowids, 
-			   const Quantity& restFreq,
-			   const Int facets, const Quantity& distance,
+			   const Int facets=1, 
+			   const Quantity& restFreq=Quantity(0,"Hz"),
+                           const MFrequency::Types& mFreqFrame=MFrequency::LSRK,
+			   const Quantity& distance=Quantity(0,"m"),
 			   const Bool trackSource=False, const MDirection& 
 			   trackDir=MDirection(Quantity(0.0, "deg"), 
 					       Quantity(90.0, "deg")));
@@ -198,7 +203,9 @@ class Imager
                              const String& scan="",
                              const Bool useModelCol=False);
 
-
+  // Select some data.
+  // Sets nullSelect_p and returns !nullSelect_p.
+  // be_calm: lowers the logging level of some messages if True.
   Bool setdata(const String& mode, const Vector<Int>& nchan, 
 	       const Vector<Int>& start,
 	       const Vector<Int>& step, const MRadialVelocity& mStart,
@@ -213,7 +220,8 @@ class Imager
 	       const String& spwstring="",
 	       const String& uvdist="",
                const String& scan="",
-               const Bool usemodelCol=False);
+               const Bool usemodelCol=False,
+               const Bool be_calm=false);
   
   // Set the processing options
   Bool setoptions(const String& ftmachine, const Long cache, const Int tile,
@@ -226,7 +234,9 @@ class Imager
 		  const String& cfCacheDirName="", 
 		  const Float& pastep=5.0,
 		  const Float& pbLimit=5.0e-2,
-		  const String& freqinterpmethod="linear");
+		  const String& freqinterpmethod="linear",
+		  const Int imageTileSizeInPix=0,
+		  const Bool singleprecisiononly=False);
 
   // Set the single dish processing options
   Bool setsdoptions(const Float scale, const Float weight, 
@@ -239,7 +249,8 @@ class Imager
 	     const Bool doSquint,
 	     const Quantity &parAngleInc,
 	     const Quantity &skyPosThreshold,
-	     String defaultTel="");
+	     String defaultTel="",
+             const Bool verbose=true);
 
   // Set the scales to be searched in Multi Scale clean
   Bool setscales(const String& scaleMethod,          // "nscales"  or  "uservector"
@@ -267,16 +278,27 @@ class Imager
   // Return the state of the object as a string
   String state();
   
+  // Return the # of visibilities accessible to *rvi, optionally excluding
+  // flagged ones (if unflagged_only is true) and/or ones without imaging
+  // weights (if must_have_imwt is true).
+  uInt count_visibilities(ROVisibilityIterator *rvi,
+                          const Bool unflagged_only, const Bool must_have_imwt);
+
   // Return the image coordinates
-  Bool imagecoordinates(CoordinateSystem& coordInfo);
+  Bool imagecoordinates(CoordinateSystem& coordInfo, const Bool verbose=true);
+  // new version
+  Bool imagecoordinates2(CoordinateSystem& coordInfo, const Bool verbose=true);
 
   // Return the image shape
   IPosition imageshape() const;
 
   // Weight the MeasurementSet
+  //For some time of weighting briggs/uniform ...one can do it on a per field basis to calculate 
+  //weight density distribution. If that is what is wanted multiField should be set to True
+  //multifield is inoperative for natural, radial weighting
   Bool weight(const String& algorithm, const String& rmode,
 	      const Quantity& noise, const Double robust,
-              const Quantity& fieldofview, const Int npixels);
+              const Quantity& fieldofview, const Int npixels, const Bool multiField=False);
   
   // Filter the MeasurementSet
   Bool filter(const String& type, const Quantity& bmaj, const Quantity& bmin,
@@ -288,12 +310,9 @@ class Imager
   // Sensitivity
   Bool sensitivity(Quantity& pointsourcesens, Double& relativesens, Double& sumwt);
   
-  // Make plain image
-  Bool makeimage(const String& type, const String& imageName);
-
-  // Make plain image: keep the complex image as well
+  // Make plain image + keep the complex image as well if complexImageName != "".
   Bool makeimage(const String& type, const String& imageName,
-	     const String& complexImageName);
+                 const String& complexImageName="", const Bool verbose=true);
   
   // Fill in a region of a mask
   Bool boxmask(const String& mask, const Vector<Int>& blc,
@@ -316,11 +335,17 @@ class Imager
   Bool clipimage(const String& image, const Quantity& threshold);
 
   // Make a mask image
-  Bool mask(const String& mask, const String& imageName,
-	    const Quantity& threshold);
+  static Bool mask(const String& mask, const String& imageName,
+                   const Quantity& threshold);
   
   // Restore
   Bool restore(const Vector<String>& model, const String& complist,
+	       const Vector<String>& image, const Vector<String>& residual);
+
+  // similar to restore except this is to be called if you fiddle with the model and complist
+  // outside of this object (say you clip stuff etc) ...keep the sm_p and se_p state but just calculate new residuals and 
+  // restored images. Will throw an exception is se_p or sm_p is not valid (i.e you should have used clean, mem etc before hand).
+  Bool updateresidual(const Vector<String>& model, const String& complist,
 	       const Vector<String>& image, const Vector<String>& residual);
 
   // Setbeam
@@ -350,7 +375,23 @@ class Imager
 	     const Vector<String>& mask,
 	     const Vector<String>& restored,
 	     const Vector<String>& residual,
-	     const Vector<String>& psf=Vector<String>(0));
+	     const Vector<String>& psf=Vector<String>(0),
+             const Bool firstrun=true);
+
+  Bool iClean(const String& algorithm, 
+	      const Int niter, 
+	      const Double gain,
+	      //const String& threshold, 
+	      const Quantity& threshold,
+	      const Bool displayprogress,
+	      const Vector<String>& model,
+	      const Vector<Bool>& keepfixed, const String& complist,
+	      const Vector<String>& mask,
+	      const Vector<String>& image,
+	      const Vector<String>& residual,
+	      const Vector<String>& psfnames,
+	      const Bool interactive, const Int npercycle,
+	      const String& masktemplate);
   
   // MEM algorithm
   Bool mem(const String& algorithm,
@@ -379,14 +420,18 @@ class Imager
 	    const Vector<String>& residual);
 
   // Multi-field control parameters
+  //flat noise is the parameter that control the search of clean components
+  //in a flat noise image or an optimum beam^2 image
   Bool setmfcontrol(const Float cyclefactor,
 		    const Float cyclespeedup,
+		    const Float cyclemaxpsffraction,
 		    const Int stoplargenegatives, 
 		    const Int stoppointmode,
 		    const String& scaleType,
 		    const Float  minPB,
 		    const Float constPB,
-		    const Vector<String>& fluxscale);
+		    const Vector<String>& fluxscale,
+		    const Bool flatnoise=True);
   
   // Feathering algorithm
   Bool feather(const String& image,
@@ -422,11 +467,15 @@ class Imager
 	     const String& fieldnames, const String& spwstring, 
 	     const Vector<Double>& fluxDensity, const String& standard);
 
+  
+  //Setjy with model image. If chanDep=True then the scaling is calulated on a 
+  //per channel basis for the model image...otherwise the whole spw get the same scaling
   Bool setjy(const Vector<Int>& fieldid, 
 	     const Vector<Int>& spectralwindowid, 
 	     const String& fieldnames, const String& spwstring, 
 	     const String& model,
-	     const Vector<Double>& fluxDensity, const String& standard);
+	     const Vector<Double>& fluxDensity, const String& standard, 
+	     const Bool chanDep=False);
 
   // Make an empty image
   Bool make(const String& model);
@@ -439,7 +488,7 @@ class Imager
 		       String& maskImage);
 
   // Clone an image
-  Bool clone(const String& imageName, const String& newImageName);
+  static Bool clone(const String& imageName, const String& newImageName);
   
   // Fit the psf
   Bool fitpsf(const String& psf, Quantity& mbmaj, Quantity& mbmin,
@@ -464,23 +513,39 @@ class Imager
   Bool clipvis(const Quantity& threshold);
 
 
-  //This is necessary for setting from the DO...but once its set properly from 
-  // the constructor...these two functions should go 
-
-  PGPlotter& getPGPlotter();
-  void setPGPlotter(PGPlotter& thePlotter);
-
   //Check if can proceed with this object
   Bool valid() const;
 
 
   //Interactive mask drawing
+  //forceReload..forces the viewer to dump previous image that is being displayed
   Int interactivemask(const String& imagename, const String& maskname, 
-		      Int& niter, Int& ncycles, String& threshold);
+		      Int& niter, Int& ncycles, String& threshold, const Bool forceReload=False);
+
+
+  //helper function to copy a mask from one image to another
+
+  Bool copyMask(ImageInterface<Float>& out, const ImageInterface<Float>& in, String maskname="mask0", Bool setdefault=True); 
+
+
+  // Supports the "[] or -1 => everything" convention using the rule:
+  // If v is empty or only has 1 element, and it is < 0, 
+  //     replace v with 0, 1, ..., nelem - 1.
+  // Returns whether or not it modified v.
+  //   If so, v is modified in place.
+  static Bool expand_blank_sel(Vector<Int>& v, const uInt nelem);  
+
+  //spectral gridding calculation for output images (use SubMS::calcChanFreqs)
+  Bool calcImFreqs(Vector<Double>& imfreqs, Vector<Double>& imfreqres,
+                   const MFrequency::Types& oldRefFrame,
+                   const MEpoch& obsEpoch, const MPosition& obsPosition,
+                   const Double& restFreq);
+
+  String dQuantitytoString(const Quantity& dq);
 
 protected:
 
-  MeasurementSet* ms_p;
+  CountedPtr<MeasurementSet> ms_p;
   CountedPtr<MSHistoryHandler> hist_p;
   Table antab_p;
   Table datadesctab_p;
@@ -501,13 +566,14 @@ protected:
   Table weathertab_p;
   Int lockCounter_p;
   Int nx_p, ny_p, npol_p, nchan_p;
-  ObsInfo latestObsInfo_p;  
-  
+  ObsInfo latestObsInfo_p;
+  //What should be the tile volume on disk
+  Int imageTileVol_p;
 
 
 
   String msname_p;
-  MeasurementSet *mssel_p;
+  CountedPtr<MeasurementSet> mssel_p;
   VisSet *vs_p;
   ROVisibilityIterator* rvi_p;
   VisibilityIterator* wvi_p;
@@ -535,6 +601,7 @@ protected:
   MRadialVelocity mDataStart_p, mImageStart_p;
   MRadialVelocity mDataStep_p,  mImageStep_p;
   MFrequency mfImageStart_p, mfImageStep_p;
+  MFrequency::Types freqFrame_p;
   MDirection phaseCenter_p;
   Quantity restFreq_p;
   Quantity distance_p;
@@ -556,6 +623,7 @@ protected:
   // special mf control parms, etc
   Float cyclefactor_p;
   Float cyclespeedup_p;
+  Float cyclemaxpsffraction_p;
   Int stoplargenegatives_p;
   Int stoppointmode_p;
   Vector<String> fluxscale_p;
@@ -569,6 +637,8 @@ protected:
   Vector<Int> dataspectralwindowids_p;
   Vector<Int> datadescids_p;
   Vector<Int> datafieldids_p;
+  //TT
+  Cube<Int> spwchansels_p;
 
   String telescope_p;
   String vpTableStr_p;         // description of voltage patterns for various telescopes
@@ -578,13 +648,14 @@ protected:
   BeamSquint::SquintType  squintType_p;
   Bool doDefaultVP_p;          // make default VPs, rather than reading in a vpTable
 
-  PGPlotter* pgplotter_p;
 
   Bool  doMultiFields_p;      // Do multiple fields?
   Bool  multiFields_p; 	      // multiple fields have been specified in setdata
 
   Bool doWideBand_p;          // Do Multi Frequency Synthesis Imaging
   String freqInterpMethod_p; //frequency interpolation mode
+
+  Bool flatnoise_p;
 
   // Set the defaults
   void defaults();
@@ -594,10 +665,11 @@ protected:
 
   // Create the FTMachines when necessary or when the control parameters
   // have changed. 
-  Bool createFTMachine();
+  virtual Bool createFTMachine();
 
   Bool removeTable(const String& tablename);
-
+  Bool updateSkyModel(const Vector<String>& model,
+		      const String complist);
   Bool createSkyEquation(const String complist="");
   Bool createSkyEquation(const Vector<String>& image, 
 			 const Vector<Bool>& fixed,
@@ -613,8 +685,11 @@ protected:
 			 const Vector<String>& mask,
 			 const Vector<String>& fluxMask,
 			 const String complist="");
+  ATerm* createTelescopeATerm(MeasurementSet& ms);
   void destroySkyEquation();
 
+  //add residual to the private vars or create residual images
+  Bool addResiduals(const Vector<String>& residual);
   // Add the residuals to the SkyEquation
   Bool addResidualsToSkyEquation(const Vector<String>& residual);
 
@@ -637,6 +712,15 @@ protected:
 	      const MDirection&,
 	      const Quantity&);
 
+  // Helper func for printing clean's restoring beam to the logger.  May find
+  // the restoring beam as a side effect, so sm_p can't be const.
+  void printbeam(CleanImageSkyModel *sm_p, LogIO &os, const Bool firstrun=true);
+
+  // Helper func for createFTMachine().  Returns phaseCenter_p as a String,
+  // *assuming* it is set.  It does not check!
+  String tangentPoint();
+  
+
   Bool assertDefinedImageParameters() const;
  // Virtual methods to set the ImageSkyModel and SkyEquation.
   // This allows derived class pimager to set parallelized
@@ -657,7 +741,16 @@ protected:
   static Bool regionToMask(ImageInterface<Float>& maskImage, ImageRegion& imagreg, const Float& value=1.0);
 
   //set the mosaic ft machine and right convolution function
-  virtual void setMosaicFTMachine(); 
+  virtual void setMosaicFTMachine(Bool useDoublePrec=False); 
+
+  // Makes a component list on disk containing cmp (with fluxval and cspectrum)
+  // named msname_p.fieldName.spw<spwid>.tempcl and returns the name.
+  String makeComponentList(const String& fieldName, const Int spwid,
+                           const Flux<Double>& fluxval,
+                           const ComponentShape& cmp,
+                           const ConstantSpectrum& cspectrum) const;
+
+  Vector<Int> decideNPolPlanes(Bool checkwithMS);
  
   ComponentList* componentList_p;
 
@@ -685,6 +778,8 @@ protected:
   //Whether to use model column or use it in memory on the fly
   Bool useModelCol_p;
 
+  //Force single precision always
+  Bool singlePrec_p;
   //sink used to store history mainly
   LogSink logSink_p;
 
@@ -695,6 +790,7 @@ protected:
   EPJones *epJ;
   String epJTableName_p, cfCacheDirName_p;
   Bool doPointing, doPBCorr;
+  //SimplePlotterPtr plotter_p;
   Record interactiveState_p;
 
   //Track moving source stuff
@@ -703,23 +799,16 @@ protected:
   String pointingDirCol_p;
   VisImagingWeight imwgt_p;
 
+  // viewer connection
+  ViewerProxy *viewer_p;
+  int clean_panel_p;
+  int image_id_p;
+  int mask_id_p;
+  int prev_image_id_p;
+  int prev_mask_id_p;
 };
 
 
 } //# NAMESPACE CASA - END
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-

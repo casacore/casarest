@@ -446,13 +446,11 @@ int main (Int argc, char** argv)
                         img_nchan,                  // nchan
                         img_start,                  // start
                         img_step,                   // step
-                        Quantity(0,"Hz"),           // mFreqstart
-                        Quantity(0,"km/s"),         // mstart, Def=0 km/s
-                        Quantity(1,"km/s"),         // mstep, Def=1 km/s
+                        MFrequency(),               // mFreqstart
+                        MRadialVelocity(),          // mStart
+                        Quantity(1,"km/s"),         // qstep, Def=1 km/s
                         spwid,                      // spectralwindowids
-                        Quantity(0, "Hz"),          // restFreq
-                        nfacet,                     // facets
-                        Quantity(0, "m"));          // distance
+                        nfacet);                    // facets
 
     // Create empty image?
     if (operation == "empty" ) {

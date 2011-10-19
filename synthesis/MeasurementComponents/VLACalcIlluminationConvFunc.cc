@@ -45,6 +45,7 @@
 #include <casa/OS/File.h>
 #include <fstream>
 #include <casa/sstream.h>
+
 namespace casa{
 
   //
@@ -69,7 +70,8 @@ namespace casa{
 
 
   CoordinateSystem VLACalcIlluminationConvFunc::makeUVCoords(CoordinateSystem& imageCoordSys,
-							 IPosition& shape)
+							     IPosition& shape,
+							     Double refFreq)
   {
     CoordinateSystem FTCoords = imageCoordSys;
 
@@ -78,6 +80,14 @@ namespace casa{
     Vector<Bool> axes(2); axes=True;
     Vector<Int> dirShape(2); dirShape(0)=shape(0);dirShape(1)=shape(1);
     Coordinate* FTdc=dc.makeFourierCoordinate(axes,dirShape);
+    // if (refFreq > 0)
+    //   {
+    // 	Int index1 = FTCoords.findCoordinate(Coordinate::SPECTRAL);
+    // 	SpectralCoordinate SpC = FTCoords.spectralCoordinate(index1);
+    // 	Vector<Double> refVal = SpC.referenceValue();
+    // 	refVal = refFreq;
+    // 	SpC.setReferenceValue(refVal);
+    //   }
 
     FTCoords.replaceCoordinate(*FTdc,dirIndex);
     delete FTdc;
@@ -89,79 +99,86 @@ namespace casa{
   //
   void VLACalcIlluminationConvFunc::applyPB(ImageInterface<Float>& pbImage,
 					    const VisBuffer& vb, const Vector<Float>& paList, 
-					    Int bandID)
+					    Int bandID, Bool doSquint)
   {
     CoordinateSystem skyCS(pbImage.coordinates());
     IPosition skyShape(pbImage.shape());
     TempImage<Complex> uvGrid;
     if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
-    regridAperture(skyCS, skyShape, uvGrid, vb, paList, False, bandID);
+    //    regridAperture(skyCS, skyShape, uvGrid, vb, paList, False, bandID);
+    regridAperture(skyCS, skyShape, uvGrid, vb, paList, doSquint, bandID);
 
     fillPB(*(ap.aperture),pbImage);
   }
   void VLACalcIlluminationConvFunc::applyPB(ImageInterface<Float>& pbImage,
-					    const VisBuffer& vb, Int bandID)
+					    const VisBuffer& vb, Int bandID,
+					    Bool doSquint)
   {
     CoordinateSystem skyCS(pbImage.coordinates());
     IPosition skyShape(pbImage.shape());
 
     TempImage<Complex> uvGrid;
     if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
-    regridAperture(skyCS, skyShape, uvGrid, vb,False, bandID);
+    //    regridAperture(skyCS, skyShape, uvGrid, vb,False, bandID);
+    regridAperture(skyCS, skyShape, uvGrid, vb, doSquint, bandID);
     fillPB(*(ap.aperture),pbImage);
   }
   void VLACalcIlluminationConvFunc::applyPB(ImageInterface<Complex>& pbImage, 
-					    const VisBuffer& vb, Int bandID)
+					    const VisBuffer& vb, Int bandID,
+					    Bool doSquint)
   {
     CoordinateSystem skyCS(pbImage.coordinates());
     IPosition skyShape(pbImage.shape());
 
     TempImage<Complex> uvGrid;
     if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
-    regridAperture(skyCS, skyShape, uvGrid, vb, True, bandID);
-    /*
-    {
-      String name("pb.im");
-      storeImg(name,*(ap.aperture));
-    }
-    */
+    //    regridAperture(skyCS, skyShape, uvGrid, vb, True, bandID);
+    regridAperture(skyCS, skyShape, uvGrid, vb, doSquint, bandID);
+    pbImage.setCoordinateInfo(skyCS);
     fillPB(*(ap.aperture),pbImage);
   }
   //--------------------------------------------------------------------------
   // Write PB^2 to the pbImage
   //
   void VLACalcIlluminationConvFunc::applyPBSq(ImageInterface<Float>& pbImage,
-					      const VisBuffer& vb, const Vector<Float>& paList, 
-					      Int bandID)
+					      const VisBuffer& vb, 
+					      const Vector<Float>& paList, 
+					      Int bandID,
+					      Bool doSquint)
   {
     CoordinateSystem skyCS(pbImage.coordinates());
     IPosition skyShape(pbImage.shape());
     TempImage<Complex> uvGrid;
     if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
-    regridAperture(skyCS, skyShape, uvGrid, vb, paList, False, bandID);
+    //    regridAperture(skyCS, skyShape, uvGrid, vb, paList, False, bandID);
+    regridAperture(skyCS, skyShape, uvGrid, vb, paList, doSquint, bandID);
 
     fillPB(*(ap.aperture),pbImage, True);
   }
   void VLACalcIlluminationConvFunc::applyPBSq(ImageInterface<Float>& pbImage,
-					      const VisBuffer& vb, Int bandID)
+					      const VisBuffer& vb, Int bandID,
+					      Bool doSquint)
   {
     CoordinateSystem skyCS(pbImage.coordinates());
     IPosition skyShape(pbImage.shape());
 
     TempImage<Complex> uvGrid;
     if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
-    regridAperture(skyCS, skyShape, uvGrid, vb,False, bandID);
+    //    regridAperture(skyCS, skyShape, uvGrid, vb,False, bandID);
+    regridAperture(skyCS, skyShape, uvGrid, vb, doSquint, bandID);
     fillPB(*(ap.aperture),pbImage,True);
   }
   void VLACalcIlluminationConvFunc::applyPBSq(ImageInterface<Complex>& pbImage, 
-					      const VisBuffer& vb, Int bandID)
+					      const VisBuffer& vb, Int bandID,
+					      Bool doSquint)
   {
     CoordinateSystem skyCS(pbImage.coordinates());
     IPosition skyShape(pbImage.shape());
 
     TempImage<Complex> uvGrid;
     if (maximumCacheSize() > 0) uvGrid.setMaximumCacheSize(maximumCacheSize());
-    regridAperture(skyCS, skyShape, uvGrid, vb, True, bandID);
+    //    regridAperture(skyCS, skyShape, uvGrid, vb, True, bandID);
+    regridAperture(skyCS, skyShape, uvGrid, vb, doSquint, bandID);
     fillPB(*(ap.aperture),pbImage, True);
   }
   //
@@ -173,6 +190,7 @@ namespace casa{
 						   const VisBuffer& vb,
 						   Bool doSquint, Int bandID)
   {
+    LogIO logIO(LogOrigin("VLACalcIlluminationConvFunc","regrid"));
     CoordinateSystem skyCoords(skyCS);
 
     Int index;
@@ -180,34 +198,68 @@ namespace casa{
     Float pa;
     if (bandID != -1) ap.band = (BeamCalcBandCode)bandID;
     AlwaysAssert(ap.band>=-1, AipsError);
-    {
-      Vector<Float> antPA = vb.feed_pa(timeValue);
-      pa = sum(antPA)/(antPA.nelements()-1);
-    }
-
-    Float Freq;
+    // {
+    //   Vector<Float> antPA = vb.feed_pa(timeValue);
+    //   pa = sum(antPA)/(antPA.nelements()-1);
+    // }
+    //
+    pa = getPA(vb);
+    //
+    // Till we understand and fix the origin of 180 deg. flip in EVLA
+    // data, rotate the PA by 180 deg. only for EVLA.
+    //
+    String telescopeName=vb.msColumns().observation().telescopeName().getColumn()[0];
+    // if (telescopeName == "EVLA") 
+    //   {
+    // 	logIO << "Fixing PA computation for EVLA"  << LogIO::WARN;
+    // 	pa += M_PI;
+    //   }
+    // pa=0.0;
+    Float Freq, freqLo, freqHi;
     Vector<Double> chanFreq = vb.frequency();
 
-    if (lastPA != pa)
+    if (lastPA == pa)
+      {
+	//	LogIO logIO;
+	logIO << "Your CPU is being used to do computations for the same PA as for the previous call.  Report this!" 
+	      << LogIO::NORMAL1;
+      }
+    //    if (lastPA != pa)
       {
 	lastPA = pa;
 	
-	const ROMSSpWindowColumns& spwCol = vb.msColumns().spectralWindow();
-	ROArrayColumn<Double> chanfreq = spwCol.chanFreq();
-	ROScalarColumn<Double> reffreq = spwCol.refFrequency();
-	
-	//	Freq = sum(chanFreq)/chanFreq.nelements();
-	Freq = max(chanfreq.getColumn());
-	ap.freq = Freq/1E9;
+	// const ROMSSpWindowColumns& spwCol = vb.msColumns().spectralWindow();
+	// ROArrayColumn<Double> chanfreq = spwCol.chanFreq();
+	// ROScalarColumn<Double> reffreq = spwCol.refFrequency();
+
+	Vector<Double> chanFreq = vb.frequency();
+	index = skyCS.findCoordinate(Coordinate::SPECTRAL);
+	SpectralCoordinate SpC = skyCS.spectralCoordinate(index);
+	Vector<Double> refVal = SpC.referenceValue();
+	//	refVal(0) = freqHi;
+	refVal(0) += SpC.increment()(0)/2.0;
+	SpC.setReferenceValue(refVal);
+	skyCS.replaceCoordinate(SpC,index);
+
+
+	freqHi = max(chanFreq);
+	freqLo = min(chanFreq);
+	// Freq   = freqHi;
+	// Freq = freqHi = 1856e6;
+	Freq = freqHi ;//= refVal(0);
+	//	cerr << "CF Ref. Freq = " << freqHi << endl;
+	ap.freq = freqHi/1E9;
 	
 	IPosition imsize(skyShape);
-	CoordinateSystem uvCoords = makeUVCoords(skyCoords,imsize);
-	
+	//	CoordinateSystem uvCoords = makeUVCoords(skyCoords,imsize,Freq);
+	CoordinateSystem uvCoords = makeUVCoords(skyCoords,imsize,freqHi);
+
 	index = uvCoords.findCoordinate(Coordinate::LINEAR);
 	LinearCoordinate lc=uvCoords.linearCoordinate(index);
 	Vector<Double> incr = lc.increment();
-	Double Lambda = C::c/Freq;
+	Double Lambda = C::c/freqHi;
 	
+
 	ap.nx = skyShape(0); ap.ny = skyShape(1);
 	IPosition apertureShape(ap.aperture->shape());
 	apertureShape(0) = ap.nx;  apertureShape(1) = ap.ny;
@@ -275,8 +327,8 @@ namespace casa{
 		      val = ap.aperture->getAt(tndx);
 		      Rval = ap.aperture->getAt(PolnRIndex);
 		      Lval = ap.aperture->getAt(PolnLIndex);
-		      phase = arg(Rval); Rval=Complex(cos(phase),sin(phase));
-		      phase = arg(Lval); Lval=Complex(cos(phase),sin(phase));
+		      phase = arg(Rval);  Rval=Complex(cos(phase),sin(phase));
+		      phase = arg(Lval);  Lval=Complex(cos(phase),sin(phase));
 		      
 		      if      (tndx(2)==0) ap.aperture->putAt(val*conj(Rval),tndx);
 		      else if (tndx(2)==1) ap.aperture->putAt(val*conj(Lval),tndx);
@@ -300,10 +352,21 @@ namespace casa{
 	
 	ap.aperture->setCoordinateInfo(uvCoords);
 
+	// if (doSquint==True)
+	//   {
+	//     String name("apperture.im");
+	//     storeImg(name,*(ap.aperture));
+	//   }
+
 	//
 	// Now FT the re-gridded Fourier plane to get the primary beam.
 	//
 	ftAperture(*(ap.aperture));
+	// if (doSquint==True)
+	//   {
+	//     String name("ftapperture.im");
+	//     storeImg(name,*(ap.aperture));
+	//   }
       }
   }
   void VLACalcIlluminationConvFunc::regridAperture(CoordinateSystem& skyCS,
@@ -327,7 +390,8 @@ namespace casa{
 
     Freq = max(chanfreq.getColumn());
     IPosition imsize(skyShape);
-    CoordinateSystem uvCoords = makeUVCoords(skyCoords,imsize);
+    CoordinateSystem uvCoords = makeUVCoords(skyCoords,imsize,Freq);
+    uvGrid.setCoordinateInfo(uvCoords);
 	
     Int index = uvCoords.findCoordinate(Coordinate::LINEAR);
     LinearCoordinate lc=uvCoords.linearCoordinate(index);
@@ -424,6 +488,11 @@ namespace casa{
     uvCoords.replaceCoordinate(spectralCoord,index);
 
     ap.aperture->setCoordinateInfo(uvCoords);
+    // if (doSquint==False)
+    //   {
+    // 	String name("apperture.im");
+    // 	storeImg(name,*(ap.aperture));
+    //   }
     
     ftAperture(*(ap.aperture));
   }
@@ -572,57 +641,6 @@ namespace casa{
     skyMuller(uvgrid);
   }
   
-  void VLACalcIlluminationConvFunc::store(String& fileName){storeImg(fileName,convFunc_p);}
-  
-  void VLACalcIlluminationConvFunc::storeImg(String& fileName,ImageInterface<Complex>& theImg)
-  {
-    ostringstream reName,imName;
-    reName << "re" << fileName;
-    imName << "im" << fileName;
-    PagedImage<Complex> ctmp(theImg.shape(), theImg.coordinates(), fileName);
-    LatticeExpr<Complex> le(theImg);
-    ctmp.copyData(le);
-    {
-      PagedImage<Float> tmp(theImg.shape(), theImg.coordinates(), reName);
-      LatticeExpr<Float> le(abs(theImg));
-      tmp.copyData(le);
-    }
-    {
-      PagedImage<Float> tmp(theImg.shape(), theImg.coordinates(), imName);
-      LatticeExpr<Float> le(arg(theImg));
-      tmp.copyData(le);
-    }
-  }
-  
-  void VLACalcIlluminationConvFunc::storeImg(String& fileName,ImageInterface<Float>& theImg)
-  {
-    PagedImage<Float> tmp(theImg.shape(), theImg.coordinates(), fileName);
-    LatticeExpr<Float> le(theImg);
-    tmp.copyData(le);
-  }
-  
-  void VLACalcIlluminationConvFunc::storePB(String& fileName)
-  {
-    {
-      ostringstream Name;
-      Name << "re" << fileName;
-      IPosition newShape(convFunc_p.shape());
-      newShape(0)=newShape(1)=200;
-      PagedImage<Float> tmp(newShape, convFunc_p.coordinates(), Name);
-      LatticeExpr<Float> le(real(convFunc_p));
-      tmp.copyData(le);
-    }
-    {
-      ostringstream Name;
-      Name << "im" << fileName;
-      
-      IPosition newShape(convFunc_p.shape());
-      newShape(0)=newShape(1)=200;
-      PagedImage<Float> tmp(newShape, convFunc_p.coordinates(), Name);
-      LatticeExpr<Float> le(imag(convFunc_p));
-      tmp.copyData(le);
-    }
-  }
   void VLACalcIlluminationConvFunc::loadFromImage(String& fileName)
   {
     throw(AipsError("VLACalcIlluminationConvFunc::loadFromImage() not yet supported."));
@@ -662,7 +680,7 @@ namespace casa{
     t(2)=0;n0(2)=0;n1(2)=0; //RR
     for(  n0(0)=n1(0)=t(0)=0;n0(0)<shape(0);n0(0)++,n1(0)++,t(0)++)
       for(n0(1)=n1(1)=t(1)=0;n0(1)<shape(1);n0(1)++,n1(1)++,t(1)++)
-	buf(t) = (tmp(n0)*(tmp(n1)));
+	buf(t) = (tmp(n0)*conj(tmp(n1)));
 
     t(2)=1;n0(2)=3;n1(2)=0; //LR
     for(  n0(0)=n1(0)=t(0)=0;n0(0)<shape(0);n0(0)++,n1(0)++,t(0)++)
@@ -677,7 +695,7 @@ namespace casa{
     t(2)=3;n0(2)=3;n1(2)=3; //LL
     for(  n0(0)=n1(0)=t(0)=0;n0(0)<shape(0);n0(0)++,n1(0)++,t(0)++)
       for(n0(1)=n1(1)=t(1)=0;n0(1)<shape(1);n0(1)++,n1(1)++,t(1)++)
-	buf(t) = (tmp(n0)*(tmp(n1)));
+	buf(t) = (tmp(n0)*conj(tmp(n1)));
     /*
     sliceStart0(3)=0; sliceStart1(3)=0;
     Slicer s0(sliceStart0,sliceLength),s1(sliceStart1,sliceLength);

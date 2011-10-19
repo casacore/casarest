@@ -87,9 +87,10 @@ void HogbomCleanImageSkyModelmsgput(Int *npol, Int* pol, Int* iter, Int* px, Int
   LogMessage message(LogOrigin("HogbomCleanImageSkyModel","solve"));
   ostringstream o; 
   LogSink logSink;
-
+  /*
   String stokes("Unknown");
-
+  ///UUU
+  // This code allows only  I, IV, IQU, IQUV !!!!!
   if(*npol==1) {
     stokes="I";
   }
@@ -138,21 +139,24 @@ void HogbomCleanImageSkyModelmsgput(Int *npol, Int* pol, Int* iter, Int* px, Int
   else if(*pol==-4) {
     stokes="I,Q,U,V";
   }
-  
+  */  
   if(*npol<0) {
     StokesVector maxVal(fMaxVal[0], fMaxVal[1], fMaxVal[2], fMaxVal[3]);
     if(*iter==0) {
-      o<<stokes<<": Before iteration, peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      //      o<<stokes<<": Before iteration, peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      o<<"Before iteration, peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
       message.message(o);
       logSink.post(message);
     }
     else if(*iter>-1) {
-      o<<stokes<<": Iteration "<<*iter<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      //      o<<stokes<<": Iteration "<<*iter<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      o<<"Iteration "<<*iter<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
       message.message(o);
       logSink.post(message);
     }
     else {
-      o<<stokes<<": Final iteration "<<abs(*iter)<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      //      o<<stokes<<": Final iteration "<<abs(*iter)<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      o<<"Final iteration "<<abs(*iter)<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
       message.message(o);
       logSink.post(message);
     }
@@ -160,17 +164,20 @@ void HogbomCleanImageSkyModelmsgput(Int *npol, Int* pol, Int* iter, Int* px, Int
   else {
     Float maxVal(fMaxVal[0]);
     if(*iter==0) {
-      o<<stokes<<": Before iteration, peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      //      o<<stokes<<": Before iteration, peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      o<<"Before iteration, peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
       message.message(o);
       logSink.post(message);
     }
     else if(*iter>-1) {
-      o<<stokes<<": Iteration "<<*iter<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      //      o<<stokes<<": Iteration "<<*iter<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      o<<"Iteration "<<*iter<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
       message.message(o);
       logSink.post(message);
     }
     else {
-      o<<stokes<<": Final iteration "<<abs(*iter)<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      //      o<<stokes<<": Final iteration "<<abs(*iter)<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
+      o<<"Final iteration "<<abs(*iter)<<" peak is "<<maxVal<<" at "<<*px-1<<","<<*py-1;
       message.message(o);
       logSink.post(message);
     }
@@ -193,15 +200,18 @@ Bool HogbomCleanImageSkyModel::solve(SkyEquation& se) {
     makeNewtonRaphsonStep(se);
   
   //Make the PSF
-  makeApproxPSFs(se);
+  if(!donePSF_p)
+    makeApproxPSFs(se);
+
+  if(numberIterations() < 1){
+    return True;
+  }
   
   if(!isSolveable(0)) {
     os << "Model 1 is not solveable!" << LogIO::EXCEPTION;
   }
   
-  if(numberIterations() < 1){
-    return True;
-  }
+  
 
   Int nx=image(0).shape()(0);
   Int ny=image(0).shape()(1);
@@ -384,6 +394,10 @@ Bool HogbomCleanImageSkyModel::solve(SkyEquation& se) {
    os << LatticeExprNode(sum(image(0))).getFloat() 
 	       << " Jy is the sum of clean components " << LogIO::POST;
   modified_p=True;
+  if (maskli != 0) {
+    delete maskli;
+    maskli = 0;
+  }
   return(converged);
 };
 

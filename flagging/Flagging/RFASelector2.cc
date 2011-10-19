@@ -35,7 +35,7 @@
 #include <casa/Logging/LogIO.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <flagging/Flagging/RFASelector.tcc>
+#include <flagging/Flagging/RFASelector.h>
 #include <casa/stdio.h>
 
 #include <iomanip>
@@ -52,7 +52,14 @@ Bool verbose2 = False;
 // Reforms an array of 2N elements into a [2,N] matrix
 // -----------------------------------------------------------------------
 
-// Instantiate the templates.
+template<> Array<Int> fieldToArray<Int>( const RecordInterface &parm,const String &id )
+{ return parm.toArrayInt(id); }
+template<> Array<Double> fieldToArray<Double>( const RecordInterface &parm,const String &id )
+{ return parm.toArrayDouble(id); }
+template<> Array<String> fieldToArray<String>( const RecordInterface &parm,const String &id )
+{ return parm.toArrayString(id); }
+
+
 template Bool RFASelector::reformRange<Int>( Matrix<Int>&,const Array<Int>& );
 template Bool RFASelector::reformRange<Double>( Matrix<Double>&,const Array<Double>& );
 template Bool RFASelector::reformRange<String>( Matrix<String>&,const Array<String>& );
@@ -183,33 +190,44 @@ static Double normalize( Double value,Double base,Double cycle )
 // -----------------------------------------------------------------------
 // addClipInfo
 // -----------------------------------------------------------------------
-void RFASelector::addClipInfo( const Vector<String> &expr,Float vmin,Float vmax,Bool clip )
+void RFASelector::addClipInfo( const Vector<String> &expr,
+                               Float vmin,Float vmax,
+                               Bool clip,
+                               Bool channel_average)
 {
-// create mapper and clipinfo block
-  RFDataMapper *mapper = new RFDataMapper(expr,sel_column);
+    // create mapper and clipinfo block
+    RFDataMapper *mapper = new RFDataMapper(expr,sel_column);
 
-  ClipInfo clipinfo = { mapper,vmin,vmax,clip,0.0 };
-// if dealing with cyclic values, normalize min/max accordingly
-  Double cycle = mapper->getValueCycle();  // e.g. 360 for angles
-  if( cycle>0 )
-  {
-    Double base = mapper->getValueBase();  // e.g. -180 for angles
-    // normalize min/max angle into [base,base+cycle)
-    clipinfo.vmin = normalize(clipinfo.vmin,base,cycle);
-    clipinfo.vmax = normalize(clipinfo.vmax,base,cycle);
-    // if order is reversed, then we're spanning a cycle boundary (i.e. 355->5)
-    if( clipinfo.vmin>clipinfo.vmax )
-      clipinfo.vmax += cycle;   // ...so add a cycle
-    // use vmin as offset
-    clipinfo.offset = clipinfo.vmin;
-    clipinfo.vmin = 0;
-    clipinfo.vmax -= clipinfo.offset;
-  }
-// add block to appropriate list  
-  Block<ClipInfo> & block( mapper->type()==RFDataMapper::MAPROW ? sel_clip_row : sel_clip );
-  uInt ncl = block.nelements();
-  block.resize(ncl+1,False,True);
-  block[ncl] = clipinfo;
+    ClipInfo clipinfo = { mapper,
+                          vmin,vmax, 
+                          channel_average,
+                          clip,0.0 };
+
+    // if dealing with cyclic values, normalize min/max accordingly
+    Double cycle = mapper->getValueCycle();  // e.g. 360 for angles
+
+    if (cycle > 0)  {
+        Double base = mapper->getValueBase();  // e.g. -180 for angles
+
+        // normalize min/max angle into [base,base+cycle)
+        clipinfo.vmin = normalize(clipinfo.vmin, base, cycle);
+        clipinfo.vmax = normalize(clipinfo.vmax, base, cycle);
+
+        // if order is reversed, then we're spanning a cycle boundary (i.e. 355->5)
+        if( clipinfo.vmin > clipinfo.vmax ) {
+          clipinfo.vmax += cycle;   // ...so add a cycle
+        }
+
+        // use vmin as offset
+        clipinfo.offset = clipinfo.vmin;
+        clipinfo.vmin = 0;
+        clipinfo.vmax -= clipinfo.offset;
+    }
+    // add block to appropriate list  
+    Block<ClipInfo> & block( mapper->type()==RFDataMapper::MAPROW ? sel_clip_row : sel_clip );
+    uInt ncl = block.nelements();
+    block.resize(ncl+1,False,True);
+    block[ncl] = clipinfo;
 }
 
 // -----------------------------------------------------------------------
@@ -224,6 +242,9 @@ void RFASelector::parseClipField( const RecordInterface &spec,Bool clip )
     //cerr << "RF_EXPR: " << RF_EXPR << endl;
 
   try {
+
+    bool ca = spec.asBool(RF_CHANAVG);
+    
 // Syntax one - we have a record of {expr,min,max} or {expr,[min,max]}
 // or {expr,max}
     if( spec.name(0)== RF_EXPR )
@@ -233,7 +254,7 @@ void RFASelector::parseClipField( const RecordInterface &spec,Bool clip )
       Float vmin,vmax;
       if( !parseMinMax(vmin,vmax,spec,1))
         throw(AipsError(""));
-      addClipInfo(expr,vmin,vmax,clip);
+      addClipInfo(expr, vmin, vmax, clip, ca);
     }
 // Syntax two: we have a record of { expr1=[min,max],expr2=[min,max],.. }
     else
@@ -270,7 +291,7 @@ void RFASelector::parseClipField( const RecordInterface &spec,Bool clip )
             vmax = spec.asFloat(i);
           }
         }
-        addClipInfo(expr,vmin,vmax,clip);
+        addClipInfo(expr,vmin,vmax,clip, ca);
       }
     }
   }
@@ -286,16 +307,26 @@ void RFASelector::fortestingonly_parseClipField( const RecordInterface &spec,Boo
     parseClipField(spec, clip);
 }
 
-void RFASelector::addClipInfoDesc ( const Block<ClipInfo> &clip )
+void RFASelector::addClipInfoDesc ( const Block<ClipInfo> &clip)
 {
   for( uInt i=0; i<clip.nelements(); i++ )
   {
     String ss;
     char s1[32]="",s2[32]="";
+
+    if (clip[i].channel_average) {
+      ss = "average=1 ";
+    }
+    else {
+      ss = "average=0 ";
+    }
+
     if( clip[i].vmin != -C::flt_max )
-      sprintf(s1,"%g",clip[i].vmin+clip[i].offset);
+      sprintf(s1,"%g",clip[i].vmin + clip[i].offset);
+
     if( clip[i].vmax != C::flt_max )
-      sprintf(s2,"%g",clip[i].vmax+clip[i].offset);
+      sprintf(s2,"%g",clip[i].vmax + clip[i].offset);
+
     if( clip[i].clip )
     {
       ss += clip[i].mapper->description();
@@ -315,6 +346,7 @@ void RFASelector::addClipInfoDesc ( const Block<ClipInfo> &clip )
       if( s2[0] )
         ss += String("<=")+s2;
     }
+
     addString(desc_str,ss);
   }
 }
@@ -325,6 +357,10 @@ void RFASelector::addClipInfoDesc ( const Block<ClipInfo> &clip )
 RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) : 
   RFAFlagCubeBase(ch,parm)
 {
+  if ( chunk.measSet().isNull() ) {
+    throw AipsError("Received chunk referring to NULL MS!");
+  }
+
   char s[256];
 
   if( fieldType(parm,RF_FREQS,TpArrayString)) // frequency range[s], as measures
@@ -358,7 +394,8 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
     }
     addString(desc_str,String(RF_FREQS)+"="+fq+"MHz");
   }
-// parse input arguments: channels
+
+  // parse input arguments: channels
   if( parseRange(sel_chan,parm,RF_CHANS)) 
   {
     String sch;
@@ -370,7 +407,8 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
     addString(desc_str,String(RF_CHANS)+"="+sch);
     sel_chan(sel_chan>=0) += -(Int)indexingBase();
   }
-// parse input arguments: correlations
+  
+  // parse input arguments: correlations
   if( fieldType(parm,RF_CORR,TpString,TpArrayString))
   {
     String ss;
@@ -389,10 +427,10 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
   if( fieldType(parm,RF_COLUMN,TpString)) 
   {
     parm.get(RF_COLUMN,sel_column);
-    addString(desc_str,String(RF_COLUMN)+"="+sel_column);
+    addString(desc_str, String(RF_COLUMN)+"="+sel_column);
   }
   
-// parse input arguments: Spw ID(s)
+  // parse input arguments: Spw ID(s)
   if( fieldType(parm,RF_SPWID,TpInt,TpArrayInt)) 
   {
     parm.get(RF_SPWID,sel_spwid);
@@ -402,7 +440,8 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
     addString(desc_str,String(RF_SPWID)+"="+ss);
     sel_spwid -= (Int)indexingBase();
   }
-// parse input arguments: Field names or ID(s)
+
+  // parse input arguments: Field names or ID(s)
   if( fieldType(parm,RF_FIELD,TpString,TpArrayString)) 
   {
     parm.get(RF_FIELD,sel_fieldnames);
@@ -430,6 +469,16 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
       addString(ss,String::toString(sel_scannumber(i)),",");
     addString(desc_str,String(RF_SCAN)+"="+ss);
     sel_scannumber -= (Int)indexingBase();
+  }
+// parse input arguments: Scan intent
+  if ( fieldType(parm,RF_INTENT,TpInt,TpArrayInt))
+  {  
+    parm.get(RF_INTENT,sel_stateid);
+    String ss;
+    for( uInt i=0; i<sel_stateid.nelements(); i++) 
+      addString(ss,String::toString(sel_stateid(i)),",");
+    addString(desc_str,String(RF_INTENT)+"="+ss);
+    sel_stateid -= (Int)indexingBase();
   }
 // parse input arguments: Array ID(s)
   if( fieldType(parm,RF_ARRAY,TpInt,TpArrayInt)) 
@@ -465,7 +514,8 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
 
       addString(desc_str, s);
   }
-// parse input: specific UV ranges 
+
+  // parse input: specific UV ranges 
   Array<Double> uvrng;
   Matrix<Double> uvrange;
   if( parseTimes(uvrng,parm,RF_UVRANGE)) 
@@ -475,6 +525,7 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
     sel_uvrange = uvrange;
     addString(desc_str,String(RF_UVRANGE)+"("+String::toString(uvrange.ncolumn())+")");
   }
+
 // parse input arguments: ANT specified by string ID
   LogicalVector sel_ant(num(ANT),False); 
   if( fieldType(parm,RF_ANT,TpString,TpArrayString)) 
@@ -502,14 +553,15 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
     String sant;
     for( uInt i=0; i<num(ANT); i++) 
       if( sel_ant(i)) 
-        addString(sant,chunk.antNames()(i),",");
-    addString(desc_str,String(RF_ANT)+"="+sant);
+        addString(sant, chunk.antNames()(i),",");
+    addString(desc_str, String(RF_ANT)+"="+sant);
   }
+
 // parse input: baselines as "X-Y"
   sel_ifr = LogicalVector(num(IFR),False);
   String ifrdesc;
   const Vector<String> &names( chunk.antNames()) ;
-  if( fieldType(parm,RF_BASELINE,TpString,TpArrayString)) 
+  if( fieldType(parm, RF_BASELINE, TpString, TpArrayString)) 
   {
     Vector<String> ss(parm.asArrayString(RF_BASELINE));
     ss.apply(stringUpper);
@@ -580,12 +632,17 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
         }
         else
         {
-          sel_ifr(chunk.antToIfr(ant(0,i),ant(1,i))) = True;
+          unsigned indx = chunk.antToIfr(ant(0,i),ant(1,i));
+
+          assert( indx < sel_ifr.nelements() );
+
+          sel_ifr(indx) = True;
           addString(ifrdesc,names(ant(0,i))+"-"+names(ant(1,i)),",");
         }
       }
     }
   }
+
   if( sum(sel_ifr))
   {
     String ss;
@@ -603,6 +660,7 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
     else // no antennas either? flag everything
       sel_ifr.resize();
   }
+
   // parse input: feeds as [[x1,y1],[x2,y2],... etc.
   if( fieldType(parm,RF_FEED,TpInt,TpArrayInt)) 
   {
@@ -649,10 +707,16 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
 
   ac = new ROMSAntennaColumns(chunk.measSet().antenna());
   diameters = ac->dishDiameter().getColumn();
-
+  
   shadow = fieldType(parm, RF_SHADOW, TpBool) && parm.asBool(RF_SHADOW);
   if (shadow) {
     diameter = parm.asDouble(RF_DIAMETER);
+  }
+
+  elevation = fieldType(parm, RF_ELEVATION, TpBool) && parm.asBool(RF_ELEVATION);
+  if (elevation) {
+    lowerlimit = parm.asDouble(RF_LOWERLIMIT);
+    upperlimit = parm.asDouble(RF_UPPERLIMIT);
   }
  
 // now, scan arguments for what to flag within the selection
@@ -676,6 +740,7 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
     sel_time.row(0) = ctimes - timedelta;
     sel_time.row(1) = ctimes + timedelta;
   }
+
 // flag autocorrelations too?
   sel_autocorr =  (fieldType(parm,RF_AUTOCORR,TpBool) && parm.asBool(RF_AUTOCORR));
   if (sel_autocorr)
@@ -708,7 +773,10 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
           quack_increment = parm.asBool(RF_QUACKINC);
           
       }
-      sprintf(s, "%s=%ds", RF_QUACK, (Int)quack_si);
+      sprintf(s, "%s=%ds", // %s=%s; %s=%s", 
+              RF_QUACK, (Int)quack_si);
+              //RF_QUACKMODE, quack_mode,
+              //RF_QUACKINC, quack_increment ? "true" : "false");
       addString(desc_str, s);
       //    quack_si /= (24*3600);
       //    quack_dt /= (24*3600);
@@ -717,7 +785,7 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
     quack_si = 0;
   }
 
-// flag a specific range or clip outside of range?
+  // flag a specific range or clip outside of range?
 
   if (isValidRecord(parm,RF_CLIP)) {
     parseClipField(parm.asRecord(RF_CLIP),True);
@@ -725,6 +793,7 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
 
   if (isValidRecord(parm,RF_FLAGRANGE))
     parseClipField(parm.asRecord(RF_FLAGRANGE),False);
+
   // add to description strings, if something was parsed
   if (sel_clip.nelements())
   {
@@ -733,8 +802,7 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
   }
   if (sel_clip_row.nelements())
     addClipInfoDesc(sel_clip_row);
- 
-  
+
 // if nothing has been specified to flag, flag everything within selection
   flag_everything = 
     (quack_si == 0 && 
@@ -742,7 +810,10 @@ RFASelector::RFASelector ( RFChunkStats &ch,const RecordInterface &parm) :
      !sel_autocorr && 
      !sel_clip.nelements() && 
      !sel_clip_row.nelements() && 
-     !shadow);
+     !shadow && 
+     !elevation &&
+     !sel_stateid.nelements());
+     //!elevation);
   /*
   if (flag_everything)
   {
@@ -766,26 +837,25 @@ RFASelector::~RFASelector ()
       delete sel_clip[i].mapper;
 }
 
-void RFASelector::startData()
+void RFASelector::startData(bool verbose)
 {
-    RFAFlagCubeBase::startData();
+    RFAFlagCubeBase::startData(verbose);
   
     String flagstring = unflag?String("unflag"):String("flag");
-    os << "Data flagged/unflagged : " << desc_str << " " << flagstring;
 
+    os << LogIO::DEBUGGING << "Data flagged/unflagged : " << desc_str << " " << flagstring;
     if (flag_everything) os << " all" ;
-
     os << LogIO::POST;
     
     Bool have_subset = ( desc_str.length() );
     
     if( flag_everything && !shadow)
         {
-          /* jmlarsen: Why is this useful/necessary?? */
+          /* jmlarsen: This does not seem useful nor necessary */
           
-          if( !have_subset && !unflag)
-            os<<"FLAG ALL requested, but no MS subset specified.\n"
-              "Refusing to flag the whole measurement set!\n"<<LogIO::EXCEPTION;
+            if (false) if( !have_subset && !unflag)
+                os<<"FLAG ALL requested, but no MS subset specified.\n"
+                    "Refusing to flag the whole measurement set!\n"<<LogIO::EXCEPTION;
         }
     
     return;
@@ -835,6 +905,14 @@ Bool RFASelector::newChunk (Int &maxmem)
     if(verbose2) os<<"Array ID does not match in this chunk\n"<<LogIO::POST;
     return active=False;
   }
+  //Vector<Int> tempstateid(0);
+  //tempstateid = chunk.visIter().stateId(tempstateid);
+  //if( tempstateid.nelements() && sel_stateid.nelements() && !find(dum,tempstateid[0],sel_stateid) )
+  //{
+  //  if(verbose2) os<<"State ID does not match in this chunk\n"<<LogIO::POST;
+  //  return active=False;
+  //}  
+  //
   /*
   Vector<Int> temp(0);
   temp = chunk.visIter().scan(temp);
@@ -906,7 +984,9 @@ Bool RFASelector::newChunk (Int &maxmem)
       corrmask = clip_corrmask;
       if( !corrmask )
       {
-       if(verbose2)  os<<"No matching correlations in this chunk\n"<<LogIO::POST;
+        if (verbose2) {
+          os << "No matching correlations in this chunk\n" << LogIO::POST;
+        }
         return active=False;
       }
     }
@@ -947,35 +1027,26 @@ void RFASelector::processRow(uInt ifr,uInt it)
 }
 
 // -----------------------------------------------------------------------
-// iterTime
+// Processes 1 time slot in the MS
+// There is one MS row per baseline
+//  
 // -----------------------------------------------------------------------
 RFA::IterMode RFASelector::iterTime (uInt it)
 {
   RFAFlagCubeBase::iterTime(it);
-// extract time
+
+  // setup each correlation clip mapper
+  for (uInt i=0; i<sel_clip.nelements(); i++) 
+      if (sel_clip_active(i))
+          sel_clip[i].mapper->setVisBuffer(chunk.visBuf());
+  
+  // extract time
   const Vector<Double> &times( chunk.visBuf().time() );
+  const Vector<Double> &dtimes( chunk.visBuf().timeInterval() );
   Double t0 = times(0);
+  Double dt0 = dtimes(0);
   if( !allEQ(times,t0) )
     os << "RFASelector: VisBuffer has given us different times." << LogIO::EXCEPTION;
-  bool timeselect = True;
-// is current time slot within any selected time ranges? return if not
-
-  //cout << "sel_timerng.ncolumn()=" << sel_timerng.ncolumn() << endl;
-  //what if sel_timerng=[4660370905] [4660370905] t0=4660370905.000004 ?
-
-  if( sel_timerng.ncolumn() ) {
-    //if( allEQ(sel_timerng.row(0)<=t0 && sel_timerng.row(1)>=t0,False) ) {
-    if(allEQ((sel_timerng.row(0)-0.1)<=t0 && (sel_timerng.row(1)+0.1)>=t0,False)){
-            timeselect = False;
-      //return RFA::CONT;
-    }
-    //if (timeselect) {
-    //  cout << "timeselect=" << timeselect << endl;
-    //  cout << "sel_timerng=" << std::setprecision(16) << sel_timerng.row(0) 
-    //       << " " << std::setprecision(16) << sel_timerng.row(1) << " " 
-    //       << std::setprecision(16) << t0 << endl;
-    //}
-  }
   
   // extract scan number
   const Vector<Int> &scans( chunk.visBuf().scan() );
@@ -987,37 +1058,85 @@ RFA::IterMode RFASelector::iterTime (uInt it)
          << LogIO::EXCEPTION;
   }
 
-  // is current scan number within selected list of scan numbers ? return if not
-  bool scanselect = True;
+  // is current scan number within selected list of scan numbers?
+  bool scanselect = true;
   if (sel_scannumber.nelements()) {
-      bool sel = False;
-      for( uInt i=0;i<sel_scannumber.nelements();i++ )
-          if( sel_scannumber(i) == s0 ) sel |= True;
+      bool sel = false;
+      for (uInt i = 0;
+           i < sel_scannumber.nelements();
+           i++) {
+          if( sel_scannumber(i) == s0 ) {
+              sel = true;
+          }
+      }
     
-      if( ! sel ) scanselect = False;
+      if( ! sel ) scanselect = false;
       //if( ! sel )  return RFA::CONT;
   }
 
-  if( ! (timeselect && scanselect) ) return RFA::CONT;
+  // flag if within specific timeslots
+  bool timeselect = true;
+  if (sel_timerng.ncolumn()) {
+      timeselect = false;
+      if( anyEQ(sel_timerng.row(0) <= t0 && sel_timerng.row(1) >= t0,
+                True) ) {
+          timeselect = true;
+      }
+  }
+  
+  if ( ! (timeselect && scanselect) ) {       
+      return RFA::CONT;
+  }
   
   const Vector<Int> &ifrs( chunk.ifrNums() );
   const Vector<Int> &feeds( chunk.feedNums() );
   const Vector<casa::RigidVector<casa::Double, 3> >&uvw( chunk.visBuf().uvw() );
- // Vector<Vector<Double> > &uvw=NULL;//( chunk.visIter.uvw(uvw) );
+  // Vector<Vector<Double> > &uvw=NULL;//( chunk.visIter.uvw(uvw) );
   //chunk.visIter().uvw(uvw);
   Double uvdist=0.0;
 
   if( ifrs.nelements() != feeds.nelements() || 
       ifrs.nelements() != uvw.nelements() ) 
           cout << "RFASelector::iterTime ->  nelements mismatch " << endl;
-  
 
 // do we flag the whole selection?  
-  Bool flagall = flag_everything;
-
-  //cout << "flagall, shadow = " << flagall << ", " << shadow << endl;
+  bool flagall = flag_everything;
 
   if (!flagall) {
+
+      if (elevation) {
+          const Vector<MDirection> &azimuth_elevation = chunk.visIter().azel(t0);
+
+	  for (uInt i = 0; i < ifrs.nelements(); i++) {
+	      
+	      unsigned a1, a2;
+	      chunk.ifrToAnt(a1, a2, chunk.ifrNum(i));
+
+	      Bool inrange = False;
+	      uvdist = sqrt( uvw(i)(0)*uvw(i)(0) + uvw(i)(1)*uvw(i)(1) );
+	      for (uInt j = 0; j < sel_uvrange.ncolumn(); j++)
+		  if (uvdist >= sel_uvrange(0, j) && uvdist <= sel_uvrange(1, j))
+		      inrange |= True;
+	      
+	      if( (!sel_ifr.nelements() || sel_ifr(ifrs(i))) && 
+		  (!sel_feed.nelements() || sel_feed(feeds(i))) &&
+		  (!sel_uvrange.nelements() || inrange ) ) {
+		  
+                  //                  double antenna_elevation = azimuth_elevation[i].getAngle("deg").getValue()[1];
+                  double antenna1_elevation = azimuth_elevation[a1].getAngle("deg").getValue()[1];
+                  double antenna2_elevation = azimuth_elevation[a2].getAngle("deg").getValue()[1];
+
+                  if ( antenna1_elevation < lowerlimit ||
+                       antenna2_elevation < lowerlimit ||
+                       antenna1_elevation > upperlimit ||
+                       antenna2_elevation > upperlimit ) {
+                      processRow(ifrs(i), it);
+                  }
+	      }
+	  }
+
+      }
+
       if (shadow) {
 	  
 	  /*
@@ -1156,29 +1275,99 @@ RFA::IterMode RFASelector::iterTime (uInt it)
         }
 	  
       }
-      // flag if within specific timeslots
-      if (sel_time.ncolumn())
-	  if( anyEQ(sel_timerng.row(0)<=t0 && sel_timerng.row(1)>=t0,True) )
-	      flagall = True;
+
       // flag for specific row-based clipping expressions
-      if (sel_clip_row.nelements())
-	  {
-	      // setup each row mapper
-	      for( uInt i=0; i<sel_clip_row.nelements(); i++ ) 
-		  sel_clip_row[i].mapper->setVisBuffer(chunk.visBuf());
-	      for( uInt i=0; i<ifrs.nelements(); i++ ) // loop over rows
-		  for( uInt j=0; j<sel_clip_row.nelements(); j++ ) 
-		      {
-			  Float vmin = sel_clip_row[j].vmin, vmax = sel_clip_row[j].vmax;
-			  Float val = sel_clip_row[j].mapper->mapValue(i) - sel_clip_row[j].offset;
-			  if( (sel_clip_row[j].clip  && ( val<vmin || val>vmax ) ) ||
-			      (!sel_clip_row[j].clip && val>=vmin && val<=vmax ) )
-			      processRow(ifrs(i),it);
-		      } 
-	  }
+      if (sel_clip_row.nelements()) {
+
+        for( uInt i=0; i < ifrs.nelements(); i++ ) {// loop over rows
+          for( uInt j=0; j < sel_clip_row.nelements(); j++ ) {
+
+              Float vmin = sel_clip_row[j].vmin;
+              Float vmax = sel_clip_row[j].vmax;
+              Float val  = sel_clip_row[j].mapper->mapValue(i) - sel_clip_row[j].offset;
+              if( (sel_clip_row[j].clip  && ( val<vmin || val>vmax ) ) ||
+                  (!sel_clip_row[j].clip && val>=vmin && val<=vmax ) )
+                processRow(ifrs(i),it);
+          }
+        }
+      }
+
+      bool clip_based_on_tsys = false;
+      if (clip_based_on_tsys) {
+          /*
+            for each row:
+            
+            find antenna1 and antenna2
+            lookup temperature for 
+            (antenna1,spwid,time) and
+            (antenna2,spwid,time) in the SYSCAL subtable
+            
+          */
+          cout << "Get sysCal table" << endl;
+          // note, this is an optional subtable
+
+          const MSSysCal syscal(chunk.measSet().sysCal());
+
+          ROScalarColumn<uInt> sc_antenna_id(syscal, "ANTENNA_ID");
+          ROScalarColumn<uInt> sc_spwid     (syscal, "SPECTRAL_WINDOW_ID");
+          ROScalarColumn<Double> sc_time   (syscal, "TIME");
+          ROArrayColumn<Float> sc_tsys     (syscal, "TSYS");
+                    
+          unsigned spwid = chunk.visBuf().spectralWindow();
+          
+          for (uInt i = 0; i < ifrs.nelements(); i++) {
+          
+              unsigned a1, a2;
+              chunk.ifrToAnt(a1, a2, chunk.ifrNum(i));
+              
+              //for each SYSCAL table row
+              // if antenna1 matches or antenna2 matches and
+              //    spwid matches and time matches
+              //     if (tsys out of allowed range)
+              //             flag
+
+              unsigned nrows_syscal = sc_antenna_id.getColumn().nelements();
+              cout << nrows_syscal << " rows in SYSCAL table" << endl;
+              for (unsigned row = 0; row < nrows_syscal; row++) {
+                  cout << "a1, a2 = " << a1 << ", " << a2 << " ?= " << sc_antenna_id(row) << endl;
+                  cout << "time   = " << t0 << " ?= " << sc_time(row) << endl;
+                  cout << "spwid  = " << spwid << " ?= " << sc_spwid(row) << endl;
+                  cout << "tsys   = " << sc_tsys(row) << endl;
+
+                  if ((a1 == sc_antenna_id(row) || a2 == sc_antenna_id(row)) &&
+                      spwid == sc_spwid(row) &&
+                      t0-dt0/2 < sc_time(row) && sc_time(row) < t0+dt0/2) {
+                    cout << "                         MATCH!" << endl;
+                  }
+              }
+          }
+      }
+      // scan intent based flagging (check match per antenna/baseline) 
+      if(sel_stateid.nelements()) {
+          const Vector<Int> &stateids( chunk.visBuf().stateId() );
+          //for (uInt i = 0; i < ifrs.nelements(); i++) {
+          //    for (uInt j = 0; j < sel_stateid.nelements(); j++) {
+          //        if( sel_stateid(j) == stateid0 )
+          for (uInt i = 0; i < stateids.nelements(); i++) {
+
+	      Bool inrange=False;
+	      uvdist = sqrt( uvw(i)(0)*uvw(i)(0) + uvw(i)(1)*uvw(i)(1) );
+	      for( uInt j=0; j<sel_uvrange.ncolumn(); j++) 
+	           if( uvdist >= sel_uvrange(0,j) && uvdist <= sel_uvrange(1,j) ) inrange |= True;
+
+              for (uInt j = 0; j < sel_stateid.nelements(); j++) {
+                  if( stateids(i) == sel_stateid(j) && 
+                      ifrs.nelements()==stateids.nelements() &&
+                      (!sel_ifr.nelements()||sel_ifr(ifrs(i))) &&
+                      (!sel_feed.nelements() || sel_feed(feeds(i))) &&
+                      (!sel_uvrange.nelements() || inrange ) )
+                      processRow(ifrs(i),it);
+              }
+          }
+      }
   }
-  
-// flag whole selection, if still needed
+
+  // flag whole selection, if still needed
   if (flagall)
   {
     for (uInt i=0; i<ifrs.nelements(); i++) // loop over rows
@@ -1193,10 +1382,6 @@ RFA::IterMode RFASelector::iterTime (uInt it)
                 processRow(ifrs(i),it);
     }
   }
-// setup each correlation clip mapper
-  for (uInt i=0; i<sel_clip.nelements(); i++) 
-    if (sel_clip_active(i))
-      sel_clip[i].mapper->setVisBuffer(chunk.visBuf());
   
   return RFA::CONT;
 }
@@ -1207,23 +1392,104 @@ RFA::IterMode RFASelector::iterTime (uInt it)
 RFA::IterMode RFASelector::iterRow (uInt ir)
 {
   uInt ifr = chunk.ifrNum(ir);
+
   if( sel_clip.nelements() && sum_sel_clip_active )
   {
-// apply data flags
-    for( uInt ich=0; ich<num(CHAN); ich++ )
-      if( !flagchan.nelements() || flagchan(ich) )
-      {
-        for( uInt j=0; j<sel_clip.nelements(); j++ ) 
-        {
-          Float vmin = sel_clip[j].vmin, vmax = sel_clip[j].vmax;
-          Float val = sel_clip[j].mapper->mapValue(ich,ir);
-          if( ( sel_clip[j].clip && ( val<vmin || val>vmax ) ) ||
-              (!sel_clip[j].clip && val>=vmin && val<=vmax   ) )
-            unflag ? flag.clearFlag(ich,ifr) : flag.setFlag(ich,ifr);
-        }
+      // apply data flags
+      for( uInt j=0; j<sel_clip.nelements(); j++ ) {
+      
+          if (sel_clip[j].channel_average) {
+              // Compute average
+              Float average = 0;
+              unsigned n_unflagged = 0;
+
+              for (uInt ich=0; ich < num(CHAN); ich++ ) {
+                
+                  // if active channel, and not flagged...
+                  if ((!flagchan.nelements() || flagchan(ich))
+                      &&
+                      !flag.preFlagged(ich, ifr)) {
+                    
+                    
+                      average += sel_clip[j].mapper->mapValue(ich, ir);
+                      n_unflagged += 1;
+                  }
+              }
+          
+
+              // Decide whether to flag row (or active channels), based on average
+              //cout << "number of unflagged channels = " << n_unflagged << endl;
+              if (n_unflagged > 0) {
+                  average = average / n_unflagged;
+                
+                  //cout << " average = " << average << endl;
+                  
+                  Float vmin = sel_clip[j].vmin;
+                  Float vmax = sel_clip[j].vmax;
+                  Float val = average;
+
+                  if( ( sel_clip[j].clip && ( val <  vmin || val > vmax ) ) ||
+                      (!sel_clip[j].clip &&   vmin <= val && val <= vmax   ) )
+
+                      /* No channel selections, flag all channels.
+                         
+                      jmlarsen: Unfortunately, clearRowFlag and setRowFlag
+                      don't seem to work, therefore don't do like this.
+                      (This could probably be brought to work by
+                      fixing RFFlagCube::setMSFlags() to use the flagrow.)
+                      
+                      cout << " flag entire row " << endl;
+                      unflag ? 
+                      flag.clearRowFlag(ifr, it) :
+                      flag.setRowFlag(ifr, it);
+                      */
+                      
+                      for (uInt ich = 0; ich < num(CHAN); ich++) {
+                        if (!flagchan.nelements() || flagchan(ich)) {
+                            unflag ?
+                              flag.clearFlag(ich, ifr) :
+                              flag.setFlag(ich, ifr);
+                        }
+                    }
+              }
+              else {
+              /* If all channels were already flagged, don't flag/unflag anything. */
+              }
+          }
+          else {
+            /* No averaging */
+            for( uInt ich=0; ich<num(CHAN); ich++ ) {
+              if( !flagchan.nelements() || flagchan(ich) ) {
+                Float vmin = sel_clip[j].vmin;
+                Float vmax = sel_clip[j].vmax;
+                Float val  = sel_clip[j].mapper->mapValue(ich,ir);
+
+                if( ( sel_clip[j].clip && ( val<vmin || val>vmax ) ) ||
+                    (!sel_clip[j].clip && val>=vmin && val<=vmax   ) )
+                  unflag ? flag.clearFlag(ich,ifr) : flag.setFlag(ich,ifr);
+              }
+            }
+          }
       }
   }
+
   return RFA::CONT;
+}
+
+/* Flush flags after each time stamp, if in kiss mode */
+void RFASelector::endRows(uInt it)
+{
+    if (only_selector) {
+        flag.advance(it);
+        flag.setMSFlags(it);
+    }
+}
+    
+void RFASelector::iterFlag(uInt it)
+{
+    if (!only_selector) {
+        RFAFlagCubeBase::iterFlag(it);
+    }
 }
 
 String RFASelector::getDesc ()
@@ -1253,15 +1519,20 @@ const RecordInterface & RFASelector::getDefaults ()
     rec.define(RF_TIMEDELTA,10.0);
     rec.define(RF_QUACK,False);
     rec.define(RF_CLIP,False);
+    rec.define(RF_CHANAVG, False);
     rec.define(RF_FLAGRANGE,False);
     rec.define(RF_UNFLAG,False);
     rec.define(RF_SHADOW,False);
+    rec.define(RF_ELEVATION, False);
     rec.define(RF_SCAN,False);
+    rec.define(RF_INTENT,False);
     rec.define(RF_ARRAY,False);
     rec.define(RF_FEED,False);
     rec.define(RF_UVRANGE,False);
     rec.define(RF_COLUMN,False);
     rec.define(RF_DIAMETER, False);
+    rec.define(RF_LOWERLIMIT, False);
+    rec.define(RF_UPPERLIMIT, False);
     
     rec.setComment(RF_SPWID,"Restrict flagging to specific spectral windows (integers)");
     rec.setComment(RF_FIELD,"Restrict flagging to specific field IDs or field names (integers/strings)");
@@ -1276,15 +1547,20 @@ const RecordInterface & RFASelector::getDefaults ()
     rec.setComment(RF_TIMEDELTA,String("Time delta for ")+RF_CENTERTIME+", in seconds");
     rec.setComment(RF_QUACK,"Use [SI,DT] for VLA quack-flagging");
     rec.setComment(RF_CLIP,"Flag outside a specific range of values");
+    rec.setComment(RF_CHANAVG, "Flag based on channel average");
     rec.setComment(RF_FLAGRANGE,"Flag inside a specific range of values");
     rec.setComment(RF_UNFLAG,"If T, specified flags are CLEARED");
     rec.setComment(RF_SHADOW, "If T, flag shadowed antennas");
+    rec.setComment(RF_ELEVATION, "If T, flag based on elevation");
     rec.setComment(RF_SCAN,"Restrict flagging to specific scans (integers)");
+    rec.setComment(RF_INTENT,"Restrict flagging to specific scan intent -corresponding state IDs (integers)");
     rec.setComment(RF_ARRAY,"Restrict flagging to specific array ids (integers)");
     rec.setComment(RF_FEED,"Restrict flagging to specific feeds (2,N array of integers)");
     rec.setComment(RF_UVRANGE,"Restrict flagging to specific uv-distance ranges in meters (2,N array of doubles )");
     rec.setComment(RF_COLUMN,"Data column to clip on.");
     rec.setComment(RF_DIAMETER, "Effective diameter to use. If negative, the true antenna diameters are used");
+    rec.setComment(RF_LOWERLIMIT, "Limiting elevation");
+    rec.setComment(RF_UPPERLIMIT, "Limiting elevation");
   }
   return rec;
 }
