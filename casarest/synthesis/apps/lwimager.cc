@@ -279,6 +279,22 @@ int main (Int argc, char** argv)
     inputs.create ("maskvalue", "-1.0",
 		   "Value to store in mask region; if given, mask is created; if mask not exists, defaults to 1.0",
 		   "float");
+    inputs.create ("cyclefactor", "1.5",
+                   "multi-field deconvolution parameter; see casapy's imager.setmfcontrol",
+                   "float");
+    inputs.create ("cyclespeedup", "-1",
+                   "multi-field deconvolution parameter; see casapy's imager.setmfcontrol",
+                   "float");
+    inputs.create ("cyclemaxpsffraction", "0.8",
+                   "multi-field deconvolution parameter; see casapy's imager.setmfcontrol",
+                   "float");
+    inputs.create ("stoplargenegatives", "2",
+                   "multi-field deconvolution parameter; see casapy's imager.setmfcontrol",
+                   "int");
+    inputs.create ("stoppointmode", "-1",
+                   "multi-field deconvolution parameter; see casapy's imager.setmfcontrol",
+                   "setmfcontrol parameter; see casapy",
+                   "int");
 
     // Fill the input structure from the command line.
     inputs.readArguments (argc, argv);
@@ -308,8 +324,8 @@ int main (Int argc, char** argv)
     String mode      = inputs.getString("mode");
     String operation = inputs.getString("operation");
     String weight    = inputs.getString("weight");
-    double noise     = inputs.getDouble("noise");
-    double robust    = inputs.getDouble("robust");
+    Double noise     = inputs.getDouble("noise");
+    Double robust    = inputs.getDouble("robust");
     String filter    = inputs.getString("filter");
     String stokes    = inputs.getString("stokes");
     String chanmode  = inputs.getString("chanmode");
@@ -331,6 +347,11 @@ int main (Int argc, char** argv)
     String maskName  = inputs.getString("mask");
     String mstrBlc   = inputs.getString("maskblc");
     String mstrTrc   = inputs.getString("masktrc");
+    Double cycleFactor   = inputs.getDouble ("cyclefactor");
+    Double cycleSpeedup  = inputs.getDouble ("cyclespeedup");
+    Double cycleMaxPsfFr = inputs.getDouble ("cyclemaxpsffraction");
+    Int    stopLargeNeg  = inputs.getInt    ("stoplargenegatives");
+    Int    stopPointMode = inputs.getInt    ("stoppointmode");
 
     // Check and interpret input values.
     Quantity qcellsize = readQuantity (cellsize);
@@ -417,6 +438,10 @@ int main (Int argc, char** argv)
     // The non-parameterized values used are the defaults in imager.g.
     MeasurementSet ms(msName, Table::Update);
     Imager imager(ms);
+    // Use channel mode if only one data channel per image-channel.
+    if (nchan.size() == 1  &&  nchan[0] == img_nchan) {
+      mode = "channel";
+    }
     imager.setdata (chanmode,                       // mode
 		    nchan,
 		    chanstart,
@@ -493,7 +518,6 @@ int main (Int argc, char** argv)
                         MPosition(),                  // mLocation
                         padding,                      // padding
                         wplanes);                     // wprojplanes
-
       // Do the imaging.
       if (operation == "image") {
         imager.makeimage (imageType, imgName);
@@ -536,6 +560,16 @@ int main (Int argc, char** argv)
                             maskValue);
           }
         }
+        imager.setmfcontrol (cycleFactor,
+                             cycleSpeedup,
+                             cycleMaxPsfFr,
+                             stopLargeNeg, 
+                             stopPointMode,
+                             "SAULT",                 // scaleType
+                             0.1,                     // minPB
+                             0.4,                     // constPB
+                             Vector<String>(),        // fluxscale
+                             True);                   // flatnoise
         if (operation == "entropy") {
           imager.mem(operation,                       // algorithm
                      niter,                           // niter
