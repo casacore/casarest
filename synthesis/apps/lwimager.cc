@@ -123,6 +123,30 @@ void readFilter (const String& filter,
   }
 }
 
+void readCleanBeam (const String& clean_beam,
+                 Quantity& c_bmaj, Quantity& c_bmin, Quantity& c_bpa)
+{
+  if (clean_beam.empty()) {
+    return;
+  }
+  Vector<String> strs = stringToVector(clean_beam);
+  if (strs.size() != 3) {
+    throw AipsError("Specify clean restoring beam bmajor,bminor,bpa");
+  }
+  if (! strs[0].empty()) {
+    c_bmaj = readQuantity (strs[0]);
+  }
+  if (! strs[1].empty()) {
+    c_bmin = readQuantity (strs[1]);
+  }
+  if (! strs[2].empty()) {
+    c_bpa = readQuantity (strs[2]);
+  }
+  c_bmaj.setUnit("arcsec");
+  c_bmin.setUnit("arcsec");
+  c_bpa.setUnit("deg");
+}
+
 void makeEmpty (Imager& imager, const String& imgName, Int fieldid)
 {
   CoordinateSystem coords;
@@ -170,6 +194,9 @@ int main (Int argc, char** argv)
 		   "string");
     inputs.create ("filter", "",
                    "Apply gaussian tapering filter; specify as major,minor,pa",
+                   "string");
+    inputs.create ("clean_beam", "",
+                   "Specify clean restoring beam; specify as major,minor,pa (units are arcsec, arcsec, deg)",
                    "string");
     inputs.create ("nscales", "5",
                    "Scales for MultiScale Clean",
@@ -327,6 +354,7 @@ int main (Int argc, char** argv)
     Double noise     = inputs.getDouble("noise");
     Double robust    = inputs.getDouble("robust");
     String filter    = inputs.getString("filter");
+    String clean_beam = inputs.getString("clean_beam");
     String stokes    = inputs.getString("stokes");
     String chanmode  = inputs.getString("chanmode");
     String cellsize  = inputs.getString("cellsize");
@@ -434,6 +462,10 @@ int main (Int argc, char** argv)
     Quantity bmajor, bminor, bpa;
     readFilter (filter, bmajor, bminor, bpa);
 
+    // Get restoring beam specification from clean_beam.
+    Quantity c_bmaj, c_bmin, c_bpa;
+    readCleanBeam (clean_beam, c_bmaj, c_bmin, c_bpa);
+
     // Set the various imager variables.
     // The non-parameterized values used are the defaults in imager.g.
     MeasurementSet ms(msName, Table::Update);
@@ -506,6 +538,9 @@ int main (Int argc, char** argv)
       }
       if (! filter.empty()) {
         imager.filter ("gaussian", bmajor, bminor, bpa);
+      }
+      if (! clean_beam.empty()) {
+        imager.setbeam (c_bmaj, c_bmin, c_bpa);
       }
       String ftmachine("ft");
       if (wplanes > 0) {
