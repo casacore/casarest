@@ -142,9 +142,9 @@ void readCleanBeam (const String& clean_beam,
   if (! strs[2].empty()) {
     c_bpa = readQuantity (strs[2]);
   }
-  c_bmaj.setUnit("arcsec");
-  c_bmin.setUnit("arcsec");
-  c_bpa.setUnit("deg");
+// c_bmaj.setUnit("arcsec");
+// c_bmin.setUnit("arcsec");
+// c_bpa.setUnit("deg");
 }
 
 void makeEmpty (Imager& imager, const String& imgName, Int fieldid)
@@ -196,7 +196,7 @@ int main (Int argc, char** argv)
                    "Apply gaussian tapering filter; specify as major,minor,pa",
                    "string");
     inputs.create ("clean_beam", "",
-                   "Specify clean restoring beam; specify as major,minor,pa (units are arcsec, arcsec, deg)",
+                   "Specify clean restoring beam; specify as major axis,minor axis,position angle with units",
                    "string");
     inputs.create ("nscales", "5",
                    "Scales for MultiScale Clean",
