@@ -1362,6 +1362,8 @@ Bool Imager::setdata(const String& mode, const Vector<Int>& nchan,
     
     if(uvdist != ""){
 	thisSelection.setUvDistExpr(uvdist);
+	os << LogIO::DEBUG1 << "Selecting on UV distance expression \""
+	   << uvdist << "\"" << LogIO::POST;
     }
     
     if(scan != ""){
