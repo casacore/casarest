@@ -175,16 +175,16 @@ int main (Int argc, char** argv)
     		   "Name of output image HDF5 file ('no' means no HDF5 file) empty is <imagename>.hdf5",
     		   "string");
     inputs.create ("prior", "",
-		   "Name of prior image file (default is <imagename>.prior",
+		   "Name of prior image file (default is <imagename>.prior)",
 		   "string");
     inputs.create ("model", "",
-		   "Name of model image file (default is <imagename>.model",
+		   "Name of model image file (default is <imagename>.model)",
 		   "string");
     inputs.create ("restored", "",
-		   "Name of restored image file (default is <imagename>.restored",
+		   "Name of restored image file (default is <imagename>.restored)",
 		   "string");
     inputs.create ("residual", "",
-		   "Name of residual image file (default is <imagename>.residual",
+		   "Name of residual image file (default is <imagename>.residual)",
 		   "string");
     inputs.create ("data", "DATA",
 		   "Name of DATA column to use",
@@ -198,11 +198,8 @@ int main (Int argc, char** argv)
     inputs.create ("clean_beam", "",
                    "Specify clean restoring beam; specify as major axis,minor axis,position angle with units",
                    "string");
-    inputs.create ("nscales", "5",
-                   "Scales for MultiScale Clean",
-                   "int");
     inputs.create ("weight", "briggs",
-		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), briggsabs, or radial",
+		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), briggsabs, or radial)",
 		   "string");
     inputs.create ("noise", "1.0",
 		   "Noise (in Jy) for briggsabs weighting"
@@ -300,6 +297,9 @@ int main (Int argc, char** argv)
     inputs.create ("masktrc", "image shape",
 		   "top-right corner of mask region",
 		   "int vector");
+    inputs.create ("nscales", "5",
+                   "Scales for MultiScale Clean",
+                   "int");
     inputs.create ("uservector", "0",
 		   "user-defined scales for MultiScale clean",
 		   "float vector");
