@@ -258,6 +258,9 @@ int main (Int argc, char** argv)
     inputs.create ("img_chanstep", "1",
 		   "frequency channel step in image",
 		   "int");
+    inputs.create ("uvrange", "",
+		   "UV range filter for input",
+		   "string");
     inputs.create ("select", "",
 		   "TaQL selection string for MS",
 		   "string");
@@ -371,6 +374,7 @@ int main (Int argc, char** argv)
     String restoName = inputs.getString("restored");
     String residName = inputs.getString("residual");
     String imageType = inputs.getString("data");
+    String uvrange   = inputs.getString("uvrange");
     String select    = inputs.getString("select");
     String maskName  = inputs.getString("mask");
     String mstrBlc   = inputs.getString("maskblc");
@@ -490,7 +494,7 @@ int main (Int argc, char** argv)
                     Vector<Int>(),                  // antIndex
                     String(),                       // antnames
                     String(),                       // spwstring
-                    String(),                       // uvdist
+                    uvrange,                        // uvdist
                     String(),                       // scan
                     True);                          // useModelCol
 
