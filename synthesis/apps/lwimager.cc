@@ -262,7 +262,7 @@ int main (Int argc, char** argv)
 		   "TaQL selection string for MS",
 		   "string");
     inputs.create ("operation", "image",
-		   "Operation (empty,image,clark,hogbom,csclean,multiscale,entropy)",
+		   "Operation (empty,image,psf,clark,hogbom,csclean,multiscale,entropy)",
 		   "string");
     inputs.create ("niter", "1000",
 		   "Number of clean iterations",
@@ -387,7 +387,9 @@ int main (Int argc, char** argv)
       throw AipsError("An MS name must be given like ms=test.ms");
     }
     imageType.downcase();
-    if (imageType == "data") {
+    if (operation == "psf") {
+      imageType = "psf";
+    } else if (imageType == "data") {
       imageType = "observed";
     } else if (imageType == "corrected_data") {
       imageType = "corrected";
@@ -445,12 +447,12 @@ int main (Int argc, char** argv)
       phaseCenter = readDirection (phasectr);
     }
     operation.downcase();
-    AlwaysAssertExit (operation=="empty" || operation=="image" || operation=="hogbom" || operation=="clark" || operation=="csclean" || operation=="multiscale" || operation =="entropy");
+    AlwaysAssertExit (operation=="empty" || operation=="image" || operation=="psf" || operation=="hogbom" || operation=="clark" || operation=="csclean" || operation=="multiscale" || operation =="entropy");
     IPosition maskBlc, maskTrc;
     Quantity threshold;
     Quantity sigma;
     Quantity targetFlux;
-    Bool doClean = (operation != "empty"  &&  operation != "image");
+    Bool doClean = (operation != "empty" && operation != "image" && operation != "psf");
     if (doClean) {
       maskBlc = readIPosition (mstrBlc);
       maskTrc = readIPosition (mstrTrc);
@@ -554,7 +556,7 @@ int main (Int argc, char** argv)
                         padding,                      // padding
                         wplanes);                     // wprojplanes
       // Do the imaging.
-      if (operation == "image") {
+      if (operation == "image" || operation == "psf") {
         imager.makeimage (imageType, imgName);
 
         // Convert result to fits if needed.
