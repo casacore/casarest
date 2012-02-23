@@ -137,7 +137,7 @@ int main (Int argc, char** argv)
   try {
     Input inputs(1);
     // define the input structure
-    inputs.version("20110628-GvD");
+    inputs.version("1.2.1-20120223-OMS");
     inputs.create ("ms", "",
 		   "Name of input MeasurementSet",
 		   "string");
@@ -384,10 +384,12 @@ int main (Int argc, char** argv)
     } else if (weight == "robustabs") {
       weight = "briggsabs";
     }
-    string rmode = "norm";
+    string rmode = "none";
     if (weight == "briggsabs") {
       weight = "briggs";
       rmode  = "abs";
+    } else if (weight == "briggs" ) {
+      rmode = "norm";
     }
     bool doShift = False;
     MDirection phaseCenter;
