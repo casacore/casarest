@@ -443,6 +443,8 @@ int main (Int argc, char** argv)
     if (weight == "briggsabs") {
       weight = "briggs";
       rmode  = "abs";
+    } else if (weight == "uniform") {
+      rmode = "none";
     }
     bool doShift = False;
     MDirection phaseCenter;
@@ -451,7 +453,10 @@ int main (Int argc, char** argv)
       phaseCenter = readDirection (phasectr);
     }
     operation.downcase();
-    AlwaysAssertExit (operation=="empty" || operation=="image" || operation=="psf" || operation=="hogbom" || operation=="clark" || operation=="csclean" || operation=="multiscale" || operation =="entropy");
+    AlwaysAssertExit (operation=="empty" || operation=="image" ||
+                      operation=="psf"   || operation=="hogbom" ||
+                      operation=="clark" || operation=="csclean" ||
+                      operation=="multiscale" || operation =="entropy");
     IPosition maskBlc, maskTrc;
     Quantity threshold;
     Quantity sigma;
