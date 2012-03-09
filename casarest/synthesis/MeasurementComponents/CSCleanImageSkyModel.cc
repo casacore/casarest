@@ -231,7 +231,7 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
     os << LogIO::POST;
 
     // Can we stop?
-    if(absmax<threshold()) {
+    if(absmax<threshold() || oldmax<absmax) {
       os << LogIO::NORMAL         // Loglevel INFO
          << "Reached stopping peak residual = " << absmax << LogIO::POST;
       stop=True;
