@@ -270,6 +270,7 @@ VisBuffer::setAllCacheStatuses (bool status)
     feed2_paOK_p = status;
     feed2OK_p = status;
     fieldIdOK_p = status;
+    flagCategoryOK_p = status;
     flagCubeOK_p = status;
     flagOK_p = status;
     flagRowOK_p = status;
