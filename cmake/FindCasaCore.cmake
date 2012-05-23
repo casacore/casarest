@@ -107,7 +107,7 @@ endmacro(casacore_resolve_dependencies _result)
 macro(casacore_find_library _name)
   string(TOUPPER ${_name} _NAME)
   find_library(${_NAME}_LIBRARY ${_name}
-    PATHS ${CASACORE_ROOT_DIR} PATH_SUFFIXES lib)
+    HINTS ${CASACORE_ROOT_DIR} PATH_SUFFIXES lib)
   mark_as_advanced(${_NAME}_LIBRARY)
   if(${_NAME}_LIBRARY)
     list(APPEND CASACORE_LIBRARIES ${${_NAME}_LIBRARY})
@@ -187,7 +187,7 @@ set(CASACORE_MISSING_COMPONENTS)
 # files in ${prefix}/include/casacore, instead of ${prefix}/include.
 if(NOT CASACORE_INCLUDE_DIR)
   find_path(CASACORE_INCLUDE_DIR casa/aips.h
-    PATHS ${CASACORE_ROOT_DIR} PATH_SUFFIXES include/casacore)
+    HINTS ${CASACORE_ROOT_DIR} PATH_SUFFIXES include/casacore)
   mark_as_advanced(CASACORE_INCLUDE_DIR)
 endif(NOT CASACORE_INCLUDE_DIR)
 
