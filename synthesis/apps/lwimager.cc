@@ -110,7 +110,7 @@ void readFilter (const String& filter,
   }
   Vector<String> strs = stringToVector(filter);
   if (strs.size() != 3) {
-    throw AipsError("Specify gaussian tapering filter as bmajor,bminor,bpa");
+    throw AipsError("Specify Gaussian taper as filter=bmajor,bminor,bpa");
   }
   if (! strs[0].empty()) {
     bmajor = readQuantity (strs[0]);
@@ -137,7 +137,7 @@ int main (Int argc, char** argv)
   try {
     Input inputs(1);
     // define the input structure
-    inputs.version("20110628-GvD");
+    inputs.version("1.2.0pl1-20120621-OMS");
     inputs.create ("ms", "",
 		   "Name of input MeasurementSet",
 		   "string");
@@ -169,7 +169,7 @@ int main (Int argc, char** argv)
 		   "Imaging mode (mfs, channel, or velocity)",
 		   "string");
     inputs.create ("filter", "",
-                   "Apply gaussian tapering filter; specify as major,minor,pa",
+                   "Apply Gaussian tapering filter; specify as major,minor,pa",
                    "string");
     inputs.create ("nscales", "5",
                    "Scales for MultiScale Clean",
@@ -178,11 +178,21 @@ int main (Int argc, char** argv)
 		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), briggsabs, or radial",
 		   "string");
     inputs.create ("noise", "1.0",
-		   "Noise (in Jy) for briggsabs weighting"
+		   "Noise (in Jy) for briggsabs weighting",
 		   "float");
     inputs.create ("robust", "0.0",
-		   "Robust parameter",
+		   "Robustness parameter for briggs or briggsabs weighting",
 		   "float");
+    inputs.create ("wfov", "0rad",
+       "Field-of-view parameter for uniform, briggs or briggsabs weighting.\n"
+       "    This determines the effective FoV for sidelobe suppression.\n"
+       "    Default is to use (wnpix or npix)*cellsize.",
+       "string");
+    inputs.create ("wnpix", "0",
+       "Npixels parameter for uniform, briggs or briggsabs weighting.\n"
+       "    This determines the effective FoV for sidelobe suppression.\n"
+       "    Default is to use the npix value.",
+       "int");
     inputs.create ("wprojplanes", "0",
 		   "if >0 specifies nr of convolution functions to use in W-projection",
 		   "int");
@@ -310,6 +320,8 @@ int main (Int argc, char** argv)
     String weight    = inputs.getString("weight");
     double noise     = inputs.getDouble("noise");
     double robust    = inputs.getDouble("robust");
+    String wfov      = inputs.getString("wfov");
+    Int    wnpix     = inputs.getInt("wnpix");
     String filter    = inputs.getString("filter");
     String stokes    = inputs.getString("stokes");
     String chanmode  = inputs.getString("chanmode");
@@ -384,10 +396,12 @@ int main (Int argc, char** argv)
     } else if (weight == "robustabs") {
       weight = "briggsabs";
     }
-    string rmode = "norm";
+    string rmode = "none";
     if (weight == "briggsabs") {
       weight = "briggs";
       rmode  = "abs";
+    } else if (weight == "briggs" ) {
+      rmode = "norm";
     }
     bool doShift = False;
     MDirection phaseCenter;
@@ -465,8 +479,8 @@ int main (Int argc, char** argv)
                        rmode,                       // rmode
                        Quantity(noise, "Jy"),       // briggsabs noise
                        robust,                      // robust
-                       Quantity(0, "rad"),          // fieldofview
-                       0);                          // npixels
+                       readQuantity(wfov),          // fieldofview
+                       wnpix);                      // npixels
       }
 
       // If multiscale, set its parameters.
