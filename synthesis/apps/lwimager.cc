@@ -161,7 +161,7 @@ int main (Int argc, char** argv)
   try {
     Input inputs(1);
     // define the input structure
-    inputs.version("20110628-GvD");
+    inputs.version("20130816-OMS");
     inputs.create ("ms", "",
 		   "Name of input MeasurementSet",
 		   "string");
@@ -201,6 +201,9 @@ int main (Int argc, char** argv)
     inputs.create ("weight", "briggs",
 		   "Weighting scheme (uniform, superuniform, natural, briggs (robust), briggsabs, or radial)",
 		   "string");
+    inputs.create ("weight_fov", "",
+		   "Field of view size for uniform/briggs weighting, if different from image size",
+		   "quantity string");
     inputs.create ("noise", "1.0",
 		   "Noise (in Jy) for briggsabs weighting"
 		   "float");
@@ -354,6 +357,7 @@ int main (Int argc, char** argv)
     String mode      = inputs.getString("mode");
     String operation = inputs.getString("operation");
     String weight    = inputs.getString("weight");
+    String fov       = inputs.getString("weight_fov");
     Double noise     = inputs.getDouble("noise");
     Double robust    = inputs.getDouble("robust");
     String filter    = inputs.getString("filter");
@@ -531,7 +535,7 @@ int main (Int argc, char** argv)
                        rmode,                       // rmode
                        Quantity(noise, "Jy"),       // briggsabs noise
                        robust,                      // robust
-                       Quantity(0, "rad"),          // fieldofview
+                       fov.length() ? readQuantity(fov) : Quantity(0, "rad"),          // fieldofview
                        0);                          // npixels
       }
 
