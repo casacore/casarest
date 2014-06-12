@@ -3107,7 +3107,8 @@ void GlinXphJones::solveOneVB(const VisBuffer& vb) {
 
   // Find number of timestamps in the VB
   Vector<uInt> ord;
-  Int nTime=genSort(ord,vb.time(),Sort::NoDuplicates);
+  Int nTime=genSort(ord,vb.time(), Sort::Ascending,
+                    Sort::NoDuplicates);
 
   Vector<Double> x(nTime,0.0),y(nTime,0.0),wt(nTime,0.0),sig(nTime,0.0);
   Vector<Bool> mask(nTime,False);

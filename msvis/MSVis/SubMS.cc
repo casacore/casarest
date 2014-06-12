@@ -8059,7 +8059,8 @@ Bool SubMS::doTimeAver(const Vector<MS::PredefinedColumns>& dataColNames)
        << "Using VisibilityIterator to average both FLOAT_DATA and another DATA column is extremely experimental."
        << LogIO::POST;
 
-  ArrayColumn<Complex> outCmplxCols[nCmplx];
+  vector<ArrayColumn<Complex> > outCmplxColsVec(nCmplx);
+  ArrayColumn<Complex>* outCmplxCols = &(outCmplxColsVec[0]);
   getDataColMap(outCmplxCols, nCmplx, cmplxColLabels);
 
   // We may need to watch for chunks (timebins) that should be split because of
@@ -8294,7 +8295,8 @@ Bool SubMS::doTimeAverVisIterator(const Vector<MS::PredefinedColumns>& dataColNa
        << "Using VisIterator to average both FLOAT_DATA and another DATA column is extremely experimental."
        << LogIO::POST;
 
-  ArrayColumn<Complex> outCmplxCols[nCmplx];
+  vector<ArrayColumn<Complex> > outCmplxColsVec(nCmplx);
+  ArrayColumn<Complex>* outCmplxCols = &(outCmplxColsVec[0]);
   getDataColMap(outCmplxCols, nCmplx, cmplxColLabels);
 
   // We may need to watch for chunks (timebins) that should be split because of

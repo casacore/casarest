@@ -5,10 +5,12 @@ set(synthesis_LIB_SRCS
  DataSampling/SDDataSampling.cc
  DataSampling/SynDataSampling.cc
  IDL/IDL.cc
- MeasurementComponents/ALMAAperture.cc
- MeasurementComponents/ALMABeamCalc.cc
- MeasurementComponents/ALMABeamCalcParams.cc
- MeasurementComponents/ALMACalcIlluminationConvFunc.cc
+ Images/ImageFFT.cc
+ Images/ImagePolarimetry.cc
+# MeasurementComponents/ALMAAperture.cc
+# MeasurementComponents/ALMABeamCalc.cc
+# MeasurementComponents/ALMABeamCalcParams.cc
+# MeasurementComponents/ALMACalcIlluminationConvFunc.cc
  MeasurementComponents/AMueller.cc
  MeasurementComponents/AWConvFunc.cc
  MeasurementComponents/AWProjectFT.cc
@@ -133,7 +135,7 @@ set(synthesis_LIB_SRCS
  MeasurementEquations/MultiTermMatrixCleaner.cc
  MeasurementEquations/PSkyEquation.cc
  MeasurementEquations/Qimager.cc
- MeasurementEquations/Simulator.cc
+# MeasurementEquations/Simulator.cc
  MeasurementEquations/SkyEquation.cc
  MeasurementEquations/StokesImageUtil.cc
  MeasurementEquations/StokesUtil2.cc

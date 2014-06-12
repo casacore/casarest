@@ -47,10 +47,10 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   public: 
     VisibilityResamplerBase(): 
       uvwScale_p(), offset_p(), chanMap_p(), polMap_p(), convFuncStore_p(), inc_p()
-    {};
+    {}
     VisibilityResamplerBase(const CFStore& cfs): 
       uvwScale_p(), offset_p(), chanMap_p(), polMap_p(), convFuncStore_p(), inc_p()
-    {setConvFunc(cfs);};
+    {}
 
     VisibilityResamplerBase(const VisibilityResamplerBase& other):
       uvwScale_p(), offset_p(), chanMap_p(), polMap_p(), convFuncStore_p(), inc_p()
@@ -138,11 +138,11 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     	       const Double& dphase, const Double& freq, 
     	       const Double* __restrict__  scale, 
 	       const Double* __restrict__  offset,
-    	       const Float* __restrict__  sampling);
+    	       const Float* __restrict__  sampling) __restrict__;
 
     inline Bool onGrid (const Int& nx, const Int& ny, 
-			const Vector<Int>& __restrict__ loc, 
-			const Vector<Int>& __restrict__ support) __restrict__ 
+			const Vector<Int>& loc, 
+			const Vector<Int>& support) __restrict__ 
     {
       return (((loc(0)-support[0]) >= 0 ) && ((loc(0)+support[0]) < nx) &&
 	      ((loc(1)-support[1]) >= 0 ) && ((loc(1)+support[1]) < ny));
@@ -182,16 +182,16 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     inline void cacheAxisIncrements(const Vector<Int>& n, Vector<Int>& inc)
     {inc.resize(4);inc[0]=1, inc[1]=inc[0]*n[0], inc[2]=inc[1]*n[1], inc[3]=inc[2]*n[2];(void)n[3];}
 
+
     // Version that use internally cached inc_p
     //    template <class T>
     inline void addTo4DArray(DComplex* __restrict__& store, Int* __restrict__& iPos, 
-			     Complex& nvalue, Double& wt) __restrict__ 
+			     Complex& nvalue, Double& wt) 
     {addTo4DArray(store, iPos, inc_p, nvalue, wt);}
 
     inline void addTo4DArray(Complex* __restrict__& store, Int* __restrict__& iPos, 
-			     Complex& nvalue, Double& wt) __restrict__ 
+			     Complex& nvalue, Double& wt) 
     {addTo4DArray(store, iPos, inc_p, nvalue, wt);}
-
     
     // Version where inc_p is supplied from outside
     inline void addTo4DArray(DComplex* __restrict__& store, Int* __restrict__& iPos, 
@@ -205,7 +205,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
     // The following two methods are called in the innermost loop.
     inline Complex getFrom4DArray(const Complex* __restrict__& store, const Int* __restrict__& iPos) 
-      __restrict__ 
     {return getFrom4DArray(store, iPos, inc_p);}
 
     inline Complex getFrom4DArray(const Complex* __restrict__& store, 

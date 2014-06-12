@@ -4699,7 +4699,8 @@ void SolvableVisJones::fluxscale(const Vector<Int>& refFieldIn,
       //      cout << "cs().fieldId(iSpw) = " << cs().fieldId(iSpw) << endl;
 
       Vector<Int> thisFldList; thisFldList=cs().fieldId(iSpw);
-      Int nThisFldList=genSort(thisFldList,(Sort::QuickSort | Sort::NoDuplicates));
+      Int nThisFldList=genSort(thisFldList,Sort::Ascending,
+                               (Sort::QuickSort | Sort::NoDuplicates));
       thisFldList.resize(nThisFldList,True);
       fldList.resize(currlen+nThisFldList,True);
       for (Int ifld=0;ifld<nThisFldList;ifld++) {
@@ -4707,7 +4708,8 @@ void SolvableVisJones::fluxscale(const Vector<Int>& refFieldIn,
       }
     }
   }
-  Int nFldList=genSort(fldList,(Sort::QuickSort | Sort::NoDuplicates));
+  Int nFldList=genSort(fldList, Sort::Ascending,
+                       (Sort::QuickSort | Sort::NoDuplicates));
   fldList.resize(nFldList,True);
 
   //  cout << "fldList = " << fldList << endl;
@@ -4728,8 +4730,10 @@ void SolvableVisJones::fluxscale(const Vector<Int>& refFieldIn,
     Vector<Int> refField; refField = refFieldIn;
     Vector<Int> tranField; tranField = tranFieldIn;
     Int nRef,nTran;
-    nRef=genSort(refField,(Sort::QuickSort | Sort::NoDuplicates));
-    nTran=genSort(tranField,(Sort::QuickSort | Sort::NoDuplicates));
+    nRef=genSort(refField, Sort::Ascending,
+                 (Sort::QuickSort | Sort::NoDuplicates));
+    nTran=genSort(tranField, Sort::Ascending,
+                  (Sort::QuickSort | Sort::NoDuplicates));
 
     // make masks for ref/tran among available fields
     Vector<Bool> tranmask(nFldList,True);

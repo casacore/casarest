@@ -49,23 +49,6 @@ namespace casa{
   //   return *this;
   // }
   //
-  //-----------------------------------------------------------------------------------
-  // Re-sample the griddedData on the VisBuffer (a.k.a gridding)
-  //
-  // Template instantiations for re-sampling onto a double precision
-  // or single precision grid.
-  //
-  template
-  void VisibilityResampler::DataToGridImpl_p(Array<DComplex>& grid, VBStore& vbs, 
-					     const Bool& dopsf,  Matrix<Double>& sumwt) __restrict__;
-  template
-  void VisibilityResampler::DataToGridImpl_p(Array<Complex>& grid, VBStore& vbs, 
-  					     const Bool& dopsf,  Matrix<Double>& sumwt) __restrict__;
-
-  // template void VisibilityResampler::addTo4DArray(DComplex* store,const Int* iPos, Complex& val, Double& wt) __restrict__;
-  // template void VisibilityResampler::addTo4DArray(Complex* store,const Int* iPos, Complex& val, Double& wt) __restrict__;
-  //
-  //-----------------------------------------------------------------------------------
   // Template implementation for DataToGrid
   //
   template <class T>
@@ -98,7 +81,7 @@ namespace casa{
     support(1) = convFuncStore_p.ySupport[0];
 
     Bool Dummy, gDummy;
-    T __restrict__ *gridStore = grid.getStorage(gDummy);
+    T * __restrict__ gridStore = grid.getStorage(gDummy);
     Int * __restrict__ iPosPtr = igrdpos.getStorage(Dummy);
     const Int * __restrict__ iPosPtrConst = iPosPtr;
     Double *__restrict__ convFunc=(*(convFuncStore_p.rdata)).getStorage(Dummy);

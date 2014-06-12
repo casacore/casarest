@@ -68,7 +68,7 @@
 #include <casa/Arrays/Slice.h>
 //#include <images/Images/ImageAnalysis.h>
 #include <images/Images/ImageExpr.h>
-#include <images/Images/ImagePolarimetry.h>
+#include <synthesis/Images/ImagePolarimetry.h>
 #include <synthesis/MeasurementEquations/ClarkCleanProgress.h>
 #include <lattices/Lattices/LatticeCleanProgress.h>
 #include <msvis/MSVis/VisSet.h>
@@ -151,7 +151,7 @@
 #include <images/Images/PagedImage.h>
 #include <images/Images/ImageInfo.h>
 #include <images/Images/SubImage.h>
-#include <images/Images/ImageMetaData.h>
+///#include <images/Images/ImageMetaData.h>
 #include <images/Images/ImageUtilities.h>
 #include <coordinates/Coordinates/CoordinateSystem.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>
@@ -202,8 +202,6 @@ Imager::Imager()
      sm_p(0), vp_p(0), gvp_p(0), setimaged_p(False), nullSelect_p(False), 
      viewer_p(0), clean_panel_p(0), image_id_p(0), mask_id_p(0), prev_image_id_p(0), prev_mask_id_p(0)
 {
-  ms_p=0;
-  mssel_p=0;
   lockCounter_p=0;
   defaults();
 };
@@ -317,8 +315,6 @@ Imager::Imager(MeasurementSet& theMS,  Bool compress, Bool useModel)
     viewer_p(0), clean_panel_p(0), image_id_p(0), mask_id_p(0), prev_image_id_p(0), prev_mask_id_p(0)
 {
 
-  mssel_p=0;
-  ms_p=0;
   lockCounter_p=0;
   LogIO os(LogOrigin("Imager", "Imager(MeasurementSet &theMS)", WHERE));
   defaults();
@@ -330,7 +326,7 @@ Imager::Imager(MeasurementSet& theMS,  Bool compress, Bool useModel)
 
 
 Imager::Imager(const Imager & other)
-  : ms_p(0), msname_p(""), mssel_p(0), vs_p(0), rvi_p(0), wvi_p(0), 
+  : msname_p(""), vs_p(0), rvi_p(0), wvi_p(0), 
     ft_p(0), cft_p(0), se_p(0),
     sm_p(0), vp_p(0), gvp_p(0), setimaged_p(False), 
     nullSelect_p(False), viewer_p(0),
@@ -410,11 +406,10 @@ Imager::~Imager()
     //if (mssel_p) {
     //  delete mssel_p;
     // }
-    mssel_p = 0;
     //if (ms_p) {
     //  delete ms_p;
     //}
-    ms_p = 0;
+
     if (vs_p) {
       delete vs_p;
     }
@@ -2190,9 +2185,9 @@ Bool Imager::feather(const String& image, const String& highRes,
       
       Vector<Quantum<Double> > hBeam, lBeam;
       ImageInfo highInfo=high.imageInfo();
-      hBeam=highInfo.restoringBeam();
+      ///hBeam=highInfo.restoringBeam();
       ImageInfo lowInfo=low0.imageInfo();
-      lBeam=lowInfo.restoringBeam();
+      ///lBeam=lowInfo.restoringBeam();
       if((hBeam.nelements()<3)||!((hBeam(0).get("arcsec").getValue()>0.0)
 				  &&(hBeam(1).get("arcsec").getValue()>0.0))) {
 	os << LogIO::WARN 
@@ -6315,7 +6310,7 @@ Bool Imager::makemodelfromsd(const String& sdImage, const String& modelImage,
 
     Vector<Quantum<Double> > lBeam;
     ImageInfo lowInfo=low0.imageInfo();
-    lBeam=lowInfo.restoringBeam();
+    ///lBeam=lowInfo.restoringBeam();      // not in nrao-nov12 anymore
   
     Float beamFactor=-1.0;
 

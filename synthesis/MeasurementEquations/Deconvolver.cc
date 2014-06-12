@@ -116,7 +116,7 @@
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 Deconvolver::Deconvolver() 
-  : dirty_p(0), psf_p(0), convolver_p(0), cleaner_p(0)
+  : dirty_p(0), psf_p(0), convolver_p(0)
 {
 
   defaults();
@@ -140,7 +140,7 @@ void Deconvolver::defaults()
 }
 
 Deconvolver::Deconvolver(const String& dirty, const String& psf)
-  : dirty_p(0), psf_p(0), convolver_p(0), cleaner_p(0)
+  : dirty_p(0), psf_p(0), convolver_p(0)
 {
   LogIO os(LogOrigin("Deconvolver", "Deconvolver(String& dirty, Strong& psf)", WHERE));
   defaults();
@@ -148,7 +148,7 @@ Deconvolver::Deconvolver(const String& dirty, const String& psf)
 }
 
 Deconvolver::Deconvolver(const Deconvolver &other)
-  : dirty_p(0), psf_p(0), convolver_p(0), cleaner_p(0)
+  : dirty_p(0), psf_p(0), convolver_p(0)
 {
   defaults();
   open(other.dirty_p->table().tableName(), other.psf_p->table().tableName());

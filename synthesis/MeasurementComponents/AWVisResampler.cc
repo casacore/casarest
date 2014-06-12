@@ -35,23 +35,6 @@
 //#include <casa/BasicMath/Functors.h>
 namespace casa{
   //
-  //-----------------------------------------------------------------------------------
-  // Re-sample the griddedData on the VisBuffer (a.k.a gridding)
-  //
-  // Template instantiations for re-sampling onto a double precision
-  // or single precision grid.
-  //
-  template
-  void AWVisResampler::DataToGridImpl_p(Array<DComplex>& grid, VBStore& vbs, 
-					Matrix<Double>& sumwt,const Bool& dopsf,
-					CFStore& cfs) __restrict__;
-  template
-  void AWVisResampler::DataToGridImpl_p(Array<Complex>& grid, VBStore& vbs, 
-					Matrix<Double>& sumwt,const Bool& dopsf,
-					CFStore& cfs) __restrict__;
-
-  //
-  //-----------------------------------------------------------------------------------
   //
   // AWVisResampler& AWVisResampler::operator=(const AWVisResampler& other)
   // {
@@ -72,7 +55,7 @@ namespace casa{
   template <class T>
   void AWVisResampler::DataToGridImpl_p(Array<T>& grid,  VBStore& vbs, 
 					Matrix<Double>& sumwt,const Bool& dopsf,
-					CFStore& cfs)
+					const CFStore& cfs)
   {
     Int nDataChan, nDataPol, nGridPol, nGridChan, nx, ny, nw;
     Int achan, apol, rbeg, rend, PolnPlane, ConjPlane;

@@ -1,7 +1,7 @@
 set(msvis_LIB_SRCS
   MSVis/AsynchronousTools.cc
   MSVis/CalVisBuffer.cc
-  MSVis/MSAnalysis.cc
+#  MSVis/MSAnalysis.cc
   MSVis/MsAverager.cc
   MSVis/MSCalEnums.cc
   MSVis/MSContinuumSubtractor.cc

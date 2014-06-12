@@ -35,6 +35,7 @@
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #include <coordinates/Coordinates/SpectralCoordinate.h>
 #include <coordinates/Coordinates/StokesCoordinate.h>
+#include <casa/Quanta/MVAngle.h>
 
 namespace casa{
 

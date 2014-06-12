@@ -245,8 +245,7 @@ void VisBufferUtil::convertFrequency(Vector<Double>& outFreq,
 				  MFrequency::Ref(newMFreqType, mframe_));
 
    // The velocity conversion engine:
-   MDoppler::Convert dopConv(MDoppler::Ref(MDoppler::RELATIVISTIC),
-   			     MDoppler::Ref(veldef));
+   MDoppler::Convert dopConv(MDoppler::RELATIVISTIC, veldef);
 
    // Cope with unspecified rest freq
    MVFrequency rf=restFreq;

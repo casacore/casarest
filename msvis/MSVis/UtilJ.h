@@ -36,7 +36,7 @@
 #if defined (NDEBUG)
 #    define Throw(m) \
     { AipsError anAipsError ((m), __FILE__, __LINE__);\
-      toStdErr (anAipsError.what());\
+      toStdError (anAipsError.what());\
       throw anAipsError; }
 #else
 #    define Throw(m) throw AipsError ((m), __FILE__, __LINE__)
