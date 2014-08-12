@@ -5,7 +5,7 @@
 #   find_package(Casacore [REQUIRED] [COMPONENTS components...])
 # Valid components are:
 #   casa, scimath_f, scimath, tables, measures, lattices,
-#   fits, ms, coordinates, msfits, components, mirlib, images
+#   fits, ms, coordinates, msfits, mirlib, images
 #
 # Note that most components are dependent on other (more basic) components.
 # In that case, it suffices to specify the "top-level" components; dependent
@@ -21,8 +21,7 @@
 #   ms           ->  measures
 #   coordinates  ->  fits
 #   msfits       ->  fits, ms
-#   components   ->  coordinates
-#   images       ->  components, mirlib, lattices
+#   images       -> mirlib, lattices
 #
 # Variables used by this module:
 #  CASACORE_ROOT_DIR         - Casacore root directory. 
@@ -150,7 +149,6 @@ endmacro(casacore_find_package _name)
 # Define the Casacore components.
 set(Casacore_components
   casa
-  components
   coordinates
   fits
   images
@@ -165,10 +163,9 @@ set(Casacore_components
 )
 
 # Define the Casacore components' inter-dependencies.
-set(Casacore_components_DEPENDENCIES  coordinates)
 set(Casacore_coordinates_DEPENDENCIES fits)
 set(Casacore_fits_DEPENDENCIES        measures)
-set(Casacore_images_DEPENDENCIES      components lattices mirlib)
+set(Casacore_images_DEPENDENCIES      lattices mirlib)
 set(Casacore_lattices_DEPENDENCIES    scimath tables)
 set(Casacore_measures_DEPENDENCIES    scimath tables)
 set(Casacore_ms_DEPENDENCIES          measures)

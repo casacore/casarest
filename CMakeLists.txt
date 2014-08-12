@@ -76,6 +76,7 @@ set(OTHER_LIBRARIES ${CASACORE_LIBRARIES}
     ${Boost_LIBRARIES}
 )
 
+add_subdirectory(components)
 add_subdirectory(msvis)
 add_subdirectory(calibration)
 add_subdirectory(synthesis)

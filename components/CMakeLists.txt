@@ -1,0 +1,114 @@
+#
+# CASA Components
+#
+
+add_library (casa_components
+SpectralComponents/CompiledSpectralElement.cc
+SpectralComponents/GaussianMultipletSpectralElement.cc
+SpectralComponents/GaussianSpectralElement.cc
+SpectralComponents/LogTransformedPolynomialSpectralElement.cc
+SpectralComponents/LorentzianSpectralElement.cc
+SpectralComponents/PCFSpectralElement.cc
+SpectralComponents/PolynomialSpectralElement.cc
+SpectralComponents/PowerLogPolynomialSpectralElement.cc
+SpectralComponents/SpectralFit.cc
+SpectralComponents/SpectralEstimate.cc
+SpectralComponents/SpectralList.cc
+SpectralComponents/SpectralElement.cc
+SpectralComponents/SpectralElement2.cc
+SpectralComponents/SpectralElementFactory.cc
+ComponentModels/GaussianShape.cc
+ComponentModels/Angular2DGaussian.cc
+ComponentModels/TwoSidedShape.cc
+ComponentModels/SpectralModel.cc
+ComponentModels/SpectralIndex.cc
+ComponentModels/ComponentType.cc
+ComponentModels/PointShape.cc
+ComponentModels/SkyCompRep.cc
+ComponentModels/DiskShape.cc
+ComponentModels/LimbDarkenedDiskShape.cc
+ComponentModels/SkyComponent.cc
+ComponentModels/ComponentShape.cc
+ComponentModels/FluxStandard.cc
+ComponentModels/FluxCalcLogFreqPolynomial.cc
+ComponentModels/FluxCalcQS.cc
+#ComponentModels/FluxStdsQS.cc
+ComponentModels/FluxStdsQS2.cc
+ComponentModels/FluxStdSrcs.cc
+ComponentModels/FluxCalcVQS.cc
+ComponentModels/FluxCalc_SS_JPL_Butler.cc
+ComponentModels/SkyCompBase.cc
+ComponentModels/ComponentList.cc
+ComponentModels/ConstantSpectrum.cc
+ComponentModels/TabularSpectrum.cc
+ComponentModels/ComponentType2.cc
+)
+
+install(TARGETS casa_components DESTINATION ${LIBRARY_INSTALL_DIR})
+target_link_libraries(casa_components ${OTHER_LIBRARIES} ${LIB_EXTRA_COMPONENTS})
+set(COMPONENTS_LIBRARIES casa_components ${OTHER_LIBRARIES} ${LIB_EXTRA_COMPONENTS})
+
+install (FILES
+ComponentModels/ConstantSpectrum.h
+ComponentModels/TabularSpectrum.h
+ComponentModels/ComponentList.h
+ComponentModels/ComponentShape.h
+ComponentModels/SkyComponent.h
+ComponentModels/GaussianShape.h
+ComponentModels/Angular2DGaussian.h
+ComponentModels/PointShape.h
+ComponentModels/DiskShape.h
+ComponentModels/LimbDarkenedDiskShape.h
+ComponentModels/ComponentType.h
+ComponentModels/SpectralIndex.h
+ComponentModels/SkyCompRep.h
+ComponentModels/SkyCompBase.h
+ComponentModels/TwoSidedShape.h
+ComponentModels/SpectralModel.h
+ComponentModels/FluxStandard.h
+ComponentModels/FluxCalcLogFreqPolynomial.h
+ComponentModels/FluxCalcLogFreqPolynomial.tcc
+ComponentModels/FluxCalcQS.h
+ComponentModels/FluxCalcVQS.h
+ComponentModels/FluxCalc_SS_JPL_Butler.h
+#ComponentModels/FluxStdsQS.h
+ComponentModels/FluxStdsQS2.h
+ComponentModels/FluxStdSrcs.h
+ComponentModels/Flux.h
+ComponentModels/Flux.tcc
+DESTINATION include/casarest/components/ComponentModels
+)
+
+install (FILES
+SpectralComponents/CompiledSpectralElement.h
+SpectralComponents/GaussianMultipletSpectralElement.h
+SpectralComponents/GaussianSpectralElement.h
+SpectralComponents/LogTransformedPolynomialSpectralElement.h
+SpectralComponents/LorentzianSpectralElement.h
+SpectralComponents/PCFSpectralElement.h
+SpectralComponents/ProfileFit1D.h
+SpectralComponents/ProfileFit1D.tcc
+SpectralComponents/PolynomialSpectralElement.h
+SpectralComponents/PowerLogPolynomialSpectralElement.h
+SpectralComponents/SpectralEstimate.h
+SpectralComponents/Spectral2Estimate.tcc
+SpectralComponents/SpectralElement.h
+SpectralComponents/SpectralElementFactory.h
+SpectralComponents/SpectralFit.h
+SpectralComponents/SpectralFit2.tcc
+SpectralComponents/SpectralList.h
+SpectralComponents/SpectralList2.tcc
+DESTINATION include/casarest/components/SpectralComponents
+)
+
+install (FILES
+ComponentModels.h
+SpectralComponents.h
+DESTINATION include/casarest/components
+)
+
+if (BUILD_TESTING)
+    add_subdirectory (ComponentModels/test)
+    add_subdirectory (SpectralComponents/test)
+endif (BUILD_TESTING)
+
