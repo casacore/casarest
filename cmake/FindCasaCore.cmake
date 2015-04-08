@@ -183,8 +183,8 @@ set(CASACORE_MISSING_COMPONENTS)
 # Search for the header file first. Note that casacore installs the header
 # files in ${prefix}/include/casacore, instead of ${prefix}/include.
 if(NOT CASACORE_INCLUDE_DIR)
-  find_path(CASACORE_INCLUDE_DIR casa/aips.h
-    HINTS ${CASACORE_ROOT_DIR} PATH_SUFFIXES include/casacore)
+  find_path(CASACORE_INCLUDE_DIR casacore/casa/aips.h
+    HINTS ${CASACORE_ROOT_DIR} PATH_SUFFIXES include)
   mark_as_advanced(CASACORE_INCLUDE_DIR)
 endif(NOT CASACORE_INCLUDE_DIR)
 
@@ -193,7 +193,7 @@ if(NOT CASACORE_INCLUDE_DIR)
 else(NOT CASACORE_INCLUDE_DIR)
   # We've found the header file; let's continue.
   set(CASACORE_FOUND TRUE)
-  set(CASACORE_INCLUDE_DIRS ${CASACORE_INCLUDE_DIR})
+  set(CASACORE_INCLUDE_DIRS ${CASACORE_INCLUDE_DIR} ${CASACORE_INCLUDE_DIR}/casacore)
 
   # If the user specified components explicity, use that list; otherwise we'll
   # assume that the user wants to use all components.
