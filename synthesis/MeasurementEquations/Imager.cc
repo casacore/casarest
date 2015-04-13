@@ -99,7 +99,7 @@
 #include <ms/MeasurementSets/MSColumns.h>
 #if defined(casacore)
 #include <ms/MSSel/MSSelection.h>
-#include <ms/MSSEl/MSDataDescIndex.h>
+#include <ms/MSSel/MSDataDescIndex.h>
 #include <ms/MSSel/MSSourceIndex.h>
 #include <ms/MSOper/MSSummary.h>
 #else
