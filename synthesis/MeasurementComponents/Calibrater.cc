@@ -35,9 +35,15 @@
 #include <casa/Arrays/ArrayLogical.h>
 //#include <casa/Arrays/ArrayMath.h>
 #include <ms/MeasurementSets/MSColumns.h>
+#if defined(casacore)
+#include <ms/MSSel/MSFieldIndex.h>
+#include <ms/MSSel/MSSelection.h>
+#include <ms/MSSel/MSSelectionTools.h>
+#else
 #include <ms/MeasurementSets/MSFieldIndex.h>
 #include <ms/MeasurementSets/MSSelection.h>
 #include <ms/MeasurementSets/MSSelectionTools.h>
+#endif
 #include <casa/BasicSL/Constants.h>
 #include <casa/Exceptions/Error.h>
 #include <casa/iostream.h>

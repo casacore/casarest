@@ -43,15 +43,21 @@
 #include <casa/Utilities/Assert.h>
 #include <casa/BasicSL/String.h>
 #include <lattices/Lattices/Lattice.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeFFT.h>
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LRegions/LCBox.h>
+#else
 #include <lattices/Lattices/LatticeFFT.h>
 #include <lattices/Lattices/LatticeExpr.h>
+#include <lattices/Lattices/LCBox.h>
+#endif
 #include <lattices/Lattices/TiledLineStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>
 #include <unistd.h>
 #include <casa/Exceptions/Error.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <lattices/Lattices/LCBox.h>
 #include <lattices/Lattices/SubLattice.h>   
 #include <lattices/Lattices/TiledShape.h>  
 #include <casa/System/ProgressMeter.h>

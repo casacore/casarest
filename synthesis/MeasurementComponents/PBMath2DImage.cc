@@ -41,8 +41,13 @@
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
 #include <lattices/Lattices/LatticeStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LEL/LatticeExprNode.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
 #include <lattices/Lattices/LatticeExprNode.h>
+#endif
 #include <casa/Utilities/Assert.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <casa/Quanta.h>

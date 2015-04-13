@@ -35,7 +35,11 @@
 #include <measures/Measures/MDirection.h>
 #include <measures/Measures/MPosition.h>
 #include <measures/Measures/MRadialVelocity.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeCleaner.h>
+#else
 #include <lattices/Lattices/LatticeCleaner.h>
+#endif
 
 #include <casa/namespace.h>
 namespace casa { //# NAMESPACE CASA - BEGIN

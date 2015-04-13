@@ -36,7 +36,11 @@
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Containers/Block.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeCleaner.h>
+#else
 #include <lattices/Lattices/LatticeCleaner.h>
+#endif
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

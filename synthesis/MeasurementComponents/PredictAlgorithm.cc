@@ -46,7 +46,11 @@
 #include <casa/System/ProgressMeter.h>
 #include <synthesis/Parallel/Applicator.h>
 #include <unistd.h>
+#if defined(casacore)
+#include <lattices/LRegions/LCBox.h>
+#else
 #include <lattices/Lattices/LCBox.h>
+#endif
 #include <lattices/Lattices/SubLattice.h>   
 #include <lattices/Lattices/TiledShape.h>  
 

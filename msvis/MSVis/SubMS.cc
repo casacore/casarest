@@ -30,7 +30,11 @@
 //#define COPYTIMER
 
 #include <msvis/MSVis/SubMS.h>
+#if defined(casacore)
+#include <ms/MSSel/MSSelection.h>
+#else
 #include <ms/MeasurementSets/MSSelection.h>
+#endif
 //#include <ms/MeasurementSets/MSTimeGram.h>
 //#include <tables/Tables/ExprNode.h>
 #include <tables/Tables/RefRows.h>

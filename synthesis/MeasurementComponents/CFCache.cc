@@ -28,7 +28,11 @@
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 #include <synthesis/MeasurementComponents/CFCache.h>
 #include <synthesis/MeasurementComponents/Utils.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
+#endif
 #include <casa/Exceptions/Error.h>
 #include <casa/OS/Directory.h>
 #include <fstream>

@@ -35,7 +35,11 @@
 #include <casa/Utilities/Assert.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Arrays/ArrayMath.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
+#endif
 #include <images/Images/PagedImage.h>
 #include <images/Images/ImageRegrid.h>
 #include <casa/Containers/Record.h>

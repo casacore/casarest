@@ -33,7 +33,11 @@
 #include <casa/Arrays/Vector.h>
 #include <casa/Quanta/Quantum.h>
 #include <msvis/MSVis/MSCalEnums.h>
+#if defined(casacore)
+#include <ms/MSSel/MSSelection.h>
+#else
 #include <ms/MeasurementSets/MSSelection.h>
+#endif
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

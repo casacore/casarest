@@ -30,7 +30,11 @@
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
 #include <coordinates/Coordinates/CoordinateSystem.h>
 #include <scimath/Mathematics/FFTServer.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeFFT.h>
+#else
 #include <lattices/Lattices/LatticeFFT.h>
+#endif
 #include <images/Images/ImageInterface.h>
 #include <images/Images/PagedImage.h>
 #include <msvis/MSVis/VisBuffer.h>

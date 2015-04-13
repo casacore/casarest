@@ -67,10 +67,16 @@
 #include <casa/iomanip.h>
 #include <lattices/Lattices/ArrayLattice.h>
 #include <lattices/Lattices/SubLattice.h>
+#include <lattices/Lattices/LatticeCache.h>
+#if defined(casacore)
+#include <lattices/LRegions/LCBox.h>
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LatticeMath/LatticeFFT.h>
+#else
 #include <lattices/Lattices/LCBox.h>
 #include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeCache.h>
 #include <lattices/Lattices/LatticeFFT.h>
+#endif
 #include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/LatticeStepper.h>
 #include <casa/Utilities/CompositeNumber.h>

@@ -34,8 +34,13 @@
 #include <coordinates/Coordinates/LinearCoordinate.h>
 #include <coordinates/Coordinates/StokesCoordinate.h>
 #include <synthesis/MeasurementComponents/Utils.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LatticeMath/LatticeFFT.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
 #include <lattices/Lattices/LatticeFFT.h>
+#endif
 #include <images/Images/ImageRegrid.h>
 #include <images/Images/PagedImage.h>
 #include <casa/Arrays/ArrayMath.h>

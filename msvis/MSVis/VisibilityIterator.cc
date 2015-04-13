@@ -29,7 +29,11 @@
 #include <msvis/MSVis/VisBuffer.h>
 #include <scimath/Mathematics/InterpolateArray1D.h>
 #include <ms/MeasurementSets/MSColumns.h>
+#if defined(casacore)
+#include <ms/MSSel/MSSpwIndex.h>
+#else
 #include <ms/MeasurementSets/MSSpwIndex.h>
+#endif
 #include <tables/Tables/TableDesc.h>
 #include <tables/Tables/ColDescSet.h>
 #include <tables/Tables/TableRecord.h>

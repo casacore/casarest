@@ -50,7 +50,11 @@
 
 #include <lattices/Lattices/LatticeStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
+#endif
 
 #include <coordinates/Coordinates/CoordinateSystem.h>
 #include <coordinates/Coordinates/DirectionCoordinate.h>

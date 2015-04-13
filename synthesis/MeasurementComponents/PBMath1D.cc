@@ -41,7 +41,11 @@
 
 #include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/LatticeStepper.h>
+#if defined(casacore)
+#include <lattices/LRegions/LCSlicer.h>
+#else
 #include <lattices/Lattices/LCSlicer.h>
+#endif
 #include <casa/Arrays/IPosition.h>
 
 #include <measures/Measures.h>

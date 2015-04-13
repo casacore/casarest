@@ -31,7 +31,11 @@
 #include <ms/MeasurementSets/MSColumns.h>
 #include <synthesis/MeasurementEquations/VisEquation.h>  // *
 #include <lattices/Lattices/ArrayLattice.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeFFT.h>
+#else
 #include <lattices/Lattices/LatticeFFT.h>
+#endif
 #include <scimath/Mathematics/FFTServer.h>
 
 #include <casa/Arrays/ArrayMath.h>

@@ -41,7 +41,11 @@
 #include <casa/System/PGPlotter.h>
 #include <calibration/CalTables/BJonesMBuf.h>
 #include <calibration/CalTables/BJonesMCol.h>
+#if defined(casacore)
+#include <ms/MSSel/MSSpWindowIndex.h>
+#else
 #include <ms/MeasurementSets/MSSpWindowIndex.h>
+#endif
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

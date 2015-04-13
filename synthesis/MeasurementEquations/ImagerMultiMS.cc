@@ -34,8 +34,13 @@
 
 #include <casa/Exceptions/Error.h>
 #include <casa/iostream.h>
+#if defined(casacore)
+#include <ms/MSSel/MSSelection.h>
+#include <ms/MSSel/MSDataDescIndex.h>
+#else
 #include <ms/MeasurementSets/MSSelection.h>
 #include <ms/MeasurementSets/MSDataDescIndex.h>
+#endif
 #include <ms/MeasurementSets/MSHistoryHandler.h>
 #include <ms/MeasurementSets/MeasurementSet.h>
 #include <ms/MeasurementSets/MSDataDescColumns.h>
@@ -50,7 +55,11 @@
 #include <tables/Tables/TableParse.h>
 #include <tables/Tables/SetupNewTab.h>
 
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h> 
+#else
 #include <lattices/Lattices/LatticeExpr.h> 
+#endif
 
 #include <casa/OS/File.h>
 #include <casa/OS/HostInfo.h>

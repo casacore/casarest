@@ -31,11 +31,16 @@
 #include <casa/OS/File.h>
 #include <synthesis/MeasurementEquations/ImageMSCleaner.h>
 #include <images/Images/SubImage.h>
-#include <lattices/Lattices/LCBox.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
 #include <synthesis/MeasurementEquations/LatticeModel.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
+#if defined(casacore)
+#include <lattices/LRegions/LCBox.h>
+#include <lattices/LEL/LatticeExprNode.h>
+#else
+#include <lattices/Lattices/LCBox.h>
 #include <lattices/Lattices/LatticeExprNode.h>
+#endif
 #include <casa/Exceptions/Error.h>
 #include <casa/BasicSL/String.h>
 #include <casa/Utilities/Assert.h>

@@ -28,7 +28,11 @@
 #include <synthesis/MeasurementComponents/ConvFuncDiskCache.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <casa/Exceptions/Error.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
+#endif
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <casa/OS/Directory.h>

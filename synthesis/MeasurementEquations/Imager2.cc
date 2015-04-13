@@ -72,7 +72,11 @@
 #include <images/Images/ImageExpr.h>
 //#include <images/Images/ImagePolarimetry.h>
 #include <synthesis/MeasurementEquations/ClarkCleanProgress.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeCleanProgress.h>
+#else
 #include <lattices/Lattices/LatticeCleanProgress.h>
+#endif
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisSetUtil.h>
 #include <msvis/MSVis/VisImagingWeight.h>
@@ -93,11 +97,18 @@
 
 #include <ms/MeasurementSets/MeasurementSet.h>
 #include <ms/MeasurementSets/MSColumns.h>
+#include <ms/MeasurementSets/MSDopplerUtil.h>
+#if defined(casacore)
+#include <ms/MSSel/MSSelection.h>
+#include <ms/MSSel/MSDataDescIndex.h>
+#include <ms/MSSel/MSSourceIndex.h>
+#include <ms/MSOper/MSSummary.h>
+#else
 #include <ms/MeasurementSets/MSSelection.h>
 #include <ms/MeasurementSets/MSDataDescIndex.h>
-#include <ms/MeasurementSets/MSDopplerUtil.h>
 #include <ms/MeasurementSets/MSSourceIndex.h>
 #include <ms/MeasurementSets/MSSummary.h>
+#endif
 #include <synthesis/MeasurementEquations/CubeSkyEquation.h>
 // Disabling Imager::correct() (gmoellen 06Nov20)
 //#include <synthesis/MeasurementEquations/VisEquation.h>
@@ -132,17 +143,29 @@
 #include <synthesis/DataSampling/PixonProcessor.h>
 
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
-#include <lattices/Lattices/LattRegionHolder.h>
 #include <lattices/Lattices/TiledLineStepper.h> 
 #include <lattices/Lattices/LatticeIterator.h> 
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h> 
+#include <lattices/LatticeMath/LatticeFFT.h>
+#include <lattices/LRegions/LattRegionHolder.h>
+#include <lattices/LRegions/LCEllipsoid.h>
+#include <lattices/LRegions/LCRegion.h>
+#include <lattices/LRegions/LCBox.h>
+#include <lattices/LRegions/LCIntersection.h>
+#include <lattices/LRegions/LCUnion.h>
+#include <lattices/LRegions/LCExtension.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h> 
 #include <lattices/Lattices/LatticeFFT.h>
+#include <lattices/Lattices/LattRegionHolder.h>
 #include <lattices/Lattices/LCEllipsoid.h>
 #include <lattices/Lattices/LCRegion.h>
 #include <lattices/Lattices/LCBox.h>
 #include <lattices/Lattices/LCIntersection.h>
 #include <lattices/Lattices/LCUnion.h>
 #include <lattices/Lattices/LCExtension.h>
+#endif
 
 #include <images/Images/ImageRegrid.h>
 #include <images/Regions/ImageRegion.h>

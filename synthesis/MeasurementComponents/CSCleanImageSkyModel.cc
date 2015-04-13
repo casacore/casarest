@@ -31,8 +31,15 @@
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #include <images/Images/PagedImage.h>
 #include <casa/OS/File.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LEL/LatticeExprNode.h>
+#include <lattices/LRegions/LCBox.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
 #include <lattices/Lattices/LatticeExprNode.h>
+#include <lattices/Lattices/LCBox.h>
+#endif
 #include <lattices/Lattices/LatticeStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
@@ -50,7 +57,6 @@
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <synthesis/MeasurementEquations/ClarkCleanLatModel.h>
 #include <lattices/Lattices/SubLattice.h>
-#include <lattices/Lattices/LCBox.h>
 
 namespace casa {
 

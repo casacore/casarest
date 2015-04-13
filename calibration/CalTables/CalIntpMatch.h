@@ -33,7 +33,11 @@
 #include <casa/Arrays/Vector.h>
 #include <casa/Arrays/LogiArray.h>
 #include <casa/Containers/Record.h>
+#if defined(casacore)
+#include <ms/MSSel/MSSelection.h>
+#else
 #include <ms/MeasurementSets/MSSelection.h>
+#endif
 #include <msvis/MSVis/VisBuffer.h>
 #include <calibration/CalTables/CalMainBuffer.h>
 

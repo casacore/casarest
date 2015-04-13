@@ -56,12 +56,18 @@
 #include <lattices/Lattices/Lattice.h>
 #include <measures/Measures/UVWMachine.h>
 #include <lattices/Lattices/ArrayLattice.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeFFT.h>
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LRegions/LCRegion.h>
+#else
 #include <lattices/Lattices/LatticeFFT.h>
 #include <lattices/Lattices/LatticeExpr.h>
+#include <lattices/Lattices/LCRegion.h>
+#endif
 #include <lattices/Lattices/TiledLineStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LCRegion.h>
 #include <casa/Containers/Block.h>
 
 #include <casa/Exceptions/Error.h>

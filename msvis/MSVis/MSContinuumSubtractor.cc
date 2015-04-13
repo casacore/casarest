@@ -31,8 +31,13 @@
 #include <measures/Measures/Stokes.h>
 #include <ms/MeasurementSets/MSColumns.h>
 #include <ms/MeasurementSets/MeasurementSet.h>
+#if defined(casacore)
+#include <ms/MSSel/MSSelector.h>
+#include <ms/MSSel/MSSelection.h>
+#else
 #include <ms/MeasurementSets/MSSelector.h>
 #include <ms/MeasurementSets/MSSelection.h>
+#endif
 //#include <ms/MeasurementSets/MSRange.h>
 #include <msvis/MSVis/MSContinuumSubtractor.h>
 #include <msvis/MSVis/VisSet.h>

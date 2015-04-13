@@ -30,10 +30,16 @@
 #define SYNTHESIS_WBCLEANIMAGESKYMODEL_H
 
 #include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
+#include <lattices/Lattices/LatticeIterator.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeCleanProgress.h>
+#include <lattices/LEL/LatticeExprNode.h>
+#include <lattices/LatticeMath/MultiTermLatticeCleaner.h>
+#else
 #include <lattices/Lattices/LatticeCleanProgress.h>
 #include <lattices/Lattices/LatticeExprNode.h>
-#include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/MultiTermLatticeCleaner.h>
+#endif
 #include <synthesis/MeasurementEquations/MultiTermMatrixCleaner.h>
 #include <casa/OS/Timer.h>
 

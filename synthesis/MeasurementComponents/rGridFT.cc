@@ -67,9 +67,14 @@
 #include <lattices/Lattices/ArrayLattice.h>
 #include <measures/Measures/UVWMachine.h>
 #include <lattices/Lattices/SubLattice.h>
+#if defined(casacore)
+#include <lattices/LRegions/LCBox.h>
+#include <lattices/LatticeMath/LatticeFFT.h>
+#else
 #include <lattices/Lattices/LCBox.h>
-#include <lattices/Lattices/LatticeCache.h>
 #include <lattices/Lattices/LatticeFFT.h>
+#endif
+#include <lattices/Lattices/LatticeCache.h>
 #include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/LatticeStepper.h>
 #include <scimath/Mathematics/ConvolveGridder.h>

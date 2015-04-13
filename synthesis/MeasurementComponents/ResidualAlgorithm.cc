@@ -43,7 +43,11 @@
 #include <images/Images/PagedImage.h>
 #include <images/Images/TempImage.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
+#if defined(casacore)
+#include <lattices/LRegions/LCBox.h>
+#else
 #include <lattices/Lattices/LCBox.h>
+#endif
 #include <lattices/Lattices/SubLattice.h>   
 #include <lattices/Lattices/TiledShape.h>  
 #include <casa/System/ProgressMeter.h>

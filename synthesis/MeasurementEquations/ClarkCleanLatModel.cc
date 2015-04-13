@@ -43,8 +43,13 @@
 #include <casa/System/Choice.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <synthesis/MeasurementEquations/CCList.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LEL/LatticeExprNode.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
 #include <lattices/Lattices/LatticeExprNode.h>
+#endif
 #include <casa/BasicSL/Constants.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN

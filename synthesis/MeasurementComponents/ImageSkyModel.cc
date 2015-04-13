@@ -34,7 +34,11 @@
 #include <images/Images/SubImage.h>
 #include <images/Regions/ImageRegion.h>
 #include <casa/OS/File.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
+#endif
 #include <lattices/Lattices/TiledLineStepper.h>
 #include <lattices/Lattices/LatticeStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>

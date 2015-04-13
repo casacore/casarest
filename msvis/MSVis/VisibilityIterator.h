@@ -45,7 +45,11 @@
 #include <scimath/Mathematics/SquareMatrix.h>
 #include <scimath/Mathematics/RigidVector.h>
 
+#if defined(casacore)
+#include <ms/MSOper/MSDerivedValues.h>
+#else
 #include <ms/MeasurementSets/MSDerivedValues.h>
+#endif
 #include <msvis/MSVis/StokesVector.h>
 #include <msvis/MSVis/VisImagingWeight.h>
 #include <ms/MeasurementSets/MSIter.h>

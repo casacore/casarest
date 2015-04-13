@@ -27,10 +27,16 @@
 
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LEL/LatticeExprNode.h>
+#include <lattices/LRegions/LCBox.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
 #include <lattices/Lattices/LatticeExprNode.h>
-#include <lattices/Lattices/SubLattice.h>
 #include <lattices/Lattices/LCBox.h>
+#endif
+#include <lattices/Lattices/SubLattice.h>
 #include <casa/Utilities/Assert.h>
 #include <casa/Arrays/Vector.h>
 #include <casa/Arrays/Array.h>

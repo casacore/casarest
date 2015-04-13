@@ -29,8 +29,13 @@
 #include <synthesis/MeasurementEquations/CEMemProgress.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <casa/Arrays/IPosition.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LEL/LatticeExprNode.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
 #include <lattices/Lattices/LatticeExprNode.h>
+#endif
 #include <lattices/Lattices/TiledLineStepper.h>
 #include <lattices/Lattices/TempLattice.h>
 #include <lattices/Lattices/LatticeIterator.h>

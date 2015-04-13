@@ -39,7 +39,11 @@
 #include <coordinates/Coordinates/DirectionCoordinate.h>
 #include <coordinates/Coordinates/SpectralCoordinate.h>
 #include <coordinates/Coordinates/StokesCoordinate.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeFFT.h>
+#else
 #include <lattices/Lattices/LatticeFFT.h>
+#endif
 #include <casa/Utilities/CompositeNumber.h>
 #include <casa/ostream.h>
 namespace casa{

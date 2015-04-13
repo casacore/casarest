@@ -38,12 +38,16 @@
 #include <components/ComponentModels/PointShape.h>
 #include <components/ComponentModels/ConstantSpectrum.h>
 
+#if defined(casacore)
+#include <lattices/LRegions/LCBox.h>
+#include <lattices/LEL/LatticeExpr.h>
+#else
 #include <lattices/Lattices/LCBox.h>
 #include <lattices/Lattices/LatticeExpr.h>
+#endif
 #include <lattices/Lattices/SubLattice.h>
 #include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LatticeExpr.h>
 #include <casa/Containers/Record.h>
 #include <casa/BasicSL/String.h>
 #include <casa/Utilities/Assert.h>

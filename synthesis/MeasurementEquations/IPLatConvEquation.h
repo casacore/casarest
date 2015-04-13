@@ -32,7 +32,11 @@
 
 #include <casa/aips.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeConvolver.h>
+#else
 #include <lattices/Lattices/LatticeConvolver.h>
+#endif
 #include <lattices/Lattices/Lattice.h>
 #include <casa/Arrays/IPosition.h>
 #include <casa/Arrays/Array.h>

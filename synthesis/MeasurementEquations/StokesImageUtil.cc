@@ -38,7 +38,11 @@
 #include <casa/BasicSL/Constants.h>
 #include <casa/Utilities/Assert.h>
 #include <lattices/Lattices/Lattice.h>
+#if defined(casacore)
+#include <lattices/LEL/LatticeExpr.h>
+#else
 #include <lattices/Lattices/LatticeExpr.h>
+#endif
 #include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/LatticeStepper.h>
 #include <scimath/Fitting/NonLinearFitLM.h>

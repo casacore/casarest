@@ -48,15 +48,26 @@
 #include <images/Images/ImageSummary.h>
 #include <images/Images/TempImage.h>
 #include <lattices/Lattices/Lattice.h>
+#if defined(casacore)
+#include <lattices/LRegions/LCSlicer.h>
+#include <lattices/LEL/LatticeExprNode.h>
+#include <lattices/LEL/LatticeExpr.h>
+#include <lattices/LRegions/LCPagedMask.h>
+#else
 #include <lattices/Lattices/LCSlicer.h>
 #include <lattices/Lattices/LatticeExprNode.h>
 #include <lattices/Lattices/LatticeExpr.h>
+#include <lattices/Lattices/LCPagedMask.h>
+#endif
 #include <lattices/Lattices/TiledLineStepper.h>
 #include <lattices/Lattices/LatticeStepper.h>
 #include <lattices/Lattices/LatticeIterator.h>
 #include <lattices/Lattices/MaskedLatticeIterator.h>
+#if defined(casacore)
+#include <lattices/LatticeMath/LatticeStatistics.h>
+#else
 #include <lattices/Lattices/LatticeStatistics.h>
-#include <lattices/Lattices/LCPagedMask.h>
+#endif
 #include <casa/Logging/LogIO.h>
 #include <casa/Logging/LogOrigin.h>
 #include <casa/BasicMath/Math.h>

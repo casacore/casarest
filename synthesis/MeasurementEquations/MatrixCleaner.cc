@@ -35,7 +35,11 @@
 #include <casa/OS/File.h>
 #include <casa/Containers/Record.h>
 
+#if defined(casacore)
+#include <lattices/LRegions/LCBox.h>
+#else
 #include <lattices/Lattices/LCBox.h>
+#endif
 #include <casa/Arrays/Slicer.h>
 #include <scimath/Mathematics/FFTServer.h>
 #include <casa/OS/HostInfo.h>
