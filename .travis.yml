@@ -1,0 +1,34 @@
+os:
+  - linux
+
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+install:
+  - sudo apt-get update -q
+  - sudo apt-get install -qy python-software-properties
+  - sudo add-apt-repository -y ppa:radio-astro/main
+  - sudo apt-get update -q
+  - sudo apt-get install cmake libcasacore2-dev libboost-dev wcslib-dev 
+      libcfitsio3-dev libboost-system-dev, libboost-thread-dev, gfortran
+
+before_script:
+  - mkdir build
+  - cd build
+  - cmake ..
+      -DUSE_FFTW3=ON
+      -DBUILD_TESTING=ON
+      -DUSE_OPENMP=OFF
+      -DUSE_HDF5=ON
+      -DBUILD_PYTHON=ON
+      -DDATA_DIR=$PWD
+      -DSOFA_ROOT_DIR=$HOME
+
+script:
+  - make -j4 
+  - make test
+  - sudo make install
+
