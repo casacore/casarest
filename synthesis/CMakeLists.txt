@@ -383,3 +383,10 @@ Utilities/FixVis.h
 Utilities/ThreadCoordinator.h
 DESTINATION include/casarest/synthesis/Utilities
 )
+
+install (FILES
+Images/ImageFFT.h
+Images/ImageMetaData.h
+Images/ImagePolarimetry.h
+DESTINATION include/casarest/synthesis/Images
+)
