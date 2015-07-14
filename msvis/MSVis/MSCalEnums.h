@@ -29,12 +29,12 @@
 #ifndef MSVIS_MSCALENUMS_H
 #define MSVIS_MSCALENUMS_H
 
-#include <casa/aips.h>
-#include <casa/Containers/SimOrdMap.h>
-#include <casa/Containers/Block.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/DataType.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/SimOrdMap.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/DataType.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

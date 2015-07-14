@@ -25,8 +25,8 @@
 //#
 //# $Id$
 
-#include <synthesis/MeasurementEquations/ArrayModel.h>
-#include <casa/Arrays/IPosition.h>
+#include <casarest/synthesis/MeasurementEquations/ArrayModel.h>
+#include <casacore/casa/Arrays/IPosition.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

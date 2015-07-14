@@ -28,23 +28,23 @@
 #ifndef SYNTHESIS_CFCACHE_H
 #define SYNTHESIS_CFCACHE_H
 
-#include <casa/Arrays/Matrix.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/TempImage.h>
-#include <images/Images/PagedImage.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
-#include <lattices/Lattices/LatticeCache.h>
-#include <lattices/Lattices/ArrayLattice.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <synthesis/MeasurementComponents/VPSkyJones.h>
-#include <synthesis/MeasurementComponents/CFStore.h>
-#include <synthesis/MeasurementComponents/CFDefs.h>
-#include <synthesis/MeasurementComponents/Utils.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/lattices/Lattices/LatticeCache.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casarest/synthesis/MeasurementComponents/VPSkyJones.h>
+#include <casarest/synthesis/MeasurementComponents/CFStore.h>
+#include <casarest/synthesis/MeasurementComponents/CFDefs.h>
+#include <casarest/synthesis/MeasurementComponents/Utils.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
   using namespace CFDefs;

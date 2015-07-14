@@ -30,12 +30,12 @@
 #define SYNTHESIS_WTERM_H
 
 
-#include <casa/Arrays/Vector.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/TempImage.h>
-#include <synthesis/MeasurementComponents/CFTerms.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casarest/synthesis/MeasurementComponents/CFTerms.h>
 
 
 namespace casa{

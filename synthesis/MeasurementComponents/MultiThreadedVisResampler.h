@@ -29,19 +29,19 @@
 #ifndef SYNTHESIS_MULTITHREADEDVISIBILITYRESAMPLER_H
 #define SYNTHESIS_MULTITHREADEDVISIBILITYRESAMPLER_H
 
-#include <synthesis/MeasurementComponents/VisibilityResamplerBase.h>
-#include <synthesis/MeasurementComponents/ResamplerWorklet.h>
-#include <synthesis/MeasurementComponents/CFStore.h>
-#include <synthesis/MeasurementComponents/VBStore.h>
-#include <synthesis/MeasurementComponents/MThWorkIDEnum.h>
+#include <casarest/synthesis/MeasurementComponents/VisibilityResamplerBase.h>
+#include <casarest/synthesis/MeasurementComponents/ResamplerWorklet.h>
+#include <casarest/synthesis/MeasurementComponents/CFStore.h>
+#include <casarest/synthesis/MeasurementComponents/VBStore.h>
+#include <casarest/synthesis/MeasurementComponents/MThWorkIDEnum.h>
 //#include <msvis/MSVis/UtilJ.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
 
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 #define DEFAULTNOOFCORES -1
 #define FTMachineNumThreadsEnvVar "ftmachine_num_threads"
 namespace casa { //# NAMESPACE CASA - BEGIN

@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_TIMEVARVJTABLE_H
 #define CALIBRATION_TIMEVARVJTABLE_H
 
-#include <calibration/CalTables/VisJonesTable.h>
-#include <calibration/CalTables/TimeVarVJDesc.h>
+#include <casarest/calibration/CalTables/VisJonesTable.h>
+#include <casarest/calibration/CalTables/TimeVarVJDesc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

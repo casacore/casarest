@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_VISJONESMCOL_H
 #define CALIBRATION_VISJONESMCOL_H
 
-#include <calibration/CalTables/CalMainColumns.h>
+#include <casarest/calibration/CalTables/CalMainColumns.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

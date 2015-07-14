@@ -29,11 +29,11 @@
 #define COMPONENTS_PROFILEFIT1D_H
 
 //# Includes
-#include <casa/aips.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Vector.h>
 
-#include <components/SpectralComponents/SpectralList.h>
-#include <components/SpectralComponents/SpectralFit.h>
+#include <casarest/components/SpectralComponents/SpectralList.h>
+#include <casarest/components/SpectralComponents/SpectralFit.h>
 
 namespace casa {
 
@@ -233,6 +233,6 @@ private:
 
 } //#End casa namespace
 #ifndef CASACORE_NO_AUTO_TEMPLATES
-#include <components/SpectralComponents/ProfileFit1D.tcc>
+#include <casarest/components/SpectralComponents/ProfileFit1D.tcc>
 #endif //# CASACORE_NO_AUTO_TEMPLATES
 #endif

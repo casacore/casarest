@@ -29,13 +29,13 @@
 #ifndef CALIBRATION_CALMAINBUFFER_H
 #define CALIBRATION_CALMAINBUFFER_H
 
-#include <calibration/CalTables/CalDescBuffer.h>
-#include <calibration/CalTables/CalHistoryBuffer.h>
-#include <calibration/CalTables/CalTable.h>
-#include <calibration/CalTables/CalMainColumns.h>
-#include <msvis/MSVis/MSCalEnums.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <calibration/CalTables/CalIterBase.h>
+#include <casarest/calibration/CalTables/CalDescBuffer.h>
+#include <casarest/calibration/CalTables/CalHistoryBuffer.h>
+#include <casarest/calibration/CalTables/CalTable.h>
+#include <casarest/calibration/CalTables/CalMainColumns.h>
+#include <casarest/msvis/MSVis/MSCalEnums.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casarest/calibration/CalTables/CalIterBase.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

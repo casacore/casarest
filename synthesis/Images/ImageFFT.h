@@ -28,8 +28,8 @@
 #ifndef IMAGES_IMAGEFFT_H
 #define IMAGES_IMAGEFFT_H
 
-#include <casa/aips.h>
-#include <images/Images/ImageInterface.h>
+#include <casacore/casa/aips.h>
+#include <casacore/images/Images/ImageInterface.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

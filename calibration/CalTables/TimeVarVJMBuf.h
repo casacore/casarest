@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_TIMEVARVJMBUF_H
 #define CALIBRATION_TIMEVARVJMBUF_H
 
-#include <calibration/CalTables/VisJonesMBuf.h>
+#include <casarest/calibration/CalTables/VisJonesMBuf.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

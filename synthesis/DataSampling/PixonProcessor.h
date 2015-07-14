@@ -29,8 +29,8 @@
 #ifndef SYNTHESIS_PIXONPROCESSOR_H
 #define SYNTHESIS_PIXONPROCESSOR_H
 
-#include <synthesis/IDL/IDL.h>
-#include <synthesis/DataSampling/DataSampling.h>
+#include <casarest/synthesis/IDL/IDL.h>
+#include <casarest/synthesis/DataSampling/DataSampling.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

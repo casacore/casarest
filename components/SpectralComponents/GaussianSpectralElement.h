@@ -28,7 +28,7 @@
 #ifndef COMPONENTS_GAUSSIANSPECTRALELEMENT_H
 #define COMPONENTS_GAUSSIANSPECTRALELEMENT_H
 
-#include <components/SpectralComponents/PCFSpectralElement.h>
+#include <casarest/components/SpectralComponents/PCFSpectralElement.h>
 
 namespace casa {
 

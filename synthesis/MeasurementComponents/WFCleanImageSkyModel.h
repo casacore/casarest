@@ -29,7 +29,7 @@
 #ifndef SYNTHESIS_WFCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_WFCLEANIMAGESKYMODEL_H
 
-#include <synthesis/MeasurementComponents/MFCleanImageSkyModel.h>
+#include <casarest/synthesis/MeasurementComponents/MFCleanImageSkyModel.h>
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 //forward

@@ -28,7 +28,7 @@
 #ifndef COMPONENTS_PCFSPECTRALELEMENT_H
 #define COMPONENTS_PCFSPECTRALELEMENT_H
 
-#include <components/SpectralComponents/SpectralElement.h>
+#include <casarest/components/SpectralComponents/SpectralElement.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

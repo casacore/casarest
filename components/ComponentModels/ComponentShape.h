@@ -28,12 +28,12 @@
 #ifndef COMPONENTS_COMPONENTSHAPE_H
 #define COMPONENTS_COMPONENTSHAPE_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complexfwd.h>
-#include <measures/Measures/MDirection.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Utilities/RecordTransformable.h>
-#include <components/ComponentModels/ComponentType.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complexfwd.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Utilities/RecordTransformable.h>
+#include <casarest/components/ComponentModels/ComponentType.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -25,14 +25,14 @@
 //#
 //#   $Id: ProfileFit1D.tcc 21229 2012-04-02 12:00:20Z gervandiepen $
 
-#include <components/SpectralComponents/ProfileFit1D.h>
+#include <casarest/components/SpectralComponents/ProfileFit1D.h>
 
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Exceptions/Error.h>
-#include <components/SpectralComponents/SpectralEstimate.h>
-#include <components/SpectralComponents/SpectralElement.h>
-#include <casa/Utilities/DataType.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casarest/components/SpectralComponents/SpectralEstimate.h>
+#include <casarest/components/SpectralComponents/SpectralElement.h>
+#include <casacore/casa/Utilities/DataType.h>
+#include <casacore/casa/Utilities/Assert.h>
 
 namespace casa {
 

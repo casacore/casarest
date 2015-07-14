@@ -28,11 +28,11 @@
 #ifndef SIMULATORS_SIMARRAY_H
 #define SIMULATORS_SIMARRAY_H
 
-#include <casa/Utilities/PtrHolder.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <measures/Measures/MPosition.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/PtrHolder.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/casa/Exceptions/Error.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

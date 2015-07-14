@@ -29,17 +29,17 @@
 #ifndef CALIBRATION_CALINTPMATCH_H
 #define CALIBRATION_CALINTPMATCH_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/LogiArray.h>
-#include <casa/Containers/Record.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/LogiArray.h>
+#include <casacore/casa/Containers/Record.h>
 #if defined(casacore)
-#include <ms/MSSel/MSSelection.h>
+#include <casacore/ms/MSSel/MSSelection.h>
 #else
-#include <ms/MeasurementSets/MSSelection.h>
+#include <casacore/ms/MeasurementSets/MSSelection.h>
 #endif
-#include <msvis/MSVis/VisBuffer.h>
-#include <calibration/CalTables/CalMainBuffer.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casarest/calibration/CalTables/CalMainBuffer.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

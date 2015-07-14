@@ -27,7 +27,7 @@
 //#
 //# $Id$
 
-#include <msvis/MSVis/SubMS.h>
+#include <casarest/msvis/MSVis/SubMS.h>
 
 
 #ifndef MSVIS_SIMPLESUBMS_H

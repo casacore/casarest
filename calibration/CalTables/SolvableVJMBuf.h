@@ -29,9 +29,9 @@
 #ifndef CALIBRATION_SOLVABLEVJMBUF_H
 #define CALIBRATION_SOLVABLEVJMBUF_H
 
-#include <calibration/CalTables/TimeVarVJMBuf.h>
-#include <calibration/CalTables/SolvableVJMCol.h>
-#include <calibration/CalTables/SolvableVJTable.h>
+#include <casarest/calibration/CalTables/TimeVarVJMBuf.h>
+#include <casarest/calibration/CalTables/SolvableVJMCol.h>
+#include <casarest/calibration/CalTables/SolvableVJTable.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

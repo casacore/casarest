@@ -29,9 +29,9 @@
 #ifndef SYNTHESIS_PBMATH1DPOLY_H
 #define SYNTHESIS_PBMATH1DPOLY_H
 
-#include <casa/aips.h>
-#include <synthesis/MeasurementComponents/PBMath1D.h>
-#include <measures/Measures.h>
+#include <casacore/casa/aips.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath1D.h>
+#include <casacore/measures/Measures.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

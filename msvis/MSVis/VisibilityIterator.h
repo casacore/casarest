@@ -28,31 +28,31 @@
 #ifndef MSVIS_VISIBILITYITERATOR_H
 #define MSVIS_VISIBILITYITERATOR_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/Arrays/Slicer.h>
-#include <casa/Containers/Stack.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <measures/Measures/Stokes.h>
-#include <measures/Measures/MeasConvert.h>
-#include <casa/Quanta/MVDoppler.h>
-#include <measures/Measures/MCDoppler.h>
-#include <measures/Measures/MDoppler.h>
-#include <tables/Tables/ArrayColumn.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <casa/BasicSL/String.h>
-#include <scimath/Mathematics/SquareMatrix.h>
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/Slicer.h>
+#include <casacore/casa/Containers/Stack.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/casa/Quanta/MVDoppler.h>
+#include <casacore/measures/Measures/MCDoppler.h>
+#include <casacore/measures/Measures/MDoppler.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/scimath/Mathematics/SquareMatrix.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 
 #if defined(casacore)
-#include <ms/MSOper/MSDerivedValues.h>
+#include <casacore/ms/MSOper/MSDerivedValues.h>
 #else
-#include <ms/MeasurementSets/MSDerivedValues.h>
+#include <casacore/ms/MeasurementSets/MSDerivedValues.h>
 #endif
-#include <msvis/MSVis/StokesVector.h>
-#include <msvis/MSVis/VisImagingWeight.h>
-#include <ms/MeasurementSets/MSIter.h>
+#include <casarest/msvis/MSVis/StokesVector.h>
+#include <casarest/msvis/MSVis/VisImagingWeight.h>
+#include <casacore/ms/MeasurementSets/MSIter.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -1026,7 +1026,7 @@ protected:
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <msvis/MSVis/VisibilityIterator.tcc>
+#include <casarest/msvis/MSVis/VisibilityIterator.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 
 #endif

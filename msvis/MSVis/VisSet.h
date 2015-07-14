@@ -29,11 +29,11 @@
 #ifndef MSVIS_VISSET_H
 #define MSVIS_VISSET_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Arrays/Matrix.h>
-#include <msvis/MSVis/StokesVector.h>
-#include <msvis/MSVis/VisibilityIterator.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casarest/msvis/MSVis/StokesVector.h>
+#include <casarest/msvis/MSVis/VisibilityIterator.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

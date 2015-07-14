@@ -28,16 +28,16 @@
 #ifndef SYNTHESIS_RESIDUALALGORITHM_H
 #define SYNTHESIS_RESIDUALALGORITHM_H
 
-#include <casa/BasicSL/String.h>
-#include <synthesis/Parallel/Algorithm.h>
-#include <synthesis/Parallel/Applicator.h>
-#include <msvis/MSVis/VisSet.h>
-#include <msvis/MSVis/VisSetUtil.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/TempImage.h>
-#include <synthesis/MeasurementComponents/GridFT.h>
-#include <synthesis/MeasurementComponents/FTMachine.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casarest/synthesis/Parallel/Algorithm.h>
+#include <casarest/synthesis/Parallel/Applicator.h>
+#include <casarest/msvis/MSVis/VisSet.h>
+#include <casarest/msvis/MSVis/VisSetUtil.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casarest/synthesis/MeasurementComponents/GridFT.h>
+#include <casarest/synthesis/MeasurementComponents/FTMachine.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

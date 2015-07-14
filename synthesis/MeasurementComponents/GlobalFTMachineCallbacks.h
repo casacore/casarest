@@ -29,7 +29,7 @@
 #ifndef SYNTHESIS_GLOBALFTMACHINECALLBACKS_H
 #define SYNTHESIS_GLOBALFTMACHINECALLBACKS_H
 
-#include <synthesis/MeasurementComponents/IlluminationConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/IlluminationConvFunc.h>
 
 #define NEED_UNDERSCORES
 namespace casa {

@@ -28,28 +28,28 @@
 #ifndef SYNTHESIS_SOLVABLEVISCAL_H
 #define SYNTHESIS_SOLVABLEVISCAL_H
 
-#include <casa/aips.h>
-#include <casa/Containers/Record.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicSL/Constants.h>
-#include <synthesis/MeasurementComponents/VisCal.h>
-#include <synthesis/MeasurementComponents/CalCorruptor.h>
-#include <synthesis/MeasurementComponents/Mueller.h>
-#include <synthesis/MeasurementComponents/Jones.h>
-#include <synthesis/MeasurementComponents/VisVector.h>
-#include <synthesis/MeasurementComponents/SynthesisError.h>
-#include <calibration/CalTables/CalSet.h>
-#include <calibration/CalTables/CalSetMetaInfo.h>
-#include <calibration/CalTables/CalInterp.h>
-#include <calibration/CalTables/VisCalEnum.h>
-#include <msvis/MSVis/VisSet.h>
-#include <msvis/MSVis/CalVisBuffer.h>
-#include <msvis/MSVis/VisBuffGroupAcc.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casarest/synthesis/MeasurementComponents/VisCal.h>
+#include <casarest/synthesis/MeasurementComponents/CalCorruptor.h>
+#include <casarest/synthesis/MeasurementComponents/Mueller.h>
+#include <casarest/synthesis/MeasurementComponents/Jones.h>
+#include <casarest/synthesis/MeasurementComponents/VisVector.h>
+#include <casarest/synthesis/MeasurementComponents/SynthesisError.h>
+#include <casarest/calibration/CalTables/CalSet.h>
+#include <casarest/calibration/CalTables/CalSetMetaInfo.h>
+#include <casarest/calibration/CalTables/CalInterp.h>
+#include <casarest/calibration/CalTables/VisCalEnum.h>
+#include <casarest/msvis/MSVis/VisSet.h>
+#include <casarest/msvis/MSVis/CalVisBuffer.h>
+#include <casarest/msvis/MSVis/VisBuffGroupAcc.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/OS/Timer.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/OS/Timer.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

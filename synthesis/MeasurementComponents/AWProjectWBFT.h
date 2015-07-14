@@ -31,7 +31,7 @@
 #define DELTAPA 1.0
 #define MAGICPAVALUE -999.0
 
-#include <synthesis/MeasurementComponents/AWProjectFT.h>
+#include <casarest/synthesis/MeasurementComponents/AWProjectFT.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
   

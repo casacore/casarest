@@ -29,8 +29,8 @@
 #ifndef SYNTHESIS_MFCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_MFCLEANIMAGESKYMODEL_H
 
-#include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
-#include <synthesis/MeasurementEquations/ClarkCleanProgress.h>
+#include <casarest/synthesis/MeasurementComponents/CleanImageSkyModel.h>
+#include <casarest/synthesis/MeasurementEquations/ClarkCleanProgress.h>
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 //forward

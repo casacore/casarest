@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_EPOINTDESC_H
 #define CALIBRATION_EPOINTDESC_H
 
-#include <calibration/CalTables/TimeVarVJDesc.h>
-#include <calibration/CalTables/SolvableVJDesc.h>
+#include <casarest/calibration/CalTables/TimeVarVJDesc.h>
+#include <casarest/calibration/CalTables/SolvableVJDesc.h>
 namespace casa {
 // <summary> 
 // EPointDesc: Define the format of GJones cal tables

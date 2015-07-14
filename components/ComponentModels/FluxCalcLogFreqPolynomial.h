@@ -27,14 +27,14 @@
 #ifndef COMPONENTS_FLUXCALCLOGFREQPOLYNOMIAL_H
 #define COMPONENTS_FLUXCALCLOGFREQPOLYNOMIAL_H
 
-#include <components/ComponentModels/FluxStandard.h>
+#include <casarest/components/ComponentModels/FluxStandard.h>
 //#include <components/ComponentModels/FluxCalcQS.h>
-#include <components/ComponentModels/FluxCalcVQS.h>
-#include <casa/BasicSL/String.h>
-#include <measures/Measures/MFrequency.h>
+#include <casarest/components/ComponentModels/FluxCalcVQS.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/measures/Measures/MFrequency.h>
 
 //# Handy for passing anonymous arrays to functions.
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -250,7 +250,7 @@ private:
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <components/ComponentModels/FluxCalcLogFreqPolynomial.tcc>
+#include <casarest/components/ComponentModels/FluxCalcLogFreqPolynomial.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 
 #endif

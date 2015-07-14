@@ -28,7 +28,7 @@
 #ifndef SYNTHESIS_HETARRAYCONVFUNC_H
 #define SYNTHESIS_HETARRAYCONVFUNC_H
 
-#include <synthesis/MeasurementComponents/SimplePBConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/SimplePBConvFunc.h>
 
 namespace casa{
 

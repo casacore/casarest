@@ -29,15 +29,15 @@
 #ifndef SYNTHESIS_WONLYCONVFUNC_H
 #define SYNTHESIS_WONLYCONVFUNC_H
 
-#include <synthesis/MeasurementComponents/ConvolutionFunction.h>
-#include <synthesis/MeasurementComponents/CFStore.h>
-#include <synthesis/MeasurementComponents/WTerm.h>
-#include <synthesis/MeasurementComponents/PSTerm.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/TempImage.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogOrigin.h>
+#include <casarest/synthesis/MeasurementComponents/ConvolutionFunction.h>
+#include <casarest/synthesis/MeasurementComponents/CFStore.h>
+#include <casarest/synthesis/MeasurementComponents/WTerm.h>
+#include <casarest/synthesis/MeasurementComponents/PSTerm.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogOrigin.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
   template<class T> class ImageInterface;

@@ -27,17 +27,17 @@
 
 #ifndef CALTABLES_CALSET_H
 #define CALTABLES_CALSET_H
-#include <casa/aips.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Arrays.h>
-#include <casa/OS/File.h>
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <calibration/CalTables/CalTableDesc2.h>
-#include <calibration/CalTables/CalTable2.h>
-#include <calibration/CalTables/SolvableCalSetMCol.h>
-#include <calibration/CalTables/VisCalEnum.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays.h>
+#include <casacore/casa/OS/File.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casarest/calibration/CalTables/CalTableDesc2.h>
+#include <casarest/calibration/CalTables/CalTable2.h>
+#include <casarest/calibration/CalTables/SolvableCalSetMCol.h>
+#include <casarest/calibration/CalTables/VisCalEnum.h>
 //#include <calibration/CalTables/BaseCalSet.h>
 
 // #include <synthesis/MeasurementComponents/VisJones.h>
@@ -223,7 +223,7 @@ private:
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <calibration/CalTables/CalSet.tcc>
+#include <casarest/calibration/CalTables/CalSet.tcc>
 #endif
 
 #endif

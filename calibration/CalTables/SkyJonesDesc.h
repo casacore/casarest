@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_SKYJONESDESC_H
 #define CALIBRATION_SKYJONESDESC_H
 
-#include <calibration/CalTables/CalTableDesc.h>
+#include <casarest/calibration/CalTables/CalTableDesc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

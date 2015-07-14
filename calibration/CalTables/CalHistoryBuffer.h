@@ -29,9 +29,9 @@
 #ifndef CALIBRATION_CALHISTORYBUFFER_H
 #define CALIBRATION_CALHISTORYBUFFER_H
 
-#include <calibration/CalTables/CalIterBase.h>
-#include <calibration/CalTables/CalTable.h>
-#include <calibration/CalTables/CalHistoryColumns.h>
+#include <casarest/calibration/CalTables/CalIterBase.h>
+#include <casarest/calibration/CalTables/CalTable.h>
+#include <casarest/calibration/CalTables/CalHistoryColumns.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

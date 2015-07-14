@@ -29,17 +29,17 @@
 #ifndef CALIBRATION_CALDESCCOLUMNS2_H
 #define CALIBRATION_CALDESCCOLUMNS2_H
 
-#include <casa/aips.h>
-#include <measures/Measures/MFrequency.h>
-#include <tables/Tables/TableColumn.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ArrayColumn.h>
-#include <measures/TableMeasures/TableMeasColumn.h>
-#include <measures/TableMeasures/ScalarMeasColumn.h>
-#include <measures/TableMeasures/ArrayMeasColumn.h>
-#include <measures/TableMeasures/ArrayQuantColumn.h>
-#include <calibration/CalTables/CalTable2.h>
-#include <msvis/MSVis/MSCalEnums.h>
+#include <casacore/casa/aips.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/tables/Tables/TableColumn.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
+#include <casacore/measures/TableMeasures/TableMeasColumn.h>
+#include <casacore/measures/TableMeasures/ScalarMeasColumn.h>
+#include <casacore/measures/TableMeasures/ArrayMeasColumn.h>
+#include <casacore/measures/TableMeasures/ArrayQuantColumn.h>
+#include <casarest/calibration/CalTables/CalTable2.h>
+#include <casarest/msvis/MSVis/MSCalEnums.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

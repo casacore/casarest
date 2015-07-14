@@ -29,17 +29,17 @@
 #ifndef SYNTHESIS_VLACALCILLUMINATIONCONVFUNC_H
 #define SYNTHESIS_VLACALCILLUMINATIONCONVFUNC_H
 
-#include <synthesis/MeasurementComponents/IlluminationConvFunc.h>
-#include <synthesis/MeasurementComponents/BeamCalcConstants.h>
-#include <synthesis/MeasurementComponents/BeamCalc.h>
-#include <synthesis/MeasurementComponents/BeamCalcAntenna.h>
-#include <synthesis/MeasurementComponents/CExp.new3.h>
-#include <synthesis/MeasurementComponents/ExpCache.h>
-#include <images/Images/TempImage.h>
-#include <casa/Exceptions.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <casa/sstream.h>
-#include <synthesis/MeasurementComponents/Utils.h>
+#include <casarest/synthesis/MeasurementComponents/IlluminationConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/BeamCalcConstants.h>
+#include <casarest/synthesis/MeasurementComponents/BeamCalc.h>
+#include <casarest/synthesis/MeasurementComponents/BeamCalcAntenna.h>
+#include <casarest/synthesis/MeasurementComponents/CExp.new3.h>
+#include <casarest/synthesis/MeasurementComponents/ExpCache.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Exceptions.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/casa/sstream.h>
+#include <casarest/synthesis/MeasurementComponents/Utils.h>
 namespace casa{
 
   Int getVLABandID(Double& freq,String&telescopeName);

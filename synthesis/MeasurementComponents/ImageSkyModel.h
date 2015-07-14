@@ -29,15 +29,15 @@
 #ifndef SYNTHESIS_IMAGESKYMODEL_H
 #define SYNTHESIS_IMAGESKYMODEL_H
 
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <synthesis/MeasurementComponents/SkyModel.h>
-#include <casa/Arrays/Matrix.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/TempImage.h>
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/System/PGPlotter.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casarest/synthesis/MeasurementComponents/SkyModel.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/System/PGPlotter.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -329,7 +329,7 @@ protected:
 
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <synthesis/MeasurementComponents/ImageSkyModel.tcc>
+#include <casarest/synthesis/MeasurementComponents/ImageSkyModel.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 
 #endif

@@ -31,10 +31,10 @@
 #include <flagging/Flagging/RFDataMapper.h> 
 #include <flagging/Flagging/RFFlagCube.h> 
 #include <flagging/Flagging/RFRowClipper.h> 
-#include <scimath/Functionals/Polynomial.h>
-#include <scimath/Fitting/LinearFit.h>
-#include <casa/Containers/Queue.h>
-#include <casa/Arrays/LogiVector.h>
+#include <casacore/scimath/Functionals/Polynomial.h>
+#include <casacore/scimath/Fitting/LinearFit.h>
+#include <casacore/casa/Containers/Queue.h>
+#include <casacore/casa/Arrays/LogiVector.h>
     
 namespace casa { //# NAMESPACE CASA - BEGIN
 

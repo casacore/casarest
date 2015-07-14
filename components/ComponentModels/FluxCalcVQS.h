@@ -28,17 +28,17 @@
 #ifndef COMPONENTS_FLUXCALCVQS_H
 #define COMPONENTS_FLUXCALCVQS_H
 
-#include <components/ComponentModels/FluxStandard.h>
-#include <components/ComponentModels/FluxStdSrcs.h>
-#include <casa/BasicSL/String.h>
-#include <casa/OS/Path.h>
-#include <measures/Measures/MDirection.h>
-#include <tables/Tables/Table.h>
+#include <casarest/components/ComponentModels/FluxStandard.h>
+#include <casarest/components/ComponentModels/FluxStdSrcs.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/OS/Path.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/tables/Tables/Table.h>
 
 //# Handy for passing anonymous arrays to functions.
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 
-#include <scimath/Functionals/Interpolate1D.h>
+#include <casacore/scimath/Functionals/Interpolate1D.h>
 #include <map>
 
 

@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_MJONESMREC_H
 #define CALIBRATION_MJONESMREC_H
 
-#include <casa/aips.h>
-#include <calibration/CalTables/CalMainRecord.h>
+#include <casacore/casa/aips.h>
+#include <casarest/calibration/CalTables/CalMainRecord.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

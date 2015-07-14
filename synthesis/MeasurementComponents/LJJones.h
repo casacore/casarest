@@ -28,20 +28,20 @@
 #ifndef SYNTHESIS_LJJONES_H
 #define SYNTHESIS_LJJONES_H
 
-#include <casa/aips.h>
-#include <casa/Containers/Record.h>
-#include <casa/BasicSL/Complex.h>
-#include <synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casarest/synthesis/MeasurementComponents/SolvableVisCal.h>
 //#include <synthesis/MeasurementComponents/nPBWProjectFT.h>
-#include <synthesis/MeasurementComponents/GridFT.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/ImageInfo.h>
-#include <synthesis/MeasurementEquations/StokesImageUtil.h>
-#include <msvis/MSVis/VisSet.h>
-#include <casa/OS/Timer.h>
-#include <msvis/MSVis/VisBuffAccumulator.h>
+#include <casarest/synthesis/MeasurementComponents/GridFT.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInfo.h>
+#include <casarest/synthesis/MeasurementEquations/StokesImageUtil.h>
+#include <casarest/msvis/MSVis/VisSet.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casarest/msvis/MSVis/VisBuffAccumulator.h>
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 // Forward declaration

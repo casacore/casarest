@@ -3,7 +3,7 @@
 
 namespace casa
 {
-#include <synthesis/MeasurementComponents/BeamCalc.h>
+#include <casarest/synthesis/MeasurementComponents/BeamCalc.h>
   
 #define MAXGEOM 2000
   /*

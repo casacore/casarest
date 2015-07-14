@@ -28,7 +28,7 @@
 #ifndef COMPONENTS_FLUXSTDSQS_H
 #define COMPONENTS_FLUXSTDSQS_H
 
-#include <components/ComponentModels/FluxCalcLogFreqPolynomial.h>
+#include <casarest/components/ComponentModels/FluxCalcLogFreqPolynomial.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

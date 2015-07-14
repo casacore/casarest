@@ -32,22 +32,22 @@
 #define SAS_H
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 
-#include <tables/Tables/SetupNewTab.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
 //#include <tables/Tables/Table.h>
-#include <tables/Tables/MemoryTable.h>
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/StManAipsIO.h>
+#include <casacore/tables/Tables/MemoryTable.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/StManAipsIO.h>
 
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 
-#include <casa/Containers/List.h>
+#include <casacore/casa/Containers/List.h>
 
-#include <msvis/MSVis/VisBuffer.h>
-#include <msvis/MSVis/VisibilityIterator.h>
-#include <msvis/MSVis/VisSet.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casarest/msvis/MSVis/VisibilityIterator.h>
+#include <casarest/msvis/MSVis/VisSet.h>
 
 //#include <tableplot/TablePlot/SLog.h>
 

@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_BJONESDESC_H
 #define CALIBRATION_BJONESDESC_H
 
-#include <calibration/CalTables/SolvableVJDesc.h>
+#include <casarest/calibration/CalTables/SolvableVJDesc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

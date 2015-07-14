@@ -23,9 +23,9 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-#include <components/ComponentModels/FluxCalcLogFreqPolynomial.h>
-#include <casa/Arrays/Vector.h>
-#include <scimath/Mathematics/RigidVector.h>
+#include <casarest/components/ComponentModels/FluxCalcLogFreqPolynomial.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -29,9 +29,9 @@
 #ifndef CALIBRATION_EPOINTTABLE_H
 #define CALIBRATION_EPOINTTABLE_H
 
-#include <calibration/CalTables/TimeVarVJTable.h>
-#include <calibration/CalTables/SolvableVJTable.h>
-#include <calibration/CalTables/EPointDesc.h>
+#include <casarest/calibration/CalTables/TimeVarVJTable.h>
+#include <casarest/calibration/CalTables/SolvableVJTable.h>
+#include <casarest/calibration/CalTables/EPointDesc.h>
 namespace casa {
 class EPointTable : public SolvableVisJonesTable
 {

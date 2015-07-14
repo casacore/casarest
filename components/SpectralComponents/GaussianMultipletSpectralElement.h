@@ -29,8 +29,8 @@
 #ifndef COMPONENTS_GAUSSIANMULTIPLETSPECTRALELEMENT_H
 #define COMPONENTS_GAUSSIANMULTIPLETSPECTRALELEMENT_H
 
-#include <casa/Arrays/Matrix.h>
-#include <components/SpectralComponents/CompiledSpectralElement.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casarest/components/SpectralComponents/CompiledSpectralElement.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -25,10 +25,10 @@
 //#
 //# $Id$
 
-#include <synthesis/MeasurementEquations/MaskedHogbomCleanModel.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Arrays/MaskArrMath.h>
+#include <casarest/synthesis/MeasurementEquations/MaskedHogbomCleanModel.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/MaskArrMath.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

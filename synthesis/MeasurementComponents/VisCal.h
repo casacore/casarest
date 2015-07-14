@@ -29,17 +29,17 @@
 #ifndef SYNTHESIS_VISCAL_H
 #define SYNTHESIS_VISCAL_H
 
-#include <casa/aips.h>
-#include <casa/Containers/Record.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicSL/Constants.h>
-#include <synthesis/MeasurementComponents/Mueller.h>
-#include <synthesis/MeasurementComponents/Jones.h>
-#include <calibration/CalTables/VisCalEnum.h>
-#include <synthesis/MeasurementComponents/VisVector.h>
-#include <msvis/MSVis/VisSet.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casarest/synthesis/MeasurementComponents/Mueller.h>
+#include <casarest/synthesis/MeasurementComponents/Jones.h>
+#include <casarest/calibration/CalTables/VisCalEnum.h>
+#include <casarest/synthesis/MeasurementComponents/VisVector.h>
+#include <casarest/msvis/MSVis/VisSet.h>
 
-#include <msvis/MSVis/VisBuffGroupAcc.h>
+#include <casarest/msvis/MSVis/VisBuffGroupAcc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

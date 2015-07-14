@@ -26,7 +26,7 @@
 //# $Id$
 //----------------------------------------------------------------------------
 
-#include <calibration/CalTables/SolvableCalSetMCol.h>
+#include <casarest/calibration/CalTables/SolvableCalSetMCol.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

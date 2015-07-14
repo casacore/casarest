@@ -26,11 +26,11 @@
 //# $Id: SpectralList2.tcc 19935 2007-02-27 05:07:40Z Malte.Marquarding $
 
 //# Includes
-#include <components/SpectralComponents/SpectralList.h>
+#include <casarest/components/SpectralComponents/SpectralList.h>
 
-#include <casa/Arrays/Vector.h>
-#include <casa/Exceptions/Error.h>
-#include <components/SpectralComponents/SpectralElement.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casarest/components/SpectralComponents/SpectralElement.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

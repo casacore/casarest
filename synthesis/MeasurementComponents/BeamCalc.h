@@ -30,8 +30,8 @@
 #define SYNTHESIS_BEAMCALC_H
 
 //#include <casa/complex.h>
-#include <images/Images/TempImage.h>
-#include <casa/Exceptions.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Exceptions.h>
 
 namespace casa
 {

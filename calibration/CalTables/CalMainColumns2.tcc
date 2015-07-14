@@ -26,7 +26,7 @@
 //# $Id$
 //----------------------------------------------------------------------------
 
-#include <calibration/CalTables/CalMainColumns2.h>
+#include <casarest/calibration/CalTables/CalMainColumns2.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

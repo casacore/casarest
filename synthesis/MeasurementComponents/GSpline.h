@@ -29,10 +29,10 @@
 #ifndef SYNTHESIS_GSPLINE_H
 #define SYNTHESIS_GSPLINE_H
 
-#include <synthesis/MeasurementComponents/SolvableVisCal.h>
-#include <synthesis/MeasurementComponents/StandardVisCal.h>
-#include <calibration/CalTables/GJonesMBuf.h>
-#include <casa/Containers/SimOrdMap.h>
+#include <casarest/synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <casarest/synthesis/MeasurementComponents/StandardVisCal.h>
+#include <casarest/calibration/CalTables/GJonesMBuf.h>
+#include <casacore/casa/Containers/SimOrdMap.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

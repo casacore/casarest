@@ -30,18 +30,18 @@
 #define SYNTHESIS_STEEPESTDESCENT_H
 //----------------------------------------------------------------------------
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 
-#include <synthesis/MeasurementEquations/VisEquation.h>
-#include <synthesis/MeasurementEquations/Iterate.h>
-#include <synthesis/MeasurementComponents/EPJones.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/OS/Timer.h>
+#include <casarest/synthesis/MeasurementEquations/VisEquation.h>
+#include <casarest/synthesis/MeasurementEquations/Iterate.h>
+#include <casarest/synthesis/MeasurementComponents/EPJones.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/OS/Timer.h>
 
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
 namespace casa {
 

@@ -28,12 +28,12 @@
 #ifndef SYNTHESIS_MUELLER_H
 #define SYNTHESIS_MUELLER_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/iostream.h>
-#include <casa/Exceptions/Error.h>
-#include <synthesis/MeasurementComponents/VisVector.h>
-#include <synthesis/MeasurementComponents/Jones.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casarest/synthesis/MeasurementComponents/VisVector.h>
+#include <casarest/synthesis/MeasurementComponents/Jones.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

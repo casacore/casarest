@@ -40,7 +40,7 @@
 // #include <casa/Arrays/Vector.h>
 // #include <casa/Arrays/Matrix.h>
 // #include <scimath/Mathematics/ConvolveGridder.h>
-#include <synthesis/MeasurementComponents/nPBWProjectFT.h>
+#include <casarest/synthesis/MeasurementComponents/nPBWProjectFT.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
   

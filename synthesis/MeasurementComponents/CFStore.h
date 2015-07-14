@@ -27,15 +27,15 @@
 //# $Id$
 #ifndef SYNTHESIS_CFSTORE_H
 #define SYNTHESIS_CFSTORE_H
-#include <synthesis/MeasurementComponents/CFDefs.h>
-#include <synthesis/MeasurementComponents/SynthesisError.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogOrigin.h>
-#include <casa/Utilities/CountedPtr.h>
-#include <images/Images/ImageInterface.h>
-#include <msvis/MSVis/VisBuffer.h>
+#include <casarest/synthesis/MeasurementComponents/CFDefs.h>
+#include <casarest/synthesis/MeasurementComponents/SynthesisError.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogOrigin.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
 namespace casa { //# NAMESPACE CASA - BEGIN
   using namespace CFDefs;
   class CFStore

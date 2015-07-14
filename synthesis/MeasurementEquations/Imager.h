@@ -27,25 +27,25 @@
 #ifndef SYNTHESIS_IMAGER_H
 #define SYNTHESIS_IMAGER_H
 
-#include <casa/aips.h>
-#include <casa/OS/Timer.h>
-#include <casa/Containers/Record.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Quanta/Quantum.h>
-#include <components/ComponentModels/ConstantSpectrum.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casarest/components/ComponentModels/ConstantSpectrum.h>
 
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/MRadialVelocity.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MRadialVelocity.h>
 
-#include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
-#include <synthesis/MeasurementComponents/EVLAAperture.h>
-#include <synthesis/MeasurementComponents/BeamSquint.h>
-#include <synthesis/MeasurementComponents/WFCleanImageSkyModel.h>
-#include <synthesis/MeasurementComponents/ClarkCleanImageSkyModel.h>
-#include <synthesis/MeasurementEquations/SkyEquation.h>
-#include <synthesis/MeasurementComponents/ATerm.h>
+#include <casarest/synthesis/MeasurementComponents/CleanImageSkyModel.h>
+#include <casarest/synthesis/MeasurementComponents/EVLAAperture.h>
+#include <casarest/synthesis/MeasurementComponents/BeamSquint.h>
+#include <casarest/synthesis/MeasurementComponents/WFCleanImageSkyModel.h>
+#include <casarest/synthesis/MeasurementComponents/ClarkCleanImageSkyModel.h>
+#include <casarest/synthesis/MeasurementEquations/SkyEquation.h>
+#include <casarest/synthesis/MeasurementComponents/ATerm.h>
 
 
 namespace casa { //# NAMESPACE CASA - BEGIN

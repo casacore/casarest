@@ -28,7 +28,7 @@
 #ifndef SYNTHESIS_PSKYEQUATION_H
 #define SYNTHESIS_PSKYEQUATION_H
 
-#include <synthesis/MeasurementEquations/SkyEquation.h>
+#include <casarest/synthesis/MeasurementEquations/SkyEquation.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -29,13 +29,13 @@
 #ifndef SYNTHESIS_MEASUREMENTCOMPONENTS_H
 #define SYNTHESIS_MEASUREMENTCOMPONENTS_H
 
-#include <synthesis/MeasurementComponents/VisJones.h>
-#include <synthesis/MeasurementComponents/SkyJones.h>
-#include <synthesis/MeasurementComponents/XCorr.h>
-#include <synthesis/MeasurementComponents/MJones.h>
-#include <synthesis/MeasurementComponents/ACoh.h>
-#include <synthesis/MeasurementComponents/FTMachine.h>
-#include <synthesis/MeasurementComponents/SkyModel.h>
+#include <casarest/synthesis/MeasurementComponents/VisJones.h>
+#include <casarest/synthesis/MeasurementComponents/SkyJones.h>
+#include <casarest/synthesis/MeasurementComponents/XCorr.h>
+#include <casarest/synthesis/MeasurementComponents/MJones.h>
+#include <casarest/synthesis/MeasurementComponents/ACoh.h>
+#include <casarest/synthesis/MeasurementComponents/FTMachine.h>
+#include <casarest/synthesis/MeasurementComponents/SkyModel.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

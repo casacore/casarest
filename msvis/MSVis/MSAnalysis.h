@@ -27,9 +27,9 @@
 #define _MS_MSANALYSIS_H_
 
 // includes
-#include <msvis/MSVis/MSMoments.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <casa/Logging/LogIO.h>
+#include <casarest/msvis/MSVis/MSMoments.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/casa/Logging/LogIO.h>
 
 namespace casa {
 

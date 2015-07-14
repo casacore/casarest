@@ -27,8 +27,8 @@
 //# $Id$
 #ifndef SYNTHESIS_CFDEFS_H
 #define SYNTHESIS_CFDEFS_H
-#include <casa/Arrays/Array.h>
-#include <casa/aips.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/aips.h>
 
 namespace casa
 {

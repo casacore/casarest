@@ -24,7 +24,7 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //# $Id$
-#include <lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
 #include <flagging/Flagging/RFCubeLattice.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN

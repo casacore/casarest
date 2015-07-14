@@ -26,14 +26,14 @@
 //# $Id: Spectral2Estimate.tcc 21465 2014-06-19 05:56:56Z gervandiepen $
 
 //# Includes
-#include <components/SpectralComponents/SpectralEstimate.h>
+#include <casarest/components/SpectralComponents/SpectralEstimate.h>
 
-#include <casa/BasicMath/Math.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/Utilities/Assert.h>
-#include <components/SpectralComponents/CompiledSpectralElement.h>
-#include <components/SpectralComponents/GaussianSpectralElement.h>
-#include <components/SpectralComponents/PolynomialSpectralElement.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casarest/components/SpectralComponents/CompiledSpectralElement.h>
+#include <casarest/components/SpectralComponents/GaussianSpectralElement.h>
+#include <casarest/components/SpectralComponents/PolynomialSpectralElement.h>
 
 namespace casa { //#Begin namespace casa
 

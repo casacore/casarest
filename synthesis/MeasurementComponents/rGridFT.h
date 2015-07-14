@@ -29,21 +29,21 @@
 #ifndef SYNTHESIS_RGRIDFT_H
 #define SYNTHESIS_RGRIDFT_H
 
-#include <synthesis/MeasurementComponents/FTMachine.h>
-#include <synthesis/MeasurementComponents/VisibilityResampler.h>
-#include <synthesis/MeasurementComponents/MultiThreadedVisResampler.h>
-#include <casa/Arrays/Matrix.h>
-#include <scimath/Mathematics/FFTServer.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/ImageInterface.h>
-#include <casa/Containers/Block.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <scimath/Mathematics/ConvolveGridder.h>
-#include <lattices/Lattices/LatticeCache.h>
-#include <lattices/Lattices/ArrayLattice.h>
+#include <casarest/synthesis/MeasurementComponents/FTMachine.h>
+#include <casarest/synthesis/MeasurementComponents/VisibilityResampler.h>
+#include <casarest/synthesis/MeasurementComponents/MultiThreadedVisResampler.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/scimath/Mathematics/ConvolveGridder.h>
+#include <casacore/lattices/Lattices/LatticeCache.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
 
 
 namespace casa { //# NAMESPACE CASA - BEGIN

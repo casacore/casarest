@@ -29,10 +29,10 @@
 #ifndef SYNTHESIS_EVLAAPERTURE_H
 #define SYNTHESIS_EVLAAPERTURE_H
 
-#include <images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
 //#include <synthesis/MeasurementComponents/ATerm.h>
-#include <synthesis/MeasurementComponents/AzElAperture.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
+#include <casarest/synthesis/MeasurementComponents/AzElAperture.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
 //
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------

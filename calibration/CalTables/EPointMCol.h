@@ -29,9 +29,9 @@
 #ifndef CALIBRATION_EPOINTMCOL_H
 #define CALIBRATION_EPOINTMCOL_H
 
-#include <calibration/CalTables/SolvableVJMCol.h>
-#include <calibration/CalTables/SolvableVJTable.h>
-#include <calibration/CalTables/EPointTable.h>
+#include <casarest/calibration/CalTables/SolvableVJMCol.h>
+#include <casarest/calibration/CalTables/SolvableVJTable.h>
+#include <casarest/calibration/CalTables/EPointTable.h>
 
 namespace casa {
 class ROEPointMCol : public ROSolvableVisJonesMCol

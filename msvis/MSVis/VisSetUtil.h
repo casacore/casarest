@@ -29,12 +29,12 @@
 #ifndef MSVIS_VISSETUTIL_H
 #define MSVIS_VISSETUTIL_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Quanta/Quantum.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <msvis/MSVis/VisSet.h>
-#include <msvis/MSVis/VisibilityIterator.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casarest/msvis/MSVis/VisSet.h>
+#include <casarest/msvis/MSVis/VisibilityIterator.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -23,8 +23,8 @@
 //#                        520 Edgemont Road
 //#                        Charlottesville, VA 22903-2475 USA
 //#
-#include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Cube.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/casa/Arrays/Cube.h>
 #include <cmath>
 
 namespace casa { //# NAMESPACE CASA - BEGIN

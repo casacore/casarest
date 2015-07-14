@@ -25,20 +25,20 @@
 //#
 //# $Id$
 
-#include <casa/stdio.h>
-#include <casa/string.h>
+#include <casacore/casa/stdio.h>
+#include <casacore/casa/string.h>
 #include <errno.h>
 #include <ionosphere/Ionosphere/GPSDCB.h>
-#include <casa/Arrays/LogiVector.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Arrays/MaskArrMath.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/System/Aipsrc.h>
-#include <tables/Tables.h>
-#include <scimath/Mathematics/InterpolateArray1D.h>    
-#include <casa/iostream.h>
+#include <casacore/casa/Arrays/LogiVector.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/MaskArrMath.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/System/Aipsrc.h>
+#include <casacore/tables/Tables.h>
+#include <casacore/scimath/Mathematics/InterpolateArray1D.h>    
+#include <casacore/casa/iostream.h>
     
 namespace casa { //# NAMESPACE CASA - BEGIN
 

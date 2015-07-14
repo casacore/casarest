@@ -29,15 +29,15 @@
 #ifndef CALIBRATION_CALTABLE_H
 #define CALIBRATION_CALTABLE_H
 
-#include <casa/aips.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/ExprNode.h>
-#include <casa/Containers/Record.h>
-#include <casa/Utilities/Sort.h>
-#include <calibration/CalTables/CalTableDesc.h>
-#include <calibration/CalTables/CalMainRecord.h>
-#include <calibration/CalTables/CalDescRecord.h>
-#include <calibration/CalTables/CalHistRecord.h>
+#include <casacore/casa/aips.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/ExprNode.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Utilities/Sort.h>
+#include <casarest/calibration/CalTables/CalTableDesc.h>
+#include <casarest/calibration/CalTables/CalMainRecord.h>
+#include <casarest/calibration/CalTables/CalDescRecord.h>
+#include <casarest/calibration/CalTables/CalHistRecord.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -1,9 +1,9 @@
 #ifndef IONOSPHERE_GPS_H
 #define IONOSPHERE_GPS_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Containers/Block.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Containers/Block.h>
     
     
 namespace casa { //# NAMESPACE CASA - BEGIN

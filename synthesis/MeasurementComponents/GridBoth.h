@@ -29,8 +29,8 @@
 #ifndef SYNTHESIS_GRIDBOTH_H
 #define SYNTHESIS_GRIDBOTH_H
 
-#include <synthesis/MeasurementComponents/GridFT.h>
-#include <synthesis/MeasurementComponents/SDGrid.h>
+#include <casarest/synthesis/MeasurementComponents/GridFT.h>
+#include <casarest/synthesis/MeasurementComponents/SDGrid.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

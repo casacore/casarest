@@ -28,8 +28,8 @@
 #ifndef MSVIS_VISBUFFGROUPACC_H
 #define MSVIS_VISBUFFGROUPACC_H
 
-#include <casa/aips.h>
-#include <msvis/MSVis/VisBuffAccumulator.h>
+#include <casacore/casa/aips.h>
+#include <casarest/msvis/MSVis/VisBuffAccumulator.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

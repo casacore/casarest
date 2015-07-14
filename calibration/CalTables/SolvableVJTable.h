@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_SOLVABLEVJTABLE_H
 #define CALIBRATION_SOLVABLEVJTABLE_H
 
-#include <calibration/CalTables/TimeVarVJTable.h>
-#include <calibration/CalTables/SolvableVJDesc.h>
+#include <casarest/calibration/CalTables/TimeVarVJTable.h>
+#include <casarest/calibration/CalTables/SolvableVJDesc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

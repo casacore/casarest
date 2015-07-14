@@ -3,7 +3,7 @@
 #include <sys/syscall.h>
 #include <sys/time.h>
 #include <sys/resource.h>
-#include <msvis/MSVis/UtilJ.h>
+#include <casarest/msvis/MSVis/UtilJ.h>
 
 #ifndef SYNTHESIS_THREADTIMERS_H
 #define SYNTHESIS_THREADTIMERS_H

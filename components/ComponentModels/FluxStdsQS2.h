@@ -29,8 +29,8 @@
 #ifndef COMPONENTS_FLUXSTDSQS2_H
 #define COMPONENTS_FLUXSTDSQS2_H
 
-#include <components/ComponentModels/FluxCalcLogFreqPolynomial.h>
-#include <components/ComponentModels/FluxCalcVQS.h>
+#include <casarest/components/ComponentModels/FluxCalcLogFreqPolynomial.h>
+#include <casarest/components/ComponentModels/FluxCalcVQS.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 namespace NSTDS { //# NAMESPACE NSTDS "new standards"  - BEGIN

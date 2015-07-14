@@ -26,8 +26,8 @@
 #ifndef MSVIS_VISCHUNKAVERAGER_H
 #define MSVIS_VISCHUNKAVERAGER_H
 
-#include <casa/aips.h>
-#include <msvis/MSVis/CalVisBuffer.h>
+#include <casacore/casa/aips.h>
+#include <casarest/msvis/MSVis/CalVisBuffer.h>
 #include <map>
 #include <vector>
 

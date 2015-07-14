@@ -30,9 +30,9 @@
 #define SYNTHESIS_ARRAYMODEL_H
 
 
-#include <casa/aips.h>
-#include <synthesis/MeasurementEquations/LinearModel.h>
-#include <casa/Arrays/Array.h>
+#include <casacore/casa/aips.h>
+#include <casarest/synthesis/MeasurementEquations/LinearModel.h>
+#include <casacore/casa/Arrays/Array.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -130,6 +130,6 @@ protected:
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <synthesis/MeasurementEquations/ArrayModel.tcc>
+#include <casarest/synthesis/MeasurementEquations/ArrayModel.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 #endif

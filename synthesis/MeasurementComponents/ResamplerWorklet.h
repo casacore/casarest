@@ -29,17 +29,17 @@
 #ifndef SYNTHESIS_RESAMPLERWORKLET_H
 #define SYNTHESIS_RESAMPLERWORKLET_H
 
-#include <synthesis/MeasurementComponents/VisibilityResamplerBase.h>
-#include <synthesis/MeasurementComponents/VBStore.h>
-#include <synthesis/Utilities/ThreadCoordinator.h>
-#include <msvis/MSVis/AsynchronousTools.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Array.h>
+#include <casarest/synthesis/MeasurementComponents/VisibilityResamplerBase.h>
+#include <casarest/synthesis/MeasurementComponents/VBStore.h>
+#include <casarest/synthesis/Utilities/ThreadCoordinator.h>
+#include <casarest/msvis/MSVis/AsynchronousTools.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Array.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <sys/syscall.h>
 
 using namespace casa::async;

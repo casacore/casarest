@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_TJONESTABLE_H
 #define CALIBRATION_TJONESTABLE_H
 
-#include <calibration/CalTables/SolvableVJTable.h>
-#include <calibration/CalTables/TJonesDesc.h>
+#include <casarest/calibration/CalTables/SolvableVJTable.h>
+#include <casarest/calibration/CalTables/TJonesDesc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

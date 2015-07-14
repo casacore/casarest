@@ -29,15 +29,15 @@
 #ifndef SYNTHESIS_SKYEQUATION_H
 #define SYNTHESIS_SKYEQUATION_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <synthesis/MeasurementComponents/FTMachine.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <msvis/MSVis/VisBufferAsync.h>
-#include <ms/MeasurementSets/MSMainEnums.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casarest/synthesis/MeasurementComponents/FTMachine.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casarest/msvis/MSVis/VisBufferAsync.h>
+#include <casacore/ms/MeasurementSets/MSMainEnums.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

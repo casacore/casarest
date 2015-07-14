@@ -29,14 +29,14 @@
 #ifndef SYNTHESIS_SKYJONES_H
 #define SYNTHESIS_SKYJONES_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <synthesis/MeasurementEquations/Iterate.h>
-#include <msvis/MSVis/VisSet.h>
-#include <images/Images/ImageInterface.h>
-#include <components/ComponentModels/ComponentList.h>
-#include <components/ComponentModels/SkyComponent.h>
-#include <casa/Utilities/CompositeNumber.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casarest/synthesis/MeasurementEquations/Iterate.h>
+#include <casarest/msvis/MSVis/VisSet.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casarest/components/ComponentModels/ComponentList.h>
+#include <casarest/components/ComponentModels/SkyComponent.h>
+#include <casacore/casa/Utilities/CompositeNumber.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

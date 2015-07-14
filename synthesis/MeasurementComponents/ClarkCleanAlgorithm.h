@@ -29,10 +29,10 @@
 #define SYNTHESIS_CLARKCLEANALGORITHM_H
 
 //# Includes
-#include <casa/BasicSL/String.h>
-#include <casa/Arrays/Array.h>
-#include <lattices/Lattices/PagedArray.h>
-#include <synthesis/Parallel/Algorithm.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/lattices/Lattices/PagedArray.h>
+#include <casarest/synthesis/Parallel/Algorithm.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

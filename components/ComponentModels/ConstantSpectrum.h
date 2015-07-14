@@ -28,9 +28,9 @@
 #ifndef COMPONENTS_CONSTANTSPECTRUM_H
 #define COMPONENTS_CONSTANTSPECTRUM_H
 
-#include <casa/aips.h>
-#include <components/ComponentModels/ComponentType.h>
-#include <components/ComponentModels/SpectralModel.h>
+#include <casacore/casa/aips.h>
+#include <casarest/components/ComponentModels/ComponentType.h>
+#include <casarest/components/ComponentModels/SpectralModel.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

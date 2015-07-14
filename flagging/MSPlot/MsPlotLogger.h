@@ -36,8 +36,8 @@
 #define CASA_MSPLOT_LOGGER_H
 
 //# Include files
-#include <casa/Logging/LogIO.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/BasicSL/String.h>
   
 #define LOG0 0
 // <summary>

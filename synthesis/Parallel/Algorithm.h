@@ -31,7 +31,7 @@
 #define SYNTHESIS_ALGORITHM_H
 
 //# Includes
-#include <synthesis/Parallel/Applicator.h>
+#include <casarest/synthesis/Parallel/Applicator.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

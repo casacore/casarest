@@ -43,8 +43,8 @@
 #include <iomanip>
 
 //# General CASA includes
-#include <casa/BasicSL/String.h>
-#include <casa/Arrays/Slice.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Slice.h>
 
 //# Table and TablePlot includes
 #include <tableplot/TablePlot/TablePlot.h>

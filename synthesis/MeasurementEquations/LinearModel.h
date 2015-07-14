@@ -29,7 +29,7 @@
 #ifndef SYNTHESIS_LINEARMODEL_H
 #define SYNTHESIS_LINEARMODEL_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -114,6 +114,6 @@ public:
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <synthesis/MeasurementEquations/LinearModel.tcc>
+#include <casarest/synthesis/MeasurementEquations/LinearModel.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 #endif

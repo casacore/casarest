@@ -28,7 +28,7 @@
 #ifndef SYNTHESIS_PWFCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_PWFCLEANIMAGESKYMODEL_H
 
-#include <synthesis/MeasurementComponents/WFCleanImageSkyModel.h>
+#include <casarest/synthesis/MeasurementComponents/WFCleanImageSkyModel.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

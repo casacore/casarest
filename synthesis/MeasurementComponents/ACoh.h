@@ -29,10 +29,10 @@
 #ifndef SYNTHESIS_ACOH_H
 #define SYNTHESIS_ACOH_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <synthesis/MeasurementEquations/Iterate.h>
-#include <msvis/MSVis/VisSet.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casarest/synthesis/MeasurementEquations/Iterate.h>
+#include <casarest/msvis/MSVis/VisSet.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

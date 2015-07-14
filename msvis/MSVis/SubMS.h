@@ -26,17 +26,17 @@
 //#
 //#
 //# $Id$
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSMainEnums.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSMainEnums.h>
 //#include <msvis/MSVis/VisIterator.h>
-#include <casa/aips.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
 //#include <casa/Utilities/CountedPtr.h>
 #include <map>
 #include <vector>
-#include <scimath/Mathematics/InterpolateArray1D.h>
+#include <casacore/scimath/Mathematics/InterpolateArray1D.h>
 
 
 #ifndef MSVIS_SUBMS_H
@@ -572,7 +572,7 @@ class SubMS
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <msvis/MSVis/SubMS.tcc>
+#include <casarest/msvis/MSVis/SubMS.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 
 #endif

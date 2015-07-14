@@ -29,12 +29,12 @@
 #ifndef SYNTHESIS_VLAILLUMINATIONCONVFUNC_H
 #define SYNTHESIS_VLAILLUMINATIONCONVFUNC_H
 
-#include <synthesis/MeasurementComponents/IlluminationConvFunc.h>
-#include <synthesis/MeasurementComponents/CExp.new3.h>
-#include <synthesis/MeasurementComponents/ExpCache.h>
-#include <images/Images/TempImage.h>
-#include <casa/Exceptions.h>
-#include <msvis/MSVis/VisBuffer.h>
+#include <casarest/synthesis/MeasurementComponents/IlluminationConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/CExp.new3.h>
+#include <casarest/synthesis/MeasurementComponents/ExpCache.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Exceptions.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
 namespace casa
 {
   class VLAIlluminationConvFunc: public IlluminationConvFunc

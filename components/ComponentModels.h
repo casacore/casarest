@@ -28,25 +28,25 @@
 #ifndef COMPONENTS_COMPONENTMODELS_H
 #define COMPONENTS_COMPONENTMODELS_H
 
-#include <components/ComponentModels/ComponentType.h>
+#include <casarest/components/ComponentModels/ComponentType.h>
 
-#include <components/ComponentModels/Flux.h>
+#include <casarest/components/ComponentModels/Flux.h>
 
-#include <components/ComponentModels/ComponentShape.h>
-#include <components/ComponentModels/TwoSidedShape.h>
-#include <components/ComponentModels/PointShape.h>
-#include <components/ComponentModels/GaussianShape.h>
-#include <components/ComponentModels/DiskShape.h>
+#include <casarest/components/ComponentModels/ComponentShape.h>
+#include <casarest/components/ComponentModels/TwoSidedShape.h>
+#include <casarest/components/ComponentModels/PointShape.h>
+#include <casarest/components/ComponentModels/GaussianShape.h>
+#include <casarest/components/ComponentModels/DiskShape.h>
 
-#include <components/ComponentModels/SpectralModel.h>
-#include <components/ComponentModels/ConstantSpectrum.h>
-#include <components/ComponentModels/SpectralIndex.h>
+#include <casarest/components/ComponentModels/SpectralModel.h>
+#include <casarest/components/ComponentModels/ConstantSpectrum.h>
+#include <casarest/components/ComponentModels/SpectralIndex.h>
 
-#include <components/ComponentModels/SkyCompBase.h>
-#include <components/ComponentModels/SkyCompRep.h>
-#include <components/ComponentModels/SkyComponent.h>
+#include <casarest/components/ComponentModels/SkyCompBase.h>
+#include <casarest/components/ComponentModels/SkyCompRep.h>
+#include <casarest/components/ComponentModels/SkyComponent.h>
 
-#include <components/ComponentModels/ComponentList.h>
+#include <casarest/components/ComponentModels/ComponentList.h>
 #include <trial/ComponentModels/DOcomponentlist.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN

@@ -29,9 +29,9 @@
 #ifndef COMPONENTS_SPECTRALESTIMATE_H
 #define COMPONENTS_SPECTRALESTIMATE_H
 
-#include <casa/aips.h>
-#include <components/SpectralComponents/SpectralElement.h>
-#include <components/SpectralComponents/SpectralList.h>
+#include <casacore/casa/aips.h>
+#include <casarest/components/SpectralComponents/SpectralElement.h>
+#include <casarest/components/SpectralComponents/SpectralList.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -222,6 +222,6 @@ class SpectralEstimate {
 } //# NAMESPACE CASA - END
 
 #ifndef CASACORE_NO_AUTO_TEMPLATES
-#include <components/SpectralComponents/Spectral2Estimate.tcc>
+#include <casarest/components/SpectralComponents/Spectral2Estimate.tcc>
 #endif //# CASACORE_NO_AUTO_TEMPLATES
 #endif

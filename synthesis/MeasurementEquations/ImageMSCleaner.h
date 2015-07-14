@@ -30,7 +30,7 @@
 #define SYNTHESIS_IMAGEMSCLEANER_H
 
 //# Includes
-#include <synthesis/MeasurementEquations/MatrixCleaner.h>
+#include <casarest/synthesis/MeasurementEquations/MatrixCleaner.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

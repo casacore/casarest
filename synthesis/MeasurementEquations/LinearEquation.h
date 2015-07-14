@@ -30,9 +30,9 @@
 #define SYNTHESIS_LINEAREQUATION_H
 
 
-#include <casa/aips.h>
-#include <synthesis/MeasurementEquations/LinearModel.h>
-#include <synthesis/MeasurementEquations/ResidualEquation.h>
+#include <casacore/casa/aips.h>
+#include <casarest/synthesis/MeasurementEquations/LinearModel.h>
+#include <casarest/synthesis/MeasurementEquations/ResidualEquation.h>
 
 
 namespace casa { //# NAMESPACE CASA - BEGIN
@@ -134,7 +134,7 @@ public:
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <synthesis/MeasurementEquations/LinearEquation.tcc>
+#include <casarest/synthesis/MeasurementEquations/LinearEquation.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 #endif
 

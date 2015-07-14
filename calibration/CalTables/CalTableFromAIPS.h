@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_CALTABLEFROMAIPS_H
 #define CALIBRATION_CALTABLEFROMAIPS_H
 
-#include <calibration/CalTables/CalTable.h>
+#include <casarest/calibration/CalTables/CalTable.h>
 
 
 namespace casa { //# NAMESPACE CASA - BEGIN

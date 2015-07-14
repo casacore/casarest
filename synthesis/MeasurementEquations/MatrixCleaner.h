@@ -30,16 +30,16 @@
 #define SYNTHESIS_MATRIXCLEANER_H
 
 //# Includes
-#include <casa/aips.h>
-#include <casa/Quanta/Quantum.h>
-#include <lattices/Lattices/TempLattice.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Containers/Block.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/lattices/Lattices/TempLattice.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Containers/Block.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeCleaner.h>
+#include <casacore/lattices/LatticeMath/LatticeCleaner.h>
 #else
-#include <lattices/Lattices/LatticeCleaner.h>
+#include <casacore/lattices/Lattices/LatticeCleaner.h>
 #endif
 
 namespace casa { //# NAMESPACE CASA - BEGIN

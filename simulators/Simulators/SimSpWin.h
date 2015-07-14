@@ -28,9 +28,9 @@
 #ifndef SIMULATORS_SIMSPWIN_H
 #define SIMULATORS_SIMSPWIN_H
 
-#include <casa/Arrays/Vector.h>
-#include <measures/Measures/MFrequency.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/casa/Exceptions/Error.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

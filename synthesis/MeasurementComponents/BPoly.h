@@ -29,8 +29,8 @@
 #ifndef SYNTHESIS_BPOLY_H
 #define SYNTHESIS_BPOLY_H
 
-#include <synthesis/MeasurementComponents/SolvableVisCal.h>
-#include <synthesis/MeasurementComponents/StandardVisCal.h>
+#include <casarest/synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <casarest/synthesis/MeasurementComponents/StandardVisCal.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

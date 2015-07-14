@@ -28,16 +28,16 @@
 #ifndef MSVIS_VISBUFFER_H
 #define MSVIS_VISBUFFER_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/BasicSL/Complex.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MEpoch.h>
-#include <msvis/MSVis/StokesVector.h>
-#include <msvis/MSVis/VisibilityIterator.h>
-#include <msvis/MSVis/MSCalEnums.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casarest/msvis/MSVis/StokesVector.h>
+#include <casarest/msvis/MSVis/VisibilityIterator.h>
+#include <casarest/msvis/MSVis/MSCalEnums.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -904,7 +904,7 @@ private:
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <msvis/MSVis/VisBuffer.tcc>
+#include <casarest/msvis/MSVis/VisBuffer.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 
 #endif

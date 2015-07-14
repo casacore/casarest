@@ -29,8 +29,8 @@
 #ifndef SYNTHESIS_ALMABEAMCALC_H
 #define SYNTHESIS_ALMABEAMCALC_H
 
-#include <images/Images/TempImage.h>
-#include <casa/Exceptions.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Exceptions.h>
 
 namespace casa
 {

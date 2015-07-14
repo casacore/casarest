@@ -29,12 +29,12 @@
 #define SYNTHESIS_CALCORRUPTOR_H
 
 // for simulation 
-#include <casa/BasicMath/Random.h>
-#include <scimath/Mathematics/FFTServer.h>
-#include <casa/Containers/Record.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <synthesis/MeasurementComponents/VisCal.h>
+#include <casacore/casa/BasicMath/Random.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casarest/synthesis/MeasurementComponents/VisCal.h>
 
 using namespace std;
 

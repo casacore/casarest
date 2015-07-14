@@ -29,25 +29,25 @@
 #ifndef SYNTHESIS_MOSAICFT_H
 #define SYNTHESIS_MOSAICFT_H
 
-#include <synthesis/MeasurementComponents/FTMachine.h>
-#include <synthesis/MeasurementComponents/SkyJones.h>
-#include <casa/Arrays/Matrix.h>
-#include <scimath/Mathematics/FFTServer.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/ImageInterface.h>
-#include <casa/Containers/Block.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Utilities/CountedPtr.h>
-#include <scimath/Mathematics/ConvolveGridder.h>
-#include <lattices/Lattices/LatticeCache.h>
-#include <lattices/Lattices/ArrayLattice.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <measures/Measures/Measure.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
+#include <casarest/synthesis/MeasurementComponents/FTMachine.h>
+#include <casarest/synthesis/MeasurementComponents/SkyJones.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
+#include <casacore/scimath/Mathematics/ConvolveGridder.h>
+#include <casacore/lattices/Lattices/LatticeCache.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/measures/Measures/Measure.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

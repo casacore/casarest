@@ -27,7 +27,7 @@
 #ifndef SYNTHESIS_CUBESKYEQUATION_H
 #define SYNTHESIS_CUBESKYEQUATION_H
 
-#include <synthesis/MeasurementEquations/SkyEquation.h>
+#include <casarest/synthesis/MeasurementEquations/SkyEquation.h>
 //#include <synthesis/Utilities/ThreadTimers.h>
 
 

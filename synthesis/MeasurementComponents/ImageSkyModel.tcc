@@ -1,5 +1,5 @@
-#include <casa/OS/HostInfo.h>
-#include <synthesis/MeasurementComponents/ImageSkyModel.h>
+#include <casacore/casa/OS/HostInfo.h>
+#include <casarest/synthesis/MeasurementComponents/ImageSkyModel.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

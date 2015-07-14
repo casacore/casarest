@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_SOLVABLEMJMREC_H
 #define CALIBRATION_SOLVABLEMJMREC_H
 
-#include <calibration/CalTables/TimeVarMJMRec.h>
+#include <casarest/calibration/CalTables/TimeVarMJMRec.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

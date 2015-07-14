@@ -28,8 +28,8 @@
 #ifndef MSVIS_VISTIMEAVERAGER_H
 #define MSVIS_VISTIMEAVERAGER_H
 
-#include <casa/aips.h>
-#include <msvis/MSVis/VisBuffer.h>
+#include <casacore/casa/aips.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

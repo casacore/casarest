@@ -35,7 +35,7 @@
 #include <iomanip>
 
 //# General CASA includes
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/BasicSL/String.h>
 
 //# Table and TablePlot includes
 #include <tableplot/TablePlot/TablePlot.h>

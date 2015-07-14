@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_BJONESMCOL_H
 #define CALIBRATION_BJONESMCOL_H
 
-#include <calibration/CalTables/SolvableVJMCol.h>
-#include <calibration/CalTables/BJonesTable.h>
+#include <casarest/calibration/CalTables/SolvableVJMCol.h>
+#include <casarest/calibration/CalTables/BJonesTable.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

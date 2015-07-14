@@ -29,13 +29,13 @@
 #ifndef SYNTHESIS_PBMATHINTERFACE_H
 #define SYNTHESIS_PBMATHINTERFACE_H
 
-#include <casa/aips.h>
-#include <synthesis/MeasurementComponents/BeamSquint.h>
-#include <images/Images/ImageInterface.h>
-#include <components/ComponentModels/Flux.h>
-#include <components/ComponentModels/ComponentShape.h>
-#include <casa/BasicSL/Complex.h>
-#include <synthesis/MeasurementComponents/SkyJones.h>
+#include <casacore/casa/aips.h>
+#include <casarest/synthesis/MeasurementComponents/BeamSquint.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casarest/components/ComponentModels/Flux.h>
+#include <casarest/components/ComponentModels/ComponentShape.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casarest/synthesis/MeasurementComponents/SkyJones.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

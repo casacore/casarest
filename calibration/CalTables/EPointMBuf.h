@@ -29,9 +29,9 @@
 #ifndef CALIBRATION_EPOINTMBUF_H
 #define CALIBRATION_EPOINTMBUF_H
 
-#include <calibration/CalTables/TimeVarVJMBuf.h>
-#include <calibration/CalTables/EPointMCol.h>
-#include <calibration/CalTables/SolvableVJTable.h>
+#include <casarest/calibration/CalTables/TimeVarVJMBuf.h>
+#include <casarest/calibration/CalTables/EPointMCol.h>
+#include <casarest/calibration/CalTables/SolvableVJTable.h>
 namespace casa {
 // <summary> 
 // EPointMBuf: EPoint calibration main table buffer

@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_VISJONESMREC_H
 #define CALIBRATION_VISJONESMREC_H
 
-#include <casa/aips.h>
-#include <calibration/CalTables/CalMainRecord.h>
+#include <casacore/casa/aips.h>
+#include <casarest/calibration/CalTables/CalMainRecord.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

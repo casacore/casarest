@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_VISJONESTABLE_H
 #define CALIBRATION_VISJONESTABLE_H
 
-#include <calibration/CalTables/CalTable.h>
-#include <calibration/CalTables/VisJonesDesc.h>
+#include <casarest/calibration/CalTables/CalTable.h>
+#include <casarest/calibration/CalTables/VisJonesDesc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

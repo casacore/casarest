@@ -40,20 +40,20 @@
 #define CASA_MSPLOT_H
 
 //#! Includes go here
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/BasicSL/String.h>
 
 //
-#include <tables/Tables/Table.h>
+#include <casacore/tables/Tables/Table.h>
 #include <tableplot/TablePlot/TablePlot.h>
 #include <tableplot/TablePlot/PanelParams.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSSelection.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSSelection.h>
 
 //# MsPlot includes
-#include <measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MPosition.h>
 #include <tableplot/TablePlot/SLog.h>
 
-#include <msvis/MSVis/MsAverager.h>
+#include <casarest/msvis/MSVis/MsAverager.h>
 
 
 namespace casa { //#! NAMESPACE CASA - BEGIN

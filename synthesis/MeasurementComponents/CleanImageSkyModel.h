@@ -29,7 +29,7 @@
 #ifndef SYNTHESIS_CLEANIMAGESKYMODEL_H
 #define SYNTHESIS_CLEANIMAGESKYMODEL_H
 
-#include <synthesis/MeasurementComponents/ImageSkyModel.h>
+#include <casarest/synthesis/MeasurementComponents/ImageSkyModel.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

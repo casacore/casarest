@@ -28,9 +28,9 @@
 #ifndef SYNTHESIS_VISCALGLOBALS_H
 #define SYNTHESIS_VISCALGLOBALS_H
 
-#include <casa/aips.h>
-#include <synthesis/MeasurementComponents/VisCal.h>
-#include <synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <casacore/casa/aips.h>
+#include <casarest/synthesis/MeasurementComponents/VisCal.h>
+#include <casarest/synthesis/MeasurementComponents/SolvableVisCal.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

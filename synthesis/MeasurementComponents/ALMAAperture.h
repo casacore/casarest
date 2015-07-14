@@ -29,14 +29,14 @@
 #ifndef SYNTHESIS_ALMAAPERTURE_H
 #define SYNTHESIS_ALMAAPERTURE_H
 
-#include <images/Images/PagedImage.h>
-#include <synthesis/MeasurementComponents/AzElAperture.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <images/Images/AntennaResponses.h>
-#include <images/Images/ImageConvolver.h>
-#include <images/Images/ImageFFT.h>
-#include <images/Images/ImageRegrid.h>
-#include <images/Images/ImageRegrid.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casarest/synthesis/MeasurementComponents/AzElAperture.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/images/Images/AntennaResponses.h>
+#include <casacore/images/Images/ImageConvolver.h>
+#include <casacore/images/Images/ImageFFT.h>
+#include <casacore/images/Images/ImageRegrid.h>
+#include <casacore/images/Images/ImageRegrid.h>
 
 //
 //---------------------------------------------------------------------

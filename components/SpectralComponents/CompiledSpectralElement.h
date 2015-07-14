@@ -29,7 +29,7 @@
 #ifndef COMPONENTS_COMPILEDSPECTRALELEMENT_H
 #define COMPONENTS_COMPILEDSPECTRALELEMENT_H
 
-#include <components/SpectralComponents/SpectralElement.h>
+#include <casarest/components/SpectralComponents/SpectralElement.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

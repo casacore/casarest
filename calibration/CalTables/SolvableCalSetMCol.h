@@ -29,9 +29,9 @@
 #ifndef CALIBRATION_SOLVABLECALSETMCOL_H
 #define CALIBRATION_SOLVABLECALSETMCOL_H
 
-#include <calibration/CalTables/CalMainColumns2.h>
-#include <calibration/CalTables/ROCalMainColumns2.h>
-#include <calibration/CalTables/CalTable2.h>
+#include <casarest/calibration/CalTables/CalMainColumns2.h>
+#include <casarest/calibration/CalTables/ROCalMainColumns2.h>
+#include <casarest/calibration/CalTables/CalTable2.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -192,7 +192,7 @@ class SolvableCalSetMCol : public CalMainColumns2<T>
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <calibration/CalTables/SolvableCalSetMCol.tcc>
+#include <casarest/calibration/CalTables/SolvableCalSetMCol.tcc>
 #endif
 
 #endif

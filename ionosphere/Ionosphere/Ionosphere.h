@@ -1,20 +1,20 @@
 #ifndef IONOSPHERE_IONOSPHERE_H
 #define IONOSPHERE_IONOSPHERE_H
     
-#include <casa/aips.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/LogiVector.h>
-#include <casa/Containers/Block.h>
-#include <casa/Containers/Record.h>
-#include <casa/Quanta/MVEpoch.h>
-#include <casa/Quanta/MVTime.h>
-#include <measures/Measures/MEpoch.h>    
-#include <measures/Measures/MDirection.h>    
-#include <measures/Measures/MPosition.h>    
-#include <casa/BasicSL/Constants.h>    
-#include <casa/Logging/LogIO.h>    
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/LogiVector.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Quanta/MVEpoch.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/measures/Measures/MEpoch.h>    
+#include <casacore/measures/Measures/MDirection.h>    
+#include <casacore/measures/Measures/MPosition.h>    
+#include <casacore/casa/BasicSL/Constants.h>    
+#include <casacore/casa/Logging/LogIO.h>    
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

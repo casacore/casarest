@@ -28,9 +28,9 @@
 #ifndef MSVIS_VISBUFFACCUMULATOR_H
 #define MSVIS_VISBUFFACCUMULATOR_H
 
-#include <casa/aips.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <msvis/MSVis/CalVisBuffer.h>
+#include <casacore/casa/aips.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casarest/msvis/MSVis/CalVisBuffer.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

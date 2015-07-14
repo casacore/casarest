@@ -29,34 +29,34 @@
 #ifndef SYNTHESIS_AWPROJECTFT_H
 #define SYNTHESIS_AWPROJECTFT_H
 
-#include <synthesis/MeasurementComponents/VLACalcIlluminationConvFunc.h>
-#include <synthesis/MeasurementComponents/VLAIlluminationConvFunc.h>
-#include <synthesis/MeasurementComponents/AWVisResampler.h>
+#include <casarest/synthesis/MeasurementComponents/VLACalcIlluminationConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/VLAIlluminationConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/AWVisResampler.h>
 //#include <synthesis/MeasurementComponents/ConvolutionFunction.h>
-#include <synthesis/MeasurementComponents/EVLAConvFunc.h>
-#include <synthesis/MeasurementComponents/SolvableVisCal.h>
-#include <synthesis/MeasurementComponents/VPSkyJones.h>
-#include <synthesis/MeasurementComponents/FTMachine.h>
+#include <casarest/synthesis/MeasurementComponents/EVLAConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <casarest/synthesis/MeasurementComponents/VPSkyJones.h>
+#include <casarest/synthesis/MeasurementComponents/FTMachine.h>
 //#include <synthesis/MeasurementComponents/CFCache.h>
-#include <synthesis/MeasurementComponents/Utils.h>
+#include <casarest/synthesis/MeasurementComponents/Utils.h>
 
-#include <scimath/Mathematics/FFTServer.h>
-#include <msvis/MSVis/VisBuffer.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
 
-#include <casa/Containers/Block.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
 
-#include <scimath/Mathematics/ConvolveGridder.h>
-#include <lattices/Lattices/LatticeCache.h>
-#include <lattices/Lattices/ArrayLattice.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <measures/Measures/Measure.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
-#include <images/Images/ImageInterface.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/scimath/Mathematics/ConvolveGridder.h>
+#include <casacore/lattices/Lattices/LatticeCache.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/measures/Measures/Measure.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
   

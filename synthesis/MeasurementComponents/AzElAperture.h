@@ -29,10 +29,10 @@
 #ifndef SYNTHESIS_AZELAPERTURE_H
 #define SYNTHESIS_AZELAPERTURE_H
 
-#include <images/Images/ImageInterface.h>
-#include <synthesis/MeasurementComponents/ATerm.h>
-#include <synthesis/MeasurementComponents/Utils.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casarest/synthesis/MeasurementComponents/ATerm.h>
+#include <casarest/synthesis/MeasurementComponents/Utils.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
 //
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------

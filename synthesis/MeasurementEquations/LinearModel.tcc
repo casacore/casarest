@@ -25,7 +25,7 @@
 //#
 //# $Id$
 
-#include <synthesis/MeasurementEquations/LinearModel.h>
+#include <casarest/synthesis/MeasurementEquations/LinearModel.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

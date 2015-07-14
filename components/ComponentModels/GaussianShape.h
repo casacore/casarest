@@ -29,11 +29,11 @@
 #ifndef COMPONENTS_GAUSSIANSHAPE_H
 #define COMPONENTS_GAUSSIANSHAPE_H
 
-#include <casa/aips.h>
-#include <scimath/Functionals/Gaussian2D.h>
-#include <casa/BasicSL/Complex.h>
-#include <components/ComponentModels/ComponentType.h>
-#include <components/ComponentModels/TwoSidedShape.h>
+#include <casacore/casa/aips.h>
+#include <casacore/scimath/Functionals/Gaussian2D.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casarest/components/ComponentModels/ComponentType.h>
+#include <casarest/components/ComponentModels/TwoSidedShape.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

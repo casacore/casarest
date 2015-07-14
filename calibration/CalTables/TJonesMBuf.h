@@ -29,10 +29,10 @@
 #ifndef CALIBRATION_TJONESMBUF_H
 #define CALIBRATION_TJONESMBUF_H
 
-#include <measures/Measures/MFrequency.h>
-#include <calibration/CalTables/SolvableVJMBuf.h>
-#include <calibration/CalTables/TJonesMCol.h>
-#include <calibration/CalTables/TJonesTable.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casarest/calibration/CalTables/SolvableVJMBuf.h>
+#include <casarest/calibration/CalTables/TJonesMCol.h>
+#include <casarest/calibration/CalTables/TJonesTable.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -30,9 +30,9 @@
 #define SYNTHESIS_STOKESUTIL_H
 
 
-#include <casa/aips.h>
-#include <casa/Arrays/Array.h>
-#include <msvis/MSVis/StokesVector.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casarest/msvis/MSVis/StokesVector.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -151,6 +151,6 @@ Bool near(const StokesVector& val1, const StokesVector& val2,
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <synthesis/MeasurementEquations/StokesUtil.tcc>
+#include <casarest/synthesis/MeasurementEquations/StokesUtil.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 #endif

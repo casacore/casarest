@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_FVISJONESDESC_H
 #define CALIBRATION_FVISJONESDESC_H
 
-#include <calibration/CalTables/TimeVarVJDesc.h>
+#include <casarest/calibration/CalTables/TimeVarVJDesc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_VISJONESMBUF_H
 #define CALIBRATION_VISJONESMBUF_H
 
-#include <calibration/CalTables/CalMainBuffer.h>
+#include <casarest/calibration/CalTables/CalMainBuffer.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

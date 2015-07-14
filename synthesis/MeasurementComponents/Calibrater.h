@@ -27,18 +27,18 @@
 #ifndef SYNTHESIS_CALIBRATER_H
 #define SYNTHESIS_CALIBRATER_H
 
-#include <casa/aips.h>
-#include <casa/OS/Timer.h>
-#include <casa/Containers/Record.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <measures/Measures/MRadialVelocity.h>
-#include <synthesis/MeasurementEquations/VisEquation.h>
-#include <synthesis/MeasurementComponents/VisCal.h>
-#include <synthesis/MeasurementComponents/SolvableVisCal.h>
-#include <synthesis/MeasurementComponents/VisCalGlobals.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <ms/MeasurementSets/MSHistoryHandler.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/measures/Measures/MRadialVelocity.h>
+#include <casarest/synthesis/MeasurementEquations/VisEquation.h>
+#include <casarest/synthesis/MeasurementComponents/VisCal.h>
+#include <casarest/synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <casarest/synthesis/MeasurementComponents/VisCalGlobals.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/ms/MeasurementSets/MSHistoryHandler.h>
 
 
 namespace casa { //# NAMESPACE CASA - BEGIN

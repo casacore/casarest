@@ -29,8 +29,8 @@
 #ifndef CALIBRATION_FVISJONESMREC_H
 #define CALIBRATION_FVISJONESMREC_H
 
-#include <casa/aips.h>
-#include <calibration/CalTables/TimeVarVJMRec.h>
+#include <casacore/casa/aips.h>
+#include <casarest/calibration/CalTables/TimeVarVJMRec.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

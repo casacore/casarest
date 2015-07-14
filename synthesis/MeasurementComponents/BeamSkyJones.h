@@ -29,14 +29,14 @@
 #ifndef SYNTHESIS_BEAMSKYJONES_H
 #define SYNTHESIS_BEAMSKYJONES_H
 
-#include <casa/aips.h>
-#include <casa/Containers/Block.h>
-#include <casa/Exceptions/Error.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures.h>
-#include <measures/Measures/Stokes.h>
-#include <synthesis/MeasurementComponents/SkyJones.h>
-#include <synthesis/MeasurementComponents/PBMath.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casarest/synthesis/MeasurementComponents/SkyJones.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath.h>
 
 
 namespace casa { //# NAMESPACE CASA - BEGIN

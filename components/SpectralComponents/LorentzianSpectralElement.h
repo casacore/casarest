@@ -28,7 +28,7 @@
 #ifndef COMPONENTS_LORENTZIANSPECTRALELEMENT_H
 #define COMPONENTS_LORENTZIANSPECTRALELEMENT_H
 
-#include <components/SpectralComponents/PCFSpectralElement.h>
+#include <casarest/components/SpectralComponents/PCFSpectralElement.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

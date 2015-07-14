@@ -29,11 +29,11 @@
 #ifndef SYNTHESIS_SKYMODEL_H
 #define SYNTHESIS_SKYMODEL_H
 
-#include <casa/aips.h>
-#include <synthesis/MeasurementEquations/Iterate.h>
-#include <images/Images/ImageInterface.h>
-#include <components/ComponentModels/ComponentList.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/aips.h>
+#include <casarest/synthesis/MeasurementEquations/Iterate.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casarest/components/ComponentModels/ComponentList.h>
+#include <casacore/casa/BasicSL/String.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

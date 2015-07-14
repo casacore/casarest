@@ -28,7 +28,7 @@
 #ifndef SYNTHESIS_IMAGERMULTIMS_H
 #define SYNTHESIS_IMAGERMULTIMS_H
 
-#include <synthesis/MeasurementEquations/Imager.h>
+#include <casarest/synthesis/MeasurementEquations/Imager.h>
 
 namespace casa {
 

@@ -29,10 +29,10 @@
 #ifndef SYNTHESIS_MEASUREMENTEQUATIONS_H
 #define SYNTHESIS_MEASUREMENTEQUATIONS_H
 
-#include <synthesis/MeasurementEquations/VisEquation.h>
-#include <synthesis/MeasurementEquations/SkyEquation.h>
-#include <msvis/MSVis/VisibilityIterator.h>
-#include <msvis/MSVis/VisSet.h>
+#include <casarest/synthesis/MeasurementEquations/VisEquation.h>
+#include <casarest/synthesis/MeasurementEquations/SkyEquation.h>
+#include <casarest/msvis/MSVis/VisibilityIterator.h>
+#include <casarest/msvis/MSVis/VisSet.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

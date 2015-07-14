@@ -28,8 +28,8 @@
 #ifndef IMAGES_IMAGEMETADATA_H
 #define IMAGES_IMAGEMETADATA_H
 
-#include <images/Images/ImageInterface.h>
-#include <casa/aips.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/aips.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

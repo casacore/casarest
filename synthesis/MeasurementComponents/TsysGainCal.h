@@ -28,12 +28,12 @@
 #ifndef SYNTHESIS_TSYSGAINCAL_H
 #define SYNTHESIS_TSYSGAINCAL_H
 
-#include <casa/aips.h>
-#include <casa/Containers/Record.h>
-#include <casa/BasicSL/Complex.h>
-#include <synthesis/MeasurementComponents/VisCal.h>
-#include <synthesis/MeasurementComponents/SolvableVisCal.h>
-#include <synthesis/MeasurementComponents/StandardVisCal.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casarest/synthesis/MeasurementComponents/VisCal.h>
+#include <casarest/synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <casarest/synthesis/MeasurementComponents/StandardVisCal.h>
 // not yet:#include <synthesis/MeasurementComponents/CalCorruptor.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN

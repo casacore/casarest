@@ -29,11 +29,11 @@
 #ifndef SYNTHESIS_MFMSCLEANIMAGESKYMODEL_H
 #define SYNTHESIS_MFMSCLEANIMAGESKYMODEL_H
 
-#include <synthesis/MeasurementComponents/MFCleanImageSkyModel.h>
+#include <casarest/synthesis/MeasurementComponents/MFCleanImageSkyModel.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeCleanProgress.h>
+#include <casacore/lattices/LatticeMath/LatticeCleanProgress.h>
 #else
-#include <lattices/Lattices/LatticeCleanProgress.h>
+#include <casacore/lattices/Lattices/LatticeCleanProgress.h>
 #endif
 
 namespace casa { //# NAMESPACE CASA - BEGIN

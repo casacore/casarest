@@ -29,31 +29,31 @@
 #ifndef SYNTHESIS_PBWPROJECTFT_H
 #define SYNTHESIS_PBWPROJECTFT_H
 
-#include <synthesis/MeasurementComponents/FTMachine.h>
-#include <casa/Arrays/Matrix.h>
-#include <scimath/Mathematics/FFTServer.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <images/Images/ImageInterface.h>
-#include <casa/Containers/Block.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <scimath/Mathematics/ConvolveGridder.h>
-#include <lattices/Lattices/LatticeCache.h>
-#include <lattices/Lattices/ArrayLattice.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <measures/Measures/Measure.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <synthesis/MeasurementComponents/VPSkyJones.h>
-#include <synthesis/MeasurementComponents/VLACalcIlluminationConvFunc.h>
-#include <synthesis/MeasurementComponents/VLAIlluminationConvFunc.h>
-#include <synthesis/MeasurementComponents/Utils.h>
+#include <casarest/synthesis/MeasurementComponents/FTMachine.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/scimath/Mathematics/ConvolveGridder.h>
+#include <casacore/lattices/Lattices/LatticeCache.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/measures/Measures/Measure.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casarest/synthesis/MeasurementComponents/VPSkyJones.h>
+#include <casarest/synthesis/MeasurementComponents/VLACalcIlluminationConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/VLAIlluminationConvFunc.h>
+#include <casarest/synthesis/MeasurementComponents/Utils.h>
 
 //#include <synthesis/MeasurementComponents/EPJones.h>
-#include <synthesis/MeasurementComponents/SolvableVisCal.h>
-#include <synthesis/MeasurementComponents/ConvFuncDiskCache.h>
+#include <casarest/synthesis/MeasurementComponents/SolvableVisCal.h>
+#include <casarest/synthesis/MeasurementComponents/ConvFuncDiskCache.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
   

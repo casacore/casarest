@@ -29,12 +29,12 @@
 #ifndef SYNTHESIS_SDDATASAMPLING_H
 #define SYNTHESIS_SDDATASAMPLING_H
 
-#include <synthesis/DataSampling/DataSampling.h>
-#include <synthesis/MeasurementComponents/SkyJones.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
+#include <casarest/synthesis/DataSampling/DataSampling.h>
+#include <casarest/synthesis/MeasurementComponents/SkyJones.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

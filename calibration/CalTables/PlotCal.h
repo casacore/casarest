@@ -26,7 +26,7 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <tableplot/TablePlot/TablePlot.h>
 
 

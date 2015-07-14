@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_VISJONESDESC_H
 #define CALIBRATION_VISJONESDESC_H
 
-#include <calibration/CalTables/CalTableDesc.h>
+#include <casarest/calibration/CalTables/CalTableDesc.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

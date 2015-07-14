@@ -29,7 +29,7 @@
 #ifndef COMPONENTS_LOGTRANSFORMEDPOLYNOMIALSPECTRALELEMENT_H
 #define COMPONENTS_LOGTRANSFORMEDPOLYNOMIALSPECTRALELEMENT_H
 
-#include <components/SpectralComponents/PolynomialSpectralElement.h>
+#include <casarest/components/SpectralComponents/PolynomialSpectralElement.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -29,18 +29,18 @@
 #ifndef SYNTHESIS_VISIBILITYRESAMPLER_H
 #define SYNTHESIS_VISIBILITYRESAMPLER_H
 
-#include <synthesis/MeasurementComponents/CFStore.h>
-#include <synthesis/MeasurementComponents/Utils.h>
-#include <synthesis/MeasurementComponents/VBStore.h>
-#include <synthesis/MeasurementComponents/VisibilityResamplerBase.h>
-#include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <msvis/MSVis/AsynchronousTools.h>
+#include <casarest/synthesis/MeasurementComponents/CFStore.h>
+#include <casarest/synthesis/MeasurementComponents/Utils.h>
+#include <casarest/synthesis/MeasurementComponents/VBStore.h>
+#include <casarest/synthesis/MeasurementComponents/VisibilityResamplerBase.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casarest/msvis/MSVis/AsynchronousTools.h>
 
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
   class VisibilityResampler: public VisibilityResamplerBase

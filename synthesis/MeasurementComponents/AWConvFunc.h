@@ -29,14 +29,14 @@
 #ifndef SYNTHESIS_AWCONVFUNC_H
 #define SYNTHESIS_AWCONVFUNC_H
 
-#include <synthesis/MeasurementComponents/ConvolutionFunction.h>
-#include <synthesis/MeasurementComponents/CFStore.h>
-#include <synthesis/MeasurementComponents/ATerm.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/TempImage.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogOrigin.h>
+#include <casarest/synthesis/MeasurementComponents/ConvolutionFunction.h>
+#include <casarest/synthesis/MeasurementComponents/CFStore.h>
+#include <casarest/synthesis/MeasurementComponents/ATerm.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogOrigin.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
   template<class T> class ImageInterface;

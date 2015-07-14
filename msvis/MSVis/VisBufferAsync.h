@@ -8,7 +8,7 @@
 #ifndef VISIBILITYBUFFERASYNC_H_
 #define VISIBILITYBUFFERASYNC_H_
 
-#include <msvis/MSVis/VisBuffer.h>
+#include <casarest/msvis/MSVis/VisBuffer.h>
 
 namespace casa {
 

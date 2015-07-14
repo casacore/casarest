@@ -24,39 +24,39 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 
-#include <calibration/CalTables/CalSet.h>
+#include <casarest/calibration/CalTables/CalSet.h>
 
-#include <calibration/CalTables/CalTable2.h>
+#include <casarest/calibration/CalTables/CalTable2.h>
 //#include <calibration/CalTables/CalTable.h>
-#include <calibration/CalTables/CalDescColumns2.h>
-#include <calibration/CalTables/SolvableVJTable.h>
-#include <calibration/CalTables/CalMainColumns2.h>
+#include <casarest/calibration/CalTables/CalDescColumns2.h>
+#include <casarest/calibration/CalTables/SolvableVJTable.h>
+#include <casarest/calibration/CalTables/CalMainColumns2.h>
 
-#include <calibration/CalTables/TimeVarVJDesc.h>
-#include <calibration/CalTables/SolvableVJDesc.h>
-#include <calibration/CalTables/SolvableVJMRec.h>
-#include <calibration/CalTables/SolvableVJMCol.h>
+#include <casarest/calibration/CalTables/TimeVarVJDesc.h>
+#include <casarest/calibration/CalTables/SolvableVJDesc.h>
+#include <casarest/calibration/CalTables/SolvableVJMRec.h>
+#include <casarest/calibration/CalTables/SolvableVJMCol.h>
 
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/ArrColDesc.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ArrayColumn.h>
-#include <tables/Tables/RefRows.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/ArrColDesc.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
+#include <casacore/tables/Tables/RefRows.h>
 
-#include <casa/Arrays.h>
-#include <scimath/Mathematics/MatrixMathLA.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/OS/Timer.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/OS/Path.h>
-#include <casa/sstream.h>
+#include <casacore/casa/Arrays.h>
+#include <casacore/scimath/Mathematics/MatrixMathLA.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/OS/Path.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

@@ -1,7 +1,7 @@
 #ifndef IONOSPHERE_IONOSPHMODELPIM_H
 #define IONOSPHERE_IONOSPHMODELPIM_H
 
-#include <casa/Arrays/LogiVector.h>    
+#include <casacore/casa/Arrays/LogiVector.h>    
 #include "Ionosphere.h"
 
 namespace casa { //# NAMESPACE CASA - BEGIN

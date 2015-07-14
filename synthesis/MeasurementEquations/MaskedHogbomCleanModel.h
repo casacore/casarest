@@ -30,11 +30,11 @@
 #define SYNTHESIS_MASKEDHOGBOMCLEANMODEL_H
 
 
-#include <casa/aips.h>
-#include <synthesis/MeasurementEquations/MaskedArrayModel.h>
-#include <synthesis/MeasurementEquations/Iterate.h>
-#include <synthesis/MeasurementEquations/ResidualEquation.h>
-#include <synthesis/MeasurementEquations/ConvolutionEquation.h>
+#include <casacore/casa/aips.h>
+#include <casarest/synthesis/MeasurementEquations/MaskedArrayModel.h>
+#include <casarest/synthesis/MeasurementEquations/Iterate.h>
+#include <casarest/synthesis/MeasurementEquations/ResidualEquation.h>
+#include <casarest/synthesis/MeasurementEquations/ConvolutionEquation.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
@@ -139,6 +139,6 @@ protected:
 } //# NAMESPACE CASA - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
-#include <synthesis/MeasurementEquations/MaskedHogbomCleanModel.tcc>
+#include <casarest/synthesis/MeasurementEquations/MaskedHogbomCleanModel.tcc>
 #endif //# AIPS_NO_TEMPLATE_SRC
 #endif

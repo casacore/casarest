@@ -29,7 +29,7 @@
 #ifndef CALIBRATION_CALITER_H
 #define CALIBRATION_CALITER_H
 
-#include <calibration/CalTables/CalIterBase.h>
+#include <casarest/calibration/CalTables/CalIterBase.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

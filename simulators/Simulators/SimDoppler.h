@@ -28,7 +28,7 @@
 #ifndef SIMULATORS_SIMDOPPLER_H
 #define SIMULATORS_SIMDOPPLER_H
 
-#include <measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MFrequency.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

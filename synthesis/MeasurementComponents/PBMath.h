@@ -29,19 +29,19 @@
 #ifndef SYNTHESIS_PBMATH_H
 #define SYNTHESIS_PBMATH_H
 
-#include <casa/aips.h>
-#include <synthesis/MeasurementComponents/PBMathInterface.h>
-#include <synthesis/MeasurementComponents/PBMath1DGauss.h>
-#include <synthesis/MeasurementComponents/PBMath1DNumeric.h>
-#include <synthesis/MeasurementComponents/PBMath1DAiry.h>
-#include <synthesis/MeasurementComponents/PBMath1DPoly.h>
-#include <synthesis/MeasurementComponents/PBMath1DIPoly.h>
-#include <synthesis/MeasurementComponents/PBMath1DCosPoly.h>
-#include <synthesis/MeasurementComponents/PBMath2DImage.h>
-#include <synthesis/MeasurementComponents/BeamSquint.h>
-#include <images/Images/ImageInterface.h>
-#include <measures/Measures.h>
-#include <casa/Utilities/CountedPtr.h>
+#include <casacore/casa/aips.h>
+#include <casarest/synthesis/MeasurementComponents/PBMathInterface.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath1DGauss.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath1DNumeric.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath1DAiry.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath1DPoly.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath1DIPoly.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath1DCosPoly.h>
+#include <casarest/synthesis/MeasurementComponents/PBMath2DImage.h>
+#include <casarest/synthesis/MeasurementComponents/BeamSquint.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 

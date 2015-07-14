@@ -28,17 +28,17 @@
 #ifndef SYN_FIXVIS_H
 #define SYN_FIXVIS_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/String.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <msvis/MSVis/MSUVWGenerator.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casarest/msvis/MSVis/MSUVWGenerator.h>
 
 // UVWMachine Does rotation, including B1950 <-> J2000, refocusing, and maybe
 // even SIN <-> (-)NCP reprojection of existing UVWs, but it does not generate
 // UVWs from an antenna table.
 // FTMachine::rotateUVW(Matrix<Double>& uvw, Vector<Double>& dphase,
 //                      const VisBuffer& vb)
-#include <synthesis/MeasurementComponents/FTMachine.h>
+#include <casarest/synthesis/MeasurementComponents/FTMachine.h>
 
 namespace casa { //# NAMESPACE CASA - BEGIN
 
