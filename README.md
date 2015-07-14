@@ -4,7 +4,6 @@
 This is the casarest package, the remainder of the AIPS++
 libraries. It consists of the libraries:
  * msvis
-
  * calibration
  * synthesis
  * flagging
