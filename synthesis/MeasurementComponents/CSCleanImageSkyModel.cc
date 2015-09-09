@@ -83,16 +83,23 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
 
   LogIO os(LogOrigin("CSCleanImageSkyModel","solve"));
   Bool converged=True;
+
+  if( numberIterations() < 1 )
+  {
+	  os << LogIO::NORMAL    // Loglevel PROGRESS
+	   << "niter=0, assuming predict-only mode, converting model image to MODEL_DATA visibilities" << LogIO::POST;
+	  makeNewtonRaphsonStep(se, False, True);
+	  return True;
+  }
+
   if(modified_p) {
     makeNewtonRaphsonStep(se, False);
   }
 
-  if( numberIterations() < 1)
-    return True;
-  //Make the PSFs, one per field
-
+  Bool lastCycleWriteModel = False;
+  
   os << LogIO::NORMAL    // Loglevel PROGRESS
-     << "Making approximate Point Spread Functions" << LogIO::POST;
+     << "Making approximate Point Spread Functions " <<LogIO::POST;
   if(!donePSF_p)
     makeApproxPSFs(se);
   //
@@ -193,7 +200,6 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
   } else {
     progress_p = 0;
   }
-  Bool lastCycleWriteModel=False;
   while((absmax>=threshold())&& (maxIterations<numberIterations()) &&!stop) {
 
     os << LogIO::NORMAL << "*** Starting major cycle " << cycle + 1 
@@ -419,22 +425,24 @@ Bool CSCleanImageSkyModel::solve(SkyEquation& se) {
   if (progress_p) delete progress_p;
   
   
-  if(modified_p || lastCycleWriteModel) {
+  if(modified_p || lastCycleWriteModel) 
+  {
     os << LogIO::NORMAL    // Loglevel INFO
        << LatticeExprNode(sum(image(0))).getFloat() 
        << " Jy is the sum of the clean components " << LogIO::POST;
     os << LogIO::NORMAL    // Loglevel PROGRESS
        << "Finalizing residual images for all fields" << LogIO::POST;
     makeNewtonRaphsonStep(se, False, True);
-    Float finalabsmax=maxField(resmax, resmin);
+  	Float finalabsmax = maxField(resmax, resmin);
 
-    os << LogIO::NORMAL    // Loglevel INFO
-       << "Final maximum residual = " << finalabsmax << LogIO::POST;
-    converged=(finalabsmax < threshold());
-    for (model=0;model<numberOfModels();model++) {
-      os << LogIO::NORMAL    // Loglevel INFO
-         << "Model " << model+1 << ": max, min residuals = "
-	 << max(resmax[model]) << ", " << min(resmin[model]) << endl;
+  	os << LogIO::NORMAL    // Loglevel INFO
+     << "Final maximum residual = " << finalabsmax << LogIO::POST;
+  	converged=(finalabsmax < threshold());
+  	for (model=0;model<numberOfModels();model++) 
+  	{
+    	os << LogIO::NORMAL    // Loglevel INFO
+    		<< "Model " << model+1 << ": max, min residuals = "
+ 			<< max(resmax[model]) << ", " << min(resmin[model]) << endl;
     }
   }
   else {
