@@ -77,7 +77,7 @@ namespace casa{
 	    aux.open(name.str().c_str());
 	    if (readFromFile && aux.good()) aux >> Npa >> Nw;
 	    else
-	      throw(SynthesisFTMachineError(String("Error while reading convolution function cache file ")+name));
+	      throw(SynthesisFTMachineError(String("Error while reading convolution function cache file ")+String(name)));
 	  }
 
 	if (Npa > 0)
@@ -420,7 +420,7 @@ namespace casa{
     catch(AipsError &x)
       {
 	throw(SynthesisFTMachineError(String("Error while writing ")
-				      + name + x.getMesg()));
+				      + String(name) + x.getMesg()));
       }
   }
   //
@@ -444,7 +444,7 @@ namespace casa{
     catch(AipsError &x)
       {
 	throw(SynthesisFTMachineError(String("Error while writing ")
-				      + Name + x.getMesg()));
+				      + String(Name) + x.getMesg()));
       }
   }
   //
@@ -468,7 +468,7 @@ namespace casa{
 			// the state of this object consistant.
       {
 	throw(SynthesisFTMachineError(String("Error while loading \"")+
-				      name + String("\": ") + x.getMesg()));
+				      String(name) + String("\": ") + x.getMesg()));
       }
   }
   //
@@ -548,7 +548,7 @@ namespace casa{
 	catch(AipsError &x)
 	  {
 	    throw(SynthesisFTMachineError(String("Error while loading \"")+
-					  name + String("\": ") + x.getMesg()));
+					  String(name) + String("\": ") + x.getMesg()));
 	  }
 	
       }
