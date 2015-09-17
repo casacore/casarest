@@ -161,7 +161,7 @@ int main (Int argc, char** argv)
   try {
     Input inputs(1);
     // define the input structure
-    inputs.version("20130816-OMS");
+    inputs.version("1.4.0");
     inputs.create ("ms", "",
 		   "Name of input MeasurementSet",
 		   "string");
@@ -288,6 +288,9 @@ int main (Int argc, char** argv)
     inputs.create ("fixed", "False",
 		   "Keep clean model fixed",
 		   "bool");
+    inputs.create ("fillmodel", "False",
+		   "fill MODEL_DATA column with clean model visibilities, else keeps model in memory",
+		   "bool");
     inputs.create ("constrainflux", "False",
 		   "Constrain image to match target flux? For max entropy",
 		   "bool");
@@ -334,6 +337,7 @@ int main (Int argc, char** argv)
 
     // Get the input specification.
     Bool fixed       = inputs.getBool("fixed");
+    Bool useModel    = inputs.getBool("fillmodel");
     Bool constrainFlux  = inputs.getBool("constrainflux");
     Bool preferVelocity = inputs.getBool("prefervelocity");
     Long cachesize   = inputs.getInt("cachesize");
@@ -484,7 +488,8 @@ int main (Int argc, char** argv)
     // Set the various imager variables.
     // The non-parameterized values used are the defaults in imager.g.
     MeasurementSet ms(msName, Table::Update);
-    Imager imager(ms);
+    Imager imager(ms,False,useModel);
+    //    cout << "fillModel is "<<useModel;
     // Use channel mode if only one data channel per image-channel.
     if (nchan.size() == 1  &&  nchan[0] == img_nchan) {
       mode = "channel";
