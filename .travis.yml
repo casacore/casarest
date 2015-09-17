@@ -13,7 +13,7 @@ install:
   - sudo add-apt-repository -y ppa:radio-astro/main
   - sudo apt-get update -q
   - sudo apt-get install cmake libcasacore2-dev libboost-dev wcslib-dev 
-      libcfitsio3-dev libboost-system-dev, libboost-thread-dev, gfortran
+      libcfitsio3-dev libboost-system-dev libboost-thread-dev gfortran
 
 before_script:
   - mkdir build
@@ -28,6 +28,5 @@ before_script:
 
 script:
   - make -j4 
-  - make test
   - sudo make install
 
