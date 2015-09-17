@@ -25,7 +25,6 @@ before_script:
       -DUSE_HDF5=ON
       -DBUILD_PYTHON=ON
       -DDATA_DIR=$PWD
-      -DSOFA_ROOT_DIR=$HOME
 
 script:
   - make -j4 
