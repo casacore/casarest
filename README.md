@@ -40,7 +40,7 @@ To compile casarest you need to meet the following requirements:
 On Debian / Ubuntu you can install these with:
 ``` 
 $ sudo apt-get install cmake libcasacore2-dev libboost-dev wcslib-dev \
-   libcfitsio3-dev libboost-system-dev, libboost-thread-dev, gfortran
+   libcfitsio3-dev libboost-system-dev libboost-thread-dev gfortran
 ```
 
 ## Compilation
