@@ -31,16 +31,24 @@ To compile casarest you need to meet the following requirements:
 
 
 * cmake
+* g++
 * casacore (2.0 or later)
 * boost
 * wcslib
 * cfitsio
 * fortran 
+* hdf5 (optional)
 
 On Debian / Ubuntu you can install these with:
 ``` 
 $ sudo apt-get install cmake libcasacore2-dev libboost-dev wcslib-dev \
-   libcfitsio3-dev libboost-system-dev, libboost-thread-dev, gfortran
+   libcfitsio3-dev libboost-system-dev libboost-thread-dev gfortran \
+   g++
+```
+
+And the optional dependencies:
+``` 
+$ sudo apt-get install libhdf5-dev
 ```
 
 ## Compilation
