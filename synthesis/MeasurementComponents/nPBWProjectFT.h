@@ -159,12 +159,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     // Assignment operator
     nPBWProjectFT &operator=(const nPBWProjectFT &other);
 
-#if __cplusplus > 199711L
-#define CASAREST_NOEXCEPT noexcept
-#else
-#define CASAREST_NOEXCEPT
-#endif
-
     ~nPBWProjectFT() CASAREST_NOEXCEPT;
     
     //   void setEPJones(EPJones* ep_j) {epJ = ep_j;}
