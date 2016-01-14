@@ -45,6 +45,12 @@
 #include <synthesis/MeasurementComponents/CFCache.h>
 #include <synthesis/MeasurementComponents/ConvolutionFunction.h>
 
+#if __cplusplus > 199711L
+#define CASAREST_NOEXCEPT noexcept
+#else
+#define CASAREST_NOEXCEPT
+#endif
+
 namespace casa { //# NAMESPACE CASA - BEGIN
 
 class VisSet;

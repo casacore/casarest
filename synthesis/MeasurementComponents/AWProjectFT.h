@@ -166,7 +166,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     // Assignment operator
     AWProjectFT &operator=(const AWProjectFT &other);
     
-    ~AWProjectFT();
+    ~AWProjectFT() CASAREST_NOEXCEPT;
     
     //   void setEPJones(EPJones* ep_j) {epJ = ep_j;}
     void setEPJones(SolvableVisJones* ep_j) {epJ_p = ep_j;}
