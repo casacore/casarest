@@ -225,7 +225,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   //---------------------------------------------------------------
   //
   // This is nasty, we should use CountedPointers here.
-  AWProjectFT::~AWProjectFT() 
+  AWProjectFT::~AWProjectFT() CASAREST_NOEXCEPT
   {
       if(imageCache) delete imageCache; imageCache=0;
       if(gridder) delete gridder; gridder=0;
