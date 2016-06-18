@@ -468,7 +468,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   //---------------------------------------------------------------
   //
   // This is nasty, we should use CountedPointers here.
-  nPBWProjectFT::~nPBWProjectFT() 
+  nPBWProjectFT::~nPBWProjectFT() CASAREST_NOEXCEPT
   {
       if(imageCache) delete imageCache; imageCache=0;
       if(gridder) delete gridder; gridder=0;
