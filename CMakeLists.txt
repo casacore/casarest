@@ -34,7 +34,7 @@ set( ${PROJECT_NAME}_PATCH_LEVEL 1 )
 
 # dependencies
 find_package(CasaCore REQUIRED)
-find_package(CfitsIO REQUIRED)
+find_package(CFITSIO REQUIRED)
 find_package(WcsLib REQUIRED)
 find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
