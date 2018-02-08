@@ -45,6 +45,7 @@ if(HDF5_FOUND)
 else(HDF5_FOUND)
     message(STATUS "  HDF5 not used")
     set(HDF5_LIBRARIES )
+    set(HDF5_INCLUDE_DIRS )
 endif(HDF5_FOUND)
 
 # options and defaults
