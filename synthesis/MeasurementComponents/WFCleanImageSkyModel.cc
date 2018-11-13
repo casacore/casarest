@@ -25,36 +25,36 @@
 //#
 //# $Id$
 
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementComponents/WFCleanImageSkyModel.h>
 //#include <synthesis/MeasurementComponents/MFCleanImageSkyModel.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/ImageInterface.h>
-#include <casa/OS/File.h>
-#include <images/Images/SubImage.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LatticeIterator.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/OS/File.h>
+#include <casacore/images/Images/SubImage.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LRegions/LCBox.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LRegions/LCBox.h>
 #endif
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogIO.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 WFCleanImageSkyModel::WFCleanImageSkyModel():
   MFCleanImageSkyModel(), facets_p(1), nfacets_p(1), 
@@ -302,7 +302,7 @@ WFCleanImageSkyModel::makeSlicers(const Int facet, const IPosition& imageShape,
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 

@@ -24,16 +24,16 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //# $Id$
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Exceptions/Error.h>
 #include <flagging/Flagging/Flagger.h>
 #include <flagging/Flagging/RFChunkStats.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <stdio.h>
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
       
 RFChunkStats::RFChunkStats( VisibilityIterator &vi,VisBuffer &vb,Flagger &rf )
   : visiter(vi),
@@ -142,8 +142,8 @@ void RFChunkStats::newChunk(bool init_quack)
 
           /* Figure out if anything is flagged in this buffer */
           Bool any_unflagged = false;
-          casa::Bool dataIsAcopy;
-          casa::Bool * flags = visbuf.flagCube().getStorage(dataIsAcopy);
+          casacore::Bool dataIsAcopy;
+          casacore::Bool * flags = visbuf.flagCube().getStorage(dataIsAcopy);
           
           unsigned n = visbuf.flagCube().nelements();
           for (unsigned i = 0; i < n; i++) {
@@ -324,5 +324,5 @@ Int findCorrType( Stokes::StokesTypes type,const Vector<Int> &corr )
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

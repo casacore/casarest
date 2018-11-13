@@ -29,14 +29,14 @@
 #ifndef COMPONENTS_TWOSIDEDSHAPE_H
 #define COMPONENTS_TWOSIDEDSHAPE_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentShape.h>
 #include <components/ComponentModels/ComponentType.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Quanta/Unit.h>
-#include <casa/Quanta/Quantum.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Quanta/Unit.h>
+#include <casacore/casa/Quanta/Quantum.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class DirectionCoordinate;
 class MDirection;
@@ -364,6 +364,6 @@ private:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -39,25 +39,25 @@
 //#include <synthesis/MeasurementComponents/CFCache.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 
-#include <scimath/Mathematics/FFTServer.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
 #include <msvis/MSVis/VisBuffer.h>
 
-#include <casa/Containers/Block.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
 
-#include <scimath/Mathematics/ConvolveGridder.h>
-#include <lattices/Lattices/LatticeCache.h>
-#include <lattices/Lattices/ArrayLattice.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <measures/Measures/Measure.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
-#include <images/Images/ImageInterface.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/scimath/Mathematics/ConvolveGridder.h>
+#include <casacore/lattices/Lattices/LatticeCache.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/measures/Measures/Measure.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   
   // <summary>  An FTMachine for Gridded Fourier transforms including effects of primary beam and pointing offsets and the w-term</summary>
   
@@ -403,7 +403,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 			 Int& doGrad,
 			 Int paIndex);
   };
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
     // void makeAntiAliasingOp(Vector<Complex>& val, const Int len, const Double HPBW);
     // void makeAntiAliasingCorrection(Vector<Complex>& correction, 
     // 				    const Vector<Complex>& op, 

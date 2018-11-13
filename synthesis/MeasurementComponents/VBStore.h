@@ -29,7 +29,7 @@
 #define SYNTHESIS_VBSTORE_H
 #include <synthesis/MeasurementComponents/Utils.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   class VBStore
   {
   public:
@@ -92,5 +92,5 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     Bool dopsf_p,useCorrected_p;
   };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 #endif

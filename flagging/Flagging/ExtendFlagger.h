@@ -36,28 +36,28 @@
 
 //# Includes
 
-#include <casa/aips.h>
-#include <casa/iostream.h>
-#include <casa/OS/Timer.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/OS/Timer.h>
 
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Slicer.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Slicer.h>
 
-#include <tables/Tables/Table.h>
-#include <tables/Tables/ArrayColumn.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/TableColumn.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/TableColumn.h>
 
-#include <tables/Tables/ExprNode.h>
-#include <tables/Tables/RecordGram.h>
+#include <casacore/tables/TaQL/ExprNode.h>
+#include <casacore/tables/TaQL/RecordGram.h>
 
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 #include <flagging/Flagging/Flagger.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // class for flaging and extend flagging
@@ -419,7 +419,7 @@ class ExtendFlagger
 
 };
 
-} //# NAMESPACE CASA - END 
+} //# NAMESPACE CASACORE - END 
 
 //#ifndef AIPS_NO_TEMPLATE_SRC
 //#include <flagging/Flagging/ExtendFlagger.cc>

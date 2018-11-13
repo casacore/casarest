@@ -26,22 +26,22 @@
 //# $Id$
 
 #include <synthesis/MeasurementComponents/SimpComponentGridMachine.h>
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 #include <components/ComponentModels/ComponentShape.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/Flux.h>
 #include <components/ComponentModels/SkyComponent.h>
 #include <components/ComponentModels/SpectralModel.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicSL/Constants.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicSL/Constants.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 void SimpComponentGridMachine::get(VisBuffer& vb, SkyComponent& component,
 				     Int row)
@@ -107,5 +107,5 @@ void SimpComponentGridMachine::get(VisBuffer& vb, SkyComponent& component,
   }
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -26,10 +26,10 @@
 #ifndef COMPONENTS_ANGULAR2DGAUSSIAN_H
 #define COMPONENTS_ANGULAR2DGAUSSIAN_H
 
-#include <casa/aips.h>
-#include <scimath/Mathematics/GaussianBeam.h>
+#include <casacore/casa/aips.h>
+#include <casacore/scimath/Mathematics/GaussianBeam.h>
 
-namespace casa {
+namespace casacore {
 
 class Angular2DGaussian : public GaussianBeam {
 public:

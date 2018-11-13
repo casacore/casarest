@@ -25,7 +25,7 @@
 //#
 //# $Id: dTwoSidedShape.cc 19933 2007-02-27 05:04:51Z Malte.Marquarding $
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/Flux.h>
 #include <components/ComponentModels/GaussianShape.h>
 #include <components/ComponentModels/DiskShape.h>
@@ -33,18 +33,18 @@
 #include <components/ComponentModels/ConstantSpectrum.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/TwoSidedShape.h>
-#include <casa/Exceptions/Error.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MeasFrame.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Arrays/ArrayIO.h>
-#include <casa/BasicSL/String.h>
-#include <casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MeasFrame.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 void printShape(const TwoSidedShape& theShape) {
   cout << "This is a " << ComponentType::name(theShape.type())
        << " shape " << endl 

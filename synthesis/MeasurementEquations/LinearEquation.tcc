@@ -27,7 +27,7 @@
 
 #include <synthesis/MeasurementEquations/LinearEquation.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class Domain, class Range> LinearEquation<Domain,Range>::
 ~LinearEquation()
@@ -35,5 +35,5 @@ template<class Domain, class Range> LinearEquation<Domain,Range>::
   // Does nothing
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

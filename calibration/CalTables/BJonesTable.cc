@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/BJonesTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -116,5 +116,5 @@ BJonesPolyTable::BJonesPolyTable (const String& tableName,
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

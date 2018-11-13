@@ -25,7 +25,7 @@
 //#
 //# $Id$
 
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/Assert.h>
 #include <synthesis/Parallel/Applicator.h>
 #include <synthesis/Parallel/Algorithm.h>
 #include <synthesis/MeasurementComponents/ClarkCleanAlgorithm.h>
@@ -33,13 +33,13 @@
 #include <synthesis/MeasurementComponents/MakeApproxPSFAlgorithm.h>
 #include <synthesis/MeasurementComponents/PredictAlgorithm.h>
 #include <synthesis/MeasurementComponents/ResidualAlgorithm.h>
-#include <casa/BasicMath/Math.h>
+#include <casacore/casa/BasicMath/Math.h>
 #include <synthesis/Parallel/MPIError.h>
 #ifdef PABLO_IO
 #include <synthesis/Parallel/PabloIO.h>
 #endif
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Applicator::Applicator() : comm(0), algorithmIds(0),
   knownAlgorithms((Algorithm*)0), LastID(101), usedAllThreads(False),
@@ -352,5 +352,5 @@ Int Applicator::findFreeProc(Bool &lastOne)
 Applicator applicator;
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

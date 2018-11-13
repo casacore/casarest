@@ -1,16 +1,16 @@
 #ifndef IONOSPHERE_GPSEPHEMERIS_H
 #define IONOSPHERE_GPSEPHEMERIS_H
 
-#include <casa/stdio.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Quanta/MVPosition.h>
-#include <casa/Quanta/MVDirection.h>
-#include <scimath/Functionals/ScalarSampledFunctional.h>
+#include <casacore/casa/stdio.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Quanta/MVPosition.h>
+#include <casacore/casa/Quanta/MVDirection.h>
+#include <casacore/scimath/Functionals/ScalarSampledFunctional.h>
     
 #include <ionosphere/Ionosphere/GPS.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // Stores a chunk of GPS Ephemeris data
@@ -81,6 +81,6 @@ public:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

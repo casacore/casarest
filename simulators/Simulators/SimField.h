@@ -28,11 +28,11 @@
 #ifndef SIMULATORS_SIMFIELD_H
 #define SIMULATORS_SIMFIELD_H
 
-#include <casa/BasicSL/String.h>
-#include <casa/Arrays/Vector.h>
-#include <measures/Measures/MDirection.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/measures/Measures/MDirection.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MeasurementSet;
 class MSSource;
@@ -333,6 +333,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

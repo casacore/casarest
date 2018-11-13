@@ -27,21 +27,21 @@
 
 #include <synthesis/MeasurementEquations/ClarkCleanModel.h>
 #include <synthesis/MeasurementEquations/ClarkCleanProgress.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Slice.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayError.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/VectorIter.h>
-#include <casa/Logging/LogOrigin.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/iostream.h> 
-#include <casa/System/Choice.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/ArrayError.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/VectorIter.h>
+#include <casacore/casa/Logging/LogOrigin.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/iostream.h> 
+#include <casacore/casa/System/Choice.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# These are the definitions of the fortran functions
 
@@ -1148,5 +1148,5 @@ const Float ClarkCleanModel::threshold()
   return thresh;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

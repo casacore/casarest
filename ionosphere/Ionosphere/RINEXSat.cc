@@ -1,15 +1,15 @@
 
-#include <casa/stdio.h>
+#include <casacore/casa/stdio.h>
     
 #include <ionosphere/Ionosphere/RINEXSat.h>
-#include <casa/BasicSL/Constants.h>    
-#include <casa/Quanta/MVTime.h>    
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/Slice.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/Constants.h>    
+#include <casacore/casa/Quanta/MVTime.h>    
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/casa/Exceptions/Error.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Int RINEXSat::debug_level =0;
 
@@ -139,7 +139,7 @@ uInt RINEXSat::closeDomain ( uInt irec0,uInt irec1 )
   Slice S(irec0,nrec);
   Vector<Double> diffph( d().column(L1)(S) - d().column(L2)(S) );
   Vector<Double> diffgr( d().column(P2)(S) - d().column(P1)(S) - tgd_ );
-  Vector<uChar> sigstr( ::casa::min( static_cast<Array<uChar> >(ssi().column(L1)(S)),
+  Vector<uChar> sigstr( ::casacore::min( static_cast<Array<uChar> >(ssi().column(L1)(S)),
                                      static_cast<Array<uChar> >(ssi().column(L2)(S)) ) );
   Vector<Double> snrsq(nrec);
   for( uInt i=0; i<nrec; i++ )
@@ -346,5 +346,5 @@ Double RINEXSat::getTEC (Double &sig,Double &sig30,uInt i) const
   return tec(i);
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

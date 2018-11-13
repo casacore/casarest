@@ -26,24 +26,24 @@
 //# $Id: dSpectralModel.cc 18093 2004-11-30 17:51:10Z ddebonis $
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SpectralIndex.h>
 #include <components/ComponentModels/SpectralModel.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Exceptions/Error.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MeasFrame.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/Quanta/MVFrequency.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/iostream.h>
-#include <casa/iomanip.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MeasFrame.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/Quanta/MVFrequency.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/iomanip.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 void plotSpectrum(const SpectralModel& modelSpectrum) {
   cout << "This is a "
        << ComponentType::name(modelSpectrum.type())

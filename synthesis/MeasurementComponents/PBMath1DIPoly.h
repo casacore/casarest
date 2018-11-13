@@ -29,11 +29,11 @@
 #ifndef SYNTHESIS_PBMATH1DIPOLY_H
 #define SYNTHESIS_PBMATH1DIPOLY_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementComponents/PBMath1D.h>
-#include <measures/Measures.h>
+#include <casacore/measures/Measures.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //#forward
 
@@ -155,6 +155,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

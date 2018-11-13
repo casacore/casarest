@@ -27,11 +27,11 @@
 
 #include <synthesis/MeasurementEquations/LinearModel.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class Domain> LinearModel<Domain>::
 ~LinearModel() {
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

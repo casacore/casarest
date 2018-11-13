@@ -43,8 +43,8 @@
 #include <iomanip>
 
 //# General CASA includes
-#include <casa/BasicSL/String.h>
-#include <casa/Arrays/Slice.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Slice.h>
 
 //# Table and TablePlot includes
 #include <tableplot/TablePlot/TablePlot.h>
@@ -56,7 +56,7 @@
 #define LOG0 0
 #define LOG2 1
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //#!//////////////////////////////////////////////////////////////////////////
 //#! All the wonderful docs, that will show up in the user reference
@@ -293,7 +293,7 @@ class MSPlotMainMSCallBack : public TPGuiCallBackHooks
 #endif 
       };
       
-      casa::Bool
+      casacore::Bool
       releasetable( Int nrows, Int ncols, Int panel, String tablename )
       {
           String fnname = "releasetable";
@@ -309,7 +309,7 @@ class MSPlotMainMSCallBack : public TPGuiCallBackHooks
           return True;
       }
 
-      casa::Bool
+      casacore::Bool
       createiterplotlabels(Vector<String> iteraxes,
                            Vector<Double> values, String &titleString) {
          String fnname = "createiterplotlabels";
@@ -441,7 +441,7 @@ class MSPlotMainMSCallBack : public TPGuiCallBackHooks
          return True;
      };
          
-     casa::Bool
+     casacore::Bool
      flagdata(String tablename) {
 #if LOG2 
          String fnname = "flagdata";
@@ -451,7 +451,7 @@ class MSPlotMainMSCallBack : public TPGuiCallBackHooks
          return True;
      }
 
-      casa::Bool
+      casacore::Bool
       flagdisplay(Int direction, Vector<String> collist,
                 Matrix<Double> infomat, Vector<String> cpol) {
           String fnname = "flagdisplay";
@@ -617,7 +617,7 @@ class MSPlotMainMSCallBack : public TPGuiCallBackHooks
 
       }
 
-      casa::Bool
+      casacore::Bool
       flagdata(Int direction, Vector<String> collist,
                 Matrix<Double> infomat, Vector<String> cpol, Bool ave) {
           String fnname = "flagdata";
@@ -896,7 +896,7 @@ class MSPlotMainMSCallBack : public TPGuiCallBackHooks
 
       }
 
-      casa::Bool
+      casacore::Bool
       printlocateinfo( Vector<String> collist,
                   Matrix<Double> infomat,Vector<String> cpol)
       {
@@ -1342,7 +1342,7 @@ class MSPlotAntennaCallBack : public TPGuiCallBackHooks
 #endif 
       };
       
-      casa::Bool
+      casacore::Bool
       releasetable( Int nrows,
          Int ncols,
          Int panel,
@@ -1361,7 +1361,7 @@ class MSPlotAntennaCallBack : public TPGuiCallBackHooks
           return True;
       }
 
-      casa::Bool
+      casacore::Bool
       createiterplotlabels( Vector<String> iteraxes,
          Vector<Double> values,
          String &titleString )
@@ -1441,7 +1441,7 @@ class MSPlotAntennaCallBack : public TPGuiCallBackHooks
      };
      
 
-      casa::Bool
+      casacore::Bool
       flagdata(String tablename) {
 #if LOG2 
           String fnname = "flagdata";
@@ -1451,7 +1451,7 @@ class MSPlotAntennaCallBack : public TPGuiCallBackHooks
           return True;
       }
 
-      casa::Bool
+      casacore::Bool
       flagdata(Int direction, Vector<String> collist,
                   Matrix<Double> infomat,Vector<String> cpol, Bool ave) {
           String fnname = "flagdata";
@@ -1462,7 +1462,7 @@ class MSPlotAntennaCallBack : public TPGuiCallBackHooks
 
       }
       
-      casa::Bool
+      casacore::Bool
       printlocateinfo( Vector<String> collist,
                   Matrix<Double> infomat,Vector<String> cpol)
       {
@@ -1682,7 +1682,7 @@ class MSPlotUVWCallBack : public TPGuiCallBackHooks
       };
 
 
-      casa::Bool
+      casacore::Bool
       releasetable( Int nrows, Int ncols, Int panel, String tablename )
       {
           String fnname = "releasetable";
@@ -1699,7 +1699,7 @@ class MSPlotUVWCallBack : public TPGuiCallBackHooks
       }
 
             
-      casa::Bool
+      casacore::Bool
       createiterplotlabels( Vector<String> iteraxes,
          Vector<Double> values,
          String &titleString )
@@ -1781,7 +1781,7 @@ class MSPlotUVWCallBack : public TPGuiCallBackHooks
          return True;
      };
       
-     casa::Bool
+     casacore::Bool
      flagdata(String tablename) {
 #if LOG2 
          String fnname = "flagdata";
@@ -1791,7 +1791,7 @@ class MSPlotUVWCallBack : public TPGuiCallBackHooks
          return True;
      }
 
-      casa::Bool
+      casacore::Bool
       flagdata(Int direction, Vector<String> collist,
                   Matrix<Double> infomat,Vector<String> cpol, Bool ave) {
           String fnname = "flagdata";
@@ -1801,7 +1801,7 @@ class MSPlotUVWCallBack : public TPGuiCallBackHooks
 
       }
      
-     casa::Bool
+     casacore::Bool
      printlocateinfo( Vector<String> collist,
                   Matrix<Double> infomat,Vector<String> cpol)
      {

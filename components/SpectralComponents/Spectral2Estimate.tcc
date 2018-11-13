@@ -28,14 +28,14 @@
 //# Includes
 #include <components/SpectralComponents/SpectralEstimate.h>
 
-#include <casa/BasicMath/Math.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/Utilities/Assert.h>
 #include <components/SpectralComponents/CompiledSpectralElement.h>
 #include <components/SpectralComponents/GaussianSpectralElement.h>
 #include <components/SpectralComponents/PolynomialSpectralElement.h>
 
-namespace casa { //#Begin namespace casa
+namespace casacore { //#Begin namespace casa
 
 //# Member templates
 template <class MT>

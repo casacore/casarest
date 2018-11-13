@@ -26,14 +26,14 @@
 //# $Id$
 
 //# Includes
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementComponents/BeamSquint.h>
-#include <coordinates/Coordinates.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/iostream.h>
+#include <casacore/coordinates/Coordinates.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main()
 {
   try {

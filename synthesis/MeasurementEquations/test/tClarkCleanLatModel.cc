@@ -25,26 +25,26 @@
 //#
 //# $Id$
 
-#include <casa/iostream.h>
-#include <casa/aips.h>
-#include <lattices/Lattices/TempLattice.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Slicer.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/lattices/Lattices/TempLattice.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Slicer.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <synthesis/MeasurementEquations/LatticeModel.h>
 #include <synthesis/MeasurementEquations/ClarkCleanLatModel.h>
 #include <synthesis/MeasurementEquations/ClarkCleanProgress.h>
-#include <lattices/Lattices/LatticeConvolver.h>
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeExprNode.h>
-#include <casa/System/PGPlotter.h>
+#include <casacore/lattices/LatticeMath/LatticeConvolver.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/casa/System/PGPlotter.h>
 
-#include <casa/OS/Time.h>
-#include <casa/OS/Timer.h>
-#include <casa/BasicMath/Random.h>
-#include <coordinates/Coordinates/CoordinateUtil.h>
+#include <casacore/casa/OS/Time.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/BasicMath/Random.h>
+#include <casacore/coordinates/Coordinates/CoordinateUtil.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main()
 {
   Bool Failed = False;

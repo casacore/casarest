@@ -25,23 +25,23 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
-#include <casa/Arrays/IPosition.h>
-#include <lattices/Lattices/TempLattice.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/BasicMath/Random.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/lattices/Lattices/TempLattice.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/BasicMath/Random.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <synthesis/MeasurementEquations/LatticeModel.h>
-#include <lattices/Lattices/LatticeConvolver.h>
-#include <lattices/Lattices/PagedArray.h>
-#include <casa/OS/Time.h>
-#include <casa/BasicSL/String.h>
-#include <casa/iostream.h>
-#include <casa/iomanip.h>
+#include <casacore/lattices/LatticeMath/LatticeConvolver.h>
+#include <casacore/lattices/Lattices/PagedArray.h>
+#include <casacore/casa/OS/Time.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/iomanip.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 void plotLattice(Lattice<Float>* latp, const String& title);
 
 int main()

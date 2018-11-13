@@ -25,24 +25,24 @@
 //#
 //# $Id$
 
-#include <casa/iostream.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/MatrixMath.h>
-#include <casa/OS/HostInfo.h>
-#include <casa/System/ProgressMeter.h>
-#include <casa/Utilities/CountedPtr.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/MatrixMath.h>
+#include <casacore/casa/OS/HostInfo.h>
+#include <casacore/casa/System/ProgressMeter.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
 
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #endif
 
 #include <synthesis/MeasurementComponents/SkyModel.h>
@@ -65,8 +65,8 @@
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
 
-#include <images/Images/ImageInterface.h>
-#include <images/Images/SubImage.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/SubImage.h>
 
 #include <msvis/MSVis/StokesVector.h>
 #include <msvis/MSVis/VisBufferUtil.h>
@@ -77,7 +77,7 @@
 #include <msvis/MSVis/VisBufferAsync.h>
 //#include <synthesis/Utilities/ThreadTimers.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 CubeSkyEquation::CubeSkyEquation(SkyModel& sm, VisSet& vs, FTMachine& ft,
                                  ComponentFTMachine& cft, Bool noModelCol)
@@ -627,7 +627,7 @@ void CubeSkyEquation::gradientsChiSquared(Bool /*incr*/, Bool commitModel){
     predictComponents(incremental, initialized);
     Bool predictedComp=initialized;
 
-    using namespace casa::asyncio;
+    using namespace casacore::asyncio;
 
     PrefetchColumns prefetchColumns = ROVIA::prefetchColumns (Ant1,
                                                               Ant2,
@@ -652,7 +652,7 @@ void CubeSkyEquation::gradientsChiSquared(Bool /*incr*/, Bool commitModel){
                                                               PhaseCenter,
                                                               PolFrame,
                                                               SpW,
-                                                              casa::asyncio::Time,
+                                                              casacore::asyncio::Time,
                                                               Uvw,
                                                               -1);
 
@@ -1434,4 +1434,4 @@ void CubeSkyEquation::fixImageScale()
   }
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

@@ -29,19 +29,19 @@
 #define SYNTHESIS_INCCEMEMMODEL_H
 
 
-#include <casa/aips.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Array.h>
-#include <lattices/Lattices/Lattice.h>
-#include <images/Images/PagedImage.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/lattices/Lattices/Lattice.h>
+#include <casacore/images/Images/PagedImage.h>
 #include <synthesis/MeasurementEquations/IncEntropy.h>
 #include <synthesis/MeasurementEquations/LinearEquation.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogIO.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Forward declaration
 class LatConvEquation;
@@ -475,7 +475,7 @@ protected:
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

@@ -2,8 +2,8 @@
 
 #include <msvis/MSVis/VisSet.h>
 
-#include <casa/aips.h>
-#include <casa/namespace.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/namespace.h>
 #include <cassert>
 
 const String MSFILE = "/diska/jmlarsen/gnuactive/data/protopipe/imager/cal.3mmcont.ggtau.ms";

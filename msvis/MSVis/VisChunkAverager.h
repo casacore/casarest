@@ -26,12 +26,12 @@
 #ifndef MSVIS_VISCHUNKAVERAGER_H
 #define MSVIS_VISCHUNKAVERAGER_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <msvis/MSVis/CalVisBuffer.h>
 #include <map>
 #include <vector>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class CalVisBuffer;
 class VisBuffer;
@@ -225,7 +225,7 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

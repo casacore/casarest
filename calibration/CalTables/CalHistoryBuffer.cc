@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/CalHistoryBuffer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -186,5 +186,5 @@ Vector<String>& CalHistoryBuffer::calNotes()
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

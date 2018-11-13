@@ -24,23 +24,23 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 //#include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/FluxStandard.h>
 //#include <components/ComponentModels/FluxCalcQS.h>
 //#include <components/ComponentModels/TwoSidedShape.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/Constants.h>
-//#include <casa/BasicMath/Math.h>
-#include <measures/Measures/MFrequency.h>
-#include <measures/Measures/MEpoch.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
-#include <casa/iostream.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/Constants.h>
+//#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main() {
   try {
     String fluxScaleName;

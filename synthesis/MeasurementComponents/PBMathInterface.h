@@ -29,15 +29,15 @@
 #ifndef SYNTHESIS_PBMATHINTERFACE_H
 #define SYNTHESIS_PBMATHINTERFACE_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementComponents/BeamSquint.h>
-#include <images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
 #include <components/ComponentModels/Flux.h>
 #include <components/ComponentModels/ComponentShape.h>
-#include <casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicSL/Complex.h>
 #include <synthesis/MeasurementComponents/SkyJones.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //Forward declaration
 class Table;
@@ -325,7 +325,7 @@ private:
 };
  
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

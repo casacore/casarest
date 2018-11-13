@@ -25,20 +25,20 @@
 //#
 //# $Id: tProfileFit1D.cc 21451 2014-06-10 07:48:08Z gervandiepen $
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/SpectralComponents/ProfileFit1D.h>
 
-#include <casa/Containers/Record.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Utilities/Assert.h>
 #include <components/SpectralComponents/GaussianMultipletSpectralElement.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 void makeData (Vector<Double>& x, Vector<Double>& y, Vector<Bool>& m, 
 		Double& amp, Double& cen, Double& sigma,
 		Double& p0, Double& p1);

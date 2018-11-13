@@ -28,14 +28,14 @@
 #ifndef SIMULATORS_SIMFEED_H
 #define SIMULATORS_SIMFEED_H
 
-#include <casa/BasicSL/String.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/Stokes.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/casa/Exceptions/Error.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MSFeed;
 class MSFeedColumns;
@@ -397,6 +397,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

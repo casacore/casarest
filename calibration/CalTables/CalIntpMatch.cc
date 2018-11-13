@@ -29,7 +29,7 @@
 #include <calibration/CalTables/CalIntpMatch.h>
 #include <msvis/MSVis/MSCalEnums.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -402,5 +402,5 @@ Vector<Int> CalIntpMatch::calRows (const Int& matchIndex,
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -28,11 +28,11 @@
 //# Includes
 #include <components/SpectralComponents/PolynomialSpectralElement.h>
 
-#include <scimath/Functionals/Polynomial.h>
+#include <casacore/scimath/Functionals/Polynomial.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 PolynomialSpectralElement::PolynomialSpectralElement()
 : SpectralElement(SpectralElement::POLYNOMIAL, Vector<Double>(0)) {
@@ -114,5 +114,5 @@ ostream &operator<<(ostream &os, const PolynomialSpectralElement &elem) {
     return os;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

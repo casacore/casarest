@@ -29,12 +29,12 @@
 #ifndef CALIBRATION_GJONESMBUF_H
 #define CALIBRATION_GJONESMBUF_H
 
-#include <measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MFrequency.h>
 #include <calibration/CalTables/SolvableVJMBuf.h>
 #include <calibration/CalTables/GJonesMCol.h>
 #include <calibration/CalTables/GJonesTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // GJonesPolyMBuf: GJonesPoly calibration main table buffer
@@ -300,7 +300,7 @@ class GJonesSplineMBuf : public GJonesPolyMBuf
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

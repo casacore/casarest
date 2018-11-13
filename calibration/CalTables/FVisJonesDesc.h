@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/TimeVarVJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // FVisJonesDesc: Define the format of FVisJones cal tables
@@ -141,6 +141,6 @@ class FVisJonesIonoDesc : public FVisJonesDesc
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

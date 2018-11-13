@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/VisJonesTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -80,5 +80,5 @@ VisJonesTable::VisJonesTable (const String& tableName,
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

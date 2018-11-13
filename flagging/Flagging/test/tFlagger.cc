@@ -8,7 +8,7 @@
 
 #include <msvis/MSVis/VisSet.h>
 
-using namespace casa;
+using namespace casacore;
 
 
 void loop_visiter(MeasurementSet &ms)

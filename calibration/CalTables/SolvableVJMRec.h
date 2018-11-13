@@ -29,10 +29,10 @@
 #ifndef CALIBRATION_SOLVABLEVJMREC_H
 #define CALIBRATION_SOLVABLEVJMREC_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <calibration/CalTables/TimeVarVJMRec.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // SolvableVisJonesMRec: SolvableVisJones cal_main table record access/creation
@@ -258,7 +258,7 @@ class TJonesMRec : public SolvableVisJonesMRec
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

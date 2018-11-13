@@ -29,11 +29,11 @@
 #ifndef SYNTHESIS_LATTICEMODEL_H
 #define SYNTHESIS_LATTICEMODEL_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
-#include <lattices/Lattices/Lattice.h>
+#include <casacore/lattices/Lattices/Lattice.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> models with an internal & external representation as an Lattice </summary>
 
@@ -126,6 +126,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

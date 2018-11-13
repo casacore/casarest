@@ -28,9 +28,9 @@
 
 #include <calibration/CalTables/SolvableVJDesc.h>
 #include <msvis/MSVis/MSCalEnums.h>
-#include <tables/Tables/ArrColDesc.h>
+#include <casacore/tables/Tables/ArrColDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -134,5 +134,5 @@ TableDesc GJonesDelayRateSBDesc::calMainDesc()
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

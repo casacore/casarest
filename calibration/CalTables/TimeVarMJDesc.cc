@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/TimeVarMJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -41,5 +41,5 @@ TimeVarMJonesDesc::TimeVarMJonesDesc() : MJonesDesc()
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

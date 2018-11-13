@@ -29,30 +29,30 @@
 
 #include <msvis/MSVis/VisBuffer.h>
 
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayIter.h>
-#include <scimath/Mathematics/MatrixMathLA.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/OS/Memory.h>
-#include <casa/Utilities/GenSort.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/QuantumHolder.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <ms/MeasurementSets/MSFieldColumns.h>
-#include <ms/MeasurementSets/MSSpWindowColumns.h>
-#include <casa/sstream.h>
-#include <casa/iostream.h>
-#include <casa/iomanip.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayIter.h>
+#include <casacore/scimath/Mathematics/MatrixMathLA.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/OS/Memory.h>
+#include <casacore/casa/Utilities/GenSort.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/ms/MeasurementSets/MSFieldColumns.h>
+#include <casacore/ms/MeasurementSets/MSSpWindowColumns.h>
+#include <casacore/casa/sstream.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/iomanip.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
 #include <fstream>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   //
   //----------------------------------------------------------------
   //
@@ -257,4 +257,4 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     return (spwVerified & antennaVerified & fieldVerified);
   }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

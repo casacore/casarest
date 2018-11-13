@@ -24,26 +24,26 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 #include <components/ComponentModels/FluxCalcVQS.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Quanta/MVTime.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MFrequency.h>
-#include <measures/Measures/MEpoch.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ArrayColumn.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
 
 // Handy for passing anonymous arrays to functions.
-#include <scimath/Mathematics/RigidVector.h>
-#include <scimath/Functionals/ScalarSampledFunctional.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Functionals/ScalarSampledFunctional.h>
 
 #include <components/ComponentModels/FluxCalcLogFreqPolynomial.h>
 
 #include <map>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 FluxCalcVQS::FluxCalcVQS() :
   srcEnum_p(FluxStdSrcs::UNKNOWN_SOURCE),
   istimevar_p(false)
@@ -234,4 +234,4 @@ void FluxCalcVQS::isTimeVar(Bool istimevar)
   istimevar_p=istimevar;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

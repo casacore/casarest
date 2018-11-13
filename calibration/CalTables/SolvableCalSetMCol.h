@@ -33,7 +33,7 @@
 #include <calibration/CalTables/ROCalMainColumns2.h>
 #include <calibration/CalTables/CalTable2.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // ROSolvableVisJonesMCol: Read-only SolvableVisJones cal_main column access
@@ -189,7 +189,7 @@ class SolvableCalSetMCol : public CalMainColumns2<T>
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <calibration/CalTables/SolvableCalSetMCol.tcc>

@@ -6,9 +6,9 @@
  */
 
 #include "UtilJ.h"
-using namespace casa::utilj;
+using namespace casacore::utilj;
 
-#include <casa/Containers/Record.h>
+#include <casacore/casa/Containers/Record.h>
 
 #include "VisBufferAsync.h"
 #include "VisBufferAsyncWrapper.h"
@@ -19,14 +19,14 @@ using namespace casa::utilj;
 
 using std::transform;
 
-#include <ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <typeinfo>
 
 #define Log(level, ...) \
     {if (VlaData::loggingInitialized_p && level <= VlaData::logLevel_p) \
          Logger::get()->log (__VA_ARGS__);};
 
-namespace casa {
+namespace casacore {
 
 namespace asyncio {
 

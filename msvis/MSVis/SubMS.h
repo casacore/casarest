@@ -26,21 +26,21 @@
 //#
 //#
 //# $Id$
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSMainEnums.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSMainEnums.h>
 //#include <msvis/MSVis/VisIterator.h>
-#include <casa/aips.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-//#include <casa/Utilities/CountedPtr.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+//#include <casacore/casa/Utilities/CountedPtr.h>
 #include <map>
 #include <vector>
-#include <scimath/Mathematics/InterpolateArray1D.h>
+#include <casacore/scimath/Mathematics/InterpolateArray1D.h>
 
 
 #ifndef MSVIS_SUBMS_H
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 #define MSVIS_SUBMS_H
 
@@ -72,7 +72,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 // These forward declarations are so the corresponding .h files don't have to
 // be included in this .h file, but it's only worth it if a lot of other files
 // include this file.
-class MSSelection; // #include <ms/MeasurementSets/MSSelection.h>
+class MSSelection; // #include <casacore/ms/MSSel/MSSelection.h>
 
   // These typedefs are necessary because a<b::c> doesn't work.
   typedef std::vector<uInt> uivector;
@@ -569,7 +569,7 @@ class SubMS
   Matrix<Double> selTimeRanges_p;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <msvis/MSVis/SubMS.tcc>

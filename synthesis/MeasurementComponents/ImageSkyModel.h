@@ -29,17 +29,17 @@
 #ifndef SYNTHESIS_IMAGESKYMODEL_H
 #define SYNTHESIS_IMAGESKYMODEL_H
 
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 #include <synthesis/MeasurementComponents/SkyModel.h>
-#include <casa/Arrays/Matrix.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/TempImage.h>
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/System/PGPlotter.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/System/PGPlotter.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // Image Sky Model: Image-based Model for the Sky Brightness
@@ -325,7 +325,7 @@ protected:
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 #ifndef AIPS_NO_TEMPLATE_SRC

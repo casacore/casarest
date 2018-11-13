@@ -28,12 +28,12 @@
 #ifndef SYNTHESIS_AMUELLER_H
 #define SYNTHESIS_AMUELLER_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
 #include <synthesis/MeasurementComponents/StandardVisCal.h>
 #include <synthesis/MeasurementComponents/CalCorruptor.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class VisBuffGroupAcc;
 
@@ -199,6 +199,6 @@ private:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

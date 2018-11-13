@@ -28,10 +28,10 @@
 
 // includes
 #include <msvis/MSVis/MSMoments.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/casa/Logging/LogIO.h>
 
-namespace casa {
+namespace casacore {
 
 class MeasurementSet ;
 template<class T> class MSMoments ;
@@ -61,7 +61,7 @@ class MSAnalysis
 public:
 
   // Constructor
-  MSAnalysis( const casa::MeasurementSet *inMS ) ;
+  MSAnalysis( const casacore::MeasurementSet *inMS ) ;
 
   // Destructor
   virtual ~MSAnalysis() ;
@@ -92,8 +92,8 @@ public:
 private:
   // Set other data
   // <group>
-  void setMS( casa::MeasurementSet *inMS ) ;
-  void setMS( const casa::String name ) ;
+  void setMS( casacore::MeasurementSet *inMS ) ;
+  void setMS( const casacore::String name ) ;
   // </group>
 
   // Select data from input MS
@@ -103,7 +103,7 @@ private:
   void cleanup() ;
 
   // Initialization
-  void init( const casa::MeasurementSet *inMS ) ;
+  void init( const casacore::MeasurementSet *inMS ) ;
 
   // Add comments on HISTORY table
   void addHistory( String tableName, String suffix ) ;

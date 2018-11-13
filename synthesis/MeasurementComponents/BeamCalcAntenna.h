@@ -1,7 +1,7 @@
 #ifndef SYNTHESIS_ANTENNA_H
 #define SYNTHESIS_ANTENNA_H
 
-namespace casa
+namespace casacore
 {
 #include <synthesis/MeasurementComponents/BeamCalc.h>
   
@@ -68,8 +68,8 @@ namespace casa
   void alignfeed(calcAntenna *a, const Pathology *p);
   void getfeedbasis(const calcAntenna *a, Double B[3][3]);
   void Efield(const calcAntenna *a, 
-	      const casa::Complex *pol, 
-	      casa::Complex *E);
+	      const casacore::Complex *pol, 
+	      casacore::Complex *E);
   Int Antennasetfeedpattern(calcAntenna *a, const char *filename, Double scale);
   calcAntenna *newAntennafromApertureCalcParams(struct ApertureCalcParams *ap);
   void applyPathology(Pathology *P, calcAntenna *a);
@@ -96,7 +96,7 @@ namespace casa
   Ray *trace(const calcAntenna *a, Double x, Double y, const Pathology *p);
   Double feedgain(const calcAntenna *a, const Ray *ray, const Pathology *p);
   
-  void tracepol(casa::Complex *E0, const Ray *ray, casa::Complex *E1);
+  void tracepol(casacore::Complex *E0, const Ray *ray, casacore::Complex *E1);
   
   Int legplanewaveblock(const calcAntenna *a, Double x, Double y);
   Int legplanewaveblock2(const calcAntenna *a, const Ray *ray);

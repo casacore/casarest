@@ -25,18 +25,18 @@
 //#
 //# $Id$
 
-#include <tables/Tables/Table.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/iostream.h>
-#include <casa/sstream.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/sstream.h>
 #include <synthesis/MeasurementEquations/Qimager.h>
 #include <msvis/MSVis/VisSet.h>
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Qimager::Qimager(MeasurementSet& theMS)
 {
@@ -330,5 +330,5 @@ Bool Qimager::selectDataChannel(VisSet& vs, Vector<Int>& spectralwindowids,
 
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

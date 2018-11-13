@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/CalHistoryColumns.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -130,5 +130,5 @@ void CalHistoryColumns::attach (CalTable& calTable,
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

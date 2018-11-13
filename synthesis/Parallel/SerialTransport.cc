@@ -28,9 +28,9 @@
 //# Includes
 
 #include <synthesis/Parallel/PTransport.h>
-#include <casa/Containers/Record.h>
+#include <casacore/casa/Containers/Record.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
   // OK this is all pretty straight forward.  Just assign the pointers.  
   // On the gets check it's nonzero first.  Probably should throw an 
@@ -176,5 +176,5 @@ Int SerialTransport::get(Bool &b){
    return(r_status);
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

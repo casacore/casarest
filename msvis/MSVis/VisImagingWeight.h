@@ -28,11 +28,11 @@
 
 #ifndef VISIMAGINGWEIGHT_H
 #define VISIMAGINGWEIGHT_H
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Quanta/Quantum.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Quanta/Quantum.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 //#forward
 class ROVisibilityIterator;
 template<class T> class Matrix;
@@ -136,5 +136,5 @@ template<class T> class Vector;
 
 
  };
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 #endif // VISIMAGINGWEIGHT_H

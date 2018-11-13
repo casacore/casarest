@@ -24,21 +24,21 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 
-#include <casa/aips.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Containers/Record.h>
-#include <casa/Utilities/PtrHolder.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Utilities/PtrHolder.h>
 #include <components/SpectralComponents/LogTransformedPolynomialSpectralElement.h>
 #include <components/SpectralComponents/SpectralElementFactory.h>
 
-#include <casa/Utilities/Assert.h>
-#include <casa/Arrays/ArrayIO.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Arrays/ArrayIO.h>
 
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Vector.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 
 int main() {
 	{

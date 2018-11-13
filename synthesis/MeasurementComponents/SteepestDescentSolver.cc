@@ -28,8 +28,8 @@
 
 #include <synthesis/MeasurementComponents/SteepestDescentSolver.h>
 #include <synthesis/MeasurementComponents/Utils.h>
-#include <casa/Arrays/MatrixMath.h>
-namespace casa {
+#include <casacore/casa/Arrays/MatrixMath.h>
+namespace casacore {
 
   SteepestDescentSolver::SteepestDescentSolver(Int nParams,Vector<Int> polMap,
 					       Int nIter, Double tol):
@@ -119,7 +119,7 @@ namespace casa {
   // Compute the penalty function (also called the Goodness-of-fit criteria).
   // For us, its the Chi-square function.
   //
-  Double SteepestDescentSolver::getGOF(const VisBuffer& residual, Int& whichPol, Double& sumWt, char* msg)
+  Double SteepestDescentSolver::getGOF(const VisBuffer& residual, Int& whichPol, Double& sumWt, const char*)
   {
     Double Chisq=0.0;
     Int nRow=residual.nRow();

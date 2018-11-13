@@ -28,11 +28,11 @@
 #ifndef COMPONENTS_TABULARSPECTRUM_H
 #define COMPONENTS_TABULARSPECTRUM_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SpectralModel.h>
 #include <components/ComponentModels/Flux.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MFrequency;
 class RecordInterface;
@@ -245,6 +245,6 @@ private:
   
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

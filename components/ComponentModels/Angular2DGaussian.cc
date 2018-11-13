@@ -25,12 +25,12 @@
 
 #include <components/ComponentModels/Angular2DGaussian.h>
 
-#include <casa/Containers/Record.h>
-#include <casa/Quanta/QC.h>
-#include <casa/Quanta/QuantumHolder.h>
-#include <casa/Quanta/QLogical.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Quanta/QC.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/casa/Quanta/QLogical.h>
 
-namespace casa {
+namespace casacore {
 
 Bool Angular2DGaussian::deconvolve(
 	Angular2DGaussian& deconvolvedSize,

@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/CalDescColumns2.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -286,5 +286,5 @@ void CalDescColumns2::attach (CalTable2& calTable,
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

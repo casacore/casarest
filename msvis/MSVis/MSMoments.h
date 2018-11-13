@@ -29,18 +29,18 @@
 #ifndef _MS_MSMOMENTS_H_
 #define _MS_MSMOMENTS_H_
 
-#include <casa/aips.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Slice.h>
-#include <casa/Arrays/Slicer.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/StokesConverter.h>
-#include <ms/MeasurementSets/MSDerivedValues.h>
-#include <ms/MeasurementSets/MSSelectionKeywords.h>
-#include <images/Images/MomentsBase.h>
-#include <images/Images/MomentCalculator.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/casa/Arrays/Slicer.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/StokesConverter.h>
+#include <casacore/ms/MSOper/MSDerivedValues.h>
+#include <casacore/ms/MSSel/MSSelectionKeywords.h>
+#include <casacore/images/Images/MomentsBase.h>
+#include <casacore/images/Images/MomentCalculator.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class T> class MomentCalcBase;
 template<class T> class MomentsBase;
@@ -282,7 +282,7 @@ protected:
   using MomentsBase<T>::setMoments;
   using MomentsBase<T>::errorMessage;
 };
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef CASACORE_NO_AUTO_TEMPLATES
 #include <msvis/MSVis/MSMoments.tcc>

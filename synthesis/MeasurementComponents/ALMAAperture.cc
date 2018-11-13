@@ -32,12 +32,12 @@
 #include <synthesis/MeasurementComponents/BeamCalc.h>
 #include <synthesis/MeasurementComponents/WTerm.h>
 #include <synthesis/MeasurementComponents/ALMACalcIlluminationConvFunc.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
-#include <casa/Quanta/MVAngle.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/casa/Quanta/MVAngle.h>
 
-namespace casa{
+namespace casacore{
 
   AntennaResponses* ALMAAperture::aR_p = 0;
   Bool ALMAAperture::orderMattersInCFKey = False;

@@ -28,10 +28,10 @@
 #ifndef SYNTHESIS_MULTITERMLATTICECLEANER_H
 #define SYNTHESIS_MULTITERMLATTICECLEANER_H
 
-#include <scimath/Mathematics/FFTServer.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
 #include <synthesis/MeasurementEquations/MatrixCleaner.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MultiTermMatrixCleaner : public MatrixCleaner
 {
@@ -201,7 +201,7 @@ private:
   Bool adbg;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

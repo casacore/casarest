@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/TJonesTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -117,5 +117,5 @@ TJonesSplineTable::TJonesSplineTable (const String& tableName,
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

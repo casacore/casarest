@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/TimeVarVJMBuf.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -121,5 +121,5 @@ CJonesMBuf::CJonesMBuf (CalIterBase& calIter)
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

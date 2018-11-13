@@ -24,10 +24,10 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/Cube.h>
 #include <cmath>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 template<class T>
 void VisBuffer::chanAveVisCube(Cube<T>& data, Int nChanOut)
 {
@@ -133,6 +133,6 @@ void VisBuffer::chanAccCube(Cube<T>& cube, Int nChanOut)
   cube.reference(newCube);        // Install accumulated cube
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 

@@ -27,14 +27,14 @@
 //----------------------------------------------------------------------------
 
 #include <msvis/MSVis/VisBuffAccumulator.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Logging/LogIO.h>
 
 #define PRTLEV_VBA 0
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
   
@@ -422,5 +422,5 @@ void VisBuffAccumulator::throw_err(const String& origin, const String &msg)
   throw(AipsError(msg));
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

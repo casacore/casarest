@@ -1,12 +1,12 @@
 #ifndef IONOSPHERE_GPS_H
 #define IONOSPHERE_GPS_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Containers/Block.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Containers/Block.h>
     
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 const uInt MAX_GPS_SVN = 32;            // highest sattelite number in GPS constellation
 const uInt NUM_GPS     = MAX_GPS_SVN; // # of sats in GPS constellation
@@ -31,6 +31,6 @@ const Double
 template<class T> void toBlock ( Block<T> &blk,const Array<T> &arr );
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

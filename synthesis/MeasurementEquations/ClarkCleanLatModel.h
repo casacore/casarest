@@ -29,15 +29,15 @@
 #ifndef SYNTHESIS_CLARKCLEANLATMODEL_H
 #define SYNTHESIS_CLARKCLEANLATMODEL_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
 #include <synthesis/MeasurementEquations/LinearEquation.h>
-#include <lattices/Lattices/Lattice.h>
-#include <casa/Arrays/IPosition.h>
+#include <casacore/lattices/Lattices/Lattice.h>
+#include <casacore/casa/Arrays/IPosition.h>
 #include <synthesis/MeasurementEquations/Iterate.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogIO.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template <class T> class Matrix;
 template <class T> class Vector;
@@ -338,6 +338,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -1,16 +1,16 @@
 #ifndef IONOSPHERE_GPSDCB_H
 #define IONOSPHERE_GPSDCB_H
 
-#include <casa/stdio.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Cube.h>
+#include <casacore/casa/stdio.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Cube.h>
 #include <ionosphere/Ionosphere/GPS.h>
-#include <casa/Logging/LogIO.h>    
-#include <casa/Containers/Record.h>    
+#include <casacore/casa/Logging/LogIO.h>    
+#include <casacore/casa/Containers/Record.h>    
     
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // 30 days is normal spacing for DCB estimates
 const Float DCB_SPACING = 30;
@@ -124,7 +124,7 @@ inline const Matrix<Float> & GPSDCB::rawStDcbRms () const
 { return starms; }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <ionosphere/Ionosphere/GPSDCB.tcc>

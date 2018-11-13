@@ -27,13 +27,13 @@
 
 //# Includes
 #include <msvis/MSVis/StokesVector.h>
-// #include <tables/Tables/RetypedArrayEngine.h>
-// #include <tables/Tables/RetypedArraySetGet.h>
-// #include <tables/Tables/DataManError.h>
-#include <casa/Exceptions/Error.h>
+// #include <casacore/tables/DataMan/RetypedArrayEngine.h>
+// #include <casacore/tables/DataMan/RetypedArraySetGet.h>
+// #include <casacore/tables/DataMan/DataManError.h>
+#include <casacore/casa/Exceptions/Error.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // The following sqrt functions are required for Image to
 // work. Ug-ly.
@@ -67,5 +67,5 @@ Float StokesVector::determinant() const {
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

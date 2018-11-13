@@ -28,11 +28,11 @@
 //# Includes
 #include <components/SpectralComponents/SpectralList.h>
 
-#include <casa/Arrays/Vector.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Exceptions/Error.h>
 #include <components/SpectralComponents/SpectralElement.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Member templates
 template <class MT>
@@ -75,5 +75,5 @@ void SpectralList::residual(Vector<MT> &y, const Vector<MT> &x) const {
   };
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

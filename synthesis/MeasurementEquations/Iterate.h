@@ -29,12 +29,12 @@
 #ifndef SYNTHESIS_ITERATE_H
 #define SYNTHESIS_ITERATE_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Fallible.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Fallible.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Base class for Iteration
 class Iterate {
@@ -75,6 +75,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

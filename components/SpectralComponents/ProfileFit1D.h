@@ -29,13 +29,13 @@
 #define COMPONENTS_PROFILEFIT1D_H
 
 //# Includes
-#include <casa/aips.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Vector.h>
 
 #include <components/SpectralComponents/SpectralList.h>
 #include <components/SpectralComponents/SpectralFit.h>
 
-namespace casa {
+namespace casacore {
 
 class SpectralElement;
 

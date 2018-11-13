@@ -29,11 +29,11 @@
 
 #include <flagging/Flagging/RFChunkStats.h> 
 #include <flagging/Flagging/DDMapper.h> 
-#include <casa/Arrays/Cube.h>
-#include <scimath/Mathematics/RigidVector.h>
-#include <casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
+#include <casacore/casa/Containers/Block.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class RFDataMapper;
 class VisBuffer;
@@ -168,6 +168,6 @@ inline Double RFDataMapper::getValueBase ()
 { return cycle_base; }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -38,8 +38,8 @@
 
 //# Table and TablePlot includes
 #include <tableplot/TablePlot/TablePlot.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/RefRows.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/RefRows.h>
 
 //# Local (MsPlot) includes
 #include <flagging/MSPlot/MsPlot.h>
@@ -47,26 +47,26 @@
 #include <flagging/MSPlot/MsPlotHooks.h>
 
 //# Measurment and table related includes
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <ms/MeasurementSets/MSDataDescColumns.h>
-#include <ms/MeasurementSets/MSSpWindowColumns.h>
-#include <ms/MeasurementSets/MSDerivedValues.h>
-#include <ms/MeasurementSets/MSRange.h>
-#include <ms/MeasurementSets/MSIter.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/ms/MeasurementSets/MSDataDescColumns.h>
+#include <casacore/ms/MeasurementSets/MSSpWindowColumns.h>
+#include <casacore/ms/MSOper/MSDerivedValues.h>
+#include <casacore/ms/MeasurementSets/MSRange.h>
+#include <casacore/ms/MeasurementSets/MSIter.h>
 
-#include <measures/Measures/MeasTable.h>
-#include <measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MeasTable.h>
+#include <casacore/measures/Measures/MFrequency.h>
 
 #include <msvis/MSVis/MsAverager.h>
 
 //# General CASA includes
-#include <casa/Exceptions.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/GenSort.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Exceptions.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/GenSort.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 
 //# System Includes
 #include <stdio.h>
@@ -130,7 +130,7 @@
 //#                             s = step
 //#
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 String MsPlot::clname = "MsPlot";
 
@@ -492,7 +492,7 @@ MsPlot::open( const String& MSPath, Bool doV, const String& restfreq,
     }
 
     try {
-	itsMS = new MeasurementSet( MSPath, casa::Table::Update );
+	itsMS = new MeasurementSet( MSPath, casacore::Table::Update );
 	itsSelectedMS = MS(*itsMS);
 	itsIsNewSelection = True;
 
@@ -1196,7 +1196,7 @@ MsPlot::getAllTimes()
         
     ROMSColumns msColumns( itsSelectedMS );
     Double startTime, endTime;
-    ::casa::minMax( startTime, endTime, msColumns.time().getColumn() );
+    ::casacore::minMax( startTime, endTime, msColumns.time().getColumn() );
     
     //# Now store the time as an MVTime value, this allows us to
     //# easily find the year, month, ... of the value later on.
@@ -1411,8 +1411,8 @@ MsPlot::initialize()
     if ( itsTablePlot == NULL ) 
     {
        //# Create a new TablePlot class for plotting
-       //#itsTablePlot = new casa::TablePlot();
-       itsTablePlot = casa::TablePlot::TablePlotInstance();
+       //#itsTablePlot = new casacore::TablePlot();
+       itsTablePlot = casacore::TablePlot::TablePlotInstance();
 #if LOG2 
        log->out("Created TablePlot class", 
                 fnname, clname, LogMessage::DEBUG1 );
@@ -1422,7 +1422,7 @@ MsPlot::initialize()
     //# Setup the reset call back with table plot.
     if ( itsResetCallBack == NULL )
     {
-       itsResetCallBack = new casa::MSPlotReset( this );
+       itsResetCallBack = new casacore::MSPlotReset( this );
 #if LOG2 
        log->out( "Created MS Plot Reset callback class", 
            fnname, clname, LogMessage::DEBUG1 );
@@ -1440,21 +1440,21 @@ MsPlot::initialize()
     itsPlotOptions.reset(); //# resets to defaults.
 
     //# Flag that signals iteration plot state.
-    itsIterPlotOn = casa::False;
+    itsIterPlotOn = casacore::False;
 
     //# Flags that control when a new Selected MS 
     //#  must be sent into itsTablePlot
-    itsIsSubTablePlot = casa::False;
-    itsIsNewSelection = casa::False;
+    itsIsSubTablePlot = casacore::False;
+    itsIsNewSelection = casacore::False;
     if ( itsConvertClassSet && itsPlotOptions.Convert != NULL ) 
     {
 	delete itsPlotOptions.Convert;
 	itsPlotOptions.Convert = NULL;
     }
     
-    itsConvertClassSet = casa::False;
-    itsIsInIterPlot = casa::False; //# different from itsIterPlotOn.
-    itsSpwIterOn = casa::False;
+    itsConvertClassSet = casacore::False;
+    itsIsInIterPlot = casacore::False; //# different from itsIterPlotOn.
+    itsSpwIterOn = casacore::False;
    
     //# Make sure the data selection values are set to their initial
     //# state. Currently this only resets chan, corr selection to "all".
@@ -1462,7 +1462,7 @@ MsPlot::initialize()
     resetTableSelection();
 
     //# Flag to signal that MsPlot is ready to use.
-    itsInitialized = casa::True;
+    itsInitialized = casacore::True;
 
     log->FnExit( fnname, clname);
     return True;
@@ -1495,7 +1495,7 @@ MsPlot::enableAllButtons( )
 //# Take in user input plot options and fill it into itsPlotOptions.
 //#////////////////////////////////////////////////////////////////////////////
 Bool 
-MsPlot::setplotoptions( casa::Record options )
+MsPlot::setplotoptions( casacore::Record options )
 {
     String FnCall = "(options)";
     String fnname = "setplotoptions";
@@ -1847,7 +1847,7 @@ MsPlot::plotrangeToDbls( Vector<String> rangeStrVec,
    //# TODO add the parsing
    timeString += tmpStr;
        
-   casa::Quantity qa;   
+   casacore::Quantity qa;   
    if ( ! MVTime::read( qa, timeString ) )
    {
        errors[0] += String( "Unable to convert plotrange value: " )
@@ -2855,7 +2855,7 @@ MsPlot::makeDataSelectStr( MSSelection& MSSelectObj,
 //# It adds a single set of start,stop,step values for a particular 
 //# SPW 
 //#
-casa::Bool
+casacore::Bool
 MsPlot::setSingleChannelSet( uInt spwId, Int start, Int stop, Int step )
 {
     String FnCall = String( "( " )
@@ -3099,7 +3099,7 @@ MsPlot::defaultDataSelectString()
 //# It adds a single table to the class variables (itsTableVector and
 //# itsTableVectorName) for use later.
 //#
-casa::Bool
+casacore::Bool
 MsPlot::setSingleInputTable( const Vector<String>& sortOrder, 
       const uInt spwId, 
       const uInt polId, 
@@ -3209,7 +3209,7 @@ MsPlot::setSingleInputTable( const Vector<String>& sortOrder,
 //#       or after itsTablePlot.reset() )
 //#
 //#////////////////////////////////////////////////////////////////////////////
-casa::Bool
+casacore::Bool
 MsPlot::setInputTable( const String& xcolumn, const String& ycolumn )
 {
    String FnCall = String( "( " ) +  xcolumn 
@@ -3697,8 +3697,8 @@ MsPlot::setInputTable( const String& xcolumn, const String& ycolumn )
 //#////////////////////////////////////////////////////////////////////////////
 //#  Check the iteration axes strings
 //#////////////////////////////////////////////////////////////////////////////
-//#casa::Vector<casa::String>
-casa::Bool
+//#casacore::Vector<casacore::String>
+casacore::Bool
 MsPlot::checkIterationAxes( const Vector<String>& iteration )
 {
     String fnname = "checkInterationAxes";
@@ -3820,7 +3820,7 @@ MsPlot::checkIterationAxes( const Vector<String>& iteration )
 //# ie. that the spectral windows all have the same number of
 //# channels.
 //#////////////////////////////////////////////////////////////////////////////
-casa::Bool
+casacore::Bool
 MsPlot::checkSpwShapes()
 {
     String fnname = "checkSpwShapes";
@@ -3898,7 +3898,7 @@ MsPlot::checkSpwShapes()
 //# Check if all selected polarizations (correlations) have the same shape, 
 //# ie. that each row in the polarization table is the same size.
 //#////////////////////////////////////////////////////////////////////////////
-casa::Bool
+casacore::Bool
 MsPlot::checkPolShapes()
 {
     String fnname = "checkPolShapes";
@@ -3972,10 +3972,10 @@ MsPlot::checkPolShapes()
 
 //#////////////////////////////////////////////////////////////////////////////
 //# Clear the Plotter
-casa::Bool
-MsPlot::clearPlot( const casa::Int nrows, 
-   const casa::Int ncols, 
-   const casa::Int panel )
+casacore::Bool
+MsPlot::clearPlot( const casacore::Int nrows, 
+   const casacore::Int ncols, 
+   const casacore::Int panel )
 {
     String FnCall = String( "( " ) + String::toString( nrows )
    + String( ", " ) + String::toString( ncols )
@@ -4000,14 +4000,14 @@ MsPlot::clearPlot( const casa::Int nrows,
 
 //#////////////////////////////////////////////////////////////////////////////
 //# Plot the specified portion of the measurement set
-casa::Bool
-MsPlot::setupPlotxy( const casa::String& x,
-   const casa::String& y,
-   const casa::String& xcolumn,
-   const casa::String& ycolumn,
-   const casa::String& xvalue,
-   const casa::String& yvalue,
-   casa::Vector<casa::String>& iteration )
+casacore::Bool
+MsPlot::setupPlotxy( const casacore::String& x,
+   const casacore::String& y,
+   const casacore::String& xcolumn,
+   const casacore::String& ycolumn,
+   const casacore::String& xvalue,
+   const casacore::String& yvalue,
+   casacore::Vector<casacore::String>& iteration )
 {
    String FnCall = "( x, y, xcolumn, ycolumn, xvalue, yvalue, iteration )";
    String fnname = "setupPlotxy";
@@ -4178,15 +4178,15 @@ MsPlot::setupPlotxy( const casa::String& x,
 //#      FEED1, FIELD, FIELD_ID, SCAN, SCAN_NUMBER, SPW, SPECTRAL_WINDOW
 //#         also anything that is a column in the Main MS table will work.
 
-casa::Bool
-MsPlot::plotxy( const casa::Bool checkOnly,
-        const casa::String& x,
-   const casa::String& y,
-   const casa::String& xcolumn,
-   const casa::String& ycolumn,
-   const casa::String& xvalue,
-   const casa::String& yvalue,
-        casa::Vector<casa::String>& iteration )
+casacore::Bool
+MsPlot::plotxy( const casacore::Bool checkOnly,
+        const casacore::String& x,
+   const casacore::String& y,
+   const casacore::String& xcolumn,
+   const casacore::String& ycolumn,
+   const casacore::String& xvalue,
+   const casacore::String& yvalue,
+        casacore::Vector<casacore::String>& iteration )
 {
     String FnCall = "(x, y, xcolumn, ycolumn, xvalue, yvalue, iteration, filename)";
     String fnname = "plotxy";
@@ -4419,7 +4419,7 @@ MsPlot::plotxy( const casa::Bool checkOnly,
                               itsTaqlStrings[tblVecCnt], itsIterationAxes );
         
                   //# Set the iterplot ON flag.
-                  itsIterPlotOn = casa::True;
+                  itsIterPlotOn = casacore::True;
                
                   //# Do this so got that at the end of iterplot, 
                   //# the TP.setTableT will be
@@ -4487,7 +4487,7 @@ MsPlot::cleanupOptions()
 
 //#////////////////////////////////////////////////////////////////////////////
 //# Modify TaQL string for time (chan) average plotting
-casa::Bool
+casacore::Bool
 MsPlot::createSaQL(  const String& x, const String& y,
                      const String& xvalue, const String& yvalue,
                      String& title, String& xlabel, String& ylabel)
@@ -4794,7 +4794,7 @@ MsPlot::createSaQL(  const String& x, const String& y,
 //# Create TaQL string which is used to select the data from the
 //# table.  Note that there can be conversion information added to
 //# the TaQL string as well.
-casa::Bool
+casacore::Bool
 MsPlot::createTaQL( const String& x, 
    const String& y, 
    const String& xcolumn, 
@@ -4956,7 +4956,7 @@ MsPlot::createTaQL( const String& x,
 //# Construct TaQL strings for various cases.
 //# Also construct default axis labels here.
 //#////////////////////////////////////////////////////////////////////////////
-casa::Vector<casa::String>
+casacore::Vector<casacore::String>
 MsPlot::getTaQL( const String& axisStr, const String& column,   
         const String& value, const uInt spwId, const uInt polId, 
         const char axis, String& label)
@@ -5248,7 +5248,7 @@ MsPlot::iterPlotNext()
     String fnname = "iterPlotNext";
     log->FnEnter( fnname, clname );
 
-    casa::Bool rstat( casa::True );
+    casacore::Bool rstat( casacore::True );
     if ( ! checkInit() || ! checkOpenMS() )  { 
        log->FnExit( fnname, clname); 
        return rstat=False; 
@@ -5275,12 +5275,12 @@ MsPlot::iterPlotNext()
     //#
     //# (there may be a better way to do this, but I'm not sure how.....)
     //#
-    casa::Vector<casa::String> labcol;
-    casa::Vector<casa::Vector<casa::Double> > labval;
+    casacore::Vector<casacore::String> labcol;
+    casacore::Vector<casacore::Vector<casacore::Double> > labval;
     
     //# Call next()
     if ( itsTablePlot->iterMultiPlotNext( labcol, labval ) == -1 )
-       iterPlotStop( casa::False );
+       iterPlotStop( casacore::False );
       
     log->FnExit( fnname, clname);
     return rstat;
@@ -5296,7 +5296,7 @@ MsPlot::iterPlotStop( const Bool rmplotter )
            + String( " ) " );
     String fnname = "iterPlotStop";
     log->FnEnter( fnname + FnCall, clname );
-    casa::Bool rstat( casa::True ); 
+    casacore::Bool rstat( casacore::True ); 
     if ( ! checkInit() || ! checkOpenMS() )  { 
         log->FnExit( fnname, clname); 
         return rstat=False; 
@@ -5311,7 +5311,7 @@ MsPlot::iterPlotStop( const Bool rmplotter )
 
     //-----itsTablePlot->iterMultiPlotStop( rmplotter );
     itsTablePlot->changeGuiButtonState("iternext","disabled");
-    itsIterPlotOn = casa::False;
+    itsIterPlotOn = casacore::False;
 
     //# Cleanup, undo any internal plot options that may have
     //# been set internally.  
@@ -5467,7 +5467,7 @@ MsPlot::validateCorrAndStokes( Vector<Vector<String> >& names )
     String fnname = "validateCorrAndStokes";
     log->FnEnter( fnname + "names", clname);
 
-    casa::Bool rstat = True;
+    casacore::Bool rstat = True;
     if ( ! checkInit() || ! checkOpenMS() )  { log->FnExit( fnname, clname); return rstat=False; }
 
     //# Make sure our list of correlation IDs is the same size as
@@ -5543,7 +5543,7 @@ MsPlot::validateCorrAndStokes( Vector<Vector<String> >& names )
       }      
       if( !found ){
           /*
-          *itsLog << casa::LogIO::WARN
+          *itsLog << casacore::LogIO::WARN
              << LogOrigin( "MSPlot", "ValidateCorr" )
              << "Invalid correlation given for polarization row " 
              << String::toString(polId) << " : " 
@@ -5551,7 +5551,7 @@ MsPlot::validateCorrAndStokes( Vector<Vector<String> >& names )
              << ". This correlation will be ignored."
              << " The valid correlation values for this MS are: "
              << itsCorrelationNames[polId]
-             <<casa::LogIO::POST;
+             <<casacore::LogIO::POST;
           */
       } 
        }//# end of i loop
@@ -5572,11 +5572,11 @@ MsPlot::validateCorrAndStokes( Vector<Vector<String> >& names )
        {
       //# If there were no valid correlations given then warn
       //# the user.
-      //#*itsLog << casa::LogIO::WARN 
+      //#*itsLog << casacore::LogIO::WARN 
       //#   << LogOrigin( "MSPlot", "ValidateCorr" )
       //#   << "No valid correlation values were found for row "
       //#   << String::toString( polId )
-      //#   << casa::LogIO::POST;
+      //#   << casacore::LogIO::POST;
       names[polId].resize( 0 );
       ids[polId].resize( 0 );
        } else if ( rstat && validNames.nelements() != names.nelements() ) {
@@ -5649,7 +5649,7 @@ MsPlot::makeCorrIdLists( Vector< Vector<Int> >& ids )
     String fnname = "makeCorrIdLists";
     log->FnEnter( fnname + "(ids)",  clname);
 
-   casa::Bool rstat = True;
+   casacore::Bool rstat = True;
     if ( ! checkInit() || ! checkOpenMS() )  { 
         log->FnExit( fnname, clname); 
         return rstat=False; 
@@ -5830,7 +5830,7 @@ MsPlot::makeCorrIdLists( Vector< Vector<Int> >& ids )
 //# select the time ranges 
 //#
 //#///////////////////////////////////////////////////////////////////////////
-casa::String
+casacore::String
 MsPlot::getTimeExprStr( const String& times)
 {
     String FnCall = String( "( " ) + times + String( " )" );
@@ -5930,7 +5930,7 @@ MsPlot::getTimeExprStr( const String& times)
 //# TODO : Be more flexible on the time syntax
 //#
 //#///////////////////////////////////////////////////////////////////////////
-casa::String
+casacore::String
 MsPlot::getTimeExprStr(const String& times, const String& mode)
 {
    //mode can be vector, scalar, step
@@ -6065,7 +6065,7 @@ MsPlot::saveFigure( const String& filename,
     String fnname = "saveFigure";
     log->FnEnter( fnname + FnCall, clname );
 
-    casa::Bool rstat = True;
+    casacore::Bool rstat = True;
     if ( ! checkInit() || ! checkOpenMS() )  { log->FnExit( fnname, clname); return rstat=False; }
 
     try {
@@ -6094,7 +6094,7 @@ MsPlot::markRegion( Int nrows, Int ncols, Int panel, Vector<Double> regionvec )
    + String( ", regionvec )" );
   String fnname = "markRegion";
   log->FnEnter( fnname + FnCall, clname );
-  casa::Bool rstat = True;
+  casacore::Bool rstat = True;
   if ( ! checkInit() || ! checkOpenMS() )  {
       log->FnExit( fnname, clname); return rstat=False;
   }
@@ -6122,7 +6122,7 @@ MsPlot::flagData( Int direction )
     String fnname = "flagData";
     log->FnEnter( fnname + FnCall, clname );
     
-    casa::Bool rstat = True;
+    casacore::Bool rstat = True;
     if ( ! checkInit() || ! checkOpenMS() )  { 
    log->FnExit( fnname, clname); return rstat=False; 
     }
@@ -6327,7 +6327,7 @@ MsPlot::checkAverageMode(String optName, String mode )
 //# itsStartChan and itsEndChan MUST be one-based at this point.
 //# -1 and 0 are both defaults here.
 //#
-casa::Vector<casa::String>
+casacore::Vector<casacore::String>
 MsPlot::dataTaQL( const String& column, const String& value, 
                   const uInt spwId, const uInt polId, String& label ) 
 {
@@ -6467,7 +6467,7 @@ MsPlot::dataTaQL( const String& column, const String& value,
 //#////////////////////////////////////////////////////////////////////////////
 //# Create a Single Y-TaQL string for a data column.
 //#////////////////////////////////////////////////////////////////////////////
-casa::String 
+casacore::String 
     MsPlot::getIndices( const Int& startcorr,
        const Int& endcorr,
        const Int& stepcorr,
@@ -6850,7 +6850,7 @@ casa::String
 //#///////////////////////////////////////////////////////////////////////
 
 //# For special cases, update the Plot Options.
-casa::Bool
+casacore::Bool
 MsPlot::updatePlotOptions( const String& title, 
                            const String& xlabel,
             const String& ylabel,
@@ -6865,7 +6865,7 @@ MsPlot::updatePlotOptions( const String& title,
    String fnname = "updatePlotOptions";
 
    log->FnEnter( fnname + FnCall, clname );
-   casa::Bool retValue = True;
+   casacore::Bool retValue = True;
 
    //# (1) If the user has not set a title, then apply the defaults.
    if (itsPlotOptions.Title.length()==0) 
@@ -7032,7 +7032,7 @@ MsPlot::updatePlotOptions( const String& title,
 //#////////////////////////////////////////////////////////////////////////////
 //#/////////////////  Flag Version Control - start ////////////////////////////
 //#////////////////////////////////////////////////////////////////////////////
-casa::Bool
+casacore::Bool
 MsPlot::saveFlagVersion( String versionname, 
                          String comment, String merge) 
 {
@@ -7040,7 +7040,7 @@ MsPlot::saveFlagVersion( String versionname,
    + String( ", " ) + comment + String( ", " ) + merge + String( " )");
     String fnname = "saveFlagVersion";
     log->FnEnter( fnname + FnCall, clname );
-    casa::Bool rstat = True;
+    casacore::Bool rstat = True;
     if ( ! checkInit() || ! checkOpenMS() )  { log->FnExit( fnname, clname); return rstat=False; }
 
     if( ! itsTablePlot->saveFlagVersion( versionname, comment, merge ) )
@@ -7055,7 +7055,7 @@ MsPlot::saveFlagVersion( String versionname,
     return rstat;
 }
 //#////////////////////////////////////////////////////////////////////////////
-casa::Bool
+casacore::Bool
 MsPlot::restoreFlagVersion(Vector<String> versionname, 
             String merge) 
 {
@@ -7064,7 +7064,7 @@ MsPlot::restoreFlagVersion(Vector<String> versionname,
     String fnname = "restoreFlagVersion";
     log->FnEnter( fnname + FnCall, clname );
 
-    casa::Bool rstat = True;
+    casacore::Bool rstat = True;
     if ( ! checkInit() || ! checkOpenMS() )  { 
    log->FnExit( fnname, clname); return rstat=False; 
     }
@@ -7081,14 +7081,14 @@ MsPlot::restoreFlagVersion(Vector<String> versionname,
     return rstat;
 }
 //#////////////////////////////////////////////////////////////////////////////
-casa::Bool
+casacore::Bool
 MsPlot::deleteFlagVersion(Vector<String> versionname )
                          {
     String FnCall = String( "( versionname )" );
     String fnname = "deleteFlagVersion";
     log->FnEnter( fnname + FnCall, clname );
 
-    casa::Bool rstat = True;
+    casacore::Bool rstat = True;
     if ( ! checkInit() || ! checkOpenMS() )  {
     log->FnExit( fnname, clname); return rstat=False;
     }
@@ -7105,12 +7105,12 @@ MsPlot::deleteFlagVersion(Vector<String> versionname )
     return rstat;
 }
 //#////////////////////////////////////////////////////////////////////////////
-casa::Bool
+casacore::Bool
 MsPlot::getFlagVersionList() 
 {
     String fnname = "getFlagVersionList";
     log->FnEnter(fnname, clname);
-    casa::Bool rstat = True;
+    casacore::Bool rstat = True;
     if ( ! checkInit() || ! checkOpenMS() )  { 
        log->FnExit( fnname, clname); 
        return rstat=False; 
@@ -7145,5 +7145,5 @@ MsPlot::getFlagVersionList()
 
 
 //#////////////////////////////////////////////////////////////////////////////
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 //# end of file

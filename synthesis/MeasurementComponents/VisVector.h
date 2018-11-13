@@ -28,13 +28,13 @@
 #ifndef SYNTHESIS_VISVECTOR_H
 #define SYNTHESIS_VISVECTOR_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/iostream.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class VisVector {
   
@@ -134,7 +134,7 @@ private:
 VisVector::VisType visType(const Int& ncorr);
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

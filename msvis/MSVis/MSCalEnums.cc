@@ -28,7 +28,7 @@
 
 #include <msvis/MSVis/MSCalEnums.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -303,5 +303,5 @@ DataType MSCalEnums::basicType (Int enumField)
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

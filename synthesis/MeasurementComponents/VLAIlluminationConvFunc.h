@@ -32,10 +32,10 @@
 #include <synthesis/MeasurementComponents/IlluminationConvFunc.h>
 #include <synthesis/MeasurementComponents/CExp.new3.h>
 #include <synthesis/MeasurementComponents/ExpCache.h>
-#include <images/Images/TempImage.h>
-#include <casa/Exceptions.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Exceptions.h>
 #include <msvis/MSVis/VisBuffer.h>
-namespace casa
+namespace casacore
 {
   class VLAIlluminationConvFunc: public IlluminationConvFunc
   {

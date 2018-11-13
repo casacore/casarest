@@ -28,33 +28,33 @@
 #include <simulators/Simulators/SimpleSimulator.h>
 #include <simulators/Simulators/SimScan.h>
 
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/MatrixMath.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/Arrays/ArrayUtil.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/MeasConvert.h>
-#include <casa/Quanta/MVAngle.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSObservation.h>
-#include <ms/MeasurementSets/MSObsColumns.h>
-#include <ms/MeasurementSets/MSDerivedValues.h>
-#include <casa/Logging/LogIO.h>
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/TiledShapeStMan.h>
-#include <tables/Tables/TiledColumnStMan.h>
-#include <tables/Tables/IncrementalStMan.h>
-#include <tables/Tables/StandardStMan.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/OS/Time.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/MatrixMath.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/ArrayUtil.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSObservation.h>
+#include <casacore/ms/MeasurementSets/MSObsColumns.h>
+#include <casacore/ms/MSOper/MSDerivedValues.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/DataMan/TiledShapeStMan.h>
+#include <casacore/tables/DataMan/TiledColumnStMan.h>
+#include <casacore/tables/DataMan/IncrementalStMan.h>
+#include <casacore/tables/DataMan/StandardStMan.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/OS/Time.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // not publicly available
 SimpleSimulator::SimpleSimulator() : delms_p(False), scannum_p(0), 
@@ -514,5 +514,5 @@ void SimpleSimulator::blockage(Double &fraction1, Double &fraction2,
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

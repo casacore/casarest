@@ -32,9 +32,9 @@
 #include <synthesis/MeasurementComponents/BeamCalc.h>
 #include <synthesis/MeasurementComponents/WTerm.h>
 #include <synthesis/MeasurementComponents/VLACalcIlluminationConvFunc.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
 //
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
@@ -47,7 +47,7 @@
 // #define OVERSAMPLING 20
 // #define THRESHOLD 1E-4
 
-namespace casa{
+namespace casacore{
   
   EVLAAperture& EVLAAperture::operator=(const EVLAAperture& other)
   {

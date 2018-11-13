@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/TimeVarMJMRec.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // SolvableMJonesMRec: SolvableMJones cal_main table record access/creation
@@ -156,7 +156,7 @@ class MIfrMRec : public SolvableMJonesMRec
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

@@ -26,13 +26,13 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <synthesis/MeasurementComponents/BeamSquint.h>
 
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 BeamSquint::BeamSquint()
 {
@@ -156,5 +156,5 @@ BeamSquint::getPointingDirection (const MDirection& pointDir,
     
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

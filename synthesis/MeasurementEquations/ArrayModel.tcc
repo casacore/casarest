@@ -26,9 +26,9 @@
 //# $Id$
 
 #include <synthesis/MeasurementEquations/ArrayModel.h>
-#include <casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/IPosition.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class T> ArrayModel<T>::
 ArrayModel(){};
@@ -64,5 +64,5 @@ setModel(Array<T> & model){
   theModel.reference(model);
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

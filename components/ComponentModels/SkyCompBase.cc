@@ -27,7 +27,7 @@
 
 #include <components/ComponentModels/SkyCompBase.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SkyCompBase::~SkyCompBase() {
 }
@@ -35,5 +35,5 @@ SkyCompBase::~SkyCompBase() {
 // compile-command: "gmake SkyCompBase"
 // End: 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

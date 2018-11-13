@@ -30,7 +30,7 @@
 
 #include <synthesis/MeasurementComponents/SimplePBConvFunc.h>
 
-namespace casa{
+namespace casacore{
 
   // <summary>  A class to support FTMachines get their convolution Function </summary>
   
@@ -114,6 +114,6 @@ namespace casa{
       Block <CountedPtr<Vector<Int> > > convSupportBlock_p;
 
     };
-}; // end of namespace casa
+}; // end of namespace casacore
 
 #endif

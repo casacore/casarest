@@ -26,19 +26,19 @@
 
 #include <calibration/CalTables/CalInterp.h>
 
-#include <casa/Arrays.h>
-#include <scimath/Mathematics/MatrixMathLA.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Utilities/BinarySearch.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays.h>
+#include <casacore/scimath/Mathematics/MatrixMathLA.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/BinarySearch.h>
+#include <casacore/casa/Exceptions/Error.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 CalInterp::CalInterp(CalSet<Complex>& cs,
 		     const String& timetype,
@@ -865,5 +865,5 @@ void CalInterp::setSpwOK() {
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

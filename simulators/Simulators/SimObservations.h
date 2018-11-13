@@ -34,7 +34,7 @@
 #include <simulators/Simulators/SimField.h>
 #include <simulators/Simulators/SimDataDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // A container for descriptions of simulated observations
@@ -337,6 +337,6 @@ private:
     SimDataDescList dds_p;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

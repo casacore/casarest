@@ -28,28 +28,28 @@
 
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisBuffAccumulator.h>
-#include <ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <synthesis/MeasurementEquations/VisEquation.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <synthesis/MeasurementComponents/SteepestDescentSolver.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/QuantumHolder.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
 
-#include <tables/Tables/ExprNode.h>
+#include <casacore/tables/TaQL/ExprNode.h>
 
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/OS/Memory.h>
-#include <casa/System/Aipsrc.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/OS/Memory.h>
+#include <casacore/casa/System/Aipsrc.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   
   
   // **********************************************************
@@ -180,7 +180,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     // logSink() << LogOrigin("EPJones","setSolve") 
     // 	      << "Using PBMosaicFT for residual and derivative computations"
     // 	      << LogIO::POST;
-    casa::Quantity patol(paInc,"deg");
+    casacore::Quantity patol(paInc,"deg");
     logSink() << LogOrigin("EPJones","setSolve") 
 	      << "Parallactic Angle tolerance set to " << patol.getValue("deg") << " deg" 
 	      << LogIO::POST;
@@ -1149,7 +1149,7 @@ void EPJones::printRPar()
              << endl;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 //  cout << pointingOffsets << endl;

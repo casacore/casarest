@@ -27,20 +27,20 @@
 
 
 #include <synthesis/MeasurementEquations/VisEquation.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
 
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Exceptions/Error.h>
 #include <msvis/MSVis/VisBuffer.h>
-//#include <casa/Quanta/MVTime.h>
-#include <casa/iostream.h>
+//#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/OS/Timer.h>
+#include <casacore/casa/OS/Timer.h>
 
 #define VISEQPRTLEV 0
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // ***************************************************************************
 // ********************  Start of public member functions ********************
@@ -698,5 +698,5 @@ Bool VisEquation::ok() {
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

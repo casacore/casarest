@@ -19,17 +19,17 @@
 #include <sys/syscall.h>
 #include <sys/time.h>
 
-#include <casa/Exceptions/Error.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <boost/thread/once.hpp>
 
 #include "AsynchronousTools.h"
 #include "UtilJ.h"
 
 using namespace std;
-using namespace casa::utilj;
+using namespace casacore::utilj;
 
-namespace casa {
+namespace casacore {
 
 namespace async {
 

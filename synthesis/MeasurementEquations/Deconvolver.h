@@ -29,20 +29,20 @@
 #ifndef SYNTHESIS_DECONVOLVER_H
 #define SYNTHESIS_DECONVOLVER_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Quanta/Quantum.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/MRadialVelocity.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MRadialVelocity.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeCleaner.h>
+#include <casacore/lattices/LatticeMath/LatticeCleaner.h>
 #else
-#include <lattices/Lattices/LatticeCleaner.h>
+#include <casacore/lattices/LatticeMath/LatticeCleaner.h>
 #endif
 
-#include <casa/namespace.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+#include <casacore/casa/namespace.h>
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 template<class T> class Lattice;
 template<class T> class PagedImage;
 template<class T> class TempImage;
@@ -344,6 +344,6 @@ private:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

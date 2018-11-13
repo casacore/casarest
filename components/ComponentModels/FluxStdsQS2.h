@@ -32,7 +32,7 @@
 #include <components/ComponentModels/FluxCalcLogFreqPolynomial.h>
 #include <components/ComponentModels/FluxCalcVQS.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 namespace NSTDS { //# NAMESPACE NSTDS "new standards"  - BEGIN
                   //#   once old code (FluxCalcQS etc) deleted this can be
                   //#   removed.
@@ -305,6 +305,6 @@ private:
 
 
 } //# NAMESPACE NSTDS -END
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif /* COMPONENTS_FLUXSTDSQS2_H */

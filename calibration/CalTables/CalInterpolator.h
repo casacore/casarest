@@ -29,12 +29,12 @@
 #ifndef CALIBRATION_CALINTERPOLATOR_H
 #define CALIBRATION_CALINTERPOLATOR_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Matrix.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Matrix.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <calibration/CalTables/CalInterpolation.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalInterpolator: a class to interpolate calibration information
@@ -106,7 +106,7 @@ class CalInterpolator
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

@@ -29,13 +29,13 @@
 #ifndef SYNTHESIS_DATASAMPLING_H
 #define SYNTHESIS_DATASAMPLING_H
 
-#include <images/Images/ImageInterface.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> Provides sampling of data for esimation algorithms
 // </summary>
@@ -139,6 +139,6 @@ protected:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

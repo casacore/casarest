@@ -31,12 +31,12 @@
 
 #include "AsynchronousTools.h"
 #include "UtilJ.h"
-using casa::utilj::ThreadTimes;
-using casa::utilj::DeltaThreadTimes;
+using casacore::utilj::ThreadTimes;
+using casacore::utilj::DeltaThreadTimes;
 #include "VisBuffer.h"
 #include "VisibilityIterator.h"
 #include "VisibilityIteratorAsync.h"
-using casa::asyncio::RoviaModifiers;
+using casacore::asyncio::RoviaModifiers;
 #include "VisBufferAsync.h"
 #include <boost/tuple/tuple.hpp>
 
@@ -46,9 +46,9 @@ using std::pair;
 #include <queue>
 using std::queue;
 
-using namespace casa::async;
+using namespace casacore::async;
 
-namespace casa {
+namespace casacore {
 
 class VisBuffer;
 
@@ -344,15 +344,15 @@ class VlatFunctor {
 public:
 
 	VlatFunctor (Int precedence = 0)
-	: id_p (casa::asyncio::N_PrefetchColumnIds), precedence_p (precedence)
+	: id_p (casacore::asyncio::N_PrefetchColumnIds), precedence_p (precedence)
 	{}
 	virtual ~VlatFunctor () {}
 
 	virtual void operator() (VisBuffer *) { throw AipsError ("Illegal Vlat Functor");}
 	virtual VlatFunctor * clone () { return new VlatFunctor (* this);}
 
-	casa::asyncio::PrefetchColumnIds getId () const { return id_p;}
-	void setId (casa::asyncio::PrefetchColumnIds id) { id_p = id;}
+	casacore::asyncio::PrefetchColumnIds getId () const { return id_p;}
+	void setId (casacore::asyncio::PrefetchColumnIds id) { id_p = id;}
 	void setPrecedence (Int precedence) { precedence_p = precedence; }
 
 	static Bool byDecreasingPrecedence (const VlatFunctor * a, const VlatFunctor * b)
@@ -363,7 +363,7 @@ public:
 	}
 private:
 
-	casa::asyncio::PrefetchColumnIds id_p;
+	casacore::asyncio::PrefetchColumnIds id_p;
 	Int precedence_p;
 
 };
@@ -479,7 +479,7 @@ VlatFunctor1<Ret, Arg> * vlatFunctor1 (Ret (VisBuffer::* f) (Arg), Arg i)
 // <todo asof="yyyy/mm/dd">
 // </todo>
 
-class VLAT : public casa::async::Thread {
+class VLAT : public casacore::async::Thread {
 
 public:
 
@@ -510,10 +510,10 @@ public:
 
 protected:
 
-	class FillerDictionary : public map<casa::asyncio::PrefetchColumnIds, VlatFunctor *> {
+	class FillerDictionary : public map<casacore::asyncio::PrefetchColumnIds, VlatFunctor *> {
 
 	public:
-	    void add (casa::asyncio::PrefetchColumnIds id, VlatFunctor * f)
+	    void add (casacore::asyncio::PrefetchColumnIds id, VlatFunctor * f)
 	    {
 	        f->setId (id);
 	        assert (find(id) == end()); // shouldn't already have one for this ID

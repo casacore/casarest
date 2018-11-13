@@ -29,10 +29,10 @@
 #ifndef CALIBRATION_BJONESMREC_H
 #define CALIBRATION_BJONESMREC_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <calibration/CalTables/SolvableVJMRec.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // BJonesMRec: BJones cal_main table record access & creation
@@ -85,6 +85,6 @@ class BJonesMRec : public SolvableVisJonesMRec
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

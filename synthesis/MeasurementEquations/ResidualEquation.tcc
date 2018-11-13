@@ -27,7 +27,7 @@
 
 #include <synthesis/MeasurementEquations/ResidualEquation.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class Domain> ResidualEquation<Domain>::
 ~ResidualEquation()
@@ -35,5 +35,5 @@ template<class Domain> ResidualEquation<Domain>::
   // Does nothing
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

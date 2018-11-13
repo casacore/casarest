@@ -30,21 +30,21 @@
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 #include <synthesis/MeasurementComponents/WTerm.h>
 #include <synthesis/MeasurementComponents/PSTerm.h>
-#include <images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <synthesis/MeasurementComponents/CFStore.h>
 #include <synthesis/MeasurementComponents/ConvolutionFunction.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #else
-#include <lattices/Lattices/LatticeFFT.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #endif
-#include <casa/ostream.h>
+#include <casacore/casa/ostream.h>
 
-namespace casa{
+namespace casacore{
   void WOnlyConvFunc::makeConvFunction(const ImageInterface<Complex>& image,
 				       const VisBuffer& vb,
 				       const Int wConvSize,

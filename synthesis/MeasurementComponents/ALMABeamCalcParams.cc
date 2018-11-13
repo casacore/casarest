@@ -1,7 +1,7 @@
 #include <synthesis/MeasurementComponents/BeamCalc.h>
 #include <synthesis/MeasurementComponents/ALMABeamCalc.h>
 
-namespace casa{
+namespace casacore{
   struct BeamCalcGeometry ALMABeamCalcGeometryDefaults[ALMABeamCalc_NumBandCodes] = 
     {
       /* Format of each entry:

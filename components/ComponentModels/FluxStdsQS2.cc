@@ -27,12 +27,12 @@
 
 #include <components/ComponentModels/FluxStdsQS2.h>
 #include <components/ComponentModels/FluxStdSrcs.h>
-#include <casa/OS/Path.h>
-#include <casa/System/Aipsrc.h>
+#include <casacore/casa/OS/Path.h>
+#include <casacore/casa/System/Aipsrc.h>
 
-//#include <casa/Logging/LogIO.h>
+//#include <casacore/casa/Logging/LogIO.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 namespace NSTDS { //# NAMESPACE NSTDS - BEGIN
 // Each of these c'tors defines the polynomial coefficients for the
 // log10(fluxDensity) = polynomial(log10(frequency)) calculations
@@ -309,4 +309,4 @@ Bool FluxStdScaifeHeald2012::setSourceCoeffs()
 }
 
 } //# NAMESPACE NSTD - END 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

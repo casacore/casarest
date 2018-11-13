@@ -28,14 +28,14 @@
 
 //# Includes
 #include <synthesis/MeasurementEquations/CEMemProgress.h>
-#include <images/Images/TempImage.h>
-#include <casa/System/PGPlotter.h>
-#include <casa/BasicMath/Math.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/System/PGPlotter.h>
+#include <casacore/casa/BasicMath/Math.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 CEMemProgress::CEMemProgress(PGPlotter* pgplotter)
   : itsPgplotter(pgplotter),
@@ -250,5 +250,5 @@ if(itsPgplotter){
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

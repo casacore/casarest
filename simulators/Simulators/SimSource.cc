@@ -27,14 +27,14 @@
 
 #include <simulators/Simulators/SimSource.h>
 
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSSource.h>
-#include <ms/MeasurementSets/MSSourceColumns.h>
-#include <measures/Measures/MPosition.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/sstream.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSSource.h>
+#include <casacore/ms/MeasurementSets/MSSourceColumns.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SimSource::SimSource(const String& name, const MDirection& dir, 
 		     const String& code, Int spWinId) 
@@ -148,5 +148,5 @@ void SimSourceList::throwOutOfRange(uInt legallength, Int index) const {
     throw AipsError(String(msg));
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

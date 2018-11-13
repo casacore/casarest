@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/CalBuffer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -849,5 +849,5 @@ Vector<Int>& CalBuffer::calHistoryId()
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

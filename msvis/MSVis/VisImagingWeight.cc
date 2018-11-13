@@ -28,14 +28,14 @@
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisImagingWeight.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Vector.h>
 
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   VisImagingWeight::VisImagingWeight() : multiFieldMap_p(-1), wgtType_p("none"), doFilter_p(False) {
 
     }
@@ -403,4 +403,4 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     }
 
 
-}//# NAMESPACE CASA - END
+}//# NAMESPACE CASACORE - END

@@ -27,11 +27,11 @@
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/BJonesDesc.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/ArrColDesc.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/ArrColDesc.h>
 #include <msvis/MSVis/MSCalEnums.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -67,5 +67,5 @@ TableDesc BJonesPolyDesc::calMainDesc()
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

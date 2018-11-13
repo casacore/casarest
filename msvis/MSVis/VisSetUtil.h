@@ -29,14 +29,14 @@
 #ifndef MSVIS_VISSETUTIL_H
 #define MSVIS_VISSETUTIL_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Quanta/Quantum.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // Utilities for operating on VisSets.
@@ -84,7 +84,7 @@ public:
   static void UVSub(VisibilityIterator &vs, Bool reverse=False);
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

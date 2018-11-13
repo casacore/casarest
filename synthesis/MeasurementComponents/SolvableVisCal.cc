@@ -30,33 +30,33 @@
 
 #include <msvis/MSVis/VisBuffer.h>
 
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayIter.h>
-#include <scimath/Mathematics/MatrixMathLA.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/OS/Memory.h>
-#include <casa/Utilities/GenSort.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/QuantumHolder.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <ms/MeasurementSets/MSSpWindowColumns.h>
-#include <ms/MeasurementSets/MSFieldColumns.h>
-#include <casa/sstream.h>
-#include <casa/iostream.h>
-#include <casa/iomanip.h>
-#include <casa/Containers/RecordField.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayIter.h>
+#include <casacore/scimath/Mathematics/MatrixMathLA.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/OS/Memory.h>
+#include <casacore/casa/Utilities/GenSort.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/ms/MeasurementSets/MSSpWindowColumns.h>
+#include <casacore/ms/MeasurementSets/MSFieldColumns.h>
+#include <casacore/casa/sstream.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/iomanip.h>
+#include <casacore/casa/Containers/RecordField.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/System/Aipsrc.h>
-#include <casa/System/ProgressMeter.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/System/Aipsrc.h>
+#include <casacore/casa/System/ProgressMeter.h>
 
 #include <fstream>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // **********************************************************
 //  SolvableVisCal Implementations
@@ -2701,7 +2701,7 @@ void SolvableVisCal::smooth(Vector<Int>& fields,
 
   if (smoothable()) 
     // Call CalSet's global smooth method
-    casa::smooth(cs(),smtype,smtime,fields);
+    casacore::smooth(cs(),smtype,smtime,fields);
   else
     throw(AipsError("This type does not support smoothing!"));
 
@@ -3362,7 +3362,7 @@ void SolvableVisMueller::createDiffMueller() {
   if (dM_ && dM().type() != mtype) delete dM_;
   
   // If needed, construct the correct diff Mueller
-  if (!dM_) dM_ = casa::createMueller(mtype);
+  if (!dM_) dM_ = casacore::createMueller(mtype);
       
 }
 
@@ -4195,8 +4195,8 @@ void SolvableVisJones::createDiffJones() {
   if (dJ2_ && dJ2().type() != jtype) delete dJ2_;
   
   // If needed, construct the correct diff Jones
-  if (!dJ1_) dJ1_ = casa::createJones(jtype);
-  if (!dJ2_) dJ2_ = casa::createJones(jtype);
+  if (!dJ1_) dJ1_ = casacore::createJones(jtype);
+  if (!dJ2_) dJ2_ = casacore::createJones(jtype);
       
 }
 
@@ -5671,4 +5671,4 @@ String calTableType(const String& tablename) {
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

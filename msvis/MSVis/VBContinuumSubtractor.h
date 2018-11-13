@@ -29,12 +29,12 @@
 #ifndef MSVIS_VBCONTINUUMSUBTRACTOR_H
 #define MSVIS_VBCONTINUUMSUBTRACTOR_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Cube.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 //#include <msvis/MSVis/VisBuffer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class VisBuffer;
 class VisBuffGroupAcc;
@@ -242,6 +242,6 @@ private:
   uInt      totnumchan_p;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

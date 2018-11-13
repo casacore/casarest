@@ -27,14 +27,14 @@
 #include <flagging/Flagging/RFADiffBase.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/MaskArrMath.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/Slice.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/MaskArrMath.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/Slice.h>
 
-#include <casa/stdio.h>
+#include <casacore/casa/stdio.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Bool RFADiffBase::dummy_Bool;
 
@@ -379,5 +379,5 @@ String RFADiffMapBase::getDesc ()
   return RFDataMapper::description()+"; "+RFADiffBase::getDesc();
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

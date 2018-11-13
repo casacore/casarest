@@ -24,9 +24,9 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 #include <msvis/MSVis/VisibilityIterator.h>
-#include <casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/Cube.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   // helper function to swap the y and z axes of a Cube
   template<class T>
   void ROVisibilityIterator::swapyz(Cube<T>& out, const Cube<T>& in) const
@@ -51,6 +51,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     out.putStorage(pout,deleteOut);
     in.freeStorage(pin,deleteIn);
   }
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
   

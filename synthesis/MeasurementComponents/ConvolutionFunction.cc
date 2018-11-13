@@ -26,7 +26,7 @@
 //#
 //# $Id$
 #include <synthesis/MeasurementComponents/ConvolutionFunction.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   ConvolutionFunction::~ConvolutionFunction() {};
   //  ConvolutionFunction& operator=(const ConvolutionFunction& other) {return *this;}
   // int ConvolutionFunction::getVisParams(const VisBuffer& vb) {return 0;};

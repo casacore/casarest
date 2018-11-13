@@ -3,7 +3,7 @@
     
 #include "Ionosphere.h"
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // Implements corrections via GPS data
@@ -31,6 +31,6 @@ class IonosphDataGPS : public IonosphData
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -30,12 +30,12 @@
 #define SYNTHESIS_WPCONVFUNC_H
 
 
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Vector.h>
 #include <synthesis/MeasurementComponents/PixelatedConvFunc.h>
-#include <casa/Containers/Block.h>
-#include <casa/Utilities/CountedPtr.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
 
-namespace casa{
+namespace casacore{
 
   // <summary>  A class to support FTMachines get their convolution Function </summary>
   

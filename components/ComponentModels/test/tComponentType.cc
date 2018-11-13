@@ -25,16 +25,16 @@
 //#
 //# $Id: tComponentType.cc 20059 2007-03-23 04:02:28Z gervandiepen $
 
-#include <casa/aips.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/Assert.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SkyCompRep.h>
 #include <components/ComponentModels/ComponentShape.h>
 #include <components/ComponentModels/SpectralModel.h>
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main() {
   try {
     {

@@ -27,14 +27,14 @@
 
 #include <components/SpectralComponents/PowerLogPolynomialSpectralElement.h>
 
-#include <scimath/Functionals/PowerLogarithmicPolynomial.h>
+#include <casacore/scimath/Functionals/PowerLogarithmicPolynomial.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
 #define _ORIGIN  String("PowerLogPolynomialSpectralElement::") + __FUNCTION__ + ":" + String::toString(__LINE__) + ": "
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 /*
 PowerLogPolynomialSpectralElement::PowerLogPolynomialSpectralElement(
@@ -132,5 +132,5 @@ ostream &operator<<(ostream& os, const PowerLogPolynomialSpectralElement& elem) 
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

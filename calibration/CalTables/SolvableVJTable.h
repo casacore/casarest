@@ -32,7 +32,7 @@
 #include <calibration/CalTables/TimeVarVJTable.h>
 #include <calibration/CalTables/SolvableVJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // SolvableVisJonesTable: SolvableVisJones calibration table access/creation
@@ -303,7 +303,7 @@ class TJonesTable : public SolvableVisJonesTable
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

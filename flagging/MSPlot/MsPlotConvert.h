@@ -40,15 +40,15 @@
 
 
 //# General CASA includes
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/BasicSL/String.h>
 
 //# Measurement and table related includes
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <ms/MeasurementSets/MSSpWindowColumns.h>
-#include <ms/MeasurementSets/MSDerivedValues.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/ms/MeasurementSets/MSSpWindowColumns.h>
+#include <casacore/ms/MSOper/MSDerivedValues.h>
 
-#include <measures/Measures/MeasTable.h>
+#include <casacore/measures/Measures/MeasTable.h>
 
 #include <tableplot/TablePlot/SLog.h>
 
@@ -65,7 +65,7 @@
 //#!//////////////////////////////////////////////////////////////////////////
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
     
 ///////////////////////////////////////////////////////////////////////////////

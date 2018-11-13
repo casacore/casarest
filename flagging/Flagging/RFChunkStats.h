@@ -27,15 +27,15 @@
 #ifndef FLAGGING_RFCHUNKSTATS_H
 #define FLAGGING_RFCHUNKSTATS_H
 
-#include <measures/Measures/Stokes.h> 
-#include <casa/Arrays/Vector.h> 
-#include <casa/Arrays/Matrix.h> 
-#include <casa/Arrays/Cube.h> 
-#include <casa/Containers/Block.h> 
-#include <lattices/Lattices/LatticeIterator.h> 
+#include <casacore/measures/Measures/Stokes.h> 
+#include <casacore/casa/Arrays/Vector.h> 
+#include <casacore/casa/Arrays/Matrix.h> 
+#include <casacore/casa/Arrays/Cube.h> 
+#include <casacore/casa/Containers/Block.h> 
+#include <casacore/lattices/Lattices/LatticeIterator.h> 
 #include <flagging/Flagging/RFCommon.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class Flagger;
 class MeasurementSet;
@@ -247,7 +247,7 @@ const uInt num_active_stats = 3;
 Int findCorrType( Stokes::StokesTypes type,const Vector<Int> &corr );
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <flagging/Flagging/RFChunkStats.tcc>

@@ -29,10 +29,10 @@
 #ifndef CALIBRATION_MJONESMREC_H
 #define CALIBRATION_MJONESMREC_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <calibration/CalTables/CalMainRecord.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // MJonesMRec: MJones cal_main table record access and creation
@@ -93,7 +93,7 @@ class MJonesMRec : public CalMainRecord
  };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

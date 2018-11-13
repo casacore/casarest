@@ -42,7 +42,7 @@
 #define OVERSAMPLING 20
 #define THRESHOLD 1E-4
 
-namespace casa{
+namespace casacore{
   
   EVLAConvFunc& EVLAConvFunc::operator=(const EVLAConvFunc& other)
   {

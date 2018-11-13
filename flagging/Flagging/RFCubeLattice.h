@@ -27,13 +27,13 @@
 #ifndef FLAGGING_RFCUBELATTICE_H
 #define FLAGGING_RFCUBELATTICE_H
     
-#include <casa/Arrays/Matrix.h> 
-#include <lattices/Lattices/TempLattice.h> 
-#include <lattices/Lattices/LatticeIterator.h> 
+#include <casacore/casa/Arrays/Matrix.h> 
+#include <casacore/lattices/Lattices/TempLattice.h> 
+#include <casacore/lattices/Lattices/LatticeIterator.h> 
 #include <boost/dynamic_bitset.hpp>
 #include <vector>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 // <summary>
@@ -229,7 +229,7 @@ public:
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <flagging/Flagging/RFCubeLattice.tcc>

@@ -25,31 +25,31 @@
 //#
 //# $Id: tDiskShape.cc 18093 2004-11-30 17:51:10Z ddebonis $
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/DiskShape.h>
 #include <components/ComponentModels/TwoSidedShape.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Containers/Record.h>
-#include <casa/Containers/RecordFieldId.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/BasicMath/Math.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MeasureHolder.h>
-#include <casa/Quanta/Euler.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/Quanta/MVDirection.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/QuantumHolder.h>
-#include <casa/Quanta/RotMatrix.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
-#include <casa/iostream.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Containers/RecordFieldId.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MeasureHolder.h>
+#include <casacore/casa/Quanta/Euler.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/Quanta/MVDirection.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/casa/Quanta/RotMatrix.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main() {
   try {
     TwoSidedShape* shapePtr = 0;

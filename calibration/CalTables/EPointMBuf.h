@@ -32,7 +32,7 @@
 #include <calibration/CalTables/TimeVarVJMBuf.h>
 #include <calibration/CalTables/EPointMCol.h>
 #include <calibration/CalTables/SolvableVJTable.h>
-namespace casa {
+namespace casacore {
 // <summary> 
 // EPointMBuf: EPoint calibration main table buffer
 // </summary>

@@ -26,20 +26,20 @@
 // include
 #include <msvis/MSVis/MSAnalysis.h>
 #include <msvis/MSVis/MSMoments.h>
-#include <casa/Exceptions/Error.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSSelection.h>
-#include <ms/MeasurementSets/MSIter.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSConcat.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/OS/Time.h>
-#include <casa/OS/File.h>
-#include <casa/Containers/Block.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/RefRows.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MSSel/MSSelection.h>
+#include <casacore/ms/MeasurementSets/MSIter.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MSOper/MSConcat.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/OS/Time.h>
+#include <casacore/casa/OS/File.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/RefRows.h>
 
-namespace casa { // namespace casa begins
+namespace casacore { // namespace casa begins
 
 MSAnalysis::MSAnalysis( const MeasurementSet *inMS )
   : ms_p( 0 ),

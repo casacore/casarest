@@ -26,12 +26,12 @@
 //# $Id$
 #include <simulators/Simulators/SimFeed.h>
 
-#include <ms/MeasurementSets/MSFeed.h>
-#include <ms/MeasurementSets/MSFeedColumns.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/sstream.h>
+#include <casacore/ms/MeasurementSets/MSFeed.h>
+#include <casacore/ms/MeasurementSets/MSFeedColumns.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SimFeed& SimFeed::operator=(const SimFeed& f) {
     antId_p = f.antId_p; 
@@ -175,5 +175,5 @@ void SimFeedList::throwOutOfRange(uInt legallength, Int index) const {
     throw AipsError(String(msg));
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

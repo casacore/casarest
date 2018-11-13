@@ -27,15 +27,15 @@
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/CalTableFromAIPS.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/TableRow.h>
-#include <tables/Tables/TableParse.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <casa/Arrays.h>
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/Tables/TableRow.h>
+#include <casacore/tables/TaQL/TableParse.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/casa/Arrays.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 #include <msvis/MSVis/MSCalEnums.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -59,5 +59,5 @@ CalTableFromAIPS::CalTableFromAIPS (const String& fitsFileName, const String& ta
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

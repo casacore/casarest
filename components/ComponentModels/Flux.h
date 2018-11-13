@@ -29,15 +29,15 @@
 #ifndef COMPONENTS_FLUX_H
 #define COMPONENTS_FLUX_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Vector.h>
-#include <scimath/Mathematics/NumericTraits.h>
-#include <measures/Measures/Stokes.h>
-#include <casa/Quanta/Unit.h>
-#include <casa/Utilities/CountedPtr.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/scimath/Mathematics/NumericTraits.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/casa/Quanta/Unit.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
 #include <components/ComponentModels/ComponentType.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class RecordInterface;
 template <class Qtype> class Quantum;
@@ -726,7 +726,7 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef CASACORE_NO_AUTO_TEMPLATES
 #include <components/ComponentModels/Flux.tcc>

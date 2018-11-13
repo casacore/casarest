@@ -28,17 +28,17 @@
 
 //#include <stdio.h>
 //#include <complex.h>
-#include <casa/math.h>
+#include <casacore/casa/math.h>
 //#include <stdlib.h>
 //#include <string.h>
 #include <synthesis/MeasurementComponents/BeamCalcConstants.h>
 #include <synthesis/MeasurementComponents/BeamCalc.h>
 #include <synthesis/MeasurementComponents/ALMABeamCalc.h>
 #include <synthesis/MeasurementComponents/BeamCalcAntenna.h>
-#include <images/Images/TempImage.h>
-#include <casa/Exceptions.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Exceptions.h>
 #include <synthesis/MeasurementComponents/SynthesisError.h>
-namespace casa{
+namespace casacore{
   
   
   calcAntenna *newALMAAntennafromApertureCalcParams(struct ALMAApertureCalcParams *ap)

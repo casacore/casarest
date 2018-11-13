@@ -8,9 +8,9 @@
 #ifndef VISIBILITYPROCESSING_H_
 #define VISIBILITYPROCESSING_H_
 
-#include <casa/aips.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Exceptions/Error.h>
 #include "VisBuffer.h"
 #include "VisibilityIterator.h"
 #include "UtilJ.h"
@@ -22,7 +22,7 @@
 #include <set>
 #include <vector>
 
-namespace casa {
+namespace casacore {
 
 namespace asyncio {
     class PrefetchColumns;
@@ -233,7 +233,7 @@ public:
     String getName () const;
     VpPort getOutput (const String & name) const;
     VpPorts getOutputs () const;
-    virtual casa::asyncio::PrefetchColumns getPrefetchColumns () const;
+    virtual casacore::asyncio::PrefetchColumns getPrefetchColumns () const;
     virtual void processingStart () {}
     virtual void validate (const VpPorts & inputs, const VpPorts & outputs) = 0;
 

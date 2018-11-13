@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/MJonesMRec.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // TimeVarMJonesMRec: TimeVarMJones cal_main table record access & creation
@@ -83,7 +83,7 @@ class TimeVarMJonesMRec : public MJonesMRec
  };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

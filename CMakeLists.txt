@@ -1,7 +1,9 @@
-PROJECT(casarest)
+project(casarest)
 enable_language(CXX Fortran)
 cmake_minimum_required(VERSION 2.6)
-list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
+include(CheckCXXCompilerFlag)
+#list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 # rpath setup for libraries
 
@@ -19,7 +21,15 @@ if(HDF5_ROOT_DIR)
   set(ENV{HDF5_ROOT} ${HDF5_ROOT_DIR})
 endif(HDF5_ROOT_DIR)
 
-# libsynthesis has mix of C++ and Fortran which is not handled well by
+# Detect if the compiler supports C++11 if we want to use it.
+check_cxx_compiler_flag(-std=c++11 HAS_CXX11)
+if (HAS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+else()
+    message(FATAL_ERROR "Casacore build requires a c++11 compatible compiler")
+endif (HAS_CXX11)
+
+# libsynthesis has a mix of C++ and Fortran which is not handled well by
 # versions before 2.8.
 if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 2.8)
   if(NOT LIB_EXTRA_SYNTHESIS)
@@ -32,12 +42,23 @@ set( ${PROJECT_NAME}_MAJOR_VERSION 1 )
 set( ${PROJECT_NAME}_MINOR_VERSION 4 )
 set( ${PROJECT_NAME}_PATCH_LEVEL 1 )
 
+if (UseCasaNamespace)
+    add_definitions (-DUseCasaNamespace)
+    message (STATUS "Using namespace casa. This will be deprecated at some point.")
+else ()
+    message (STATUS "Using namespace casacore.")
+endif ()
+
+# Make use of test programs
+include (CTest)
+
+# Determine which external packages to use.
 # dependencies
 find_package(CasaCore REQUIRED)
-find_package(CFITSIO REQUIRED)
-find_package(WcsLib REQUIRED)
-find_package(LAPACK REQUIRED)
+find_package(CFITSIO 3.030 REQUIRED) # Should pad to three decimal digits
+find_package(WCSLIB 4.7 REQUIRED)    # needed for CASA
 find_package(BLAS REQUIRED)
+find_package(LAPACK REQUIRED)
 find_package(Boost REQUIRED COMPONENTS thread system)
 find_package(HDF5)
 if(HDF5_FOUND)

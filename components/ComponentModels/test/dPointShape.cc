@@ -25,21 +25,21 @@
 //#
 //# $Id: dPointShape.cc 18093 2004-11-30 17:51:10Z ddebonis $
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/Flux.h>
 #include <components/ComponentModels/PointShape.h>
 #include <components/ComponentModels/SkyComponent.h>
 #include <components/ComponentModels/ConstantSpectrum.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/ComponentShape.h>
-#include <casa/Exceptions/Error.h>
-#include <measures/Measures/MDirection.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/BasicSL/String.h>
-#include <casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 void printShape(const ComponentShape& theShape) {
   cout << "This is a " << ComponentType::name(theShape.type())
        << " shape " << endl 

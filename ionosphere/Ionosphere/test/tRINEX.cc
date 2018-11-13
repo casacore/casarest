@@ -4,14 +4,14 @@
 #include <ionosphere/Ionosphere/GPSEphemeris.h>
 #include <ionosphere/Ionosphere/GPSDCB.h>
 
-#include <casa/Quanta/MVTime.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MeasConvert.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/casa/Exceptions/Error.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 
 int main (void)
 {

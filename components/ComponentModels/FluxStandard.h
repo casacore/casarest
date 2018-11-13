@@ -29,16 +29,16 @@
 #ifndef COMPONENTS_FLUXSTANDARD_H
 #define COMPONENTS_FLUXSTANDARD_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/Flux.h>
-#include <measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MDirection.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Forward declarations
-class String;        //#include <casa/BasicSL/String.h>
-class MEpoch;        //#include <measures/Measures/MEpoch.h>
-class MFrequency;    //#include <measures/Measures/MFrequency.h>
+class String;        //#include <casacore/casa/BasicSL/String.h>
+class MEpoch;        //#include <casacore/measures/Measures/MEpoch.h>
+class MFrequency;    //#include <casacore/measures/Measures/MFrequency.h>
 class SpectralModel; //#include <components/ComponentModels/SpectralModel.h>
 
 // <summary> 
@@ -221,6 +221,6 @@ class FluxStandard
   String interpmethod_p;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

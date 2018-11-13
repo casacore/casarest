@@ -31,14 +31,14 @@
 
 #include <synthesis/DataSampling/DataSampling.h>
 #include <synthesis/MeasurementComponents/SkyJones.h>
-#include <images/Images/ImageInterface.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> Provides sampling of single dish data for esimation algorithms
 // </summary>
@@ -103,6 +103,6 @@ private:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -33,14 +33,14 @@
 #include <synthesis/MeasurementComponents/VBStore.h>
 #include <synthesis/MeasurementComponents/VisibilityResampler.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
 
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   class AWVisResampler: public VisibilityResampler
   {
   public: 
@@ -187,6 +187,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 		 const Vector<Int>& Origin, const Vector<Int>& size);
 
   };
-}; //# NAMESPACE CASA - END
+}; //# NAMESPACE CASACORE - END
 
 #endif // 

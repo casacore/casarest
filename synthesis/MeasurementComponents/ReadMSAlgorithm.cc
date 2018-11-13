@@ -1,34 +1,34 @@
-#include <casa/BasicSL/String.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Array.h>
-#include <lattices/Lattices/ArrayLattice.h>
-#include <lattices/Lattices/PagedArray.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/lattices/Lattices/PagedArray.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeExprNode.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
 #endif
-#include <casa/OS/File.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/OS/File.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisSetUtil.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/sstream.h>
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSColumns.h>
+#include <casacore/casa/sstream.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <synthesis/MeasurementComponents/ReadMSAlgorithm.h>
-#include <casa/OS/Time.h>
+#include <casacore/casa/OS/Time.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 ReadMSAlgorithm::ReadMSAlgorithm() : msid(0), myName("Test Parallel Read")
 {
@@ -129,5 +129,5 @@ cout << "seconds elapsed since start: " << starttime.age () << endl;
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

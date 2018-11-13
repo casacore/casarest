@@ -25,38 +25,38 @@
 //#
 //# $Id$
 //#
-//#include <casa/Quanta/MVTime.h>
-#include <casa/Quanta/QuantumHolder.h>
-#include <casa/Containers/RecordFieldId.h>
-#include <measures/Measures/Stokes.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
+//#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/casa/Containers/RecordFieldId.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 #if defined(casacore)
-#include <ms/MSSel/MSSelector.h>
-#include <ms/MSSel/MSSelection.h>
+#include <casacore/ms/MSSel/MSSelector.h>
+#include <casacore/ms/MSSel/MSSelection.h>
 #else
-#include <ms/MeasurementSets/MSSelector.h>
-#include <ms/MeasurementSets/MSSelection.h>
+#include <casacore/ms/MSSel/MSSelector.h>
+#include <casacore/ms/MSSel/MSSelection.h>
 #endif
-//#include <ms/MeasurementSets/MSRange.h>
+//#include <casacore/ms/MeasurementSets/MSRange.h>
 #include <msvis/MSVis/MSContinuumSubtractor.h>
 #include <msvis/MSVis/VisSet.h>
-#include <scimath/Fitting/LinearFit.h>
-#include <scimath/Functionals/Polynomial.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayUtil.h>
-//#include <casa/Arrays/MaskedArray.h>
-//#include <casa/Arrays/MaskArrMath.h>
-#include <casa/Containers/Record.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Logging/LogIO.h>
-#include <tables/Tables/TableParse.h>
-//#include <casa/iomanip.h>
-#include <casa/iostream.h>
+#include <casacore/scimath/Fitting/LinearFit.h>
+#include <casacore/scimath/Functionals/Polynomial.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayUtil.h>
+//#include <casacore/casa/Arrays/MaskedArray.h>
+//#include <casacore/casa/Arrays/MaskArrMath.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/tables/TaQL/TableParse.h>
+//#include <casacore/casa/iomanip.h>
+#include <casacore/casa/iostream.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //
 // Constructor assigns pointer (if MS goes out of scope you will get rubbish)
@@ -402,5 +402,5 @@ void MSContinuumSubtractor::subtract()
   }
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -25,38 +25,38 @@
 //#
 //# $Id$
 
-#include <casa/Arrays/Cube.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayPosIter.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayPosIter.h>
 #include <msvis/MSVis/StokesVector.h>
 #include <synthesis/MeasurementComponents/HogbomCleanImageSkyModel.h>
-#include <images/Images/PagedImage.h>
-#include <casa/OS/File.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LatticeIterator.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/OS/File.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeExprNode.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
 #endif
 #include <synthesis/MeasurementEquations/SkyEquation.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
-#include <casa/System/Choice.h>
+#include <casacore/casa/System/Choice.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 #define NEED_UNDERSCORES
 #if defined(NEED_UNDERSCORES)
@@ -491,5 +491,5 @@ Matrix<Float>* HogbomCleanImageSkyModel::makeMaskMatrix(const Int& nx,
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -26,9 +26,9 @@
 //# $Id$
 #include <simulators/Simulators/SimTelescope.h>
 
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 const String SimTelescope::defaultName("Very Simulated Array");
 const MPosition SimTelescope::defaultLocation(MVPosition(0.0,0.0,0.0), 
@@ -207,5 +207,5 @@ uInt SimTelescope::addFeed(uInt id, const String& pols,
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

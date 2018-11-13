@@ -32,7 +32,7 @@
 #include <calibration/CalTables/TimeVarVJTable.h>
 #include <calibration/CalTables/SolvableVJTable.h>
 #include <calibration/CalTables/EPointDesc.h>
-namespace casa {
+namespace casacore {
 class EPointTable : public SolvableVisJonesTable
 {
  public:

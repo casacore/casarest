@@ -33,7 +33,7 @@
 #include <calibration/CalTables/SolvableVJTable.h>
 #include <calibration/CalTables/EPointTable.h>
 
-namespace casa {
+namespace casacore {
 class ROEPointMCol : public ROSolvableVisJonesMCol
 {
  public:

@@ -29,15 +29,15 @@
 #ifndef SYNTHESIS_IDL_H
 #define SYNTHESIS_IDL_H
 
-#include <casa/Arrays/Vector.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/BasicSL/String.h>
 
 #ifdef HAVE_IDL_LIB
-#include <casa/stdio.h>
+#include <casacore/casa/stdio.h>
 #include "export.h"
 #endif
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> A class to start IDL and execute commands, etc.
 // </summary>
@@ -121,6 +121,6 @@ protected:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

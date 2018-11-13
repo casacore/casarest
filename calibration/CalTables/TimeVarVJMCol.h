@@ -32,7 +32,7 @@
 #include <calibration/CalTables/VisJonesMCol.h>
 #include <calibration/CalTables/TimeVarVJTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // ROTimeVarVisJonesMCol: Read-only TimeVarVisJones cal_main column access
@@ -373,7 +373,7 @@ class CJonesMCol : public TimeVarVisJonesMCol
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

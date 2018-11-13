@@ -37,7 +37,7 @@
 #include <msvis/MSVis/VisBuffer.h>
 #include <calibration/CalTables/CalIterBase.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalMainBuffer: Calibration main table buffer
@@ -297,7 +297,7 @@ class CalMainBuffer
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

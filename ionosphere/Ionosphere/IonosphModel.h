@@ -3,7 +3,7 @@
 
 #include "Ionosphere.h"
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // -----------------------------------------------------------------------
 // IonosphModel
@@ -45,6 +45,6 @@ class IonosphModel
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

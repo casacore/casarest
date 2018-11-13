@@ -29,9 +29,9 @@
 #include <calibration/CalTables/EPointDesc.h>
 #include <calibration/CalTables/SolvableVJDesc.h>
 #include <msvis/MSVis/MSCalEnums.h>
-#include <tables/Tables/ArrColDesc.h>
+#include <casacore/tables/Tables/ArrColDesc.h>
 
-namespace casa{
+namespace casacore{
 
 EPointDesc::EPointDesc() :  SolvableVisJonesDesc("EPoint Jones")
   , itsTableDesc()

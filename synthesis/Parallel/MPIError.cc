@@ -27,7 +27,7 @@
 
 #include <synthesis/Parallel/MPIError.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Implementation of MPI error classes.
 
@@ -43,5 +43,5 @@ MPIError::~MPIError () throw()
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

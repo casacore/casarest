@@ -33,7 +33,7 @@
 #include <calibration/CalTables/CalTable.h>
 #include <calibration/CalTables/CalMainColumns.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalBuffer: Calibration table buffer
@@ -207,7 +207,7 @@ class CalBuffer
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

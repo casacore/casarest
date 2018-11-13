@@ -27,16 +27,16 @@
 //# $Id$
 #ifndef SYNTHESIS_CFDEFS_H
 #define SYNTHESIS_CFDEFS_H
-#include <casa/Arrays/Array.h>
-#include <casa/aips.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/aips.h>
 
-namespace casa
+namespace casacore
 {
-  namespace CFDefs { //# NAMESPACE CASA - BEGIN
+  namespace CFDefs { //# NAMESPACE CASACORE - BEGIN
     typedef Array<Complex> CFType ;
     typedef Array<Double> CFTypeReal ;
     enum CACHETYPE {NOTCACHED=0,DISKCACHE, MEMCACHE};
     enum CFARRAYSHAPE {NXPOS=0,NYPOS,NWPOS,NPOLPOS,NBASEPOS,CFNDIM};
-  } //# NAMESPACE CASA - END
+  } //# NAMESPACE CASACORE - END
 }
 #endif

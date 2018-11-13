@@ -30,7 +30,7 @@
 #define SYNTHESIS_PCLARKCLEANIMAGESKYMODEL_H
 
 #include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //forward
 class SkyEquation;
@@ -95,7 +95,7 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

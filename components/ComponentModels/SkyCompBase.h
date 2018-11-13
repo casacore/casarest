@@ -29,12 +29,12 @@
 #ifndef COMPONENTS_SKYCOMPBASE_H
 #define COMPONENTS_SKYCOMPBASE_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
-#include <casa/Utilities/RecordTransformable.h>
-#include <casa/BasicSL/Complexfwd.h>
+#include <casacore/casa/Utilities/RecordTransformable.h>
+#include <casacore/casa/BasicSL/Complexfwd.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MFrequency;
 class MVFrequency;
@@ -285,6 +285,6 @@ public:
   virtual Bool ok() const = 0;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

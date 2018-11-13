@@ -37,28 +37,28 @@
 #include <calibration/CalTables/SolvableVJMRec.h>
 #include <calibration/CalTables/SolvableVJMCol.h>
 
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/ArrColDesc.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ArrayColumn.h>
-#include <tables/Tables/RefRows.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/ArrColDesc.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
+#include <casacore/tables/Tables/RefRows.h>
 
-#include <casa/Arrays.h>
-#include <scimath/Mathematics/MatrixMathLA.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/OS/Timer.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/OS/Path.h>
-#include <casa/sstream.h>
+#include <casacore/casa/Arrays.h>
+#include <casacore/scimath/Mathematics/MatrixMathLA.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/OS/Path.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // ------------------------------------------------------------------
 
@@ -1129,5 +1129,5 @@ template<class T> void CalSet<T>::store (const String& file,
 
 };
 */
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -24,10 +24,10 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //# $Id$
-#include <lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
 #include <flagging/Flagging/RFCubeLattice.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class T> RFCubeLatticeIterator<T>::RFCubeLatticeIterator ()
   : n_chan(0), n_ifr(0), n_time(0), n_bit(0), n_corr(0)
@@ -298,5 +298,5 @@ template<class T> void RFCubeLattice<T>::reset ()
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

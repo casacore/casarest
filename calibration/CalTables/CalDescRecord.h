@@ -29,10 +29,10 @@
 #ifndef CALIBRATION_CALDESCRECORD_H
 #define CALIBRATION_CALDESCRECORD_H
 
-#include <casa/aips.h>
-#include <casa/Containers/Record.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/Record.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalDescRecord: Cal_desc table record access and creation
@@ -119,7 +119,7 @@ class CalDescRecord
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

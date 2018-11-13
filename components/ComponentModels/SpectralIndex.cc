@@ -26,23 +26,23 @@
 //# $Id: SpectralIndex.cc 21465 2014-06-19 05:56:56Z gervandiepen $
 
 #include <components/ComponentModels/SpectralIndex.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Containers/RecordInterface.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogOrigin.h>
-#include <casa/BasicMath/Math.h>
-#include <measures/Measures/MFrequency.h>
-#include <measures/Measures/MCFrequency.h>
-#include <measures/Measures/MeasConvert.h>
-#include <casa/Quanta/MVFrequency.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Utilities/DataType.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Containers/RecordInterface.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogOrigin.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MCFrequency.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/casa/Quanta/MVFrequency.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/DataType.h>
+#include <casacore/casa/BasicSL/String.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SpectralIndex::SpectralIndex()
   :SpectralModel(),
@@ -422,5 +422,5 @@ Bool SpectralIndex::ok() const {
 // compile-command: "gmake SpectralIndex"
 // End: 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

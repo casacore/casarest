@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/SolvableVJMCol.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -155,5 +155,5 @@ TJonesMCol::TJonesMCol (TJonesTable& djTable) : SolvableVisJonesMCol (djTable)
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

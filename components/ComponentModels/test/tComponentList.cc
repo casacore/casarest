@@ -25,34 +25,34 @@
 //#
 //# $Id: tComponentList.cc 19477 2006-06-15 22:32:06Z kgolap $
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentList.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SkyComponent.h>
 #include <components/ComponentModels/ComponentShape.h>
 #include <components/ComponentModels/SpectralModel.h>
 #include <components/ComponentModels/Flux.h>
-// #include <coordinates/Coordinates/CoordinateUtil.h>
-// #include <coordinates/Coordinates/CoordinateSystem.h>
-// #include <coordinates/Coordinates/DirectionCoordinate.h>
+// #include <casacore/coordinates/Coordinates/CoordinateUtil.h>
+// #include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+// #include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
 // #include <trial/Images/PagedImage.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Exceptions/Error.h>
-// #include <casa/Arrays/IPosition.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/Quanta/Quantum.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MFrequency.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/OS/Path.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
-#include <casa/iostream.h>
-#include <casa/Containers/Record.h>
-#include <casa/namespace.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Exceptions/Error.h>
+// #include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/OS/Path.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/namespace.h>
 int main() {
   try {
     {

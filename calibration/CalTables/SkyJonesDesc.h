@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/CalTableDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // SkyJonesDesc: Define the format of SkyJones calibration tables
@@ -78,7 +78,7 @@ class SkyJonesDesc : public CalTableDesc
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

@@ -29,27 +29,27 @@
 #include <ctype.h>
 #include <setjmp.h>
 #include <signal.h>
-#include <casa/System/Aipsrc.h>    
-#include <casa/Exceptions/Error.h>
-#include <measures/Measures/MCPosition.h>
-#include <measures/Measures/MCDirection.h>
-#include <measures/Measures.h>
-#include <measures/Measures/MEpoch.h>
-#include <casa/System/ProgressMeter.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ArrayColumn.h>
-#include <tables/Tables/TableRecord.h>
-#include <tables/Tables/RefRows.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/LogiVector.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Slice.h>
+#include <casacore/casa/System/Aipsrc.h>    
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/measures/Measures/MCPosition.h>
+#include <casacore/measures/Measures/MCDirection.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/casa/System/ProgressMeter.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
+#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/tables/Tables/RefRows.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/LogiVector.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Slice.h>
 
 #include <ionosphere/Ionosphere/IonosphModelPIM.h>
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 const char * PIM_ParameterNames[] = { "F10.7","Ap","IMF Bz" };
 
@@ -783,5 +783,5 @@ Block <EDProfile> IonosphModelPIM::getED( LogicalVector &isUniq,
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

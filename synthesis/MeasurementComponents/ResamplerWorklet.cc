@@ -36,7 +36,7 @@
 #include <fstream>
 #include <sys/syscall.h>
 
-namespace casa{
+namespace casacore{
   ResamplerWorklet& ResamplerWorklet::operator=(const ResamplerWorklet& other)
   {
     myResampler_p = other.myResampler_p;

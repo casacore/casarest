@@ -29,12 +29,12 @@
 #ifndef SYNTHESIS_XCORR_H
 #define SYNTHESIS_XCORR_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
 #include <synthesis/MeasurementEquations/Iterate.h>
 #include <msvis/MSVis/VisSet.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> Model non-linear correlator function for the VisEquation </summary>
 
@@ -105,6 +105,6 @@ public:
  
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

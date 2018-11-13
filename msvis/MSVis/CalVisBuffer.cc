@@ -26,11 +26,11 @@
 //# $Id$
 
 #include <msvis/MSVis/CalVisBuffer.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/Assert.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 CalVisBuffer::CalVisBuffer() : 
   VisBuffer(),
@@ -257,5 +257,5 @@ void CalVisBuffer::cleanUp()
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

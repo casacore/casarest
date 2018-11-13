@@ -37,9 +37,9 @@
 
 // Instantiate all casarest templates needed.
 
-#include <casa/Utilities/CountedPtr.h>
-#include <casa/Arrays/Array.h>
-#include <lattices/Lattices/Lattice.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/lattices/Lattices/Lattice.h>
 #include <synthesis/MeasurementComponents/PBMathInterface.h>
 #include <synthesis/MeasurementEquations/ArrayModel.tcc>
 #include <synthesis/MeasurementEquations/LinearEquation.tcc>
@@ -51,7 +51,7 @@
 #include <calibration/CalTables/CalMainColumns2.tcc>
 #include <msvis/MSVis/StokesVector.h>
 
-namespace casa { //# NAMESPACE - BEGIN
+namespace casacore { //# NAMESPACE - BEGIN
 
   template class CountedPtr<PBMathInterface>;
   template class ArrayModel<Float>;

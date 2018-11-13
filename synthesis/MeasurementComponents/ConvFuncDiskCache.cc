@@ -27,18 +27,18 @@
 //# $Id$
 #include <synthesis/MeasurementComponents/ConvFuncDiskCache.h>
 #include <synthesis/MeasurementComponents/Utils.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Exceptions/Error.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #endif
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 #include <synthesis/MeasurementComponents/Utils.h>
-#include <casa/OS/Directory.h>
+#include <casacore/casa/OS/Directory.h>
 #include <fstream>
 
-namespace casa{
+namespace casacore{
   //
   //-------------------------------------------------------------------------
   // Just load the axillary info. if found.  The actual functions are loaded

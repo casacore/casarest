@@ -32,9 +32,9 @@
 #include <synthesis/MeasurementComponents/SolvableVisCal.h>
 #include <synthesis/MeasurementComponents/StandardVisCal.h>
 #include <calibration/CalTables/GJonesMBuf.h>
-#include <casa/Containers/SimOrdMap.h>
+#include <casacore/casa/Containers/SimOrdMap.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> Electronic gain Jones matrix as spline polynomial over time
 // </summary>
@@ -207,7 +207,7 @@ public:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

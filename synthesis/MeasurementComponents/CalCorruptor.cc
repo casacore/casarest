@@ -26,12 +26,12 @@
 
 #include <synthesis/MeasurementComponents/StandardVisCal.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
 #define PRTLEV 3
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 CalCorruptor::CalCorruptor(const Int nSim) : 

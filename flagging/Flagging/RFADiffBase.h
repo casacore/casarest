@@ -31,12 +31,12 @@
 #include <flagging/Flagging/RFDataMapper.h> 
 #include <flagging/Flagging/RFFloatLattice.h>
 #include <flagging/Flagging/RFRowClipper.h>
-#include <scimath/Mathematics/MedianSlider.h> 
-#include <casa/Arrays/LogiVector.h>
-#include <casa/Containers/RecordInterface.h>
+#include <casacore/scimath/Mathematics/MedianSlider.h> 
+#include <casacore/casa/Arrays/LogiVector.h>
+#include <casacore/casa/Containers/RecordInterface.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // min number of deviations for which average is considered valid
 const int   RFA_MIN_NAD = 20;
@@ -175,6 +175,6 @@ protected:
     { RFDataMapper::setVisBuffer(chunk.visBuf()); }
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

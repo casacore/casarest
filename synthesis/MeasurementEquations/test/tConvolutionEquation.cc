@@ -25,20 +25,20 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/BasicMath/Random.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/BasicMath/Random.h>
 #include <synthesis/MeasurementEquations/ConvolutionEquation.h>
 #include <synthesis/MeasurementEquations/ArrayModel.h>
-#include <scimath/Mathematics/Convolver.h>
-#include <casa/OS/Time.h>
+#include <casacore/scimath/Mathematics/Convolver.h>
+#include <casacore/casa/OS/Time.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main()
 {
   Bool anyFailures = False;

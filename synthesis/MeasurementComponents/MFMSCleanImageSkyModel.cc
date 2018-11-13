@@ -25,36 +25,36 @@
 //#
 //# $Id$
 
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementComponents/MFMSCleanImageSkyModel.h>
-#include <images/Images/PagedImage.h>
-#include <casa/OS/File.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/OS/File.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LEL/LatticeExprNode.h>
-#include <lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LRegions/LCBox.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeExprNode.h>
-#include <lattices/Lattices/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LRegions/LCBox.h>
 #endif
-#include <images/Images/SubImage.h>
-#include <casa/Arrays/IPosition.h>
+#include <casacore/images/Images/SubImage.h>
+#include <casacore/casa/Arrays/IPosition.h>
 #include <synthesis/MeasurementEquations/ImageMSCleaner.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Quanta/Quantum.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Quanta/Quantum.h>
 
-#include <casa/sstream.h>
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/sstream.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogIO.h>
 
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 
-namespace casa {
+namespace casacore {
 
 
 // Some constructors

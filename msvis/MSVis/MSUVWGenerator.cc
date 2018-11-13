@@ -1,15 +1,15 @@
 // Based on code/alma/apps/UVWCoords
 
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <msvis/MSVis/MSUVWGenerator.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MFrequency.h>
-#include <measures/Measures/MPosition.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <measures/Measures/MCBaseline.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/measures/Measures/MCBaseline.h>
 
-namespace casa {
+namespace casacore {
 
 // The UvwCoords ctor has lines for the antennas, antenna offsets, and station
 // positions.  This ctor assumes they're present in msc_p if present at all.

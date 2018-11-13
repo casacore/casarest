@@ -29,14 +29,14 @@
 #ifndef MSVIS_VISBUFFERUTIL_H
 #define MSVIS_VISBUFFERUTIL_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/MFrequency.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <scimath/Mathematics/InterpolateArray1D.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/scimath/Mathematics/InterpolateArray1D.h>
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 //forward 
 class VisBuffer;
 // <summary> 
@@ -110,7 +110,7 @@ public:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

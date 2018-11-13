@@ -26,21 +26,21 @@
 //# $Id: dSkyCompBase.cc 19933 2007-02-27 05:04:51Z Malte.Marquarding $
 
 
-#include <casa/aips.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/ArrayIO.h>
-#include <casa/Exceptions/Error.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MFrequency.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/BasicSL/String.h>
 #include <components/ComponentModels/Flux.h>
 #include <components/ComponentModels/PointShape.h>
 #include <components/ComponentModels/SkyComponent.h>
 #include <components/ComponentModels/SpectralIndex.h>
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 void printComponent(const SkyCompBase & comp);
 
 int main() {

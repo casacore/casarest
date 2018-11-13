@@ -27,12 +27,12 @@
 
 #include <components/SpectralComponents/LogTransformedPolynomialSpectralElement.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
 #define _ORIGIN  String("LogTransformedPolynomialSpectralElement::") + __FUNCTION__ + ":" + String::toString(__LINE__) + ": "
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 LogTransformedPolynomialSpectralElement::LogTransformedPolynomialSpectralElement(

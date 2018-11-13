@@ -28,36 +28,36 @@
 
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisBuffAccumulator.h>
-#include <ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <synthesis/MeasurementEquations/VisEquation.h>  // *
-#include <lattices/Lattices/ArrayLattice.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #else
-#include <lattices/Lattices/LatticeFFT.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #endif
-#include <scimath/Mathematics/FFTServer.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
 
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/MatrixMath.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/System/Aipsrc.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/MatrixMath.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/System/Aipsrc.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-#include <measures/Measures/MCBaseline.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MeasTable.h>
+#include <casacore/measures/Measures/MCBaseline.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MeasTable.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 
@@ -1046,4 +1046,4 @@ void KAntPosJones::calcAllJones() {
 
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

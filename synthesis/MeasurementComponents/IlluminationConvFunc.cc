@@ -29,7 +29,7 @@
 #define USETABLES 0
 #include <synthesis/MeasurementComponents/IlluminationConvFunc.h>
 
-namespace casa{
+namespace casacore{
   //
   //------------------------------------------------------------------------
   //

@@ -28,16 +28,16 @@
 //# Includes
 #include <components/SpectralComponents/SpectralList.h>
 
-#include <casa/Exceptions/Error.h>
-#include <casa/Containers/RecordInterface.h>
-#include <casa/Containers/Record.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Containers/RecordInterface.h>
+#include <casacore/casa/Containers/Record.h>
 #include <components/SpectralComponents/GaussianSpectralElement.h>
-#include <casa/Utilities/PtrHolder.h>
+#include <casacore/casa/Utilities/PtrHolder.h>
 #include <components/SpectralComponents/SpectralElementFactory.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Constructors
 SpectralList::SpectralList() :
@@ -249,14 +249,14 @@ ostream &operator<<(ostream &os, const SpectralList &lst) {
   return os;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 //# Cater for Double and Float
 #ifdef AIPS_NO_TEMPLATE_SRC
 #include <components/SpectralComponents/SpectralList2.tcc>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 template void SpectralList::residual<Double>(Vector<Double> &) const;
 template void SpectralList::residual<Float>(Vector<Float> &) const;
 template void SpectralList::evaluate<Double>(Vector<Double> &) const;
@@ -269,5 +269,5 @@ template void SpectralList::evaluate<Double>(Vector<Double> &,
 				     Vector<Double> const &) const; 
 template void SpectralList::evaluate<Float>(Vector<Float> &,
 				     Vector<Float> const &) const; 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 #endif

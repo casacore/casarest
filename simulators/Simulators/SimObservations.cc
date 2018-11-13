@@ -26,9 +26,9 @@
 //# $Id$
 #include <simulators/Simulators/SimObservations.h>
 
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SimObservations::SimObservations(SimTelescope *tel, Bool dodel) 
     : deltel_p(dodel), tel_p(tel), srcs_p(), flds_p(), dops_p(), dds_p()
@@ -109,5 +109,5 @@ void SimObservations::attach(MeasurementSet &ms, Bool clear) {
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

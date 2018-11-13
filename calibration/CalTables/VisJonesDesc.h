@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/CalTableDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // VisJonesDesc: Define the format of VisJones calibration tables
@@ -83,7 +83,7 @@ class VisJonesDesc : public CalTableDesc
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

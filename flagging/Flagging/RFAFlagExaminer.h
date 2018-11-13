@@ -30,9 +30,9 @@
 #include <flagging/Flagging/RFAFlagCubeBase.h> 
 #include <flagging/Flagging/RFASelector.h> 
 #include <flagging/Flagging/RFDataMapper.h>
-#include <casa/Arrays/LogiVector.h>
+#include <casacore/casa/Arrays/LogiVector.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // RFAFlagExaminer: Examine the flags and get statistics. perform extensions too.
@@ -122,7 +122,7 @@ private:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <flagging/Flagging/RFAFlagExaminer.tcc>

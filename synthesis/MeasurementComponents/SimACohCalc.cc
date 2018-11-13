@@ -28,13 +28,13 @@
 
 #include <synthesis/MeasurementComponents/SimACohCalc.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <casa/Logging/LogIO.h>
-#include <ms/MeasurementSets/MSSpWindowColumns.h>
-#include <measures/Measures.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/ms/MeasurementSets/MSSpWindowColumns.h>
+#include <casacore/measures/Measures.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Note: this simplistic implementation just generates a new random
 // noise value for every call of apply, it doesn't keep track of
@@ -191,5 +191,5 @@ VisBuffer& SimACohCalc::applyInv(VisBuffer& vb)
     return vb;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

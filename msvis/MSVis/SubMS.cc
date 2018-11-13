@@ -31,74 +31,74 @@
 
 #include <msvis/MSVis/SubMS.h>
 #if defined(casacore)
-#include <ms/MSSel/MSSelection.h>
+#include <casacore/ms/MSSel/MSSelection.h>
 #else
-#include <ms/MeasurementSets/MSSelection.h>
+#include <casacore/ms/MSSel/MSSelection.h>
 #endif
-//#include <ms/MeasurementSets/MSTimeGram.h>
-//#include <tables/Tables/ExprNode.h>
-#include <tables/Tables/RefRows.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <coordinates/Coordinates/CoordinateUtil.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayOpsDiffShapes.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayUtil.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Slice.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/OS/File.h>
-#include <casa/OS/HostInfo.h>
-#include <casa/OS/Memory.h>              // Can be commented out along with
+//#include <casacore/ms/MSSel/MSTimeGram.h>
+//#include <casacore/tables/TaQL/ExprNode.h>
+#include <casacore/tables/Tables/RefRows.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/coordinates/Coordinates/CoordinateUtil.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayOpsDiffShapes.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayUtil.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/OS/File.h>
+#include <casacore/casa/OS/HostInfo.h>
+#include <casacore/casa/OS/Memory.h>              // Can be commented out along with
 //                                         // Memory:: calls.
 
 //#ifdef COPYTIMER
-#include <casa/OS/Timer.h>
+#include <casacore/casa/OS/Timer.h>
 //#endif
 
-#include <casa/Containers/Record.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Utilities/GenSort.h>
-#include <casa/System/AppInfo.h>
-#include <casa/System/ProgressMeter.h>
-#include <casa/Quanta/QuantumHolder.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/GenSort.h>
+#include <casacore/casa/System/AppInfo.h>
+#include <casacore/casa/System/ProgressMeter.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisChunkAverager.h>
 #include <msvis/MSVis/VisIterator.h>
 //#include <msvis/MSVis/VisibilityIterator.h>
-#include <tables/Tables/IncrementalStMan.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/StandardStMan.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/TableInfo.h>
-#include <tables/Tables/TableLock.h>
-#include <tables/Tables/TableRecord.h>
-#include <tables/Tables/TableCopy.h>
-#include <tables/Tables/TableRow.h>
-#include <tables/Tables/TiledColumnStMan.h>
-#include <tables/Tables/TiledShapeStMan.h>
-#include <tables/Tables/TiledDataStMan.h>
-#include <tables/Tables/TiledStManAccessor.h>
-#include <ms/MeasurementSets/MSTileLayout.h>
-#include <scimath/Mathematics/InterpolateArray1D.h>
-#include <scimath/Mathematics/FFTServer.h>
-#include <casa/sstream.h>
-#include <casa/iomanip.h>
+#include <casacore/tables/DataMan/IncrementalStMan.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/DataMan/StandardStMan.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/TableInfo.h>
+#include <casacore/tables/Tables/TableLock.h>
+#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/tables/Tables/TableCopy.h>
+#include <casacore/tables/Tables/TableRow.h>
+#include <casacore/tables/DataMan/TiledColumnStMan.h>
+#include <casacore/tables/DataMan/TiledShapeStMan.h>
+#include <casacore/tables/DataMan/TiledDataStMan.h>
+#include <casacore/tables/DataMan/TiledStManAccessor.h>
+#include <casacore/ms/MeasurementSets/MSTileLayout.h>
+#include <casacore/scimath/Mathematics/InterpolateArray1D.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
+#include <casacore/casa/sstream.h>
+#include <casacore/casa/iomanip.h>
 #include <functional>
 #include <map>
 #include <set>
-#include <measures/Measures/MeasTable.h>
-#include <scimath/Mathematics/Smooth.h>
-#include <casa/Quanta/MVTime.h>
+#include <casacore/measures/Measures/MeasTable.h>
+#include <casacore/scimath/Mathematics/Smooth.h>
+#include <casacore/casa/Quanta/MVTime.h>
 
-namespace casa {
+namespace casacore {
 
 //typedef ROVisibilityIterator ROVisIter;
 //typedef VisibilityIterator VisIter;
@@ -3807,7 +3807,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
       
       os << LogOrigin("SubMS", "convertGridPars");
       
-      casa::QuantumHolder qh;
+      casacore::QuantumHolder qh;
       String error;
 
       t_mode = mode;

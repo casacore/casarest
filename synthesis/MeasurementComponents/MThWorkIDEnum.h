@@ -28,8 +28,8 @@
 #ifndef SYNTHESIS_MTHENUM_H
 #define SYNTHESIS_MTHENUM_H
 
-namespace casa{
-  namespace MThWorkID { //# NAMESPACE CASA - BEGIN
+namespace casacore{
+  namespace MThWorkID { //# NAMESPACE CASACORE - BEGIN
     enum  {NOONE=-1, DATATOGRID=0, GRIDTODATA, RESIDUALCALC};
   };
 };

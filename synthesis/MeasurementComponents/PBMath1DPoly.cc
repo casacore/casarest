@@ -26,16 +26,16 @@
 //#
 //# $Id$
  
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicMath/Math.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicMath/Math.h>
 #include <synthesis/MeasurementComponents/PBMath1DPoly.h>
-#include <casa/Quanta.h>
-#include <measures/Measures.h>
+#include <casacore/casa/Quanta.h>
+#include <casacore/measures/Measures.h>
 
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 PBMath1DPoly::PBMath1DPoly(const Vector<Double>& coeff, Quantity maxRad,
 			   Quantity refFreq, 
@@ -112,5 +112,5 @@ PBMath1DPoly::summary(Int nValues)
    os << "Even Powered Coefficients: " << coeff_p <<  LogIO::POST;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

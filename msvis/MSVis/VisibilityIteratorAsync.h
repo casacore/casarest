@@ -17,7 +17,7 @@ using std::set;
 
 #define NotImplementedROVIA throw utilj::AipsErrorTrace (String ("Method not legal in ROVIA: ") + __PRETTY_FUNCTION__, __FILE__, __LINE__)
 
-namespace casa {
+namespace casacore {
 
 
 class VisBufferAsync;
@@ -92,7 +92,7 @@ public:
 
 
 
-    typedef casa::asyncio::PrefetchColumns PrefetchColumns;
+    typedef casacore::asyncio::PrefetchColumns PrefetchColumns;
 
     // ROVisibilityIteratorAsync ();
 

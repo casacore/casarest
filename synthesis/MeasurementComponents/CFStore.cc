@@ -26,7 +26,7 @@
 //#
 //# $Id$
 #include <synthesis/MeasurementComponents/CFStore.h>
-namespace casa{
+namespace casacore{
 
   CFStore& CFStore::operator=(const CFStore& other)
   {

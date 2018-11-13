@@ -27,24 +27,24 @@
 
 #include <simulators/Simulators/SimDoppler.h>
 
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSDoppler.h>
-#include <ms/MeasurementSets/MSDopplerColumns.h>
-#include <ms/MeasurementSets/MSSource.h>
-#include <ms/MeasurementSets/MSSourceColumns.h>
-#include <ms/MeasurementSets/MSSourceIndex.h>
-#include <ms/MeasurementSets/MSSpectralWindow.h>
-#include <ms/MeasurementSets/MSSpWindowColumns.h>
-#include <casa/Logging/LogIO.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/ArrColDesc.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <tables/Tables/ColumnsIndex.h>
-#include <casa/Containers/RecordField.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/sstream.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSDoppler.h>
+#include <casacore/ms/MeasurementSets/MSDopplerColumns.h>
+#include <casacore/ms/MeasurementSets/MSSource.h>
+#include <casacore/ms/MeasurementSets/MSSourceColumns.h>
+#include <casacore/ms/MSSel/MSSourceIndex.h>
+#include <casacore/ms/MeasurementSets/MSSpectralWindow.h>
+#include <casacore/ms/MeasurementSets/MSSpWindowColumns.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/ArrColDesc.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/tables/Tables/ColumnsIndex.h>
+#include <casacore/casa/Containers/RecordField.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SimDoppler::SimDoppler(const SimDoppler& s) : row_p(s.row_p), src_p(s.src_p), 
     rfreq_p(s.rfreq_p), trans_p(s.trans_p), spwids_p(s.spwids_p)
@@ -294,5 +294,5 @@ void SimDopplerList::throwOutOfRange(uInt legallength, Int index) const {
     throw AipsError(String(msg));
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -28,9 +28,9 @@
 
 #include <calibration/CalTables/FVisJonesDesc.h>
 #include <msvis/MSVis/MSCalEnums.h>
-#include <tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -98,5 +98,5 @@ TableDesc FVisJonesIonoDesc::calMainDesc()
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

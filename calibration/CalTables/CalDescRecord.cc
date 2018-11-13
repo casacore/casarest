@@ -28,9 +28,9 @@
 
 #include <calibration/CalTables/CalDescRecord.h>
 #include <msvis/MSVis/MSCalEnums.h>
-#include <casa/Arrays.h>
+#include <casacore/casa/Arrays.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -390,5 +390,5 @@ void CalDescRecord::getMSName (String& msName)
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

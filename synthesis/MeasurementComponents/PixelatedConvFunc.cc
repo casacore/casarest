@@ -28,7 +28,7 @@
 
 #include <synthesis/MeasurementComponents/PixelatedConvFunc.h>
 
-namespace casa{
+namespace casacore{
   /*
   void PixelatedConvFunc::setSize(IPosition& size)
   {

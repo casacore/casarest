@@ -27,12 +27,12 @@
 
 #include <simulators/Simulators/SimPol.h>
 
-#include <ms/MeasurementSets/MSPolarization.h>
-#include <ms/MeasurementSets/MSPolColumns.h>
-#include <casa/Containers/SimOrdMap.h>
-#include <casa/sstream.h>
+#include <casacore/ms/MeasurementSets/MSPolarization.h>
+#include <casacore/ms/MeasurementSets/MSPolColumns.h>
+#include <casacore/casa/Containers/SimOrdMap.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 const String SimPol::pnames_p = "RLXY";
 const Int SimPol::ptbits_p[] = { 1, 2, 4, 8 };
@@ -256,5 +256,5 @@ void SimPolList::throwOutOfRange(uInt legallength, Int index) const {
     throw AipsError(String(msg));
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

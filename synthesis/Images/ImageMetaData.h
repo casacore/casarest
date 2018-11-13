@@ -28,10 +28,10 @@
 #ifndef IMAGES_IMAGEMETADATA_H
 #define IMAGES_IMAGEMETADATA_H
 
-#include <images/Images/ImageInterface.h>
-#include <casa/aips.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/aips.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // A class in which to store and allow read-only access to image metadata.
@@ -180,6 +180,6 @@ class ImageMetaData {
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 #endif
 

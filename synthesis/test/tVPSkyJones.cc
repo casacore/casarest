@@ -26,26 +26,26 @@
 //# $Id: tVPSkyJones.cc,v 19.4 2004/11/30 17:50:58 ddebonis Exp $
 
 //# Includes
-#include <casa/aips.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/Constants.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures.h>
-#include <coordinates/Coordinates.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/coordinates/Coordinates.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Vector.h>
 
-#include <images/Images/PagedImage.h>
-#include <images/Images/ImageRegion.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/ImageRegion.h>
 
-#include <lattices/Lattices/LatticeIterator.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/TiledLineStepper.h>
-#include <casa/Arrays/IPosition.h>
-#include <lattices/Lattices/TiledShape.h>
-#include <lattices/Lattices/LCRegion.h>
-#include <lattices/Lattices/LCSlicer.h>
-#include <casa/Arrays/Slicer.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/TiledLineStepper.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/lattices/Lattices/TiledShape.h>
+#include <casacore/lattices/LRegions/LCRegion.h>
+#include <casacore/lattices/LRegions/LCSlicer.h>
+#include <casacore/casa/Arrays/Slicer.h>
 
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/Flux.h>
@@ -53,15 +53,15 @@
 #include <components/ComponentModels/SpectralIndex.h>
 #include <components/ComponentModels/SkyComponent.h>
 
-#include <ms/MeasurementSets/MSSummary.h>
+#include <casacore/ms/MSOper/MSSummary.h>
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <synthesis/MeasurementComponents/VPSkyJones.h>
 #include <synthesis/MeasurementComponents/PBMath.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/BasicSL/String.h>
 
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main()
 {
   try {

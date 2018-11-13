@@ -1,10 +1,10 @@
 #ifndef IONOSPHERE_IONOSPHMODELPIM_H
 #define IONOSPHERE_IONOSPHMODELPIM_H
 
-#include <casa/Arrays/LogiVector.h>    
+#include <casacore/casa/Arrays/LogiVector.h>    
 #include "Ionosphere.h"
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 const Float pimDefaultAltGrid[]=
       { 90., 95., 100., 105., 110., 115., 120., 125., 130.,
@@ -157,6 +157,6 @@ class IonosphModelPIM : public IonosphModel
 // }
 // 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -27,25 +27,25 @@
 //# $Id$
 
 #include <msvis/MSVis/MSMoments.h>
-#include <ms/MeasurementSets/MSSelection.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Utilities/LinearSearch.h>
+#include <casacore/ms/MSSel/MSSelection.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/LinearSearch.h>
 
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ArrayColumn.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
 
-#include <scimath/Mathematics/VectorKernel.h>
-#include <coordinates/Coordinates/CoordinateUtil.h>
+#include <casacore/scimath/Mathematics/VectorKernel.h>
+#include <casacore/coordinates/Coordinates/CoordinateUtil.h>
 
-#include <lattices/Lattices/ArrayLattice.h>
-#include <lattices/Lattices/LatticeApply.h>
-#include <lattices/Lattices/MaskedLattice.h>
-#include <lattices/Lattices/SubLattice.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/lattices/LatticeMath/LatticeApply.h>
+#include <casacore/lattices/Lattices/MaskedLattice.h>
+#include <casacore/lattices/Lattices/SubLattice.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class T> 
 MSMoments<T>::MSMoments(MeasurementSet& ms,
@@ -896,5 +896,5 @@ Bool MSMoments<T>::setMomentAxis (const Int& momentAxisU)
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

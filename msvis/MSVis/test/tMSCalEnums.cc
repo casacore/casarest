@@ -26,14 +26,14 @@
 //# $Id$
 
 
-#include <casa/aips.h>
-#include <casa/iostream.h>
-#include <casa/Containers/Block.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Utilities/Assert.h>
 #include <msvis/MSVis/MSCalEnums.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 // <summary>
 // Test program for class MSCalEnums.
 // </summary>

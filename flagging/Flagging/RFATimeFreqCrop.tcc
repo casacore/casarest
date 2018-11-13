@@ -27,7 +27,7 @@
 
 #include <flagging/Flagging/RFATimeFreqCrop.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
   //#define baselinecnt ( (NumAnt)*((NumAnt)+1)/2 - ((NumAnt)-ant1[bs])*((NumAnt)-ant1[bs]+1)/2 + (ant2[bs] - ant1[bs]) )
 #define SELF(ant) ( (NumAnt)*((NumAnt)+1)/2 - ((NumAnt)-ant)*((NumAnt)-ant+1)/2 )
@@ -1559,5 +1559,5 @@ void RFATimeFreqCrop :: Plot_ds9(Int dim, Vector<Float> data1, Vector<Float> dat
 }// end of plot_ds9
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

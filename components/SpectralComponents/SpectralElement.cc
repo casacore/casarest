@@ -27,21 +27,21 @@
 
 #include <components/SpectralComponents/SpectralElement.h>
 
-#include <casa/BasicSL/Constants.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Utilities/MUString.h>
-#include <scimath/Mathematics/AutoDiffMath.h>
-#include <scimath/Functionals/Function.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/MUString.h>
+#include <casacore/scimath/Mathematics/AutoDiffMath.h>
+#include <casacore/scimath/Functionals/Function.h>
 
 //debug only
-#include <scimath/Functionals/CompiledFunction.h>
-#include <casa/Arrays/ArrayIO.h>
+#include <casacore/scimath/Functionals/CompiledFunction.h>
+#include <casacore/casa/Arrays/ArrayIO.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SpectralElement::SpectralElement(SpectralElement::Types type, const Vector<Double>& parms)
 	: _type(type), _params(parms), _errors(parms.size(), 0),
@@ -240,6 +240,6 @@ void SpectralElement::set(const Vector<Double>& params) {
 	_set(params);
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 

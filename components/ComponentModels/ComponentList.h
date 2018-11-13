@@ -30,14 +30,14 @@
 #define COMPONENTS_COMPONENTLIST_H
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/SkyComponent.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MFrequency.h>
-#include <casa/Containers/Block.h>
-#include <tables/Tables/Table.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/tables/Tables/Table.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class String;
 class Path;
@@ -472,7 +472,7 @@ private:
   Bool itsAddOptCol;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

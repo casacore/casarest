@@ -27,18 +27,18 @@
 
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <tables/Tables.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/iostream.h>
-#include <casa/iomanip.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/BasicSL/Constants.h>
+#include <casacore/tables/Tables.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/iomanip.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/BasicSL/Constants.h>
 
-#include <tables/Tables/ForwardCol.h>
+#include <casacore/tables/DataMan/ForwardCol.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 
 int
 main(int argc, char **argv)

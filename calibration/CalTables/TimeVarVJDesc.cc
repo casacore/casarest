@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/TimeVarVJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -65,5 +65,5 @@ CJonesDesc::CJonesDesc() : TimeVarVisJonesDesc("C Jones")
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

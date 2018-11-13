@@ -32,7 +32,7 @@
 
 #ifndef MSVIS_SIMPLESUBMS_H
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 #define MSVIS_SUBMS_H
 //
@@ -81,6 +81,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

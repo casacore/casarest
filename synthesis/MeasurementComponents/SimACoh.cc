@@ -26,11 +26,11 @@
 //#
 //# $Id$
 
-#include <casa/BasicMath/Math.h>
+#include <casacore/casa/BasicMath/Math.h>
 #include <synthesis/MeasurementComponents/SimACoh.h>
 #include <msvis/MSVis/VisBuffer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Note: this simplistic implementation just generates a new random
 // noise value for every call of apply, it doesn't keep track of
@@ -80,5 +80,5 @@ VisBuffer& SimACoh::applyInv(VisBuffer& vb)
     return vb;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

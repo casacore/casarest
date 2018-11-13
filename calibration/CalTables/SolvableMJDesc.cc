@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/SolvableMJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -70,5 +70,5 @@ MIfrDesc::MIfrDesc() : SolvableMJonesDesc()
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

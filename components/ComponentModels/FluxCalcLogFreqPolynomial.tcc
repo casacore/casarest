@@ -24,10 +24,10 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 #include <components/ComponentModels/FluxCalcLogFreqPolynomial.h>
-#include <casa/Arrays/Vector.h>
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template <Int lford, Int errord>
 void FluxCalcLogFreqPolynomial::fill_coeffs(const RigidVector<Float, lford>& lfrv,
@@ -55,4 +55,4 @@ void FluxCalcLogFreqBrokenPolynomial::fill_lohi_coeffs(const RigidVector<Float, 
   in_low_state_p = true;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

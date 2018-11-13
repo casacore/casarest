@@ -31,14 +31,14 @@
 
 //# Includes
 
-#include <casa/aips.h>
-#include <casa/Arrays/Vector.h>
-#include <lattices/Lattices/Lattice.h>
-#include <casa/Containers/OrderedMap.h>
-#include <casa/Containers/Record.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/lattices/Lattices/Lattice.h>
+#include <casacore/casa/Containers/OrderedMap.h>
+#include <casacore/casa/Containers/Record.h>
 #include <synthesis/Parallel/PTransport.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 class Algorithm;
@@ -192,7 +192,7 @@ class Applicator {
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

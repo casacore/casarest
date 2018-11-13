@@ -29,12 +29,12 @@
 #ifndef SYNTHESIS_BEAMSQUINT_H
 #define SYNTHESIS_BEAMSQUINT_H
 
-#include <casa/aips.h>
-#include <measures/Measures.h>
-#include <coordinates/Coordinates.h>
-#include <measures/Measures/MDirection.h>
+#include <casacore/casa/aips.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/coordinates/Coordinates.h>
+#include <casacore/measures/Measures/MDirection.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> encapsulates beam squint (RR and LL beams at different directions) </summary>
 
@@ -148,6 +148,6 @@ protected:
 };
   
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/TimeVarVJMCol.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -111,5 +111,5 @@ CJonesMCol::CJonesMCol (CJonesTable& cjTable) :
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

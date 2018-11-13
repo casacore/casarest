@@ -26,17 +26,17 @@
 //#
 //# $Id$
  
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicMath/Math.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicMath/Math.h>
 #include <synthesis/MeasurementComponents/PBMath1DCosPoly.h>
-#include <casa/Quanta.h>
-#include <measures/Measures.h>
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Quanta.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 PBMath1DCosPoly::PBMath1DCosPoly(const Vector<Double>& coeff, 
 				 const Vector<Double>& cosScale,
@@ -130,5 +130,5 @@ PBMath1DCosPoly::summary(Int nValues)
    os << "Cosine scaling:      " << cosScale_p <<  LogIO::POST;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

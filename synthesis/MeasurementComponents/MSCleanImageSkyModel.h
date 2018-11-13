@@ -31,12 +31,12 @@
 
 #include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeCleanProgress.h>
+#include <casacore/lattices/LatticeMath/LatticeCleanProgress.h>
 #else
-#include <lattices/Lattices/LatticeCleanProgress.h>
+#include <casacore/lattices/LatticeMath/LatticeCleanProgress.h>
 #endif
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //forward
 class SkyEquation;
@@ -129,7 +129,7 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

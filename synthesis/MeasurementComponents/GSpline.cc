@@ -28,25 +28,25 @@
 #include <synthesis/MeasurementComponents/GSpline.h>
 #include <synthesis/MeasurementEquations/VisEquation.h>
 
-#include <casa/Logging/LogIO.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <scimath/Mathematics/MatrixMathLA.h>
-#include <casa/Quanta/MVTime.h>
-//#include <casa/Containers/SimOrdMap.h>
-#include <casa/Containers/Block.h>
-#include <casa/math.h>
-#include <casa/fstream.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/scimath/Mathematics/MatrixMathLA.h>
+#include <casacore/casa/Quanta/MVTime.h>
+//#include <casacore/casa/Containers/SimOrdMap.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/math.h>
+#include <casacore/casa/fstream.h>
 
-#include <casa/System/PGPlotter.h>
-#include <ms/MeasurementSets/MSColumns.h>
+#include <casacore/casa/System/PGPlotter.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <msvis/MSVis/VisBuffAccumulator.h>
 #include <calibration/CalTables/GJonesMBuf.h>
 #include <calibration/CalTables/GJonesTable.h>
 #include <calibration/CalTables/CalIter.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Define external CLIC solvers
 #define NEED_UNDERSCORES
@@ -1498,5 +1498,5 @@ void GJonesSpline::writeAsciiLog(const String& filename, const Matrix<Double>& c
   }
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

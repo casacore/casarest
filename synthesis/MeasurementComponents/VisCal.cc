@@ -29,30 +29,30 @@
 
 #include <msvis/MSVis/VisBuffer.h>
 
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/MaskArrMath.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayIter.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <scimath/Mathematics/MatrixMathLA.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/QuantumHolder.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/OS/Memory.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/MaskArrMath.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayIter.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/scimath/Mathematics/MatrixMathLA.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/OS/Memory.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
-#include <casa/Quanta/MVTime.h>
+#include <casacore/casa/Quanta/MVTime.h>
 
 #define PRTLEV 0
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // **********************************************************
 //  VisCal Implementations
@@ -873,7 +873,7 @@ void VisMueller::createMueller() {
   
   // If needed, construct the correct Mueller
   if (!M_[currSpw()])
-    M_[currSpw()] = casa::createMueller(mtype);
+    M_[currSpw()] = casacore::createMueller(mtype);
 
 
   // Nominal synchronization is with currMElem()(0,0,0);
@@ -1003,7 +1003,7 @@ VisJones::~VisJones() {
 Mueller::MuellerType VisJones::muellerType() {
 
   // Ask Mueller to give us the answer:
-  return casa::muellerType(jonesType(),V().type());
+  return casacore::muellerType(jonesType(),V().type());
   
 }
 
@@ -1314,10 +1314,10 @@ void VisJones::createJones() {
   
   // If needed, construct the correct Jones
   if (!J1_[currSpw()])
-    J1_[currSpw()] = casa::createJones(jtype);
+    J1_[currSpw()] = casacore::createJones(jtype);
 
   if (!J2_[currSpw()])
-    J2_[currSpw()] = casa::createJones(jtype);
+    J2_[currSpw()] = casacore::createJones(jtype);
       
 
   // Nominal synchronization is with currJElem()(0,0,0):
@@ -1475,5 +1475,5 @@ void VisJones::deleteVisJones() {
   J2_=NULL;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

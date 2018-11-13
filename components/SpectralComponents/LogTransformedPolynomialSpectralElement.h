@@ -31,7 +31,7 @@
 
 #include <components/SpectralComponents/PolynomialSpectralElement.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // Describes the often used for determining spectral index plus higher order terms:
@@ -99,7 +99,7 @@ ostream &operator<<(
 );
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

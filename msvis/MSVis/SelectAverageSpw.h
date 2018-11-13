@@ -32,18 +32,18 @@
 #define SAS_H
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 
-#include <tables/Tables/SetupNewTab.h>
-//#include <tables/Tables/Table.h>
-#include <tables/Tables/MemoryTable.h>
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/StManAipsIO.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+//#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/MemoryTable.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/DataMan/StManAipsIO.h>
 
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 
-#include <casa/Containers/List.h>
+#include <casacore/casa/Containers/List.h>
 
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisibilityIterator.h>
@@ -93,7 +93,7 @@
 //# End of documentation.    
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace casa {
+namespace casacore {
 
 class SelectAverageSpw;
 

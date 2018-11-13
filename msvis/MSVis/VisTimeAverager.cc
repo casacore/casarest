@@ -27,9 +27,9 @@
 //----------------------------------------------------------------------------
 
 #include <msvis/MSVis/VisTimeAverager.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Exceptions/Error.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -309,5 +309,5 @@ Int VisTimeAverager::hashFunction (const Int& ant1, const Int& ant2)
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

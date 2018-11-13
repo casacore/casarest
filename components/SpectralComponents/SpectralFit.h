@@ -30,10 +30,10 @@
 #define COMPONENTS_SPECTRALFIT_H
 
 //# Includes
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/SpectralComponents/SpectralList.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 class SpectralElement;
@@ -173,7 +173,7 @@ class SpectralFit {
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef CASACORE_NO_AUTO_TEMPLATES
 #include <components/SpectralComponents/SpectralFit2.tcc>

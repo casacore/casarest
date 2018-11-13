@@ -36,7 +36,7 @@
 #include <components/ComponentModels/SpectralModel.h>
 #include <components/ComponentModels/TabularSpectrum.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // The functions declared below are contained in a seperate .cc file to prevent
 // all the derived classes from unnecessarily being linked in when they are not
@@ -75,5 +75,5 @@ construct(ComponentType::SpectralShape spectralEnum) {
 // compile-command: "gmake ComponentType2"
 // End: 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

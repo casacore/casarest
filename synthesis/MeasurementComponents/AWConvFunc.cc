@@ -29,24 +29,20 @@
 #include <synthesis/MeasurementComponents/AWConvFunc.h>
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 #include <synthesis/MeasurementComponents/WTerm.h>
-#include <images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <synthesis/MeasurementComponents/BeamCalc.h>
 #include <synthesis/MeasurementComponents/CFStore.h>
 #include <synthesis/MeasurementComponents/ATerm.h>
 #include <synthesis/MeasurementComponents/VLACalcIlluminationConvFunc.h>
 #include <synthesis/MeasurementComponents/ConvolutionFunction.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
-#if defined(casacore)
-#include <lattices/LatticeMath/LatticeFFT.h>
-#else
-#include <lattices/Lattices/LatticeFFT.h>
-#endif
-#include <casa/Utilities/CompositeNumber.h>
-#include <casa/ostream.h>
-namespace casa{
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/casa/Utilities/CompositeNumber.h>
+#include <casacore/casa/ostream.h>
+namespace casacore{
 
   AWConvFunc& AWConvFunc::operator=(const AWConvFunc& other)
   {
