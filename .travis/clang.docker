@@ -1,0 +1,24 @@
+FROM kernsuite/base:dev
+RUN docker-apt-install \
+    clang \
+    cmake \
+    casacore-dev \
+    libhdf5-dev \
+    libboost-dev \
+    wcslib-dev \
+    libcfitsio-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
+    libblas-dev \
+    liblapack-dev \
+    gfortran
+ADD . /code
+RUN mkdir /code/build
+WORKDIR /code/build
+RUN cmake .. \
+      -DBUILD_TESTING=ON \
+      -DCMAKE_C_COMPILER=/usr/bin/clang \
+      -DCMAKE_CXX_COMPILER=/usr/bin/clang++
+RUN make -j4 
+RUN make install
+
