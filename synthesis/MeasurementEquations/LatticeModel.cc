@@ -27,7 +27,7 @@
 
 #include <synthesis/MeasurementEquations/LatticeModel.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 LatticeModel::LatticeModel(Lattice<Float>& mod) :
   itsModelPtr(&mod)
@@ -41,5 +41,5 @@ LatticeModel::~LatticeModel() {
 // compile-command: "cd test; gmake OPTLIB=1 inst"
 // End: 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

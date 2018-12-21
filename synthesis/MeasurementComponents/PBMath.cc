@@ -26,8 +26,8 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
 #include <synthesis/MeasurementComponents/PBMath.h>
 #include <synthesis/MeasurementComponents/PBMath1DAiry.h>
 #include <synthesis/MeasurementComponents/PBMath1DCosPoly.h>
@@ -37,40 +37,40 @@
 #include <synthesis/MeasurementComponents/PBMath1DPoly.h>
 
 
-#include <measures/Measures/Stokes.h>
-#include <casa/BasicSL/Constants.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/casa/BasicSL/Constants.h>
 
 #include <components/ComponentModels/Flux.h>
 #include <components/ComponentModels/ComponentShape.h>
 
-#include <images/Images/PagedImage.h>
-#include <images/Images/TempImage.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Regions/ImageRegion.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Regions/ImageRegion.h>
 
-#include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #endif
 
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
-#include <coordinates/Coordinates/Projection.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/Projection.h>
+#include <casacore/casa/Logging/LogIO.h>
 
-#include <casa/Utilities/Assert.h>
-#include <casa/Containers/RecordInterface.h>
-#include <casa/Quanta/QuantumHolder.h>
-#include <measures/Measures/MeasureHolder.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Containers/RecordInterface.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/measures/Measures/MeasureHolder.h>
 
-#include <scimath/Mathematics/MathFunc.h>
+#include <casacore/scimath/Mathematics/MathFunc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 PBMath::PBMath()
 {
@@ -1488,5 +1488,5 @@ void PBMath::initByTelescope(PBMath::CommonPB myPBType,
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

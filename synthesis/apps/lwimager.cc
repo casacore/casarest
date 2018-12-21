@@ -26,21 +26,21 @@
 //# $Id: lwimager.cc 20245 2008-02-14 11:05:10Z gervandiepen $
 
 //# Includes
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/Imager.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/HDF5Image.h>
-#include <images/Images/ImageFITSConverter.h>
-#include <casa/Inputs.h>
-#include <casa/Arrays/ArrayUtil.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Utilities/Regex.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/iostream.h>
-#include <casa/sstream.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/HDF5Image.h>
+#include <casacore/images/Images/ImageFITSConverter.h>
+#include <casacore/casa/Inputs.h>
+#include <casacore/casa/Arrays/ArrayUtil.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Utilities/Regex.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/sstream.h>
 
-using namespace casa;
+using namespace casacore;
 
 IPosition handlePos (const IPosition& pos, const IPosition& def)
 {

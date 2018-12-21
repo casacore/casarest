@@ -28,9 +28,9 @@
 
 #include <calibration/CalTables/CalMainRecord.h>
 #include <msvis/MSVis/MSCalEnums.h>
-#include <casa/Arrays.h>
+#include <casacore/casa/Arrays.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -1190,5 +1190,5 @@ void CalMainRecord::gSnr (Array <Float>& snr)
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

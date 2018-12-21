@@ -27,30 +27,30 @@
 
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <scimath/Mathematics/InterpolateArray1D.h>
-#include <ms/MeasurementSets/MSColumns.h>
+#include <casacore/scimath/Mathematics/InterpolateArray1D.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 #if defined(casacore)
-#include <ms/MSSel/MSSpwIndex.h>
+#include <casacore/ms/MSSel/MSSpwIndex.h>
 #else
-#include <ms/MeasurementSets/MSSpwIndex.h>
+#include <casacore/ms/MSSel/MSSpwIndex.h>
 #endif
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/ColDescSet.h>
-#include <tables/Tables/TableRecord.h>
-#include <tables/Tables/TiledStManAccessor.h>
-#include <tables/Tables/StandardStManAccessor.h>
-#include <tables/Tables/IncrStManAccessor.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Containers/Record.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Utilities/Sort.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/ColDescSet.h>
+#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/tables/DataMan/TiledStManAccessor.h>
+#include <casacore/tables/DataMan/StandardStManAccessor.h>
+#include <casacore/tables/DataMan/IncrStManAccessor.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/Sort.h>
 #include <cassert>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 ROVisibilityIterator::ROVisibilityIterator() 
  : selRows_p(0, 0) 
@@ -2946,7 +2946,7 @@ ROVisibilityIterator::AsyncEnabler::release ()
     roVisibilityIterator_p->setAsyncEnabled (oldEnabledState_p);
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 

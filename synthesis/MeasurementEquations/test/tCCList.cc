@@ -25,12 +25,12 @@
 //#
 //# $Id$
 
-#include <casa/iostream.h>
-#include <casa/aips.h>
-#include <casa/Containers/Block.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/Block.h>
 #include <synthesis/MeasurementEquations/CCList.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main()
 {
   {

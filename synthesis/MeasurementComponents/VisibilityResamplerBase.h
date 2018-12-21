@@ -33,15 +33,15 @@
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <synthesis/MeasurementComponents/VBStore.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
 #include <msvis/MSVis/AsynchronousTools.h>
 
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   class VisibilityResamplerBase
   {
   public: 
@@ -219,6 +219,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     {return store[iPos[0] + iPos[1]*inc[1] + iPos[2]*inc[2] +iPos[3]*inc[3]];};
 
   };
-}; //# NAMESPACE CASA - END
+}; //# NAMESPACE CASACORE - END
 
 #endif // 

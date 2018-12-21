@@ -29,7 +29,7 @@
 #ifndef SYNTHESIS_PBMATH_H
 #define SYNTHESIS_PBMATH_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementComponents/PBMathInterface.h>
 #include <synthesis/MeasurementComponents/PBMath1DGauss.h>
 #include <synthesis/MeasurementComponents/PBMath1DNumeric.h>
@@ -39,11 +39,11 @@
 #include <synthesis/MeasurementComponents/PBMath1DCosPoly.h>
 #include <synthesis/MeasurementComponents/PBMath2DImage.h>
 #include <synthesis/MeasurementComponents/BeamSquint.h>
-#include <images/Images/ImageInterface.h>
-#include <measures/Measures.h>
-#include <casa/Utilities/CountedPtr.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //#forward
 class Table;
@@ -447,6 +447,6 @@ private:
 
   
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

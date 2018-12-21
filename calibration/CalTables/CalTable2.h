@@ -29,17 +29,17 @@
 #ifndef CALIBRATION_CALTABLE2_H
 #define CALIBRATION_CALTABLE2_H
 
-#include <casa/aips.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/ExprNode.h>
-#include <casa/Containers/Record.h>
-#include <casa/Utilities/Sort.h>
+#include <casacore/casa/aips.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/TaQL/ExprNode.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Utilities/Sort.h>
 #include <calibration/CalTables/CalTableDesc2.h>
 #include <calibration/CalTables/CalMainRecord.h>
 #include <calibration/CalTables/CalDescRecord.h>
 #include <calibration/CalTables/CalHistRecord.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   
   // <summary> 
   // CalTable: Calibration table access and creation
@@ -186,7 +186,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     Int parType_;
   };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

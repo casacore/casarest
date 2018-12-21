@@ -27,18 +27,18 @@
 
 #include <simulators/Simulators/SimField.h>
 
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSSource.h>
-#include <ms/MeasurementSets/MSSourceColumns.h>
-#include <ms/MeasurementSets/MSField.h>
-#include <ms/MeasurementSets/MSFieldColumns.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MeasConvert.h>
-#include <casa/Containers/SimOrdMap.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/sstream.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSSource.h>
+#include <casacore/ms/MeasurementSets/MSSourceColumns.h>
+#include <casacore/ms/MeasurementSets/MSField.h>
+#include <casacore/ms/MeasurementSets/MSFieldColumns.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/casa/Containers/SimOrdMap.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SimField::SimField(const SimField& s) 
     : row_p(s.row_p), src_p(s.src_p), rep_p(s.rep_p), off_p(s.off_p), 
@@ -203,5 +203,5 @@ void SimFieldList::throwOutOfRange(uInt legallength, Int index) const {
     throw AipsError(String(msg));
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -36,8 +36,8 @@
 #define CASA_MSPLOT_LOGGER_H
 
 //# Include files
-#include <casa/Logging/LogIO.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/BasicSL/String.h>
   
 #define LOG0 0
 // <summary>
@@ -119,10 +119,10 @@
 //   <li> Perhaps provide ways of "streaming" the error messages
 //        instead of making it all a single String.    
 // </todo>
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   
 
-class MsPlotLogger : public casa::LogIO
+class MsPlotLogger : public casacore::LogIO
 {
  public:
     //#! Constructors
@@ -314,7 +314,7 @@ class MsPlotLogger : public casa::LogIO
 
     
 };  // class MsPlotLogger;
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 #endif

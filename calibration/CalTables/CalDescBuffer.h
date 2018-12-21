@@ -29,12 +29,12 @@
 #ifndef CALIBRATION_CALDESCBUFFER_H
 #define CALIBRATION_CALDESCBUFFER_H
 
-#include <casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Matrix.h>
 #include <calibration/CalTables/CalIterBase.h>
 #include <calibration/CalTables/CalTable.h>
 #include <calibration/CalTables/CalDescColumns.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalDescBuffer: Calibration table cal_desc buffer
@@ -155,6 +155,6 @@ class CalDescBuffer
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

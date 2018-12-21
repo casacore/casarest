@@ -30,7 +30,7 @@
 
 #include <simulators/Simulators/SimObservations.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MEpoch;
 class MeasurementSet;
@@ -192,6 +192,6 @@ private:
     MEpoch end_p;          // the end of the last scan written with write()
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

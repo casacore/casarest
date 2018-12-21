@@ -30,7 +30,7 @@
 #define SYNTHESIS_CEMEMIMAGESKYMODEL_H
 
 #include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //forward
 class SkyEquation;
@@ -126,7 +126,7 @@ protected:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/SolvableVJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // BJonesDesc: Define the format of BJones cal tables
@@ -139,7 +139,7 @@ class BJonesPolyDesc : public BJonesDesc
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

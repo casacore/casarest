@@ -32,9 +32,9 @@
 #include <components/SpectralComponents/PolynomialSpectralElement.h>
 #include <components/SpectralComponents/PowerLogPolynomialSpectralElement.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 ostream &operator<<(ostream &os, const SpectralElement &elem) {
 	switch (elem.getType()) {
@@ -99,6 +99,6 @@ Bool nearAbs(const SpectralElement& s1, const SpectralElement& s2, const Double 
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 

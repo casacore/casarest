@@ -27,13 +27,13 @@
 #ifndef FLAGGING_RFCOMMON_H
 #define FLAGGING_RFCOMMON_H
     
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Containers/RecordInterface.h>
-#include <casa/Containers/RecordInterface.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Containers/RecordInterface.h>
+#include <casacore/casa/Containers/RecordInterface.h>
+#include <casacore/casa/Logging/LogIO.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // RFAs use bitwise flags
 typedef uInt RFlagWord;
@@ -195,6 +195,6 @@ inline String stringUpper ( const String &in )
 int dprintf( LogIO &os, const char *format, ... );
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -25,24 +25,24 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //# $Id$
-#include <casa/Exceptions/Error.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Arrays/MaskArrMath.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/MaskArrMath.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <flagging/Flagging/RFASelector.h>
-#include <casa/stdio.h>
+#include <casacore/casa/stdio.h>
 
 #include <iomanip>
 #include <ostream>
 #include <cassert>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Bool dbg2 = False;
 Bool verbose2 = False;
@@ -1090,7 +1090,7 @@ RFA::IterMode RFASelector::iterTime (uInt it)
   
   const Vector<Int> &ifrs( chunk.ifrNums() );
   const Vector<Int> &feeds( chunk.feedNums() );
-  const Vector<casa::RigidVector<casa::Double, 3> >&uvw( chunk.visBuf().uvw() );
+  const Vector<casacore::RigidVector<casacore::Double, 3> >&uvw( chunk.visBuf().uvw() );
   // Vector<Vector<Double> > &uvw=NULL;//( chunk.visIter.uvw(uvw) );
   //chunk.visIter().uvw(uvw);
   Double uvdist=0.0;
@@ -1565,5 +1565,5 @@ const RecordInterface & RFASelector::getDefaults ()
   return rec;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

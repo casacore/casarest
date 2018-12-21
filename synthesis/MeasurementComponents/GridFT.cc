@@ -26,59 +26,59 @@
 //# $Id$
 
 #include <msvis/MSVis/VisibilityIterator.h>
-#include <casa/Quanta/UnitMap.h>
-#include <casa/Quanta/UnitVal.h>
-#include <measures/Measures/Stokes.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
-#include <coordinates/Coordinates/Projection.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <casa/BasicSL/Constants.h>
-#include <scimath/Mathematics/FFTServer.h>
+#include <casacore/casa/Quanta/UnitMap.h>
+#include <casacore/casa/Quanta/UnitVal.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/Projection.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
 #include <synthesis/MeasurementComponents/GridFT.h>
 #include <synthesis/MeasurementComponents/Utils.h>
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 #include <msvis/MSVis/StokesVector.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisSet.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/PagedImage.h>
-#include <casa/Containers/Block.h>
-#include <casa/Containers/Record.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/Arrays/MatrixIter.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Exceptions/Error.h>
-#include <lattices/Lattices/ArrayLattice.h>
-#include <measures/Measures/UVWMachine.h>
-#include <lattices/Lattices/SubLattice.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/MatrixIter.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/measures/Measures/UVWMachine.h>
+#include <casacore/lattices/Lattices/SubLattice.h>
 #if defined(casacore)
-#include <lattices/LRegions/LCBox.h>
-#include <lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #else
-#include <lattices/Lattices/LCBox.h>
-#include <lattices/Lattices/LatticeFFT.h>
+#include <casacore/lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #endif
-#include <lattices/Lattices/LatticeCache.h>
-#include <lattices/Lattices/LatticeIterator.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <scimath/Mathematics/ConvolveGridder.h>
-#include <casa/Utilities/CompositeNumber.h>
-#include <casa/OS/Timer.h>
-#include <casa/sstream.h>
+#include <casacore/lattices/Lattices/LatticeCache.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/scimath/Mathematics/ConvolveGridder.h>
+#include <casacore/casa/Utilities/CompositeNumber.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
-  //  using namespace casa::async;
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
+  //  using namespace casacore::async;
 GridFT::GridFT(Long icachesize, Int itilesize, String iconvType, Float padding,
 	       Bool usezero, Bool useDoublePrec)
 : FTMachine(), padding_p(padding), imageCache(0), cachesize(icachesize), tilesize(itilesize),
@@ -1209,5 +1209,5 @@ String GridFT::name(){
 
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

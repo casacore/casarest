@@ -29,14 +29,14 @@
 #ifndef COMPONENTS_COMPONENTTYPE_H
 #define COMPONENTS_COMPONENTTYPE_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 
 //# Forward Declaration
 namespace casac {
       class componentlist;
 }
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declaration
 class String;
@@ -165,6 +165,6 @@ private:
   static SpectralModel* construct(ComponentType::SpectralShape spectralEnum);
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

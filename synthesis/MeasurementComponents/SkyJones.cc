@@ -26,14 +26,14 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementComponents/SkyJones.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SkyJones::~SkyJones()
 {
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

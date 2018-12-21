@@ -25,10 +25,10 @@
 //#
 //# $Id$
 #include <flagging/Flagging/RFAFlagCubeBase.h>
-#include <casa/iostream.h>
-#include <casa/stdio.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/stdio.h>
    
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 uInt RFABase::indexing_base = 0;
  
@@ -208,5 +208,5 @@ RFA::IterMode RFAFlagCubeBase::endDry ()
   return RFA::STOP;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

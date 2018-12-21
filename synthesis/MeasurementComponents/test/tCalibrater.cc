@@ -25,17 +25,17 @@
 //#
 //# $Id$
 
-#include <casa/iostream.h>
-#include <casa/aips.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Containers/Block.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <synthesis/MeasurementComponents/Calibrater.h>
 
 int main()
 {
   using namespace std;
-  using namespace casa;
+  using namespace casacore;
   try{
      cout <<"--Starting the creation or update of the history table." << endl;
      Calibrater* cal = new Calibrater( );

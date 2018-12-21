@@ -10,8 +10,8 @@
 #include "VisBufferAsyncWrapper.h"
 #include "VLAT.h"
 
-#include <ms/MeasurementSets/MSColumns.h>
-#include <casa/System/AipsrcValue.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/casa/System/AipsrcValue.h>
 
 #include <algorithm>
 #include <cstdarg>
@@ -22,9 +22,9 @@ using namespace boost;
 using namespace std;
 
 #include "UtilJ.h"
-using namespace casa::utilj;
+using namespace casacore::utilj;
 
-using namespace casa::asyncio;
+using namespace casacore::asyncio;
 
 #define Log(level, ...) \
     {if (VlaData::loggingInitialized_p && level <= VlaData::logLevel_p) \
@@ -32,7 +32,7 @@ using namespace casa::asyncio;
 
 #define NotImplemented     Throw ("ROVisibilityIteratorAsync: Method not implemented!");
 
-namespace casa {
+namespace casacore {
 
 // The base of the AIPS RC keyword to use for asynchronous I/O keywords
 
@@ -252,13 +252,13 @@ ROVisibilityIteratorAsync::construct (const PrefetchColumns & prefetchColumns, I
     if (contains (Feed1_pa, prefetchColumns_p)){
         prefetchColumns_p.insert (Feed1);
         prefetchColumns_p.insert (Ant1);
-        prefetchColumns_p.insert (casa::asyncio::Time);
+        prefetchColumns_p.insert (casacore::asyncio::Time);
     }
 
     if (contains (Feed2_pa, prefetchColumns_p)){
         prefetchColumns_p.insert (Feed2);
         prefetchColumns_p.insert (Ant2);
-        prefetchColumns_p.insert (casa::asyncio::Time);
+        prefetchColumns_p.insert (casacore::asyncio::Time);
     }
 
     impl_p->vlat_p->setPrefetchColumns (prefetchColumns_p);

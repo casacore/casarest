@@ -32,7 +32,7 @@
 #include <calibration/CalTables/TimeVarVJMCol.h>
 #include <calibration/CalTables/SolvableVJTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // ROSolvableVisJonesMCol: Read-only SolvableVisJones cal_main column access
@@ -519,7 +519,7 @@ class TJonesMCol : public SolvableVisJonesMCol
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

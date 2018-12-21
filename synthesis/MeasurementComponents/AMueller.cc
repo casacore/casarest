@@ -25,7 +25,7 @@
 //#
 
 #include <calibration/CalTables/CalDescColumns2.h>
-//#include <ms/MeasurementSets/MSColumns.h>
+//#include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisBuffGroupAcc.h>
 #include <msvis/MSVis/VBContinuumSubtractor.h>
@@ -33,7 +33,7 @@
 #include <synthesis/MeasurementComponents/AMueller.h>
 #include <synthesis/MeasurementEquations/VisEquation.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 // **********************************************************
@@ -470,4 +470,4 @@ void ANoise::calcOneMueller(Vector<Complex>& mat, Vector<Bool>& mOk,
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

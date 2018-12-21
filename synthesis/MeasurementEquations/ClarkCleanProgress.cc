@@ -28,15 +28,15 @@
 
 //# Includes
 #include <synthesis/MeasurementEquations/ClarkCleanProgress.h>
-#include <images/Images/TempImage.h>
-#include <casa/System/PGPlotter.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/System/PGPlotter.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/Exceptions/Error.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 ClarkCleanProgress::ClarkCleanProgress(PGPlotter* pgplotter, Int inc)
   : itsPgplotter(pgplotter),
@@ -345,5 +345,5 @@ void  ClarkCleanProgress::plotOne(const Int iteration,
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

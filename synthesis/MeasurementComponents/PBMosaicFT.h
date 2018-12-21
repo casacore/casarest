@@ -30,19 +30,19 @@
 #define SYNTHESIS_PBMOSAICFT_H
 
 // #include <synthesis/MeasurementComponents/FTMachine.h>
-// #include <casa/Arrays/Matrix.h>
-// #include <scimath/Mathematics/FFTServer.h>
+// #include <casacore/casa/Arrays/Matrix.h>
+// #include <casacore/scimath/Mathematics/FFTServer.h>
 // #include <msvis/MSVis/VisBuffer.h>
-// #include <images/Images/ImageInterface.h>
-// #include <images/Images/ImageInterface.h>
-// #include <casa/Containers/Block.h>
-// #include <casa/Arrays/Array.h>
-// #include <casa/Arrays/Vector.h>
-// #include <casa/Arrays/Matrix.h>
-// #include <scimath/Mathematics/ConvolveGridder.h>
+// #include <casacore/images/Images/ImageInterface.h>
+// #include <casacore/images/Images/ImageInterface.h>
+// #include <casacore/casa/Containers/Block.h>
+// #include <casacore/casa/Arrays/Array.h>
+// #include <casacore/casa/Arrays/Vector.h>
+// #include <casacore/casa/Arrays/Matrix.h>
+// #include <casacore/scimath/Mathematics/ConvolveGridder.h>
 #include <synthesis/MeasurementComponents/nPBWProjectFT.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   
   class EPJones;
   //  class nPBWProjectFT;
@@ -157,6 +157,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
   };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

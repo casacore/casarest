@@ -26,21 +26,21 @@
 //# $Id: tSpectralFit.cc 21451 2014-06-10 07:48:08Z gervandiepen $
 
 //# Includes
-#include <casa/aips.h>
-#include <casa/Arrays/MaskArrLogi.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayIO.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/BasicMath/Random.h>
-#include <casa/Containers/Record.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/MaskArrLogi.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/BasicMath/Random.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Utilities/Assert.h>
 #include <components/SpectralComponents/SpectralEstimate.h>
 #include <components/SpectralComponents/SpectralFit.h>
 #include <components/SpectralComponents/SpectralList.h>
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 
 int main() {
 	// RecordInterface

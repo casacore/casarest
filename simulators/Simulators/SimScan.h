@@ -29,10 +29,10 @@
 #ifndef SIMULATORS_SIMSCAN_H
 #define SIMULATORS_SIMSCAN_H
 
-#include <casa/Arrays/Vector.h>
-#include <casa/Quanta/Quantum.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Quanta/Quantum.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class SimObservations;
 
@@ -262,6 +262,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

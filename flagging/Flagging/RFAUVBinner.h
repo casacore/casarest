@@ -32,9 +32,9 @@
 #include <flagging/Flagging/RFFloatLattice.h>
 #include <flagging/Flagging/RFFlagCube.h> 
 #include <flagging/Flagging/RFRowClipper.h> 
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // RFAUVBinner: flagging via UV binning
@@ -109,6 +109,6 @@ protected:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

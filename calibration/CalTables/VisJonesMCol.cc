@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/VisJonesMCol.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -57,5 +57,5 @@ VisJonesMCol::VisJonesMCol (CalTable& calTable) :
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

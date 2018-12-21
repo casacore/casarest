@@ -29,15 +29,15 @@
 #define COMPONENTS_FLUXCALC_SS_JPL_BUTLER_H
 
 //# include directives
-#include <casa/aips.h>
-#include <casa/BasicSL/String.h>
-#include <measures/Measures/MEpoch.h>
-//#include <measures/Measures/MFrequency.h>
-#include <measures/Measures/MDirection.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/measures/Measures/MEpoch.h>
+//#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MDirection.h>
 #include <components/ComponentModels/Flux.h>
-#include <tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MFrequency;
 //class ROScalarColumn<Double>;  There doesn't seem to be a way to forward
@@ -273,6 +273,6 @@ class FluxCalc_SS_JPL_Butler
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

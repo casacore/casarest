@@ -25,23 +25,23 @@
 //#
 //# $Id$
 
-#include <casa/iostream.h>
-#include <casa/aips.h>
-#include <images/Images/PagedImage.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Slicer.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Slicer.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementEquations/ConvolutionEquation.h>
 #include <synthesis/MeasurementEquations/ArrayModel.h>
 #include <synthesis/MeasurementEquations/ClarkCleanModel.h>
-#include <scimath/Mathematics/Convolver.h>
-#include <casa/OS/Time.h>
-#include <casa/OS/Timer.h>
-#include <casa/BasicMath/Random.h>
-#include <coordinates/Coordinates/CoordinateUtil.h>
+#include <casacore/scimath/Mathematics/Convolver.h>
+#include <casacore/casa/OS/Time.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/BasicMath/Random.h>
+#include <casacore/coordinates/Coordinates/CoordinateUtil.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main()
 {
   Bool Failed = False;

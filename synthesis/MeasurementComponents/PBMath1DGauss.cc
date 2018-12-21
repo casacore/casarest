@@ -26,17 +26,17 @@
 //#
 //# $Id$
  
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicMath/Math.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicMath/Math.h>
 #include <synthesis/MeasurementComponents/PBMath1DGauss.h>
-#include <measures/Measures.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/casa/Utilities/Assert.h>
 
 
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 PBMath1DGauss::PBMath1DGauss(Quantity halfWidth, Quantity maxRad, Quantity refFreq, 
 			     Bool isThisVP,
@@ -108,5 +108,5 @@ PBMath1DGauss::summary(Int nValues)
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

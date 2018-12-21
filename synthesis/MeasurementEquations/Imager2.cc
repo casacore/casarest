@@ -27,55 +27,55 @@
 //# $Id$
 
 
-#include <casa/Exceptions/Error.h>
-#include <casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/iostream.h>
 #include <synthesis/MeasurementEquations/Imager.h>
 #include <synthesis/MeasurementComponents/EPJones.h>
 
-#include <ms/MeasurementSets/MSHistoryHandler.h>
+#include <casacore/ms/MeasurementSets/MSHistoryHandler.h>
 
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
 
-#include <casa/Logging.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
-#include <casa/OS/DirectoryIterator.h>
-#include <casa/OS/File.h>
-#include <casa/OS/Path.h>
+#include <casacore/casa/OS/DirectoryIterator.h>
+#include <casacore/casa/OS/File.h>
+#include <casacore/casa/OS/Path.h>
 
-#include <casa/OS/HostInfo.h>
-#include <tables/Tables/RefRows.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/TableParse.h>
-#include <tables/Tables/TableRecord.h>
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/TableLock.h>
-#include <tables/Tables/ExprNode.h>
+#include <casacore/casa/OS/HostInfo.h>
+#include <casacore/tables/Tables/RefRows.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/TaQL/TableParse.h>
+#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/TableLock.h>
+#include <casacore/tables/TaQL/ExprNode.h>
 
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Utilities/Fallible.h>
-#include <casa/Utilities/CompositeNumber.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/Fallible.h>
+#include <casacore/casa/Utilities/CompositeNumber.h>
 
-#include <casa/BasicSL/Constants.h>
+#include <casacore/casa/BasicSL/Constants.h>
 
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Slice.h>
-//#include <images/Images/ImageAnalysis.h>
-#include <images/Images/ImageExpr.h>
-//#include <images/Images/ImagePolarimetry.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Slice.h>
+//#include <casacore/images/Images/ImageAnalysis.h>
+#include <casacore/images/Images/ImageExpr.h>
+//#include <casacore/images/Images/ImagePolarimetry.h>
 #include <synthesis/MeasurementEquations/ClarkCleanProgress.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeCleanProgress.h>
+#include <casacore/lattices/LatticeMath/LatticeCleanProgress.h>
 #else
-#include <lattices/Lattices/LatticeCleanProgress.h>
+#include <casacore/lattices/LatticeMath/LatticeCleanProgress.h>
 #endif
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisSetUtil.h>
@@ -84,30 +84,30 @@
 // Disabling Imager::correct() (gmoellen 06Nov20)
 //#include <synthesis/MeasurementComponents/TimeVarVisJones.h>
 
-#include <measures/Measures/Stokes.h>
-#include <casa/Quanta/UnitMap.h>
-#include <casa/Quanta/UnitVal.h>
-#include <casa/Quanta/MVAngle.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MPosition.h>
-#include <casa/Quanta/MVEpoch.h>
-#include <casa/Quanta/MVTime.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MeasTable.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/casa/Quanta/UnitMap.h>
+#include <casacore/casa/Quanta/UnitVal.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/casa/Quanta/MVEpoch.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MeasTable.h>
 
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSDopplerUtil.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSDopplerUtil.h>
 #if defined(casacore)
-#include <ms/MSSel/MSSelection.h>
-#include <ms/MSSel/MSDataDescIndex.h>
-#include <ms/MSSel/MSSourceIndex.h>
-#include <ms/MSOper/MSSummary.h>
+#include <casacore/ms/MSSel/MSSelection.h>
+#include <casacore/ms/MSSel/MSDataDescIndex.h>
+#include <casacore/ms/MSSel/MSSourceIndex.h>
+#include <casacore/ms/MSOper/MSSummary.h>
 #else
-#include <ms/MeasurementSets/MSSelection.h>
-#include <ms/MeasurementSets/MSDataDescIndex.h>
-#include <ms/MeasurementSets/MSSourceIndex.h>
-#include <ms/MeasurementSets/MSSummary.h>
+#include <casacore/ms/MSSel/MSSelection.h>
+#include <casacore/ms/MSSel/MSDataDescIndex.h>
+#include <casacore/ms/MSSel/MSSourceIndex.h>
+#include <casacore/ms/MSOper/MSSummary.h>
 #endif
 #include <synthesis/MeasurementEquations/CubeSkyEquation.h>
 // Disabling Imager::correct() (gmoellen 06Nov20)
@@ -143,48 +143,48 @@
 #include <synthesis/DataSampling/PixonProcessor.h>
 
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
-#include <lattices/Lattices/TiledLineStepper.h> 
-#include <lattices/Lattices/LatticeIterator.h> 
+#include <casacore/lattices/Lattices/TiledLineStepper.h> 
+#include <casacore/lattices/Lattices/LatticeIterator.h> 
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h> 
-#include <lattices/LatticeMath/LatticeFFT.h>
-#include <lattices/LRegions/LattRegionHolder.h>
-#include <lattices/LRegions/LCEllipsoid.h>
-#include <lattices/LRegions/LCRegion.h>
-#include <lattices/LRegions/LCBox.h>
-#include <lattices/LRegions/LCIntersection.h>
-#include <lattices/LRegions/LCUnion.h>
-#include <lattices/LRegions/LCExtension.h>
+#include <casacore/lattices/LEL/LatticeExpr.h> 
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LRegions/LattRegionHolder.h>
+#include <casacore/lattices/LRegions/LCEllipsoid.h>
+#include <casacore/lattices/LRegions/LCRegion.h>
+#include <casacore/lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LRegions/LCIntersection.h>
+#include <casacore/lattices/LRegions/LCUnion.h>
+#include <casacore/lattices/LRegions/LCExtension.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h> 
-#include <lattices/Lattices/LatticeFFT.h>
-#include <lattices/Lattices/LattRegionHolder.h>
-#include <lattices/Lattices/LCEllipsoid.h>
-#include <lattices/Lattices/LCRegion.h>
-#include <lattices/Lattices/LCBox.h>
-#include <lattices/Lattices/LCIntersection.h>
-#include <lattices/Lattices/LCUnion.h>
-#include <lattices/Lattices/LCExtension.h>
+#include <casacore/lattices/LEL/LatticeExpr.h> 
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LRegions/LattRegionHolder.h>
+#include <casacore/lattices/LRegions/LCEllipsoid.h>
+#include <casacore/lattices/LRegions/LCRegion.h>
+#include <casacore/lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LRegions/LCIntersection.h>
+#include <casacore/lattices/LRegions/LCUnion.h>
+#include <casacore/lattices/LRegions/LCExtension.h>
 #endif
 
-#include <images/Images/ImageRegrid.h>
-#include <images/Regions/ImageRegion.h>
-#include <images/Regions/RegionManager.h>
-#include <images/Regions/WCBox.h>
-#include <images/Regions/WCUnion.h>
-#include <images/Regions/WCIntersection.h>
+#include <casacore/images/Images/ImageRegrid.h>
+#include <casacore/images/Regions/ImageRegion.h>
+#include <casacore/images/Regions/RegionManager.h>
+#include <casacore/images/Regions/WCBox.h>
+#include <casacore/images/Regions/WCUnion.h>
+#include <casacore/images/Regions/WCIntersection.h>
 #include <synthesis/MeasurementComponents/PBMath.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/ImageInfo.h>
-#include <images/Images/SubImage.h>
-///#include <images/Images/ImageMetaData.h>
-#include <images/Images/ImageUtilities.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
-#include <coordinates/Coordinates/Projection.h>
-#include <coordinates/Coordinates/ObsInfo.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/ImageInfo.h>
+#include <casacore/images/Images/SubImage.h>
+///#include <casacore/images/Images/ImageMetaData.h>
+#include <casacore/images/Images/ImageUtilities.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/Projection.h>
+#include <casacore/coordinates/Coordinates/ObsInfo.h>
 
 #include <components/ComponentModels/ComponentList.h>
 #include <components/ComponentModels/ConstantSpectrum.h>
@@ -194,13 +194,13 @@
 #include <components/ComponentModels/PointShape.h>
 #include <components/ComponentModels/DiskShape.h>
 
-#include <casa/OS/HostInfo.h>
+#include <casacore/casa/OS/HostInfo.h>
 
 #include <components/ComponentModels/ComponentList.h>
 
-#include <measures/Measures/UVWMachine.h>
+#include <casacore/measures/Measures/UVWMachine.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -219,7 +219,7 @@ using namespace std;
 #endif
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 String Imager::imageName()
 {
@@ -4313,7 +4313,7 @@ Bool Imager::calcImFreqs(Vector<Double>& imgridfreqs,
     mode="velocity";
     start=dQuantitytoString(mImageStart_p.get("m/s"));
     width=dQuantitytoString(mImageStep_p.get("m/s"));
-    if (!width.contains(casa::Regex("^-"))) {
+    if (!width.contains(casacore::Regex("^-"))) {
       //positive vel. width (descending frequencies) 
       //reversevec=True;
       descendfreq=True;
@@ -4325,7 +4325,7 @@ Bool Imager::calcImFreqs(Vector<Double>& imgridfreqs,
     start=dQuantitytoString(mImageStart_p.get("m/s"));
     width=dQuantitytoString(mImageStep_p.get("m/s"));
     //cerr<<"optical vel width USED="<<width<<endl;
-    if (!width.contains(casa::Regex("^-"))) {
+    if (!width.contains(casacore::Regex("^-"))) {
       //positive vel. width (descending frequencies)
       //reversevec=True;
       descendfreq=True;
@@ -4336,7 +4336,7 @@ Bool Imager::calcImFreqs(Vector<Double>& imgridfreqs,
     mode="frequency";
     start=dQuantitytoString(mfImageStart_p.get("Hz"));
     width=dQuantitytoString(mfImageStep_p.get("Hz"));
-    if (width.contains(casa::Regex("^-"))) {
+    if (width.contains(casacore::Regex("^-"))) {
       //reversevec=True;
       descendfreq=True;
     }
@@ -4346,7 +4346,7 @@ Bool Imager::calcImFreqs(Vector<Double>& imgridfreqs,
     mode="channel";
     start=String::toString(imageStart_p);
     width=String::toString(imageStep_p);
-    if (width.contains(casa::Regex("^-"))) {
+    if (width.contains(casacore::Regex("^-"))) {
       // means here going to lower chan index
       descendfreq=True;
     }
@@ -4497,7 +4497,7 @@ String Imager::dQuantitytoString(const Quantity& dq) {
   return ss.str();
 } 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 

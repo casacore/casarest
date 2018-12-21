@@ -28,23 +28,23 @@
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LEL/LatticeExprNode.h>
-#include <lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LRegions/LCBox.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeExprNode.h>
-#include <lattices/Lattices/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LRegions/LCBox.h>
 #endif
-#include <lattices/Lattices/SubLattice.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/lattices/Lattices/SubLattice.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Exceptions/Error.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 LatConvEquation::LatConvEquation(Lattice<Float> & psf, 
 				 Lattice<Float> & dirtyImage)
@@ -216,5 +216,5 @@ IPosition LatConvEquation::psfSize() {
   return itsConv.psfShape();
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

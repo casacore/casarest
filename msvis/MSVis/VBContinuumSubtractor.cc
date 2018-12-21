@@ -25,29 +25,29 @@
 //#
 //# $Id$
 //#
-//#include <casa/Arrays/ArrayLogical.h>
-//#include <casa/Arrays/ArrayMath.h>
-//#include <casa/Arrays/ArrayUtil.h>
-#include <casa/Arrays/Cube.h>
-//#include <casa/Arrays/MaskedArray.h>
-//#include <casa/Arrays/MaskArrMath.h>
-//#include <casa/Containers/Record.h>
-//#include <casa/Containers/RecordFieldId.h>
-//#include <casa/Exceptions/Error.h>
-#include <casa/Logging/LogIO.h>
-//#include <casa/Quanta/MVTime.h>
-//#include <casa/Quanta/QuantumHolder.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSColumns.h>
+//#include <casacore/casa/Arrays/ArrayLogical.h>
+//#include <casacore/casa/Arrays/ArrayMath.h>
+//#include <casacore/casa/Arrays/ArrayUtil.h>
+#include <casacore/casa/Arrays/Cube.h>
+//#include <casacore/casa/Arrays/MaskedArray.h>
+//#include <casacore/casa/Arrays/MaskArrMath.h>
+//#include <casacore/casa/Containers/Record.h>
+//#include <casacore/casa/Containers/RecordFieldId.h>
+//#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Logging/LogIO.h>
+//#include <casacore/casa/Quanta/MVTime.h>
+//#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <msvis/MSVis/VBContinuumSubtractor.h>
 #include <msvis/MSVis/VisBuffGroupAcc.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <scimath/Fitting/LinearFitSVD.h>
-#include <scimath/Functionals/Polynomial.h>
+#include <casacore/scimath/Fitting/LinearFitSVD.h>
+#include <casacore/scimath/Functionals/Polynomial.h>
 
 //#include <algorithm>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 VBContinuumSubtractor::VBContinuumSubtractor():
   fitorder_p(-1),
@@ -521,5 +521,5 @@ Bool VBContinuumSubtractor::apply(VisBuffer& vb,
   return ok;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

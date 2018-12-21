@@ -30,20 +30,20 @@
 #define SYNTHESIS_STEEPESTDESCENT_H
 //----------------------------------------------------------------------------
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 
 #include <synthesis/MeasurementEquations/VisEquation.h>
 #include <synthesis/MeasurementEquations/Iterate.h>
 #include <synthesis/MeasurementComponents/EPJones.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/OS/Timer.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/OS/Timer.h>
 
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
-namespace casa {
+namespace casacore {
 
   class SteepestDescentSolver: public Iterate
   {
@@ -64,7 +64,7 @@ namespace casa {
   private:
     Vector<Complex> getVj(const VisBuffer& vb, Int NAnt, Int whichAnt, Int whichPol,
 			  Double& sumWt,Int negate=0, Int weighted=1);
-    Double getGOF(const VisBuffer& residual,Int& whichPol, Double& sumWt,char *msg="");
+    Double getGOF(const VisBuffer& residual,Int& whichPol, Double& sumWt,const char *msg="");
 
     Int maxIter,maxParams;
     

@@ -37,7 +37,7 @@
 #include <synthesis/MeasurementComponents/MThWorkIDEnum.h>
 #include <fstream>
 
-namespace casa{
+namespace casacore{
   template 
   void MultiThreadedVisibilityResampler::DataToGridImpl_p(Array<Complex>& griddedData,  
   						      VBStore& vbs, 

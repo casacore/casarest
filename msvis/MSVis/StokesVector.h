@@ -29,20 +29,20 @@
 #ifndef MSVIS_STOKESVECTOR_H
 #define MSVIS_STOKESVECTOR_H
 
-#include <casa/aips.h>
-#include <casa/IO/AipsIO.h>
-//#include <tables/Tables/TableRecord.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/MatrixMath.h>
-#include <scimath/Mathematics/RigidVector.h>
-#include <scimath/Mathematics/SquareMatrix.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/IO/AipsIO.h>
+//#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/MatrixMath.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/SquareMatrix.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 class StokesVector;
@@ -402,6 +402,6 @@ inline StokesVector applyScircInv(const CStokesVector& v) {
 //CStokesVector& sqrt(const CStokesVector& v);
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

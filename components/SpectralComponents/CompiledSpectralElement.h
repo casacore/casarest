@@ -31,7 +31,7 @@
 
 #include <components/SpectralComponents/SpectralElement.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // Describes a compiled function for describing a spectral profile
@@ -129,7 +129,7 @@ ostream &operator<<(ostream &os, const CompiledSpectralElement &elem);
 // </group>
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

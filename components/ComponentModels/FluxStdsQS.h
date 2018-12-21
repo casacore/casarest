@@ -30,7 +30,7 @@
 
 #include <components/ComponentModels/FluxCalcLogFreqPolynomial.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // FluxStdBaars: The Baars flux standard.
@@ -254,6 +254,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif /* COMPONENTS_FLUXSTDSQS_H */

@@ -30,15 +30,15 @@
 #define SYNTHESIS_CONVOLUTIONEQUATION_H
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/LinearEquation.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <scimath/Mathematics/Convolver.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/scimath/Mathematics/Convolver.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/IPosition.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> Implements the convolution equation </summary>
 
@@ -219,6 +219,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

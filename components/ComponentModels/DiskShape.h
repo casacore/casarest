@@ -29,12 +29,12 @@
 #ifndef COMPONENTS_DISKSHAPE_H
 #define COMPONENTS_DISKSHAPE_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/TwoSidedShape.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MDirection;
 class MVAngle;
@@ -260,6 +260,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

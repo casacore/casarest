@@ -29,13 +29,13 @@
 #ifndef MSVIS_VISSET_H
 #define MSVIS_VISSET_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Arrays/Matrix.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays/Matrix.h>
 #include <msvis/MSVis/StokesVector.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // The interface to the MeasurementSet for synthesis processing
@@ -237,7 +237,7 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

@@ -29,15 +29,15 @@
 #ifndef COMPONENTS_SKYCOMPREP_H
 #define COMPONENTS_SKYCOMPREP_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/Flux.h>
 #include <components/ComponentModels/SkyCompBase.h>
-#include <casa/Utilities/CountedPtr.h>
-#include <casa/BasicSL/String.h>
-#include <measures/Measures/Stokes.h>
+#include <casacore/casa/Utilities/CountedPtr.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/measures/Measures/Stokes.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class ComponentShape;
 class CoordinateSystem;
@@ -356,6 +356,6 @@ private:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

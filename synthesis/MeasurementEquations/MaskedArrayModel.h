@@ -30,12 +30,12 @@
 #define SYNTHESIS_MASKEDARRAYMODEL_H
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // base class for models with an internal & external representation 
@@ -145,7 +145,7 @@ protected:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <synthesis/MeasurementEquations/MaskedArrayModel.tcc>

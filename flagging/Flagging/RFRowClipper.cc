@@ -28,15 +28,15 @@
 #include <flagging/Flagging/RFFlagCube.h>
 #include <flagging/Flagging/RFChunkStats.h>
 #include <flagging/Flagging/RFRowClipper.h>
-#include <casa/Arrays/LogiVector.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/MaskArrMath.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/Slice.h>
-#include <scimath/Mathematics/MedianSlider.h>
-#include <casa/stdio.h>
+#include <casacore/casa/Arrays/LogiVector.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/MaskArrMath.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/scimath/Mathematics/MedianSlider.h>
+#include <casacore/casa/stdio.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 RFRowClipper::RFRowClipper( RFChunkStats &ch,RFFlagCube &fl,Float clip,uInt hw,uInt maxp ) :
   chunk(ch),flag(fl),clip_level(clip),halfwin(hw),maxpass(maxp),
@@ -185,5 +185,5 @@ Float RFRowClipper::updateSigma (uInt &ifrmax,uInt &itmax,Bool flag_rows, bool c
   return dmax;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

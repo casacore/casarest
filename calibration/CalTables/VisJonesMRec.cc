@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/VisJonesMRec.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -50,5 +50,5 @@ VisJonesMRec::VisJonesMRec (const Record& inpRec) : CalMainRecord (inpRec)
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

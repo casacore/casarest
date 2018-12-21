@@ -8,9 +8,9 @@
 #ifndef ASYNCHRONOUSTOOLS_H_
 #define ASYNCHRONOUSTOOLS_H_
 
-#include <casa/aips.h>
-#include <casa/aipstype.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/aipstype.h>
+#include <casacore/casa/BasicSL/String.h>
 #include <boost/utility.hpp>
 
 #include <map>
@@ -19,9 +19,9 @@
 using std::map;
 using std::queue;
 
-//using namespace casa;
+//using namespace casacore;
 
-namespace casa {
+namespace casacore {
 
 namespace async {
 

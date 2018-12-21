@@ -24,19 +24,19 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 #include <components/ComponentModels/FluxStdSrcs.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/BasicSL/String.h>
-#include <casa/System/Aipsrc.h>
-#include <measures/Measures/MDirection.h>
-#include <tables/Tables/TableParse.h>
-#include <tables/Tables/ScalarColumn.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/System/Aipsrc.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/tables/TaQL/TableParse.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
 
 // Handy for passing anonymous arrays to functions.
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 #include <map>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 FluxStdSrcs::FluxStdSrcs()
 {
@@ -161,4 +161,4 @@ MDirection FluxStdSrcs::getDirection(const FSS::Source srcEnum) const
   return directions_p.find(srcEnum)->second;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

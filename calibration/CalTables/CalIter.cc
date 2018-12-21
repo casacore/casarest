@@ -27,10 +27,10 @@
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/CalIter.h>
-#include <casa/Containers/Block.h>
+#include <casacore/casa/Containers/Block.h>
 #include <msvis/MSVis/MSCalEnums.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -84,5 +84,5 @@ CalTable& CalIter::subTable()
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

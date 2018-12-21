@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/CalMainColumns.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // ROVisJonesMCol: Read-only VisJones cal_main calibration table column access
@@ -147,7 +147,7 @@ class VisJonesMCol : public CalMainColumns
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

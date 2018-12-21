@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/TimeVarMJMRec.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -51,5 +51,5 @@ TimeVarMJonesMRec::TimeVarMJonesMRec (const Record& inpRec) :
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -26,28 +26,28 @@
 //#
 //# $Id$
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/Logging/LogIO.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MeasTable.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MeasTable.h>
 #include <synthesis/MeasurementComponents/SkyModel.h>
 #include <synthesis/MeasurementComponents/Utils.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #endif
-#include <images/Images/PagedImage.h>
-#include <images/Images/ImageRegrid.h>
-#include <casa/Containers/Record.h>
-#include <lattices/Lattices/LatticeIterator.h>
-#include <lattices/Lattices/TiledLineStepper.h> 
-#include <lattices/Lattices/LatticeStepper.h> 
-#include <casa/System/Aipsrc.h>
-namespace casa{
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/ImageRegrid.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/TiledLineStepper.h> 
+#include <casacore/lattices/Lattices/LatticeStepper.h> 
+#include <casacore/casa/System/Aipsrc.h>
+namespace casacore{
   //
   //--------------------------------------------------------------------------------------------
   //  

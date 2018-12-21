@@ -5,17 +5,17 @@
 #include <ionosphere/Ionosphere/RINEX.h>
 #include <ionosphere/Ionosphere/GPSEphemeris.h>                                      
 #include <ionosphere/Ionosphere/GPSGroupDelay.h>                                      
-#include <casa/Quanta/MVTime.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MeasConvert.h>
-#include <measures/Measures/MeasTable.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/measures/Measures/MeasTable.h>
 
-#include <casa/Arrays/Slice.h>
-#include <casa/Arrays/LogiVector.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/casa/Arrays/LogiVector.h>
     
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 
 int main (int argc,char *argv[])
 {

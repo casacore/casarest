@@ -32,7 +32,7 @@
 #include <calibration/CalTables/CalTable.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalTableFromAIPS: Calibration table creation from AIPS FITS file
@@ -85,7 +85,7 @@ class CalTableFromAIPS : public CalTable
  };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

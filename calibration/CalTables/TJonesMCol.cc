@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/TJonesMCol.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -145,5 +145,5 @@ TJonesSplineMCol::TJonesSplineMCol (TJonesSplineTable& gjsTable) :
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

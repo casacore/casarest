@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/VisJonesDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // TimeVarVisJonesDesc: Define the format of TimeVarVisJones cal tables
@@ -181,7 +181,7 @@ class CJonesDesc : public TimeVarVisJonesDesc
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

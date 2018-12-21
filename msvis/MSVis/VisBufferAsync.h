@@ -10,7 +10,7 @@
 
 #include <msvis/MSVis/VisBuffer.h>
 
-namespace casa {
+namespace casacore {
 
 class ROVisibilityIteratorAsync;
 

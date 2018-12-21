@@ -26,7 +26,7 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <tableplot/TablePlot/TablePlot.h>
 
 
@@ -34,7 +34,7 @@
 #define CALIBRATION_PLOTCAL_H
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // forward declarations:
 template <class T> class PtrBlock;
@@ -234,7 +234,7 @@ class PlotCal
     Vector<Int> nchan_p;
 
     // The ResetCallBack
-    casa::TPResetCallBack *resetCallBack_p;
+    casacore::TPResetCallBack *resetCallBack_p;
 
     // A record containing meta info for callbacks
     Record metaRec_p;
@@ -248,7 +248,7 @@ class PlotCal
   };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

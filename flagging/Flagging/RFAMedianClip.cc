@@ -25,11 +25,11 @@
 //#
 //# $Id$
 
-#include <casa/stdio.h>
+#include <casacore/casa/stdio.h>
 #include <flagging/Flagging/RFAMedianClip.h>
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // -----------------------------------------------------------------------
 // RFATimeMedian
@@ -357,5 +357,5 @@ const RecordInterface & RFAFreqMedian::getDefaults ()
   return rec;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -28,10 +28,10 @@
 #ifndef MS_MSCONTINUUMSUBTRACTOR_H
 #define MS_MSCONTINUUMSUBTRACTOR_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/String.h>
-#include <ms/MeasurementSets/MSColumns.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MeasurementSet;
 class LogIO;
@@ -141,6 +141,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

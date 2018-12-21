@@ -26,34 +26,34 @@
 //# $Id: WBCleanImageSkyModel.cc 13615 2010-12-20 14:04:00 UrvashiRV$
 
 
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementComponents/WBCleanImageSkyModel.h>
 #include <synthesis/MeasurementEquations/CubeSkyEquation.h>
-#include <casa/OS/File.h>
+#include <casacore/casa/OS/File.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
 #include <synthesis/MeasurementEquations/LatticeModel.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
 
-#include <scimath/Mathematics/MatrixMathLA.h>
+#include <casacore/scimath/Mathematics/MatrixMathLA.h>
 
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisSetUtil.h>
 
-#include <ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
-#include <casa/OS/HostInfo.h>
+#include <casacore/casa/OS/HostInfo.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 #define TMR(a) "[User: " << a.user() << "] [System: " << a.system() << "] [Real: " << a.real() << "]"
 	
 #define MIN(a,b) ((a)<=(b) ? (a) : (b))
@@ -823,5 +823,5 @@ Bool WBCleanImageSkyModel::checkParameters()
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

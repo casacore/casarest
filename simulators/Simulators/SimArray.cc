@@ -26,17 +26,17 @@
 //# $Id$
 #include <simulators/Simulators/SimArray.h>
 
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/MatrixMath.h>
-#include <casa/Arrays/Slicer.h>
-#include <casa/Arrays/Slice.h>
-#include <casa/Quanta/Unit.h>
-#include <ms/MeasurementSets/MSAntenna.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <measures/Measures/MeasConvert.h>
-#include <casa/sstream.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/MatrixMath.h>
+#include <casacore/casa/Arrays/Slicer.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/casa/Quanta/Unit.h>
+#include <casacore/ms/MeasurementSets/MSAntenna.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 const String SimArray::defbase_p = "SimTelescope";
 
@@ -478,5 +478,5 @@ void SimArrayList::throwOutOfRange(uInt legallength, Int index) const {
     throw AipsError(String(msg));
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

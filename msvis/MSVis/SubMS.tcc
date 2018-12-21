@@ -24,14 +24,14 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 #include <msvis/MSVis/SubMS.h>
-#include <casa/Arrays/Array.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Logging/LogIO.h>
-#include <tables/Tables/ArrayColumn.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/TableDesc.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
   // Add optional columns to outTab if present in inTab and possColNames.
   // Returns the number of added columns.
@@ -74,6 +74,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     return nAdded;
   }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 

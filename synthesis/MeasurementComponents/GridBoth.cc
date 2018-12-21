@@ -28,9 +28,9 @@
 #include <synthesis/MeasurementComponents/GridBoth.h>
 #include <synthesis/MeasurementComponents/SimpCompGridMachine.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/TempImage.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/TempImage.h>
 
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
 
@@ -39,23 +39,23 @@
 #include <components/ComponentModels/ConstantSpectrum.h>
 
 #if defined(casacore)
-#include <lattices/LRegions/LCBox.h>
-#include <lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #else
-#include <lattices/Lattices/LCBox.h>
-#include <lattices/Lattices/LatticeExpr.h>
+#include <casacore/lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #endif
-#include <lattices/Lattices/SubLattice.h>
-#include <lattices/Lattices/LatticeIterator.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <casa/Containers/Record.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/OS/Timer.h>
-#include <casa/sstream.h>
+#include <casacore/lattices/Lattices/SubLattice.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 GridBoth::GridBoth(SkyJones& sj, Long icachesize,
 		   Int itilesize, 
@@ -333,5 +333,5 @@ void GridBoth::ok() {
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

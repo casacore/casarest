@@ -30,7 +30,7 @@
 
 #include <components/SpectralComponents/PCFSpectralElement.h>
 
-namespace casa {
+namespace casacore {
 
 // <summary>
 // Describes a Gaussian spectral line
@@ -156,6 +156,6 @@ private:
 ostream &operator<<(ostream& os, const GaussianSpectralElement& elem);
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

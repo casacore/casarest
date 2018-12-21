@@ -30,20 +30,20 @@
 #define SYNTHESIS_WBCLEANIMAGESKYMODEL_H
 
 #include <synthesis/MeasurementComponents/CleanImageSkyModel.h>
-#include <lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeCleanProgress.h>
-#include <lattices/LEL/LatticeExprNode.h>
-#include <lattices/LatticeMath/MultiTermLatticeCleaner.h>
+#include <casacore/lattices/LatticeMath/LatticeCleanProgress.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LatticeMath/MultiTermLatticeCleaner.h>
 #else
-#include <lattices/Lattices/LatticeCleanProgress.h>
-#include <lattices/Lattices/LatticeExprNode.h>
-#include <lattices/Lattices/MultiTermLatticeCleaner.h>
+#include <casacore/lattices/LatticeMath/LatticeCleanProgress.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LatticeMath/MultiTermLatticeCleaner.h>
 #endif
 #include <synthesis/MeasurementEquations/MultiTermMatrixCleaner.h>
-#include <casa/OS/Timer.h>
+#include <casacore/casa/OS/Timer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //forward
 class SkyEquation;
@@ -184,7 +184,7 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

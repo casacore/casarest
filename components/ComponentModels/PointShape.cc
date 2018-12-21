@@ -27,21 +27,21 @@
 
 #include <components/ComponentModels/PointShape.h>
 #include <components/ComponentModels/Flux.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Containers/RecordFieldId.h>
-#include <casa/Containers/RecordInterface.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicMath/Math.h>
-#include <measures/Measures/MCDirection.h>
-#include <measures/Measures/MeasConvert.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/Quanta/QMath.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Containers/RecordFieldId.h>
+#include <casacore/casa/Containers/RecordInterface.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/measures/Measures/MCDirection.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/Quanta/QMath.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 PointShape::PointShape() 
   :ComponentShape()
@@ -262,5 +262,5 @@ String PointShape::sizeToString() const {
 // compile-command: "gmake PointShape"
 // End: 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

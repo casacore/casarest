@@ -25,65 +25,65 @@
 //#
 //# $Id: ImagePolarimetry.cc 20652 2009-07-06 05:04:32Z Malte.Marquarding $
 
-#include <casa/OS/Timer.h>
+#include <casacore/casa/OS/Timer.h>
 
 #include <synthesis/Images/ImagePolarimetry.h>
 
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Arrays/MaskArrMath.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
-#include <coordinates/Coordinates/LinearCoordinate.h>
-#include <casa/Exceptions/Error.h>
-#include <scimath/Functionals/Polynomial.h>
-#include <images/Images/ImageInterface.h>
-#include <images/Images/SubImage.h>
-#include <images/Images/ImageExpr.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/MaskArrMath.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/LinearCoordinate.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/scimath/Functionals/Polynomial.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/SubImage.h>
+#include <casacore/images/Images/ImageExpr.h>
 #include <synthesis/Images/ImageFFT.h>
-#include <images/Regions/ImageRegion.h>
-#include <images/Images/ImageSummary.h>
-#include <images/Images/TempImage.h>
-#include <lattices/Lattices/Lattice.h>
+#include <casacore/images/Regions/ImageRegion.h>
+#include <casacore/images/Images/ImageSummary.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/lattices/Lattices/Lattice.h>
 #if defined(casacore)
-#include <lattices/LRegions/LCSlicer.h>
-#include <lattices/LEL/LatticeExprNode.h>
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LRegions/LCPagedMask.h>
+#include <casacore/lattices/LRegions/LCSlicer.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LRegions/LCPagedMask.h>
 #else
-#include <lattices/Lattices/LCSlicer.h>
-#include <lattices/Lattices/LatticeExprNode.h>
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LCPagedMask.h>
+#include <casacore/lattices/LRegions/LCSlicer.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LRegions/LCPagedMask.h>
 #endif
-#include <lattices/Lattices/TiledLineStepper.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LatticeIterator.h>
-#include <lattices/Lattices/MaskedLatticeIterator.h>
+#include <casacore/lattices/Lattices/TiledLineStepper.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/MaskedLatticeIterator.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeStatistics.h>
+#include <casacore/lattices/LatticeMath/LatticeStatistics.h>
 #else
-#include <lattices/Lattices/LatticeStatistics.h>
+#include <casacore/lattices/LatticeMath/LatticeStatistics.h>
 #endif
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogOrigin.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/BasicSL/Constants.h>
-#include <scimath/Mathematics/NumericTraits.h>
-#include <casa/System/PGPlotter.h>
-#include <casa/System/ProgressMeter.h>
-#include <casa/Quanta/QC.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/Utilities/GenSort.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogOrigin.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/scimath/Mathematics/NumericTraits.h>
+#include <casacore/casa/System/PGPlotter.h>
+#include <casacore/casa/System/ProgressMeter.h>
+#include <casacore/casa/Quanta/QC.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/Utilities/GenSort.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Public functions
 
@@ -715,7 +715,7 @@ void ImagePolarimetry::rotationMeasure(ImageInterface<Float>*& rmOutPtr,
    Vector<Float> wsq(nFreq);
    Vector<Double> world;
    Vector<Double> pixel(cSys0.referencePixel().copy());
-   Double c = QC::c.getValue(Unit("m/s"));
+   Double c = QC::c().getValue(Unit("m/s"));
    Double csq = c*c;
    for (uInt i=0; i<nFreq; i++) {
       pixel(fAxis) = i;
@@ -1463,7 +1463,7 @@ void ImagePolarimetry::fiddleTimeCoordinate(ImageInterface<Complex>& ie, const Q
 
    Vector<Double> inc = pC->increment();
    Double ff = f.getValue(Unit("Hz"));
-   Double lambda = QC::c.getValue(Unit("m/s")) / ff;
+   Double lambda = QC::c().getValue(Unit("m/s")) / ff;
    Double fac = -C::pi * ff / 2.0 / lambda / lambda;
    inc *= fac;
 //
@@ -2009,5 +2009,5 @@ Bool ImagePolarimetry::dealWithMask (Lattice<Bool>*& pMask, ImageInterface<Float
    return isMasked;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

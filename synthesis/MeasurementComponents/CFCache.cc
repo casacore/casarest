@@ -29,15 +29,15 @@
 #include <synthesis/MeasurementComponents/CFCache.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
 #endif
-#include <casa/Exceptions/Error.h>
-#include <casa/OS/Directory.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/OS/Directory.h>
 #include <fstream>
 
-namespace casa{
+namespace casacore{
   CFCache::~CFCache()  {}
   //
   //-------------------------------------------------------------------------

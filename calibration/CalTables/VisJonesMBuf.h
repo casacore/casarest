@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/CalMainBuffer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // VisJonesMBuf: VisJones calibration main table buffer
@@ -93,7 +93,7 @@ class VisJonesMBuf : public CalMainBuffer
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

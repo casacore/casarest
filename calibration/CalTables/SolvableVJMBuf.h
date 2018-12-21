@@ -33,7 +33,7 @@
 #include <calibration/CalTables/SolvableVJMCol.h>
 #include <calibration/CalTables/SolvableVJTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // SolvableVisJonesMBuf: SolvableVisJones calibration main table buffer
@@ -340,7 +340,7 @@ class TJonesMBuf : public SolvableVisJonesMBuf
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

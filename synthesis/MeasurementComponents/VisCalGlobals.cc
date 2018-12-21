@@ -36,7 +36,7 @@
 #include <synthesis/MeasurementComponents/AMueller.h>
 #include <synthesis/MeasurementComponents/TsysGainCal.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Create a specialized VisCal from VisSet
 VisCal* createVisCal(const String& type, VisSet& vs) {
@@ -201,4 +201,4 @@ SolvableVisCal* createSolvableVisCal(const String& type, const Int& nAnt) {
   }
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

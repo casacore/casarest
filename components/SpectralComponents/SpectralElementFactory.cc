@@ -27,8 +27,8 @@
 
 //# Includes
 
-#include <casa/Containers/Record.h>
-#include <casa/Utilities/PtrHolder.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Utilities/PtrHolder.h>
 #include <components/SpectralComponents/CompiledSpectralElement.h>
 #include <components/SpectralComponents/GaussianSpectralElement.h>
 #include <components/SpectralComponents/GaussianMultipletSpectralElement.h>
@@ -38,7 +38,7 @@
 #include <components/SpectralComponents/PowerLogPolynomialSpectralElement.h>
 #include <components/SpectralComponents/SpectralElementFactory.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SpectralElement* SpectralElementFactory::fromRecord(
 	const RecordInterface &in
@@ -249,5 +249,5 @@ SpectralElement* SpectralElementFactory::fromRecord(
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

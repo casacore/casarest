@@ -25,10 +25,10 @@
 //#
 //# $Id$
 
-#include <casa/BasicSL/Complex.h>
-#include <casa/Arrays/Matrix.h>
-#include <measures/Measures/MeasConvert.h>
-#include <images/Images/ImageInterface.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/images/Images/ImageInterface.h>
 #include <synthesis/MeasurementComponents/SkyJones.h>
 #include <synthesis/MeasurementComponents/FTMachine.h>
 #include <components/ComponentModels/Flux.h>
@@ -38,35 +38,35 @@
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
 #include <msvis/MSVis/StokesVector.h>
 #include <msvis/MSVis/VisBufferUtil.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/MatrixMath.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
-#include <lattices/Lattices/Lattice.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/MatrixMath.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/lattices/Lattices/Lattice.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeFFT.h>
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LRegions/LCBox.h>
 #else
-#include <lattices/Lattices/LatticeFFT.h>
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LCBox.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LRegions/LCBox.h>
 #endif
-#include <lattices/Lattices/TiledLineStepper.h>
-#include <lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/TiledLineStepper.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
 #include <unistd.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Exceptions/Error.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <lattices/Lattices/SubLattice.h>   
-#include <lattices/Lattices/TiledShape.h>  
-#include <casa/System/ProgressMeter.h>
+#include <casacore/lattices/Lattices/SubLattice.h>   
+#include <casacore/lattices/Lattices/TiledShape.h>  
+#include <casacore/casa/System/ProgressMeter.h>
 #include <synthesis/MeasurementEquations/PSkyEquation.h>
 #include <synthesis/MeasurementComponents/PredictAlgorithm.h>
 #include <synthesis/MeasurementComponents/ResidualAlgorithm.h>
 #include <synthesis/Parallel/Applicator.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 extern Applicator applicator;
 
@@ -299,5 +299,5 @@ return vs_->msName();
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

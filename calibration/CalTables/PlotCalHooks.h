@@ -35,13 +35,13 @@
 #include <iomanip>
 
 //# General CASA includes
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/BasicSL/String.h>
 
 //# Table and TablePlot includes
 #include <tableplot/TablePlot/TablePlot.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 class PlotCalReset : public TPResetCallBack
@@ -96,18 +96,18 @@ public:
     cout << "PlotCalCallBacks dtor" << endl;
   };
 
-  casa::Bool flagdata(String tablename) {
+  casacore::Bool flagdata(String tablename) {
     //    cout << "PlotCalCallBacks :: Completed flagging on : "
     //         << tablename << endl;
     return True;
   }
-  casa::Bool releasetable(Int nrows, Int ncols, Int panel, String tablename) {
+  casacore::Bool releasetable(Int nrows, Int ncols, Int panel, String tablename) {
     //    cout << "PlotCalCallBacks :: releasing "
     //         << tablename << " from panel "
     //         << nrows << "," <<ncols << "," << panel << endl;
     return True;
   }
-  casa::Bool createiterplotlabels( Vector<String> iteraxes,
+  casacore::Bool createiterplotlabels( Vector<String> iteraxes,
 				   Vector<Double> values,
 				   String &titleString ) {
     //    cout << "iteraxes    = " << iteraxes << endl;
@@ -145,7 +145,7 @@ public:
 
   }
 
-  casa::Bool printlocateinfo(Vector<String> collist,
+  casacore::Bool printlocateinfo(Vector<String> collist,
                              Matrix<Double> infomat,
                              Vector<String> cpol) {
 
@@ -243,6 +243,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

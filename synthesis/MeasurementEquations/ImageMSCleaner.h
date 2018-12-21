@@ -32,7 +32,7 @@
 //# Includes
 #include <synthesis/MeasurementEquations/MatrixCleaner.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 template <class T> class Matrix;
@@ -206,6 +206,6 @@ class ImageMSCleaner
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

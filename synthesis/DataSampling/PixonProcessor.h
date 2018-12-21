@@ -32,7 +32,7 @@
 #include <synthesis/IDL/IDL.h>
 #include <synthesis/DataSampling/DataSampling.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> Allows processing via the Pixon algorithm
 // </summary>
@@ -99,6 +99,6 @@ protected:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

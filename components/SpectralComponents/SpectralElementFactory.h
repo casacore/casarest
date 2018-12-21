@@ -29,11 +29,11 @@
 #define COMPONENTS_SPECTRALELEMENTFACTORY_H
 
 //# Includes
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Containers/RecordInterface.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Containers/RecordInterface.h>
 #include <components/SpectralComponents/SpectralElement.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // FIXME fix documentation
 
@@ -78,6 +78,6 @@ public:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

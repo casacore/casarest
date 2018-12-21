@@ -27,10 +27,10 @@
 
 //# Includes
 #include <components/SpectralComponents/SpectralEstimate.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/BasicMath/Math.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/BasicMath/Math.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Constructors
 SpectralEstimate::SpectralEstimate(const uInt maxpar) :
@@ -124,14 +124,14 @@ void SpectralEstimate::setMaxN(const uInt maxpar) {
   slist_p.set(maxpar);
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 //# Cater for Double and Float
 #ifdef AIPS_NO_TEMPLATE_SRC
 #include <components/SpectralComponents/Spectral2Estimate.tcc>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 template SpectralList const & SpectralEstimate::estimate<Float>(Vector<Float> const &, Vector<Float> *);
 template SpectralList const & SpectralEstimate::estimate<Float>(Vector<Float> const &, Vector<Float> const &);
 template SpectralElement SpectralEstimate::convertElement<Float>(Vector<Float> const &,
@@ -147,5 +147,5 @@ template SpectralElement SpectralEstimate::convertElement<Double>(Vector<Double>
 template void SpectralEstimate::findga<Double>(Vector<Double> const &);
 template uInt SpectralEstimate::window<Double>(Vector<Double> const &);
 template void SpectralEstimate::findc2<Double>(Vector<Double> const &);
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 #endif

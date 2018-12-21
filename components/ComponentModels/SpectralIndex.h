@@ -28,11 +28,11 @@
 #ifndef COMPONENTS_SPECTRALINDEX_H
 #define COMPONENTS_SPECTRALINDEX_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SpectralModel.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MFrequency;
 class RecordInterface;
@@ -283,6 +283,6 @@ private:
   Double itsError;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

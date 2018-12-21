@@ -30,10 +30,10 @@
 #define COMPONENTS_SPECTRALLIST_H
 
 //# Includes
-#include <casa/aips.h>
-#include <casa/Containers/Block.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Containers/Block.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 class SpectralElement;
@@ -185,7 +185,7 @@ std::ostream &operator<<(std::ostream &os, const SpectralList &lst);
 // </group>
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef CASACORE_NO_AUTO_TEMPLATES
 #include <components/SpectralComponents/SpectralList2.tcc>

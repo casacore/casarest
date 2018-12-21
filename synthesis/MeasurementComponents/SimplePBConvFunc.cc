@@ -25,44 +25,44 @@
 //#
 //#
 //# $Id$
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Slice.h>
-#include <casa/Arrays/Slicer.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Quanta/MVAngle.h>
-#include <measures/Measures/MeasTable.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/casa/Arrays/Slicer.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/measures/Measures/MeasTable.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
 
-#include <images/Images/ImageInterface.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/TempImage.h>
-#include <images/Images/SubImage.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/images/Images/SubImage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
-#include <ms/MeasurementSets/MSColumns.h>
-#include <lattices/Lattices/ArrayLattice.h>
-#include <lattices/Lattices/SubLattice.h>
-#include <lattices/Lattices/LatticeCache.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/lattices/Lattices/ArrayLattice.h>
+#include <casacore/lattices/Lattices/SubLattice.h>
+#include <casacore/lattices/Lattices/LatticeCache.h>
 #if defined(casacore)
-#include <lattices/LRegions/LCBox.h>
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #else
-#include <lattices/Lattices/LCBox.h>
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeFFT.h>
+#include <casacore/lattices/LRegions/LCBox.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #endif
 
-#include <scimath/Mathematics/ConvolveGridder.h>
+#include <casacore/scimath/Mathematics/ConvolveGridder.h>
 
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisibilityIterator.h>
@@ -71,7 +71,7 @@
 #include <synthesis/MeasurementComponents/SkyJones.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
   SimplePBConvFunc::SimplePBConvFunc(): PixelatedConvFunc<Complex>(),nchan_p(-1),
 					npol_p(-1), pointToPix_p(), directionIndex_p(-1), thePix_p(0),
@@ -732,7 +732,7 @@ namespace casa { //# NAMESPACE CASA - BEGIN
      }
   }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 

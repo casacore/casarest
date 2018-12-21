@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/TimeVarVJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // SolvableVisJonesDesc: Define the format of SolvableVisJones cal tables
@@ -292,7 +292,7 @@ class TJonesDesc : public SolvableVisJonesDesc
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

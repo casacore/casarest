@@ -24,12 +24,12 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 //# $Id$
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Exceptions/Error.h>
 #include <flagging/Flagging/DDMapper.h>
 #include <flagging/Flagging/RFChunkStats.h>
-#include <casa/Utilities/Regex.h>
+#include <casacore/casa/Utilities/Regex.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 DDFunc::DDFunc( FuncSignature fsig,const String &corrstr )
   : DDMapper(),icorr(-1),func(fsig)
@@ -250,5 +250,5 @@ DDMapper * DDFunc::getMapper ( String &descr,const Vector<String> &expr0,Bool th
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

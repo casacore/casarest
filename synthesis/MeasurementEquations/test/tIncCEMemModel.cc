@@ -25,27 +25,27 @@
 //#
 //# $Id$
  
-#include <casa/iostream.h>
-#include <casa/aips.h>
-#include <images/Images/PagedImage.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Slicer.h>
-#include <casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Slicer.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <synthesis/MeasurementEquations/IncCEMemModel.h>
 #include <synthesis/MeasurementEquations/CEMemModel.h>
-#include <casa/BasicMath/Random.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/Exceptions/Error.h>
-#include <coordinates/Coordinates/CoordinateUtil.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LatticeIterator.h>
-#include <lattices/Lattices/LatticeConvolver.h>
-#include <lattices/Lattices/TempLattice.h>
+#include <casacore/casa/BasicMath/Random.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/coordinates/Coordinates/CoordinateUtil.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/LatticeMath/LatticeConvolver.h>
+#include <casacore/lattices/Lattices/TempLattice.h>
  
  
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main()
 {
 

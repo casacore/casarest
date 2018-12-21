@@ -26,10 +26,10 @@
 //# $Id$
 
 #include <synthesis/MeasurementEquations/ConvolutionEquation.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Vector.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 ConvolutionEquation::ConvolutionEquation(){
 };
@@ -191,5 +191,5 @@ void ConvolutionEquation::flushPsf(){
   thePsf.resize(IPosition(0));
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

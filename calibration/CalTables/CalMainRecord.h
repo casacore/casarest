@@ -29,11 +29,11 @@
 #ifndef CALIBRATION_CALMAINRECORD_H
 #define CALIBRATION_CALMAINRECORD_H
 
-#include <casa/aips.h>
-#include <measures/Measures/MEpoch.h>
-#include <casa/Containers/Record.h>
+#include <casacore/casa/aips.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/casa/Containers/Record.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalMainRecord: Calibration table record access and creation
@@ -184,7 +184,7 @@ class CalMainRecord
  };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

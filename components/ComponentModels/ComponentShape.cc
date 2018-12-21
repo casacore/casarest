@@ -26,28 +26,28 @@
 //# $Id: ComponentShape.cc 21465 2014-06-19 05:56:56Z gervandiepen $
 
 #include <components/ComponentModels/ComponentShape.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Containers/Record.h>
-#include <casa/Containers/RecordFieldId.h>
-#include <casa/Containers/RecordInterface.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/BasicSL/Complex.h>
-#include <measures/Measures/MeasureHolder.h>
-#include <measures/Measures/MeasFrame.h>
-#include <measures/Measures/MeasRef.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/UnitVal.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Utilities/DataType.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Quanta/QuantumHolder.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Containers/RecordFieldId.h>
+#include <casacore/casa/Containers/RecordInterface.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/measures/Measures/MeasureHolder.h>
+#include <casacore/measures/Measures/MeasFrame.h>
+#include <casacore/measures/Measures/MeasRef.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/UnitVal.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/DataType.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 ComponentShape::ComponentShape() 
   :itsDir(),
@@ -378,5 +378,5 @@ Bool ComponentShape::fromAngQRecord(Quantum<Double>& retVal,
 // compile-command: "gmake ComponentShape"
 // End: 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

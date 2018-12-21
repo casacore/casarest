@@ -28,10 +28,10 @@
 #ifndef MSVIS_VISTIMEAVERAGER_H
 #define MSVIS_VISTIMEAVERAGER_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <msvis/MSVis/VisBuffer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // A class to average VisBuffers in time
@@ -126,7 +126,7 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

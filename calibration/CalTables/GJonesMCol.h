@@ -32,7 +32,7 @@
 #include <calibration/CalTables/SolvableVJMCol.h>
 #include <calibration/CalTables/GJonesTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // ROGJonesPolyMCol: Read-only GJonesPoly cal_main column access
@@ -328,7 +328,7 @@ class GJonesSplineMCol : public GJonesPolyMCol
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

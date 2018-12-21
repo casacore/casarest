@@ -35,12 +35,12 @@
 #include <synthesis/MeasurementComponents/BeamCalcAntenna.h>
 #include <synthesis/MeasurementComponents/CExp.new3.h>
 #include <synthesis/MeasurementComponents/ExpCache.h>
-#include <images/Images/TempImage.h>
-#include <casa/Exceptions.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/casa/Exceptions.h>
 #include <msvis/MSVis/VisBuffer.h>
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 #include <synthesis/MeasurementComponents/Utils.h>
-namespace casa{
+namespace casacore{
 
   Int getVLABandID(Double& freq,String&telescopeName);
   class VLACalcIlluminationConvFunc: public IlluminationConvFunc

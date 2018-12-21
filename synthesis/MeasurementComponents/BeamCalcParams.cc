@@ -1,6 +1,6 @@
 #include <synthesis/MeasurementComponents/BeamCalc.h>
 
-namespace casa{
+namespace casacore{
   struct BeamCalcGeometry BeamCalcGeometryDefaults[BeamCalc_NumBandCodes] = 
     {
       /* Format of each entry:

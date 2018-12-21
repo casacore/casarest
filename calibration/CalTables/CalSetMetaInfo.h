@@ -28,19 +28,19 @@
 #ifndef CALTABLES_CALSETMETAINFO_H
 #define CALTABLES_CALSETMETAINFO_H
 
-#include <casa/aips.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <ms/MeasurementSets/MSAntenna.h>
-#include <ms/MeasurementSets/MSFieldColumns.h>
-#include <ms/MeasurementSets/MSField.h>
-#include <ms/MeasurementSets/MSSpWindowColumns.h>
-#include <ms/MeasurementSets/MSSpectralWindow.h>
+#include <casacore/casa/aips.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/ms/MeasurementSets/MSAntenna.h>
+#include <casacore/ms/MeasurementSets/MSFieldColumns.h>
+#include <casacore/ms/MeasurementSets/MSField.h>
+#include <casacore/ms/MeasurementSets/MSSpWindowColumns.h>
+#include <casacore/ms/MeasurementSets/MSSpectralWindow.h>
 
-// #include <casa/Logging/LogMessage.h>
-// #include <casa/Logging/LogSink.h>
-// #include <casa/Logging/LogIO.h>
+// #include <casacore/casa/Logging/LogMessage.h>
+// #include <casacore/casa/Logging/LogSink.h>
+// #include <casacore/casa/Logging/LogIO.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // **********************************************************
 //  CalSetMetaInfo
@@ -106,6 +106,6 @@ private:
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

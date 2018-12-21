@@ -27,12 +27,12 @@
 
 #include <synthesis/DataSampling/PixonProcessor.h>
 #include <synthesis/IDL/IDL.h>
-#include <casa/OS/EnvVar.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/sstream.h>
+#include <casacore/casa/OS/EnvVar.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 PixonProcessor::PixonProcessor() 
 
@@ -144,5 +144,5 @@ Bool PixonProcessor::standardTest() {
   return False;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

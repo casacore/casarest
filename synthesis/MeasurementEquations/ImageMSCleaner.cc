@@ -25,11 +25,11 @@
 //# $Id$
 #include <synthesis/MeasurementEquations/MatrixCleaner.h>
 #include <synthesis/MeasurementEquations/ImageMSCleaner.h>
-#include <images/Images/PagedImage.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/CoordinateUtil.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/CoordinateUtil.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
   ImageMSCleaner::ImageMSCleaner(): psf_p(0), dirty_p(0), mask_p(0), nPsfChan_p(0), 
 				    nImChan_p(0), nPsfPol_p(0), nImPol_p(0), chanAxis_p(-1), 
@@ -423,4 +423,4 @@ namespace casa { //# NAMESPACE CASA - BEGIN
   }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

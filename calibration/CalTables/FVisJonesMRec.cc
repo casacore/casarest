@@ -29,7 +29,7 @@
 #include <calibration/CalTables/FVisJonesMRec.h>
 #include <msvis/MSVis/MSCalEnums.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 #define AddField(Class,Type,Field,Name) \
   void Class::define##Field (const Type& Field) { \
@@ -65,5 +65,5 @@ FVisJonesIonoMRec::FVisJonesIonoMRec (const Record& inpRec) :
 AddField(FVisJonesIonoMRec,Float,TEC,IONOSPH_TEC);
 AddField(FVisJonesIonoMRec,Float,TECErr,IONOSPH_TEC_ERROR);
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

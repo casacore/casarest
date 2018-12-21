@@ -29,14 +29,14 @@
 #ifndef CALIBRATION_CALHISTORYCOLUMNS_H
 #define CALIBRATION_CALHISTORYCOLUMNS_H
 
-#include <casa/aips.h>
-#include <measures/Measures/MFrequency.h>
-#include <tables/Tables/TableColumn.h>
-#include <tables/Tables/ScalarColumn.h>
+#include <casacore/casa/aips.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/tables/Tables/TableColumn.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
 #include <calibration/CalTables/CalTable.h>
 #include <msvis/MSVis/MSCalEnums.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // ROCalHistoryColumns: Read-only cal_history calibration table column access
@@ -190,7 +190,7 @@ class CalHistoryColumns
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

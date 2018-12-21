@@ -1,10 +1,10 @@
 #include "VisBufferAsyncWrapper.h"
 
 #include "AsynchronousTools.h"
-using namespace casa::async;
+using namespace casacore::async;
 
 #include "UtilJ.h"
-using namespace casa::utilj;
+using namespace casacore::utilj;
 #include "VisibilityIteratorAsync.h"
 #include "VLAT.h"
 
@@ -17,7 +17,7 @@ using namespace casa::utilj;
     {if (VlaData::loggingInitialized_p && level <= VlaData::logLevel_p) \
          Logger::get()->log (__VA_ARGS__);};
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 VisBufferAsyncWrapper::VisBufferAsyncWrapper ()
  : wrappedVba_p (NULL),

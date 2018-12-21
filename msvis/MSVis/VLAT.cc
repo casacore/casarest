@@ -33,11 +33,11 @@
 #include "VLAT.h"
 #include "VisBufferAsync.h"
 #include "VisibilityIteratorAsync.h"
-#include <casa/Logging/LogIO.h>
-#include <casa/System/AipsrcValue.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/System/AipsrcValue.h>
 
 #include "AsynchronousTools.h"
-using namespace casa::async;
+using namespace casacore::async;
 
 #include <algorithm>
 #include <cstdarg>
@@ -49,7 +49,7 @@ using namespace casa::async;
 #include <boost/function.hpp>
 
 using namespace boost;
-using namespace casa::utilj;
+using namespace casacore::utilj;
 using namespace std;
 
 #include "UtilJ.h"
@@ -58,10 +58,10 @@ using namespace std;
     {if (VlaData::loggingInitialized_p && level <= VlaData::logLevel_p) \
          Logger::get()->log (__VA_ARGS__);};
 
-using namespace casa::utilj;
-using namespace casa::asyncio;
+using namespace casacore::utilj;
+using namespace casacore::asyncio;
 
-namespace casa {
+namespace casacore {
 
 //  **********************************************
 //	*                                            *
@@ -752,7 +752,7 @@ VLAT::createFillerDictionary ()
 	                       vlatFunctor0 (& VisBuffer::fillSpW));
 	fillerDictionary_p.add(StateId,
 	                       vlatFunctor0 (& VisBuffer::fillStateId));
-	fillerDictionary_p.add(casa::asyncio::Time,
+	fillerDictionary_p.add(casacore::asyncio::Time,
 	                       vlatFunctor0 (& VisBuffer::fillTime));
 	fillerDictionary_p.add(TimeCentroid,
 	                       vlatFunctor0 (& VisBuffer::fillTimeCentroid));

@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/TimeVarMJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // SolvableMJonesDesc: Define the format of SolvableMJones cal tables
@@ -140,7 +140,7 @@ class MIfrDesc : public SolvableMJonesDesc
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

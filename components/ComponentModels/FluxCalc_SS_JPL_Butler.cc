@@ -28,28 +28,28 @@
 //#include <components/ComponentModels/FluxStandard.h>
 #include <components/ComponentModels/FluxCalc_SS_JPL_Butler.h>
 #include <components/ComponentModels/ComponentType.h>
-#include <casa/Containers/Record.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Quanta.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/OS/Directory.h>
-#include <casa/OS/DirectoryIterator.h>
-#include <casa/System/Aipsrc.h>
-#include <casa/sstream.h>
-#include <casa/iomanip.h>
-#include <measures/Measures.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MCEpoch.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MFrequency.h>
-#include <measures/Measures/MeasComet.h>
-#include <scimath/Mathematics/InterpolateArray1D.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/TableRecord.h>
-#include <tables/Tables/ScalarColumn.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Quanta.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/OS/Directory.h>
+#include <casacore/casa/OS/DirectoryIterator.h>
+#include <casacore/casa/System/Aipsrc.h>
+#include <casacore/casa/sstream.h>
+#include <casacore/casa/iomanip.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MCEpoch.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MeasComet.h>
+#include <casacore/scimath/Mathematics/InterpolateArray1D.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Recommended constructor.
 FluxCalc_SS_JPL_Butler::FluxCalc_SS_JPL_Butler(const String& objname,
@@ -609,15 +609,15 @@ void FluxCalc_SS_JPL_Butler::compute_BB(Vector<Flux<Double> >& values,
   Quantum<Double> temperature(temperature_p, "K");
 
   // The real peak frequency is about 2.82 x this.
-  Quantum<Double> freq_peak(QC::k * temperature / QC::h);
+  Quantum<Double> freq_peak(QC::k() * temperature / QC::h());
 
   Quantum<Double> rocd2(0.5 * angdiam);	// Dimensionless for now.
 
-  rocd2 /= QC::c;	// Don't put this in the c'tor, it'll give the wrong answer.
+  rocd2 /= QC::c();	// Don't put this in the c'tor, it'll give the wrong answer.
   rocd2 *= rocd2;
 
   // Frequency independent factor.
-  Quantum<Double> freq_ind_fac(2.0e26 * QC::h * C::pi * rocd2);
+  Quantum<Double> freq_ind_fac(2.0e26 * QC::h() * C::pi * rocd2);
 
   LogIO os(LogOrigin("FluxCalc_SS_JPL_Butler", "compute_BB"));
   os << LogIO::DEBUG1
@@ -655,11 +655,11 @@ void FluxCalc_SS_JPL_Butler::compute_GB(Vector<Flux<Double> >& values,
   const uInt nfreqs = mfreqs.nelements();
   Quantum<Double> rocd2(0.5 * angdiam);	// Dimensionless for now.
 
-  rocd2 /= QC::c;	// Don't put this in the c'tor, it'll give the wrong answer.
+  rocd2 /= QC::c();	// Don't put this in the c'tor, it'll give the wrong answer.
   rocd2 *= rocd2;
 
   // Frequency independent factor.
-  Quantum<Double> freq_ind_fac(2.0e26 * QC::h * C::pi * rocd2);
+  Quantum<Double> freq_ind_fac(2.0e26 * QC::h() * C::pi * rocd2);
 
   LogIO os(LogOrigin("FluxCalc_SS_JPL_Butler", "compute_GB"));
   os << LogIO::DEBUG1
@@ -685,7 +685,7 @@ void FluxCalc_SS_JPL_Butler::compute_GB(Vector<Flux<Double> >& values,
     Quantum<Double> temperature(max(temps[f], 2.7), "K");
 
     // The real peak frequency is about 2.82 x this.
-    Quantum<Double> freq_peak(QC::k * temperature / QC::h);
+    Quantum<Double> freq_peak(QC::k() * temperature / QC::h());
     
     values[f].setUnit(jy);
     Double fd = (freq_ind_fac * freq * freq * freq).getValue() /
@@ -1108,5 +1108,5 @@ Bool FluxCalc_SS_JPL_Butler::setObj(const String& objname)
   return setObjNum();
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

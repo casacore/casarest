@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/SolvableVJMRec.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -108,5 +108,5 @@ TJonesMRec::TJonesMRec (const Record& inpRec) :
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -31,12 +31,12 @@
 #include <synthesis/Parallel/PTransport.h>
 #include <synthesis/Parallel/MPIError.h>
 #include <synthesis/Parallel/Algorithm.h>
-#include <casa/Containers/Record.h>
-#include <casa/IO/AipsIO.h>
-#include <casa/IO/MemoryIO.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/IO/AipsIO.h>
+#include <casacore/casa/IO/MemoryIO.h>
 #include <mpi.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 MPITransport::MPITransport() : PTransport()
 {
@@ -484,7 +484,7 @@ void MPITransport::setDestAndTag(Int &dest, Int &tag)
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

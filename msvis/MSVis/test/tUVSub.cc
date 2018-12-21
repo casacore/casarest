@@ -26,15 +26,15 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/iostream.h>
 #include <msvis/MSVis/VisSet.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisibilityIterator.h>
-#include <casa/OS/Timer.h>
-#include <casa/iomanip.h>
-#include <casa/namespace.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/casa/iomanip.h>
+#include <casacore/casa/namespace.h>
 using namespace std;
 
 int main(int argc, char **argv) {

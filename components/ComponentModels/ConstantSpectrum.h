@@ -28,11 +28,11 @@
 #ifndef COMPONENTS_CONSTANTSPECTRUM_H
 #define COMPONENTS_CONSTANTSPECTRUM_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SpectralModel.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MFrequency;
 class RecordInterface;
@@ -200,6 +200,6 @@ public:
   virtual Bool ok() const;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

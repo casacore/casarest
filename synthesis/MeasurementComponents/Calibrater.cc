@@ -25,43 +25,43 @@
 //#
 //# $Id: Calibrater.cc,v 19.37 2006/03/16 01:28:09 gmoellen Exp $
 
-#include <tables/Tables/Table.h>
-#include <tables/Tables/TableRecord.h>
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/TableLock.h>
-#include <tables/Tables/TableParse.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/TableLock.h>
+#include <casacore/tables/TaQL/TableParse.h>
 
-#include <casa/Arrays/ArrayUtil.h>
-#include <casa/Arrays/ArrayLogical.h>
-//#include <casa/Arrays/ArrayMath.h>
-#include <ms/MeasurementSets/MSColumns.h>
+#include <casacore/casa/Arrays/ArrayUtil.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+//#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
 #if defined(casacore)
-#include <ms/MSSel/MSFieldIndex.h>
-#include <ms/MSSel/MSSelection.h>
-#include <ms/MSSel/MSSelectionTools.h>
+#include <casacore/ms/MSSel/MSFieldIndex.h>
+#include <casacore/ms/MSSel/MSSelection.h>
+#include <casacore/ms/MSSel/MSSelectionTools.h>
 #else
-#include <ms/MeasurementSets/MSFieldIndex.h>
-#include <ms/MeasurementSets/MSSelection.h>
-#include <ms/MeasurementSets/MSSelectionTools.h>
+#include <casacore/ms/MSSel/MSFieldIndex.h>
+#include <casacore/ms/MSSel/MSSelection.h>
+#include <casacore/ms/MSSel/MSSelectionTools.h>
 #endif
-#include <casa/BasicSL/Constants.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/iostream.h>
-#include <casa/sstream.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/sstream.h>
 #include <synthesis/MeasurementComponents/Calibrater.h>
 #include <synthesis/MeasurementComponents/VisCalSolver.h>
 #include <synthesis/MeasurementComponents/UVMod.h>
 #include <msvis/MSVis/VisSetUtil.h>
 #include <msvis/MSVis/VisBuffAccumulator.h>
-#include <casa/Quanta/MVTime.h>
+#include <casacore/casa/Quanta/MVTime.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Utilities/Assert.h>
 
-#include <tables/Tables/SetupNewTab.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Calibrater::Calibrater(): 
   ms_p(0), 
@@ -3043,4 +3043,4 @@ void Calibrater::writeHistory(LogIO& os, Bool cliCommand)
   }
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

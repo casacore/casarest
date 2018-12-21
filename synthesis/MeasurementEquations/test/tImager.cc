@@ -25,21 +25,21 @@
 //#
 //# $Id$
 
-#include <casa/iostream.h>
-#include <casa/aips.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Containers/Block.h>
-#include <measures/Measures/MRadialVelocity.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Containers/Block.h>
+#include <casacore/measures/Measures/MRadialVelocity.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <synthesis/MeasurementEquations/Imager.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 
 int main()
 {
   using namespace std;
-  using namespace casa;
+  using namespace casacore;
   try{
     cout <<"--Starting to add an entry to the history table." << endl;
     MeasurementSet ms( "/home/rrusk/testing/3C273XC1.ms", Table::Update );

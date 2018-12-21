@@ -1,12 +1,12 @@
 #include <flagging/Flagging/RFASelector.h>
 
 #include <msvis/MSVis/VisSet.h>
-#include <measures/Measures/Stokes.h>
+#include <casacore/measures/Measures/Stokes.h>
 
-#include <tables/Tables/TiledShapeStMan.h>
+#include <casacore/tables/DataMan/TiledShapeStMan.h>
 
-#include <casa/aips.h>
-#include <casa/namespace.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/namespace.h>
 #include <cassert>
 
 
@@ -65,12 +65,12 @@ MeasurementSet create_ms()
 
     // MAIN - antenna
     {
-        casa::MSMainColumns(ms).antenna1().put(0, 0);
-        casa::MSMainColumns(ms).antenna1().put(1, 0);
-        casa::MSMainColumns(ms).antenna1().put(2, 1);
-        casa::MSMainColumns(ms).antenna2().put(0, 1);
-        casa::MSMainColumns(ms).antenna2().put(1, 2);
-        casa::MSMainColumns(ms).antenna2().put(2, 2);
+        casacore::MSMainColumns(ms).antenna1().put(0, 0);
+        casacore::MSMainColumns(ms).antenna1().put(1, 0);
+        casacore::MSMainColumns(ms).antenna1().put(2, 1);
+        casacore::MSMainColumns(ms).antenna2().put(0, 1);
+        casacore::MSMainColumns(ms).antenna2().put(1, 2);
+        casacore::MSMainColumns(ms).antenna2().put(2, 2);
     }
 
 

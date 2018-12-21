@@ -27,9 +27,9 @@
 //# $Id$
 #include <simulators/Simulators/SimScan.h>
 #include <simulators/Simulators/SimObservations.h>
-#include <casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SimScan::SimScan() : pid_p(0), subary_p(0), fieldrep_p(1), srcid_p(0), 
     ants_p(), flds_p(), descs_p(), inttime_p(60.0, "s"), gaptime_p(0.0, "s"),
@@ -164,5 +164,5 @@ Bool SimScan::checkFields(Int srcid, const Vector<uInt>& flds,
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

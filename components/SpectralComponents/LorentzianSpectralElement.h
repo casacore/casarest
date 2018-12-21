@@ -30,7 +30,7 @@
 
 #include <components/SpectralComponents/PCFSpectralElement.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // Describes a single Lorentzian spectral profile
@@ -103,6 +103,6 @@ private:
 
 ostream &operator<<(ostream& os, const LorentzianSpectralElement& elem);
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

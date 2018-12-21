@@ -29,12 +29,12 @@
 #ifndef SYNTHESIS_PBMATH2DIMAGE_H
 #define SYNTHESIS_PBMATH2DIMAGE_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementComponents/PBMath2D.h>
-#include <images/Images/ImageInterface.h>
-#include <measures/Measures.h>
+#include <casacore/images/Images/ImageInterface.h>
+#include <casacore/measures/Measures.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //#forward
 template<class T> class TempImage;
@@ -224,6 +224,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -30,18 +30,18 @@
 #define SYNTHESIS_LATCONVEQUATION_H
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/LinearEquation.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeConvolver.h>
+#include <casacore/lattices/LatticeMath/LatticeConvolver.h>
 #else
-#include <lattices/Lattices/LatticeConvolver.h>
+#include <casacore/lattices/LatticeMath/LatticeConvolver.h>
 #endif
-#include <lattices/Lattices/Lattice.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Array.h>
+#include <casacore/lattices/Lattices/Lattice.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Array.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template <class Domain> class LinearModel;
 
@@ -190,6 +190,6 @@ protected:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

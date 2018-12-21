@@ -33,16 +33,16 @@
 #include <flagging/Flagging/RFFlagCube.h> 
 #include <flagging/Flagging/RFRowClipper.h> 
 #include <flagging/Flagging/RFABase.h>
-#include <casa/Arrays/Vector.h>
-#include <scimath/Functionals/Polynomial.h>
-#include <scimath/Fitting.h>
-#include <scimath/Fitting/LinearFit.h>
-#include <scimath/Fitting/GenericL2Fit.h>
-#include <scimath/Mathematics/MedianSlider.h> 
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/scimath/Functionals/Polynomial.h>
+#include <casacore/scimath/Fitting.h>
+#include <casacore/scimath/Fitting/LinearFit.h>
+#include <casacore/scimath/Fitting/GenericL2Fit.h>
+#include <casacore/scimath/Mathematics/MedianSlider.h> 
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisBuffer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 // <summary>
@@ -169,7 +169,7 @@ private:
 
     
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <flagging/Flagging/RFATimeFreqCrop.tcc>

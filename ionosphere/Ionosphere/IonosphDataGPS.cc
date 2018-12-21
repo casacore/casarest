@@ -1,7 +1,7 @@
 #include <ionosphere/Ionosphere/IonosphDataGPS.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // -----------------------------------------------------------------------
 // Constructor
@@ -49,5 +49,5 @@ Float IonosphDataGPS::chiSquare ( Vector<Float> &JChi,int isl,
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -26,17 +26,17 @@
 //#
 //# $Id$
  
-#include <casa/aips.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicMath/Math.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicMath/Math.h>
 #include <synthesis/MeasurementComponents/PBMath1DAiry.h>
-#include <casa/Quanta.h>
-#include <measures/Measures.h>
+#include <casacore/casa/Quanta.h>
+#include <casacore/measures/Measures.h>
 
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 PBMath1DAiry::PBMath1DAiry(Quantity dishDiam, Quantity blockedDiam,
 			   Quantity maxRad, Quantity refFreq, 
@@ -126,5 +126,5 @@ PBMath1DAiry::summary(Int nValues)
    os << "Blocked Diameter: " << blockedDiam_p.getValue("m") << " m " <<  LogIO::POST;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

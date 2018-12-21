@@ -30,10 +30,10 @@
 
 #include <flagging/Flagging/RFAFlagCubeBase.h> 
 #include <flagging/Flagging/RFDataMapper.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <casa/Arrays/LogiVector.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/casa/Arrays/LogiVector.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // RFASelector: flags pixels/rows based on a specified selection
@@ -144,7 +144,7 @@ protected:
     
     
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <flagging/Flagging/RFASelector.tcc>

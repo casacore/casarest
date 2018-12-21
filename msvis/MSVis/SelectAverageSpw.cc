@@ -28,11 +28,11 @@
 
 
 #include <msvis/MSVis/SelectAverageSpw.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Slice.h>
-#include <measures/Measures/MeasTable.h>
-//#include <casa/OS/Timer.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Slice.h>
+#include <casacore/measures/Measures/MeasTable.h>
+//#include <casacore/casa/OS/Timer.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +43,7 @@
 
 #define LOG2 0
 
-namespace casa { 
+namespace casacore { 
 
 const Int SelectAverageSpw::maxChan = 100000; 
 
@@ -344,7 +344,7 @@ void SelectAverageSpw::averageVelocity(Bool &sorryVel,
    if (sCnt < 1)
       return;
 
-   Double cspeed = (QC::c).getValue() / 1000.;
+   Double cspeed = (QC::c()).getValue() / 1000.;
 
    String itsRestFreq = restfreq;
    String itsFrame = frame;

@@ -26,11 +26,11 @@
 //# $Id$
 
 #include <synthesis/MeasurementEquations/MaskedHogbomCleanModel.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Arrays/MaskArrMath.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/MaskArrMath.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class T> Bool MaskedHogbomCleanModel<T>::
 solve(ResidualEquation<MaskedArray<T> > & eqn){
@@ -83,5 +83,5 @@ solve(ConvolutionEquation & eqn){
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

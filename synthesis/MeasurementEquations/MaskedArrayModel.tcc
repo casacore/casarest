@@ -26,10 +26,10 @@
 //# $Id$
 
 #include <synthesis/MeasurementEquations/MaskedArrayModel.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/LogiArray.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/LogiArray.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class T> MaskedArrayModel<T>::
 MaskedArrayModel(){};
@@ -72,5 +72,5 @@ setModel(const Array<T> & model){
   theModel.setData(model, mask);
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

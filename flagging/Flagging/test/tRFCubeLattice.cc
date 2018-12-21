@@ -2,7 +2,7 @@
 #include <flagging/Flagging/RFCommon.h>
 #include <iostream>
 
-using namespace casa;
+using namespace casacore;
 using namespace std;
 
 unsigned nchan = 8;

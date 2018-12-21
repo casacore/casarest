@@ -26,12 +26,12 @@
 
 #include <components/SpectralComponents/CompiledSpectralElement.h>
 
-#include <scimath/Functionals/CompiledFunction.h>
-#include <scimath/Mathematics/AutoDiffMath.h>
+#include <casacore/scimath/Functionals/CompiledFunction.h>
+#include <casacore/scimath/Mathematics/AutoDiffMath.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 CompiledSpectralElement::CompiledSpectralElement() {}
 
@@ -151,6 +151,6 @@ ostream &operator<<(ostream& os, const CompiledSpectralElement& elem) {
 	return os;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 

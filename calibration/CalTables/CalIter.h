@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/CalIterBase.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalIter: Sequential calibration table iterator
@@ -105,7 +105,7 @@ class CalIter : public CalIterBase
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

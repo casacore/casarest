@@ -30,13 +30,13 @@
 #include <components/ComponentModels/FluxStandard.h>
 //#include <components/ComponentModels/FluxCalcQS.h>
 #include <components/ComponentModels/FluxCalcVQS.h>
-#include <casa/BasicSL/String.h>
-#include <measures/Measures/MFrequency.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/measures/Measures/MFrequency.h>
 
 //# Handy for passing anonymous arrays to functions.
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // FluxCalcLogFreqPolynomial: Implementation base class for flux standards
@@ -247,7 +247,7 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <components/ComponentModels/FluxCalcLogFreqPolynomial.tcc>

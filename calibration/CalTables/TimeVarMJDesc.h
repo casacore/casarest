@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/MJonesDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // TimeVarMJonesDesc: Define the format of TimeVarMJones cal tables
@@ -81,6 +81,6 @@ class TimeVarMJonesDesc : public MJonesDesc
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

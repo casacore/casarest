@@ -29,16 +29,16 @@
 #ifndef SYNTHESIS_SIMULATOR_H
 #define SYNTHESIS_SIMULATOR_H
 
-#include <casa/aips.h>
-#include <casa/Quanta/Quantum.h>
-#include <measures/Measures/MPosition.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/measures/Measures/MPosition.h>
 #include <synthesis/MeasurementComponents/BeamSquint.h>
 #include <synthesis/MeasurementComponents/VPSkyJones.h>
 #include <synthesis/MeasurementEquations/VisEquation.h>
 //#include <synthesis/MeasurementComponents/EPJones.h>
 
-#include <casa/namespace.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+#include <casacore/casa/namespace.h>
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 class MeasurementSet;
 class VisSet;
 class VisCal;
@@ -508,6 +508,6 @@ private:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

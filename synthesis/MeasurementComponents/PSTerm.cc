@@ -28,7 +28,7 @@
 #include <synthesis/MeasurementComponents/PSTerm.h>
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   //
   //-------------------------------------------------------------------------
   //	       

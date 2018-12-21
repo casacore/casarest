@@ -26,39 +26,39 @@
 //# $Id$
 //----------------------------------------------------------------------------
 #include <tableplot/TablePlot/TablePlot.h>
-#include <tables/Tables/TableDesc.h>
-#include <tables/Tables/TableInfo.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/TableRecord.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/ArrColDesc.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ArrayColumn.h>
-#include <tables/Tables/ExprNode.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/ArrayIO.h>
-#include <casa/Arrays/Cube.h>
-#include <casa/Arrays/MaskedArray.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayIO.h>
-#include <casa/Containers/Record.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/Utilities/GenSort.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/OS/Time.h>
-#include <casa/iostream.h>
-#include <casa/sstream.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/tables/Tables/TableInfo.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/ArrColDesc.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ArrayColumn.h>
+#include <casacore/tables/TaQL/ExprNode.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/Arrays/Cube.h>
+#include <casacore/casa/Arrays/MaskedArray.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/GenSort.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/OS/Time.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/sstream.h>
 #include <graphics/Graphics/PGPlotterLocal.h>
 #include <graphics/Graphics/PGPLOT.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/sstream.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/System/PGPlotter.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/sstream.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/System/PGPlotter.h>
 #include <calibration/CalTables/BJonesTable.h>
 #include <calibration/CalTables/BJonesMCol.h>
 #include <calibration/CalTables/GJonesTable.h>
@@ -66,13 +66,13 @@
 #include <calibration/CalTables/CalIter.h>
 #include <calibration/CalTables/PlotCal.h>
 #include <calibration/CalTables/PlotCalHooks.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSSelection.h>
-#include <ms/MeasurementSets/MSFieldColumns.h>
-#include <ms/MeasurementSets/MSAntennaColumns.h>
-#include <ms/MeasurementSets/MSSpWindowColumns.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MSSel/MSSelection.h>
+#include <casacore/ms/MeasurementSets/MSFieldColumns.h>
+#include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
+#include <casacore/ms/MeasurementSets/MSSpWindowColumns.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 #define NEED_UNDERSCORES
 #if defined(NEED_UNDERSCORES)
@@ -118,7 +118,7 @@ extern "C" {
   tp_p = TablePlot::TablePlotInstance();
       
   // The reset callback
-  resetCallBack_p = new casa::PlotCalReset( this );
+  resetCallBack_p = new casacore::PlotCalReset( this );
   tp_p->setResetCallBack("PlotCal",resetCallBack_p);
 
   //    tp_p->changeGuiButtonState("markregion","disabled");
@@ -2062,4 +2062,4 @@ Double PlotCal::getSplineVal (Double x,
        
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

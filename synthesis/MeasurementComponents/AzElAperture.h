@@ -29,10 +29,10 @@
 #ifndef SYNTHESIS_AZELAPERTURE_H
 #define SYNTHESIS_AZELAPERTURE_H
 
-#include <images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
 #include <synthesis/MeasurementComponents/ATerm.h>
 #include <synthesis/MeasurementComponents/Utils.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
 //
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
@@ -45,7 +45,7 @@
 #define OVERSAMPLING 10
 #define THRESHOLD 1E-3
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   template<class T> class ImageInterface;
   template<class T> class Matrix;
   class VisBuffer;

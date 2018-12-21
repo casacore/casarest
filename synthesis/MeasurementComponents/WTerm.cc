@@ -28,7 +28,7 @@
 #include <synthesis/MeasurementComponents/WTerm.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   
   void WTerm::applySky(Matrix<Complex>& screen, 
 		       const Int wPixel, 

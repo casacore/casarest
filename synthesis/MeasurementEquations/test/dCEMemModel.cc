@@ -25,30 +25,30 @@
 //#
 //# $Id$
  
-#include <casa/iostream.h>
-#include <casa/aips.h>
-#include <images/Images/PagedImage.h>
-#include <casa/Arrays/IPosition.h>
-#include <lattices/Lattices/LCSlicer.h>
-#include <images/Regions/ImageRegion.h>
-#include <images/Images/SubImage.h>
-#include <lattices/Lattices/PagedArray.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Slicer.h>
-#include <casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/aips.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/lattices/LRegions/LCSlicer.h>
+#include <casacore/images/Regions/ImageRegion.h>
+#include <casacore/images/Images/SubImage.h>
+#include <casacore/lattices/Lattices/PagedArray.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Slicer.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
 #include <synthesis/MeasurementEquations/LatConvEquation.h>
 #include <synthesis/MeasurementEquations/CEMemModel.h>
-#include <casa/BasicMath/Random.h>
-#include <coordinates/Coordinates/CoordinateUtil.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/SubImage.h>
-#include <lattices/Lattices/LatticeConvolver.h>
-#include <lattices/Lattices/TempLattice.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/BasicMath/Random.h>
+#include <casacore/coordinates/Coordinates/CoordinateUtil.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/SubImage.h>
+#include <casacore/lattices/LatticeMath/LatticeConvolver.h>
+#include <casacore/lattices/Lattices/TempLattice.h>
+#include <casacore/casa/Exceptions/Error.h>
 
 
  
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main()
 {
 

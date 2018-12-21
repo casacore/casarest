@@ -28,14 +28,14 @@
 #ifndef COMPONENTS_SPECTRALMODEL_H
 #define COMPONENTS_SPECTRALMODEL_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
-#include <casa/Utilities/RecordTransformable.h>
-#include <measures/Measures/MFrequency.h>
-#include <casa/Quanta/Unit.h>
-#include <casa/Quanta/Quantum.h>
+#include <casacore/casa/Utilities/RecordTransformable.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/casa/Quanta/Unit.h>
+#include <casacore/casa/Quanta/Quantum.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class RecordInterface;
 class String;
@@ -308,6 +308,6 @@ private:
   Quantity itsFreqErr;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

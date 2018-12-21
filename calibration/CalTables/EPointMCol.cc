@@ -27,7 +27,7 @@
 //----------------------------------------------------------------------------
 
 #include <calibration/CalTables/EPointMCol.h>
-namespace casa {
+namespace casacore {
 //----------------------------------------------------------------------------
 
 ROEPointMCol::ROEPointMCol (const EPointTable& epTable) :

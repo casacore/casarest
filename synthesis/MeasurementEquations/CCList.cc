@@ -26,10 +26,10 @@
 //# $Id$
 
 #include <synthesis/MeasurementEquations/CCList.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Vector.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 CCList::CCList()
   :itsPol(1),
@@ -258,5 +258,5 @@ void CCList::reactivateOKCheck() {
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

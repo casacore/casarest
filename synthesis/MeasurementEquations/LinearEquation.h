@@ -30,12 +30,12 @@
 #define SYNTHESIS_LINEAREQUATION_H
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
 #include <synthesis/MeasurementEquations/ResidualEquation.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> defines a relationship between Domain and Range objects </summary>
 
@@ -131,7 +131,7 @@ public:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <synthesis/MeasurementEquations/LinearEquation.tcc>

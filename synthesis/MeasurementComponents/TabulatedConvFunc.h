@@ -31,7 +31,7 @@
 
 #include <synthesis/MeasurementComponents/ConvolutionFunction.h>
 
-namespace casa{
+namespace casacore{
 
   class TabulatedConvFunc: public ConvolutionFunction
   {

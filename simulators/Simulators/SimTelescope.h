@@ -33,7 +33,7 @@
 #include <simulators/Simulators/SimSpWin.h>
 #include <simulators/Simulators/SimPol.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MeasurementSet;
 
@@ -417,6 +417,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

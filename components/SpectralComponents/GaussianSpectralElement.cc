@@ -28,13 +28,13 @@
 //# Includes
 #include <components/SpectralComponents/GaussianSpectralElement.h>
 
-#include <casa/BasicSL/Constants.h>
+#include <casacore/casa/BasicSL/Constants.h>
 
-#include <scimath/Functionals/Gaussian1D.h>
+#include <casacore/scimath/Functionals/Gaussian1D.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Constants
 const Double GaussianSpectralElement::SigmaToFWHM = sqrt(8.0*C::ln2);
@@ -168,5 +168,5 @@ Double GaussianSpectralElement::sigmaFromFWHM(const Double fwhm) {
   return fwhm / SigmaToFWHM;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

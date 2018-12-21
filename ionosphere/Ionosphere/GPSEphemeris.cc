@@ -26,22 +26,22 @@
 //# $Id$
 
 #include <errno.h>
-#include <casa/string.h>
-#include <casa/Exceptions.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Quanta/MVTime.h>
-#include <casa/Quanta/MVEpoch.h>
-#include <measures/Measures/MCEpoch.h>
-#include <measures/Measures/MCDirection.h>
-#include <measures/Measures.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MPosition.h>
-#include <scimath/Functionals/Interpolate1D.h>
-#include <casa/iostream.h>
+#include <casacore/casa/string.h>
+#include <casacore/casa/Exceptions.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Quanta/MVTime.h>
+#include <casacore/casa/Quanta/MVEpoch.h>
+#include <casacore/measures/Measures/MCEpoch.h>
+#include <casacore/measures/Measures/MCDirection.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/scimath/Functionals/Interpolate1D.h>
+#include <casacore/casa/iostream.h>
 #include <ionosphere/Ionosphere/GPSEphemeris.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Int GPSEphemeris::debug_level=0;
 
@@ -461,5 +461,5 @@ Vector<MVDirection> GPSEphemeris::splineAzEl (uInt svn,const Vector<Double> &mjd
   return azel;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -29,12 +29,12 @@
 #ifndef CALIBRATION_BJONESMBUF_H
 #define CALIBRATION_BJONESMBUF_H
 
-#include <measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MFrequency.h>
 #include <calibration/CalTables/SolvableVJMBuf.h>
 #include <calibration/CalTables/BJonesMCol.h>
 #include <calibration/CalTables/BJonesTable.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // BJonesMBuf: BJones calibration main table buffer
@@ -233,7 +233,7 @@ class BJonesPolyMBuf : public BJonesMBuf
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

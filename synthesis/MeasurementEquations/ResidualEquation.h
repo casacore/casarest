@@ -30,10 +30,10 @@
 #ifndef SYNTHESIS_RESIDUALEQUATION_H
 #define SYNTHESIS_RESIDUALEQUATION_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/LinearModel.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 template<class Domain> class LinearModel;
 
@@ -148,7 +148,7 @@ public:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <synthesis/MeasurementEquations/ResidualEquation.tcc>

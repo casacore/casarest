@@ -30,10 +30,10 @@
 #define SYNTHESIS_PTRANSPORT_H
 
 //# Includes
-#include <casa/aips.h>
-#include <casa/Arrays/Array.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Array.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 class Algorithm;
@@ -331,7 +331,7 @@ class SerialTransport : public PTransport {
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

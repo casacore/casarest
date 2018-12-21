@@ -29,16 +29,16 @@
 #define COMPONENTS_FLUXCALCQS_H
 
 #include <components/ComponentModels/FluxStandard.h>
-#include <casa/BasicSL/String.h>
-#include <measures/Measures/MDirection.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/measures/Measures/MDirection.h>
 
 //# Handy for passing anonymous arrays to functions.
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 
 #include <map>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //class Flux;
 class MFrequency;
@@ -134,6 +134,6 @@ private:
   std::map<FCQS::Source, MDirection> directions_p;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif /* COMPONENTS_FLUXCALCQS_H */

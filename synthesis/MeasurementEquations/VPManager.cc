@@ -26,30 +26,30 @@
 //# $Id$
 
 
-#include <casa/Containers/Record.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/iostream.h>
-#include <tables/Tables/ScalarColumn.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/ScaRecordColDesc.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/TableParse.h>
-#include <tables/Tables/TableDesc.h>
-#include <casa/Quanta/QuantumHolder.h>
-#include <casa/Quanta/Quantum.h>
-#include <measures/Measures/MDirection.h>
-#include <measures/Measures/MeasureHolder.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/tables/Tables/ScalarColumn.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/ScaRecordColDesc.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/TaQL/TableParse.h>
+#include <casacore/tables/Tables/TableDesc.h>
+#include <casacore/casa/Quanta/QuantumHolder.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/measures/Measures/MeasureHolder.h>
 #include <synthesis/MeasurementEquations/VPManager.h>
 #include <synthesis/MeasurementComponents/PBMathInterface.h>
 #include <synthesis/MeasurementComponents/PBMath.h>
-#include <casa/Logging.h>
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   VPManager::VPManager() {
 
     vplist_p=Record();
@@ -475,4 +475,4 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 
   }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

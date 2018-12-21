@@ -29,7 +29,7 @@
 #include <calibration/CalTables/MJonesMRec.h>
 #include <msvis/MSVis/MSCalEnums.h> 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -108,5 +108,5 @@ void MJonesMRec::getFeed2 (Int& feed2)
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

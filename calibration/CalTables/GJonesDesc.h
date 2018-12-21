@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/SolvableVJDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // GJonesPolyDesc: Define the format of GJonesPoly cal tables
@@ -141,7 +141,7 @@ class GJonesSplineDesc : public GJonesPolyDesc
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

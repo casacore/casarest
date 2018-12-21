@@ -29,7 +29,7 @@
 #ifndef SYNTHESIS_EVLACONVFUNC_H
 #define SYNTHESIS_EVLACONVFUNC_H
 
-#include <images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <synthesis/MeasurementComponents/BeamCalc.h>
 #include <synthesis/MeasurementComponents/CFStore.h>
@@ -37,19 +37,19 @@
 //#include <synthesis/MeasurementComponents/IlluminationConvFunc.h>
 //#include <synthesis/MeasurementComponents/PixelatedConvFunc.h>
 #include <synthesis/MeasurementComponents/ConvolutionFunction.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
 #if defined(casacore)
-#include <lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #else
-#include <lattices/Lattices/LatticeFFT.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #endif
-#include <casa/Logging/LogIO.h>
-#include <casa/Logging/LogSink.h>
-#include <casa/Logging/LogOrigin.h>
+#include <casacore/casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogOrigin.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   template<class T> class ImageInterface;
   template<class T> class Matrix;
   class VisBuffer;

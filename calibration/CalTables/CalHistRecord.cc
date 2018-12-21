@@ -28,9 +28,9 @@
 
 #include <calibration/CalTables/CalHistRecord.h>
 #include <msvis/MSVis/MSCalEnums.h>
-#include <casa/Arrays.h>
+#include <casacore/casa/Arrays.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -195,5 +195,5 @@ void CalHistoryRecord::getCalNotes (String& calNotes)
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

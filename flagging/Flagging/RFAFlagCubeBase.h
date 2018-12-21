@@ -27,11 +27,11 @@
 #ifndef FLAGGING_RFAFLAGCUBEBASE_H
 #define FLAGGING_RFAFLAGCUBEBASE_H
 
-#include <casa/Containers/RecordInterface.h>
+#include <casacore/casa/Containers/RecordInterface.h>
 #include <flagging/Flagging/RFABase.h> 
 #include <flagging/Flagging/RFFlagCube.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // Abstract RedFlagger Agent class with a flag cube
@@ -91,6 +91,6 @@ protected:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

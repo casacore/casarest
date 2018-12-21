@@ -27,11 +27,11 @@
 #ifndef SYNTHESIS_QIMAGER_H
 #define SYNTHESIS_QIMAGER_H
 
-#include <casa/aips.h>
-#include <casa/OS/Timer.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/OS/Timer.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Forward declarations
 class VisSet;
@@ -98,7 +98,7 @@ class Qimager
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

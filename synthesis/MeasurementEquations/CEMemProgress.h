@@ -29,14 +29,14 @@
 #define SYNTHESIS_CEMEMPROGRESS_H
  
 //# Includes
-#include <casa/aips.h>
-#include <casa/Quanta/Quantum.h>
-#include <lattices/Lattices/Lattice.h>
-#include <lattices/Lattices/TempLattice.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/Arrays/Vector.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/lattices/Lattices/Lattice.h>
+#include <casacore/lattices/Lattices/TempLattice.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/Arrays/Vector.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 template <class T> class Vector;
@@ -129,6 +129,6 @@ private:
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

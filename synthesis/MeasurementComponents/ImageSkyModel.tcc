@@ -1,7 +1,7 @@
-#include <casa/OS/HostInfo.h>
+#include <casacore/casa/OS/HostInfo.h>
 #include <synthesis/MeasurementComponents/ImageSkyModel.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 #define MEMFACTOR 8.0
 #if !(defined (AIPS_64B))
@@ -38,5 +38,5 @@ TempImage<M>* ImageSkyModel::getTempImage(const TiledShape& imgShp,
   return timgptr;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

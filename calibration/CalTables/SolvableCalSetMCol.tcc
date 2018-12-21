@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/SolvableCalSetMCol.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -82,5 +82,5 @@ SolvableCalSetMCol<T>::SolvableCalSetMCol (CalTable2& svjTable) :
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

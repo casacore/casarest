@@ -35,7 +35,7 @@ int main()
   TELCAL_TRACE1("dPm         = %f \n",dPm);
   TELCAL_TRACE1("h0          = %f m\n\n",h0);
 
-  casa::Atmosphere *atm = new casa::Atmosphere(altitude,temperature,pressure,maxAltitude,humidity,dTempdH,dP,dPm, h0, casa::MIDLAT_SUMMER);
+  casacore::Atmosphere *atm = new casacore::Atmosphere(altitude,temperature,pressure,maxAltitude,humidity,dTempdH,dP,dPm, h0, casacore::MIDLAT_SUMMER);
   
   TELCAL_TRACE("Test: getStartupWaterContent()\n");
   double water = atm->getStartupWaterContent();
@@ -45,7 +45,7 @@ int main()
   int npp;
   TELCAL_TRACE("Test: Profile getProfile()\n");
 
-  casa::Profile p=atm->getProfile();
+  casacore::Profile p=atm->getProfile();
   npp = p.thickness_m.size(); 
   for (int i=0; i<npp;i++) {
     printf("%8.2f %10.3f %10.6f %10.3f\n",p.thickness_m[i], p.temperature_m[i], p.water_m[i], p.pressure_m[i]);
@@ -53,7 +53,7 @@ int main()
   cout<<endl;
 
   TELCAL_TRACE("Test: void getProfile(Profile)\n");
-  casa::Profile p2;
+  casacore::Profile p2;
   atm->getProfile(p2);
   /*
   for (int i=0; i<npp;i++) {
@@ -85,7 +85,7 @@ int main()
 
   /// Test getOpacity()
   TELCAL_TRACE("Test: Opacity getOpacity()\n");
-  casa::Opacity o=atm->getOpacity();
+  casacore::Opacity o=atm->getOpacity();
   TELCAL_TRACE2(" - dryOpacity %6.4f wetOpacity/mm %7.5f\n",o.dryOpacity_m[0],o.wetOpacity_m[0]);
 
   TELCAL_TRACE("Test: getOpacity(Opacity)\n");
@@ -94,11 +94,11 @@ int main()
   
 
   /// Test getAbsCoeff
-  casa::AbsCoeff a=atm->getAbsCoeff();
+  casacore::AbsCoeff a=atm->getAbsCoeff();
   TELCAL_TRACE3("AbsCoeff getAbsCoeff() (3 first layers): %f %f %f\n",a.kH2OLines_m[0],a.kH2OLines_m[1*NMAX_DATOS*npp],a.kH2OLines_m[2*NMAX_DATOS*npp]);
 
   /// Test getAbsCoeffDer
-  casa::AbsCoeffDer aDer=atm->getAbsCoeffDer();
+  casacore::AbsCoeffDer aDer=atm->getAbsCoeffDer();
   TELCAL_TRACE3("AbsCoeff getAbsCoeff() (3 first layers): %f %f %f\n",aDer.kH2OLinesDer_m[0],aDer.kH2OLinesDer_m[1*NMAX_DATOS*npp],aDer.kH2OLinesDer_m[2*NMAX_DATOS*npp]);
 
   /// Compute SkyBrightness()
@@ -109,9 +109,9 @@ int main()
   TELCAL_TRACE("Test of computeSkyBrightness()\n");
   atm->computeSkyBrightness(airMass, tbgr, precWater);
 
-  vector<double> tBand = atm->getSkyBrightness(casa::BLACKBODY);
+  vector<double> tBand = atm->getSkyBrightness(casacore::BLACKBODY);
   TELCAL_TRACE1("SkyBrightness = %f K (TEBB) \n",tBand[0]);
-  tBand = atm->getSkyBrightness(casa::RAYLEIGH_JEANS);
+  tBand = atm->getSkyBrightness(casacore::RAYLEIGH_JEANS);
   TELCAL_TRACE1("SkyBrightness = %f K (Rayleigh Jeans) \n\n",tBand[0]);
 
 
@@ -148,7 +148,7 @@ int main()
 
   /// Test getOpacitySpec()
   TELCAL_TRACE("Test: Opacity getOpacitySpec()\n");
-  casa::OpacitySpec ospec=atm->getOpacitySpec();
+  casacore::OpacitySpec ospec=atm->getOpacitySpec();
   cout<<ospec.dryOpacitySpec_m.size()<<" "<<ospec.dryOpacitySpec_m[0].size()<<endl;
   cout<<ospec.wetOpacitySpec_m.size()<<" "<<ospec.wetOpacitySpec_m[0].size()<<endl;
   cout<<ospec.dryOpacitySpec_m.size()<<" "<<ospec.dryOpacitySpec_m[1].size()<<endl;
@@ -172,12 +172,12 @@ int main()
   TELCAL_TRACE("Test of computeSkyBrightness()\n");
   atm->computeSkyBrightness(airMass, tbgr, precWater);
 
-  vector< vector<double> > tBandSpec = atm->getSkyBrightnessSpec(casa::BLACKBODY);
+  vector< vector<double> > tBandSpec = atm->getSkyBrightnessSpec(casacore::BLACKBODY);
   for (int ib=0;ib<nbands;ib++)
     for (int i=0;i<4;i++) {
       TELCAL_TRACE3("Band %d channel %d SkyBrightness = %f K (TEBB) \n",ib,i,tBandSpec[ib][i]);
     }
-  tBandSpec = atm->getSkyBrightnessSpec(casa::RAYLEIGH_JEANS);
+  tBandSpec = atm->getSkyBrightnessSpec(casacore::RAYLEIGH_JEANS);
   for (int ib=0;ib<nbands;ib++)
     for (int i=0;i<4;i++) {
       TELCAL_TRACE3("Band %d channel %d SkyBrightness = %f K (Rayleigh Jeans) \n",ib,i,tBandSpec[ib][i]);

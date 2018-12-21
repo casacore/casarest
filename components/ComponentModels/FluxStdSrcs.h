@@ -27,12 +27,12 @@
 #ifndef COMPONENTS_FLUXSTDSRCS_H
 #define COMPONENTS_FLUXSTDSRCS_H
 
-#include <casa/BasicSL/String.h>
-#include <casa/Arrays/Vector.h>
-#include <measures/Measures/MDirection.h>
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 #include <map>
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // Basic calibrator data used in the flux standards. 
@@ -109,6 +109,6 @@ private:
   std::map<FSS::Source, MDirection> directions_p;
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif /* COMPONENTS_FLUXSTDSRCS_H */

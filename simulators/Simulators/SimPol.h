@@ -28,14 +28,14 @@
 #ifndef SIMULATORS_SIMPOL_H
 #define SIMULATORS_SIMPOL_H
 
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/Matrix.h>
-#include <measures/Measures/Stokes.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/casa/Exceptions/Error.h>
 
 #include <simulators/Simulators/SimFeed.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MSPolarization;
 
@@ -299,6 +299,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

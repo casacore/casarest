@@ -26,8 +26,8 @@
 //#
 //# $Id$
 
-#include <casa/aips.h>
-#include <casa/aipstype.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/aipstype.h>
 #include <cstddef>
 
 //<example>
@@ -67,7 +67,7 @@ namespace boost {
     class barrier;
 };
 
-namespace casa {
+namespace casacore {
 
 namespace async {
   class Condition;
@@ -165,5 +165,5 @@ private:
     T * workInfo_p;
 };
 
-} // end namespace casa
+} // end namespace casacore
 #endif // 

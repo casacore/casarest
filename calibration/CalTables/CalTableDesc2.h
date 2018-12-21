@@ -29,11 +29,11 @@
 #ifndef CALIBRATION_CALTABLEDESC2_H
 #define CALIBRATION_CALTABLEDESC2_H
 
-#include <casa/aips.h>
-#include <tables/Tables/Table.h>
-#include <tables/Tables/TableDesc.h>
+#include <casacore/casa/aips.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableDesc.h>
 #include <calibration/CalTables/VisCalEnum.h>
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalTableDesc: Define the format of calibration tables
@@ -129,7 +129,7 @@ private:
 };
   
   
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

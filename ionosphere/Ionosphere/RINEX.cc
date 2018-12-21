@@ -25,22 +25,22 @@
 //#
 //# $Id$
 
-#include <casa/stdio.h>
+#include <casacore/casa/stdio.h>
 #include <errno.h>
-#include <casa/string.h>
+#include <casacore/casa/string.h>
 #include <ctype.h>
-#include <casa/Exceptions.h>
-#include <measures/Measures.h>
-#include <measures/Measures/MCPosition.h>
-#include <measures/Measures/MCEpoch.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/MEpoch.h>
-#include <casa/Quanta/MVTime.h>
+#include <casacore/casa/Exceptions.h>
+#include <casacore/measures/Measures.h>
+#include <casacore/measures/Measures/MCPosition.h>
+#include <casacore/measures/Measures/MCEpoch.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/casa/Quanta/MVTime.h>
 #include <ionosphere/Ionosphere/RINEX.h>
 #include <ionosphere/Ionosphere/GPSDCB.h>
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Int RINEX::debug_level=0;
 MEpoch::Convert RINEX::iat2utc(MEpoch::IAT,MEpoch::UTC);
@@ -633,5 +633,5 @@ uInt RINEX::getTEC ( Vector<Double> &mjd,         // epochs
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

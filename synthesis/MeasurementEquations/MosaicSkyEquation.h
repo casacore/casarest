@@ -29,16 +29,16 @@
 #ifndef SYNTHESIS_MOSAICSKYEQUATION_H
 #define SYNTHESIS_MOSAICSKYEQUATION_H
 
-#include <casa/aips.h>
-#include <casa/Arrays/Matrix.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 #include <synthesis/MeasurementComponents/FTMachine.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
-#include <images/Regions/ImageRegion.h>
+#include <casacore/images/Regions/ImageRegion.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // forward decalaration
 template <class T> class SubImage;
@@ -245,6 +245,6 @@ public:
 
 };
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

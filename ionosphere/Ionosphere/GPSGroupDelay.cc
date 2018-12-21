@@ -1,11 +1,11 @@
-#include <casa/stdio.h>
+#include <casacore/casa/stdio.h>
 #include <errno.h>
-#include <casa/string.h>
+#include <casacore/casa/string.h>
 #include <ionosphere/Ionosphere/GPS.h>
 #include <ionosphere/Ionosphere/GPSGroupDelay.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Exceptions/Error.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // constructor. Loads TGD file    
 GPSGroupDelay::GPSGroupDelay( const char *filename ) :
@@ -40,5 +40,5 @@ Int GPSGroupDelay::import (const char *filename)
 }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

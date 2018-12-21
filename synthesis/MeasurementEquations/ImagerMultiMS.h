@@ -30,7 +30,7 @@
 
 #include <synthesis/MeasurementEquations/Imager.h>
 
-namespace casa {
+namespace casacore {
 
   class ImagerMultiMS : public Imager
     {
@@ -125,7 +125,7 @@ namespace casa {
       
     };
   
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 
 #endif

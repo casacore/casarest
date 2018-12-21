@@ -28,13 +28,13 @@
 //# Includes
 #include <components/SpectralComponents/LorentzianSpectralElement.h>
 
-#include <casa/BasicSL/Constants.h>
+#include <casacore/casa/BasicSL/Constants.h>
 
-#include <scimath/Functionals/Lorentzian1D.h>
+#include <casacore/scimath/Functionals/Lorentzian1D.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 LorentzianSpectralElement::LorentzianSpectralElement()
 : PCFSpectralElement(SpectralElement::LORENTZIAN, Vector<Double>(3)) {
@@ -110,5 +110,5 @@ ostream &operator<<(ostream &os, const LorentzianSpectralElement &elem) {
     return os;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

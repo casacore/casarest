@@ -26,15 +26,15 @@
 
 #include <components/SpectralComponents/GaussianMultipletSpectralElement.h>
 
-#include <casa/Arrays/ArrayIO.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Containers/Record.h>
+#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Containers/Record.h>
 #include <components/SpectralComponents/GaussianSpectralElement.h>
 
-#include <casa/iostream.h>
+#include <casacore/casa/iostream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 #define _ORIGIN  String("GaussianMultipletSpectralElement::") + __FUNCTION__ + ":" + String::toString(__LINE__) + ": "
 
@@ -349,6 +349,6 @@ ostream &operator<<(ostream& os, const GaussianMultipletSpectralElement& elem) {
 	return os;
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 

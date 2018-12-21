@@ -31,7 +31,7 @@
 
 #include <components/SpectralComponents/SpectralElement.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // Describes a polynomial spectral profile
@@ -102,7 +102,7 @@ ostream &operator<<(ostream &os, const PolynomialSpectralElement &elem);
 // </group>
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

@@ -35,7 +35,7 @@
 #include <vector>
 #include <ctime>
 
-namespace casa{
+namespace casacore{
 # define PI2 6.28318530717958623
 # define CE_TYPE float
 

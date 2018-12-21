@@ -1,20 +1,20 @@
 #ifndef IONOSPHERE_RINEX_H
 #define IONOSPHERE_RINEX_H
 
-#include <casa/Arrays/Matrix.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/BasicSL/String.h>
-#include <measures/Measures/MPosition.h>
-#include <measures/Measures/MEpoch.h>
-#include <casa/Containers/Block.h>
+#include <casacore/casa/Arrays/Matrix.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/measures/Measures/MPosition.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/casa/Containers/Block.h>
 #include <ionosphere/Ionosphere/GPS.h>
 #include <ionosphere/Ionosphere/RINEXSat.h>
 #include <ionosphere/Ionosphere/GPSEphemeris.h>
 #include <ionosphere/Ionosphere/GPSDCB.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //
 // Note on SVNs.
@@ -113,6 +113,6 @@ inline RINEXSat & RINEX::sdata ( uInt isat )
   
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -27,13 +27,13 @@
 
 
 #include <synthesis/MeasurementComponents/Jones.h>
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/iostream.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/namespace.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/namespace.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 // Constructor
@@ -584,4 +584,4 @@ Jones::JonesType jonesType(const Int& n) {
 
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

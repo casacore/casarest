@@ -29,12 +29,12 @@
 #ifndef SYNTHESIS_ACOH_H
 #define SYNTHESIS_ACOH_H
 
-#include <casa/aips.h>
-#include <casa/BasicSL/Complex.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/Complex.h>
 #include <synthesis/MeasurementEquations/Iterate.h>
 #include <msvis/MSVis/VisSet.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // ACoh: Model additive errors for the VisEquation.
@@ -113,6 +113,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

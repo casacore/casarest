@@ -25,27 +25,27 @@
 //#
 //# $Id: tConstantSpectrum.cc 21465 2014-06-19 05:56:56Z gervandiepen $
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ConstantSpectrum.h>
 // #include <components/ComponentModels/Flux.h>
 // #include <components/ComponentModels/SpectralModel.h>
-// #include <measures/Measures/MeasureHolder.h>
-// #include <casa/Arrays/Vector.h>
-// #include <casa/Containers/Record.h>
-// #include <casa/Containers/RecordFieldId.h>
-#include <casa/Exceptions/Error.h>
-// #include <measures/Measures/MFrequency.h>
-// #include <casa/Quanta/MVFrequency.h>
-// #include <casa/Quanta/Quantum.h>
-// #include <casa/Utilities/Assert.h>
-// #include <casa/Utilities/DataType.h>
-#include <casa/BasicSL/String.h>
+// #include <casacore/measures/Measures/MeasureHolder.h>
+// #include <casacore/casa/Arrays/Vector.h>
+// #include <casacore/casa/Containers/Record.h>
+// #include <casacore/casa/Containers/RecordFieldId.h>
+#include <casacore/casa/Exceptions/Error.h>
+// #include <casacore/measures/Measures/MFrequency.h>
+// #include <casacore/casa/Quanta/MVFrequency.h>
+// #include <casacore/casa/Quanta/Quantum.h>
+// #include <casacore/casa/Utilities/Assert.h>
+// #include <casacore/casa/Utilities/DataType.h>
+#include <casacore/casa/BasicSL/String.h>
 // #include <aips/Glish/GlishRecord.h>
-// #include <casa/iomanip.h>
-#include <casa/iostream.h>
+// #include <casacore/casa/iomanip.h>
+#include <casacore/casa/iostream.h>
 
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 // void plotSpectrum(const Flux<Double> & refFlux,
 // 		  const SpectralModel & modelSpectrum);
 int main() {

@@ -25,23 +25,23 @@
 //#
 //# $Id$
 
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
 #include <synthesis/MeasurementComponents/PClarkCleanImageSkyModel.h>
-#include <casa/OS/File.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LatticeIterator.h>
+#include <casacore/casa/OS/File.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
 #include <synthesis/MeasurementEquations/SkyEquation.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/Assert.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogIO.h>
 
-#include <casa/Logging/LogSink.h>
-#include <casa/Inputs/Input.h>
+#include <casacore/casa/Logging/LogSink.h>
+#include <casacore/casa/Inputs/Input.h>
 
 #include <synthesis/MeasurementEquations/ConvolutionEquation.h>
 #include <synthesis/MeasurementEquations/ClarkCleanModel.h>
@@ -53,8 +53,8 @@
 #endif
 #include <errno.h>
 
-#include <casa/namespace.h>
-extern casa::Applicator casa::applicator;
+#include <casacore/casa/namespace.h>
+extern casacore::Applicator casacore::applicator;
 
 void master(Int argc, Char *argv[]);
 
@@ -64,8 +64,8 @@ void master(Int argc, Char *argv[]);
 int main(Int argc, Char *argv[]){
 
    LogIO os(LogOrigin("tPClark","master solve in parallel",WHERE));
-   casa::applicator.init(argc, argv);
-   if(casa::applicator.isController()){
+   casacore::applicator.init(argc, argv);
+   if(casacore::applicator.isController()){
       try {
          master(argc, argv);
        }
@@ -193,48 +193,48 @@ void master(Int argc, Char *argv[]) {
   Int rank(0);
   ClarkCleanAlgorithm clarkClean;
   OrderedMap<Int, Int> chanNo(0);
-  Bool assigned(casa::applicator.nextAvailProcess(clarkClean, rank));
+  Bool assigned(casacore::applicator.nextAvailProcess(clarkClean, rank));
   Bool allDone(False);
   for (imageStepli.reset(),imageli.reset(),psfli.reset();
        !imageStepli.atEnd();
        imageStepli++,imageli++,psfli++,chan++) {
-          // Send the inputs to the casa::applicator
+          // Send the inputs to the casacore::applicator
         while (!assigned) {
           // No free processes; wait for any Clark Clean worker
           // process to return.
-          rank = casa::applicator.nextProcessDone(clarkClean, allDone);
+          rank = casacore::applicator.nextProcessDone(clarkClean, allDone);
           // Get the resulting plane and insert in the correct place
           Array<Float> af;
-          casa::applicator.get(af);
+          casacore::applicator.get(af);
           image.putSlice(af, IPosition(4, xbeg, ybeg, 0, chanNo(rank)));
           // Assign the next available process
-          assigned = casa::applicator.nextAvailProcess(clarkClean, rank);
+          assigned = casacore::applicator.nextAvailProcess(clarkClean, rank);
         }
-	casa::applicator.put(imageStepli.cursor());
-	casa::applicator.put(psfli.matrixCursor());
-	casa::applicator.put(mask);
-	casa::applicator.put(gain);
-	casa::applicator.put(threshold);
-	casa::applicator.put(numberIterations);
-	casa::applicator.put(chan);
-	casa::applicator.put(nchan);
+	casacore::applicator.put(imageStepli.cursor());
+	casacore::applicator.put(psfli.matrixCursor());
+	casacore::applicator.put(mask);
+	casacore::applicator.put(gain);
+	casacore::applicator.put(threshold);
+	casacore::applicator.put(numberIterations);
+	casacore::applicator.put(chan);
+	casacore::applicator.put(nchan);
 
         // Record the assignment of channel to process rank
         chanNo.define(rank, chan);
 
 		  // Run the alogrithm
-	casa::applicator.apply(clarkClean);
+	casacore::applicator.apply(clarkClean);
   }
      // Wait till the applicator finishes.
   // Wait for all outstanding processes to return
-  rank = casa::applicator.nextProcessDone(clarkClean, allDone);
+  rank = casacore::applicator.nextProcessDone(clarkClean, allDone);
   while (!allDone) {
     // Get the resulting plane and insert in the correct place
     Array<Float> af;
-    casa::applicator.get(af);
+    casacore::applicator.get(af);
     image.putSlice(af, IPosition(4, xbeg, ybeg, 0, chanNo(rank)));
     // Wait for the next process to complete
-    rank = casa::applicator.nextProcessDone(clarkClean, allDone);
+    rank = casacore::applicator.nextProcessDone(clarkClean, allDone);
   };
 
   return;

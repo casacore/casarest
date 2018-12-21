@@ -29,11 +29,11 @@
 #ifndef CALIBRATION_CALITERBASE_H
 #define CALIBRATION_CALITERBASE_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <calibration/CalTables/CalTable.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // CalIterBase: Base class for calibration table iterators
@@ -90,7 +90,7 @@ class CalIterBase
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

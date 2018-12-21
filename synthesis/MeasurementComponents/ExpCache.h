@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-namespace casa
+namespace casacore
 {
 template<class T> class ExpCache
 {

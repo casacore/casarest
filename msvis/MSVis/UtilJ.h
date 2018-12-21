@@ -8,9 +8,9 @@
 #ifndef UTILJ_H_
 #define UTILJ_H_
 
-#include <casa/aips.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Exceptions/Error.h>
 #include <cassert>
 #include <cstdlib>
 #include <cstdarg>
@@ -42,11 +42,11 @@
 #    define Throw(m) throw AipsError ((m), __FILE__, __LINE__)
 #endif
 
-#define ThrowIf(c,m) casa::utilj::throwIf ((c), (m), __FILE__, __LINE__)
+#define ThrowIf(c,m) casacore::utilj::throwIf ((c), (m), __FILE__, __LINE__)
 
-#define ThrowIfError(c,m) casa::utilj::throwIfError ((c), (m), __FILE__, __LINE__)
+#define ThrowIfError(c,m) casacore::utilj::throwIfError ((c), (m), __FILE__, __LINE__)
 
-namespace casa {
+namespace casacore {
 
 class String;
 

@@ -30,13 +30,13 @@
 #define SYNTHESIS_MASKEDHOGBOMCLEANMODEL_H
 
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/MaskedArrayModel.h>
 #include <synthesis/MeasurementEquations/Iterate.h>
 #include <synthesis/MeasurementEquations/ResidualEquation.h>
 #include <synthesis/MeasurementEquations/ConvolutionEquation.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>
 // A Class for performing Hogbom Clean's of Arrays
@@ -136,7 +136,7 @@ protected:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <synthesis/MeasurementEquations/MaskedHogbomCleanModel.tcc>

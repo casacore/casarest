@@ -26,13 +26,13 @@
 //# $Id: ImageMetaData.cc 21130 2011-10-18 07:39:05Z gervandiepen $
 
 
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <casa/aips.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/casa/aips.h>
 
 
-#include <images/Images/ImageMetaData.h>
+#include <casacore/images/Images/ImageMetaData.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
     Int ImageMetaData::spectralCoordinateNumber() const {
         // don't do a hasSpectralAxis() check or you will go down an infinite recursion path
@@ -183,5 +183,5 @@ namespace casa { //# NAMESPACE CASA - BEGIN
     }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

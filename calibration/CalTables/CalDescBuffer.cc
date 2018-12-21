@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/CalDescBuffer.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -414,5 +414,5 @@ Vector<String>& CalDescBuffer::msName()
 
 //----------------------------------------------------------------------------
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

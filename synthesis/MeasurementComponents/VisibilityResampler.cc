@@ -32,7 +32,7 @@
 #include <msvis/MSVis/AsynchronousTools.h>
 #include <fstream>
 
-namespace casa{
+namespace casacore{
   //
   //-----------------------------------------------------------------------------------
   //

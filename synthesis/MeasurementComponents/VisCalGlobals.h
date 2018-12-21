@@ -28,11 +28,11 @@
 #ifndef SYNTHESIS_VISCALGLOBALS_H
 #define SYNTHESIS_VISCALGLOBALS_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementComponents/VisCal.h>
 #include <synthesis/MeasurementComponents/SolvableVisCal.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // Forward declaration:
 class VisCal;
@@ -50,7 +50,7 @@ SolvableVisCal* createSolvableVisCal(const String& type, VisSet& vs);
 // Create a specialized SolvableVisCal from nAnt
 SolvableVisCal* createSolvableVisCal(const String& type, const Int& nAnt);
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
 

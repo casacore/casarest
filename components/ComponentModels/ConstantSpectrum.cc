@@ -26,14 +26,14 @@
 //# $Id: ConstantSpectrum.cc 21465 2014-06-19 05:56:56Z gervandiepen $
 
 #include <components/ComponentModels/ConstantSpectrum.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Containers/RecordInterface.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Containers/RecordInterface.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 ConstantSpectrum::ConstantSpectrum()
   :SpectralModel()
@@ -153,5 +153,5 @@ Bool ConstantSpectrum::ok() const {
 // compile-command: "gmake OPTLIB=1 ConstantSpectrum"
 // End:
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

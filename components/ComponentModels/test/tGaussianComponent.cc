@@ -25,38 +25,38 @@
 //#
 //# $Id: tGaussianComponent.cc 19986 2007-02-28 10:27:35Z Malte.Marquarding $
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/GaussianShape.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/Flux.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
-#include <coordinates/Coordinates/CoordinateUtil.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
-#include <images/Images/PagedImage.h>
-#include <casa/Arrays/Array.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Arrays/IPosition.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicSL/Constants.h>
-#include <casa/BasicMath/Math.h>
-#include <casa/Quanta/Euler.h>
-#include <measures/Measures/MCDirection.h>
-#include <measures/Measures/MDirection.h>
-#include <casa/Quanta/MVAngle.h>
-#include <casa/Quanta/MVDirection.h>
-#include <measures/Measures/MeasConvert.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Quanta/RotMatrix.h>
-#include <measures/Measures/Stokes.h>
-#include <tables/Tables/Table.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
-#include <casa/iostream.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/CoordinateUtil.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays/IPosition.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicSL/Constants.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/Quanta/Euler.h>
+#include <casacore/measures/Measures/MCDirection.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/casa/Quanta/MVAngle.h>
+#include <casacore/casa/Quanta/MVDirection.h>
+#include <casacore/measures/Measures/MeasConvert.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Quanta/RotMatrix.h>
+#include <casacore/measures/Measures/Stokes.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main() {
   try {
 

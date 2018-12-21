@@ -34,9 +34,9 @@
 #define Log(level, ...) \
     {Logger::get()->log (__VA_ARGS__);};
 
-using namespace casa::async;
+using namespace casacore::async;
 
-namespace casa {
+namespace casacore {
 
 ThreadCoordinatorBase::ThreadCoordinatorBase (Int nThreads, bool logStates)
   : barrier_p (new boost::barrier(nThreads)),

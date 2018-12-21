@@ -31,14 +31,14 @@
 //#include <flagging/Flagging/RedFlagger.h>
 #include <flagging/Flagging/RFCubeLattice.h>
 #include <flagging/Flagging/RFChunkStats.h>
-#include <casa/Arrays/ArrayLogical.h>
-#include <casa/Arrays/LogiMatrix.h>
-#include <casa/Arrays/LogiVector.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
+#include <casacore/casa/Arrays/LogiMatrix.h>
+#include <casacore/casa/Arrays/LogiVector.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <boost/dynamic_bitset.hpp>
 #include <stdexcept>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 typedef RFCubeLatticeIterator<RFlagWord> FlagCubeIterator;
 
@@ -360,7 +360,7 @@ inline LogIO & RFFlagCube::logSink ()
    { return os; }
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #ifndef AIPS_NO_TEMPLATE_SRC
 #include <flagging/Flagging/RFFlagCube.tcc>

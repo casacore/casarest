@@ -29,11 +29,11 @@
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 #include <synthesis/MeasurementComponents/AWVisResampler.h>
 #include <synthesis/MeasurementComponents/Utils.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/CoordinateSystem.h>
 #include <fstream>
-//#include <casa/BasicMath/Functors.h>
-namespace casa{
+//#include <casacore/casa/BasicMath/Functors.h>
+namespace casacore{
   //
   //
   // AWVisResampler& AWVisResampler::operator=(const AWVisResampler& other)

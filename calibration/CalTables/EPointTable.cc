@@ -29,7 +29,7 @@
 #include <calibration/CalTables/EPointTable.h>
 #include <calibration/CalTables/EPointDesc.h>
 //----------------------------------------------------------------------------
-namespace casa {
+namespace casacore {
 EPointTable::EPointTable (const String& tableName, 
 			  Table::TableOption access) :
   itsEPointDesc()

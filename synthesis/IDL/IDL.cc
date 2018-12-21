@@ -25,13 +25,13 @@
 //#
 //# $Id$
 
-#include <casa/Utilities/Assert.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/Logging/LogIO.h>
 #include <synthesis/IDL/IDL.h>
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 void idl_free_cb(unsigned char* loc) {
   LogIO os(LogOrigin("free_cb", "free_cb)", WHERE));
@@ -256,5 +256,5 @@ Bool IDL::setPath(const Vector<String>& paths) {
 }
   
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

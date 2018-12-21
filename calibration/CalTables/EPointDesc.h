@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/TimeVarVJDesc.h>
 #include <calibration/CalTables/SolvableVJDesc.h>
-namespace casa {
+namespace casacore {
 // <summary> 
 // EPointDesc: Define the format of GJones cal tables
 // </summary>

@@ -26,34 +26,34 @@
 //#
 //# $Id$
  
-#include <casa/aips.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicSL/Complex.h>
-#include <casa/BasicMath/Math.h>
-#include <scimath/Mathematics/FFTServer.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/scimath/Mathematics/FFTServer.h>
 #include <synthesis/MeasurementComponents/PBMath2DImage.h>
-#include <images/Images/PagedImage.h>
-#include <images/Images/TempImage.h>
-#include <images/Images/ImageRegrid.h>
-#include <images/Images/ImageSummary.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/images/Images/TempImage.h>
+#include <casacore/images/Images/ImageRegrid.h>
+#include <casacore/images/Images/ImageSummary.h>
 #include <msvis/MSVis/StokesVector.h>
 #include <synthesis/MeasurementEquations/StokesImageUtil.h>
-#include <lattices/Lattices/LatticeStepper.h>
-#include <lattices/Lattices/LatticeIterator.h>
+#include <casacore/lattices/Lattices/LatticeStepper.h>
+#include <casacore/lattices/Lattices/LatticeIterator.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LEL/LatticeExprNode.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeExprNode.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LEL/LatticeExprNode.h>
 #endif
-#include <casa/Utilities/Assert.h>
+#include <casacore/casa/Utilities/Assert.h>
 #include <components/ComponentModels/ComponentType.h>
-#include <casa/Quanta.h>
-#include <measures/Measures.h>
+#include <casacore/casa/Quanta.h>
+#include <casacore/measures/Measures.h>
 
-namespace casa {
+namespace casacore {
 
 PBMath2DImage::PBMath2DImage(ImageInterface<Float>& reJonesImage):
   PBMath2D(), reJonesImage_p(0), reRegridJonesImage_p(0),

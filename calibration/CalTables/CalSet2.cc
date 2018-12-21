@@ -26,17 +26,17 @@
 
 #include <calibration/CalTables/CalSet.h>
 
-#include <casa/Arrays.h>
-#include <casa/BasicSL/String.h>
-#include <casa/Utilities/GenSort.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Arrays.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/Utilities/GenSort.h>
+#include <casacore/casa/Exceptions/Error.h>
 
-#include <casa/sstream.h>
+#include <casacore/casa/sstream.h>
 
-#include <casa/Logging/LogMessage.h>
-#include <casa/Logging/LogSink.h>
+#include <casacore/casa/Logging/LogMessage.h>
+#include <casacore/casa/Logging/LogSink.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
 void smooth(CalSet<Complex>& cs,
@@ -211,4 +211,4 @@ void smooth(CalSet<Complex>& cs,
 	
 }
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

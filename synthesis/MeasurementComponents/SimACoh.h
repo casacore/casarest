@@ -29,11 +29,11 @@
 #ifndef SYNTHESIS_SIMACOH_H
 #define SYNTHESIS_SIMACOH_H
 
-#include <casa/aips.h>
-#include <casa/BasicMath/Random.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/BasicMath/Random.h>
 #include <synthesis/MeasurementComponents/ACoh.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // SimACoh: Model additive noise errors for the <linkto class="VisEquation">VisEquation</linkto>
@@ -89,6 +89,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

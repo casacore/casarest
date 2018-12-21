@@ -25,24 +25,24 @@
 //#
 //# $Id: tSpectralIndex.cc 21465 2014-06-19 05:56:56Z gervandiepen $
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SpectralIndex.h>
-#include <casa/Arrays/Vector.h>
-#include <casa/Containers/Record.h>
-#include <casa/Containers/RecordFieldId.h>
-#include <casa/Exceptions/Error.h>
-#include <casa/BasicMath/Math.h>
-#include <measures/Measures/MFrequency.h>
-#include <measures/Measures/MeasureHolder.h>
-#include <measures/Measures/MeasRef.h>
-#include <casa/Quanta/MVFrequency.h>
-#include <casa/Quanta/Quantum.h>
-#include <casa/Utilities/Assert.h>
-#include <casa/BasicSL/String.h>
-#include <casa/iostream.h>
+#include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Containers/RecordFieldId.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MeasureHolder.h>
+#include <casacore/measures/Measures/MeasRef.h>
+#include <casacore/casa/Quanta/MVFrequency.h>
+#include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Utilities/Assert.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/casa/iostream.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main() {
   try {
     SpectralModel* siPtr = 0;;

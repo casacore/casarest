@@ -33,7 +33,7 @@
 
 #include <synthesis/MeasurementComponents/AWProjectFT.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
   
   class EPJones;
 
@@ -224,6 +224,6 @@ namespace casa { //# NAMESPACE CASA - BEGIN
 				   Int& doGrad,
 				   Int paIndex);
   };
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

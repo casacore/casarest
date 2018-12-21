@@ -32,13 +32,13 @@
 //#
 
 #include <msvis/MSPlot/MsPlot.h>
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <tables/Tables/Table.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/tables/Tables/Table.h>
 
-#include <casa/Inputs/Input.h>
-#include <casa/Logging/LogIO.h>
+#include <casacore/casa/Inputs/Input.h>
+#include <casacore/casa/Logging/LogIO.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 
 
 int main( int argc, char **argv)

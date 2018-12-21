@@ -29,7 +29,7 @@
 #include <calibration/CalTables/SolvableVJMRec.h>
 #include <calibration/CalTables/EPointVJMRec.h>
 
-namespace casa {
+namespace casacore {
 
 //----------------------------------------------------------------------------
 

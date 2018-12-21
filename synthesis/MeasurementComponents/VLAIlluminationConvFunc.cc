@@ -29,25 +29,25 @@
 
 #define USETABLES 1
 #include <synthesis/MeasurementComponents/VLAIlluminationConvFunc.h>
-#include <coordinates/Coordinates/DirectionCoordinate.h>
-#include <coordinates/Coordinates/SpectralCoordinate.h>
-#include <coordinates/Coordinates/LinearCoordinate.h>
-#include <coordinates/Coordinates/StokesCoordinate.h>
+#include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
+#include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
+#include <casacore/coordinates/Coordinates/LinearCoordinate.h>
+#include <casacore/coordinates/Coordinates/StokesCoordinate.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #if defined(casacore)
-#include <lattices/LEL/LatticeExpr.h>
-#include <lattices/LatticeMath/LatticeFFT.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #else
-#include <lattices/Lattices/LatticeExpr.h>
-#include <lattices/Lattices/LatticeFFT.h>
+#include <casacore/lattices/LEL/LatticeExpr.h>
+#include <casacore/lattices/LatticeMath/LatticeFFT.h>
 #endif
-#include <images/Images/ImageRegrid.h>
-#include <images/Images/PagedImage.h>
-#include <casa/Arrays/ArrayMath.h>
-#include <casa/OS/File.h>
+#include <casacore/images/Images/ImageRegrid.h>
+#include <casacore/images/Images/PagedImage.h>
+#include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/OS/File.h>
 #include <fstream>
 
-namespace casa{
+namespace casacore{
   
   //
   //------------------------------------------------------------------------

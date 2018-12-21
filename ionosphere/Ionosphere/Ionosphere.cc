@@ -1,17 +1,17 @@
 #include <ionosphere/Ionosphere/Ionosphere.h>
-#include <casa/Exceptions.h>    
-#include <scimath/Mathematics.h>    
-#include <casa/Utilities/Sort.h>    
-#include <casa/Utilities/Copy.h>    
-#include <casa/System/Aipsrc.h> 
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MeasFrame.h>
-#include <measures/Measures/EarthMagneticMachine.h>
-#include <casa/Arrays/Slice.h>
+#include <casacore/casa/Exceptions.h>    
+#include <casacore/scimath/Mathematics.h>    
+#include <casacore/casa/Utilities/Sort.h>    
+#include <casacore/casa/Utilities/Copy.h>    
+#include <casacore/casa/System/Aipsrc.h> 
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MeasFrame.h>
+#include <casacore/measures/Measures/EarthMagneticMachine.h>
+#include <casacore/casa/Arrays/Slice.h>
 
-#include <casa/stdio.h>
+#include <casacore/casa/stdio.h>
     
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // define to 1 to use PIM IGRF calls instead of Measures
 #define USE_PIM_IGRF 0
@@ -450,5 +450,5 @@ Double EDProfile::getTecRot ( Double &tec_out ) const
 }
 #endif
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

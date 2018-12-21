@@ -1,9 +1,9 @@
 #include <stdio.h>
     
 #include <ionosphere/Ionosphere/GPSEphemeris.h>
-#include <casa/Exceptions/Error.h>
+#include <casacore/casa/Exceptions/Error.h>
     
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 int main (void)
 {
   GPSEphemeris::debug_level=2;

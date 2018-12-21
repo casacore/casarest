@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/CalInterpolator.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -52,5 +52,5 @@ CalInterpolator::CalInterpolator (const CalInterpolation& calInterp) :
 //----------------------------------------------------------------------------
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/VisJonesMBuf.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // TimeVarVisJonesMBuf: TimeVarVisJones calibration main table buffer
@@ -212,6 +212,6 @@ class CJonesMBuf : public TimeVarVisJonesMBuf
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

@@ -28,21 +28,21 @@
 
 #include <calibration/CalTables/CalTableDesc.h>
 #include <msvis/MSVis/MSCalEnums.h>
-#include <tables/Tables/ScaColDesc.h>
-#include <tables/Tables/ArrColDesc.h>
-#include <tables/Tables/SetupNewTab.h>
-#include <tables/Tables/TableRecord.h>
-#include <measures/TableMeasures/TableMeasRefDesc.h>
-#include <measures/TableMeasures/TableMeasValueDesc.h>
-#include <measures/TableMeasures/TableMeasDesc.h>
-#include <measures/TableMeasures/TableQuantumDesc.h>
-#include <measures/Measures/MEpoch.h>
-#include <measures/Measures/MFrequency.h>
-#include <measures/Measures/MDirection.h>
-#include <casa/Containers/Record.h>
-#include <casa/Arrays/IPosition.h>
+#include <casacore/tables/Tables/ScaColDesc.h>
+#include <casacore/tables/Tables/ArrColDesc.h>
+#include <casacore/tables/Tables/SetupNewTab.h>
+#include <casacore/tables/Tables/TableRecord.h>
+#include <casacore/measures/TableMeasures/TableMeasRefDesc.h>
+#include <casacore/measures/TableMeasures/TableMeasValueDesc.h>
+#include <casacore/measures/TableMeasures/TableMeasDesc.h>
+#include <casacore/measures/TableMeasures/TableQuantumDesc.h>
+#include <casacore/measures/Measures/MEpoch.h>
+#include <casacore/measures/Measures/MFrequency.h>
+#include <casacore/measures/Measures/MDirection.h>
+#include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/Arrays/IPosition.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 
@@ -427,5 +427,5 @@ TableDesc CalTableDesc::insertDesc (const TableDesc& tableDesc,
 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

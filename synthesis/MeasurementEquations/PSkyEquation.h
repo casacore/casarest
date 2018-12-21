@@ -30,7 +30,7 @@
 
 #include <synthesis/MeasurementEquations/SkyEquation.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // Parallelized version of class SkyEquation
@@ -107,6 +107,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

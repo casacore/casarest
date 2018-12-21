@@ -24,15 +24,15 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 #include <components/ComponentModels/FluxCalcLogFreqPolynomial.h>
-#include <casa/BasicSL/String.h>
-#include <measures/Measures/MFrequency.h>
+#include <casacore/casa/BasicSL/String.h>
+#include <casacore/measures/Measures/MFrequency.h>
 
 // Handy for passing anonymous arrays to functions.
-#include <scimath/Mathematics/RigidVector.h>
+#include <casacore/scimath/Mathematics/RigidVector.h>
 
 #include <map>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 Bool FluxCalcLogFreqPolynomial::operator()(Flux<Double>& value,
                                            Flux<Double>& error,
@@ -162,4 +162,4 @@ void FluxCalcLogFreqPolynomialSH::setFreqUnit(const String& freqUnit)
 {
   freqUnit_p = freqUnit;
 }
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END

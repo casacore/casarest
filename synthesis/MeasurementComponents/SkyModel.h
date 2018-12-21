@@ -29,13 +29,13 @@
 #ifndef SYNTHESIS_SKYMODEL_H
 #define SYNTHESIS_SKYMODEL_H
 
-#include <casa/aips.h>
+#include <casacore/casa/aips.h>
 #include <synthesis/MeasurementEquations/Iterate.h>
-#include <images/Images/ImageInterface.h>
+#include <casacore/images/Images/ImageInterface.h>
 #include <components/ComponentModels/ComponentList.h>
-#include <casa/BasicSL/String.h>
+#include <casacore/casa/BasicSL/String.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //forward declarations
 class SkyEquation;
@@ -240,6 +240,6 @@ private:
 };
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif

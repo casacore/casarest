@@ -28,7 +28,7 @@
 
 #include <calibration/CalTables/ROCalMainColumns2.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //----------------------------------------------------------------------------
 

@@ -1,11 +1,11 @@
-#include <ms/MeasurementSets/MeasurementSet.h>
-#include <ms/MeasurementSets/MSColumns.h>
-#include <ms/MeasurementSets/MSFieldColumns.h>
-#include <measures/Measures/UVWMachine.h>
-#include <measures/Measures/MBaseline.h>
-#include <measures/Measures/MCBaseline.h>
+#include <casacore/ms/MeasurementSets/MeasurementSet.h>
+#include <casacore/ms/MeasurementSets/MSColumns.h>
+#include <casacore/ms/MeasurementSets/MSFieldColumns.h>
+#include <casacore/measures/Measures/UVWMachine.h>
+#include <casacore/measures/Measures/MBaseline.h>
+#include <casacore/measures/Measures/MCBaseline.h>
 
-using namespace casa;
+using namespace casacore;
 
 int main()
 {

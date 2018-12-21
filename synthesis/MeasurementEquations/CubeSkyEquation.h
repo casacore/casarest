@@ -31,7 +31,7 @@
 //#include <synthesis/Utilities/ThreadTimers.h>
 
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //Forward
 
@@ -116,6 +116,6 @@ class CubeSkyEquation : public SkyEquation {
 
 };
 
-} //# NAMESPACE CASA - ENDf
+} //# NAMESPACE CASACORE - ENDf
 
 #endif

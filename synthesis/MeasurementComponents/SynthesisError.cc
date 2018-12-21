@@ -27,7 +27,7 @@
 
 #include <synthesis/MeasurementComponents/SynthesisError.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SynthesisError::SynthesisError (Category c)
 : AipsError("Synthesis Error",c)
@@ -60,5 +60,5 @@ SynthesisFTMachineError::~SynthesisFTMachineError () throw()
   PSFZero::~PSFZero() throw()
   {};
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 

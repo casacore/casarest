@@ -31,7 +31,7 @@
 
 #include <calibration/CalTables/CalTableDesc.h>
 
-namespace casa { //# NAMESPACE CASA - BEGIN
+namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary> 
 // MJonesDesc: Define the format of MJones calibration tables
@@ -90,7 +90,7 @@ class MJonesDesc : public CalTableDesc
 }; 
 
 
-} //# NAMESPACE CASA - END
+} //# NAMESPACE CASACORE - END
 
 #endif
    

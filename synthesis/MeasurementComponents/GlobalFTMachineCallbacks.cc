@@ -1,7 +1,7 @@
 #include <synthesis/MeasurementComponents/GlobalFTMachineCallbacks.h>
 #include <synthesis/MeasurementComponents/IlluminationConvFunc.h>
 
-using namespace casa;
+using namespace casacore;
 
 extern "C" 
 {
@@ -17,7 +17,7 @@ extern "C"
   //
   //---------------------------------------------------------------
   //
-  IlluminationConvFunc casa::gwEij;
+  IlluminationConvFunc casacore::gwEij;
   void gcppeij(Double *griduvw, Double *area,
 	       Double *raoff1, Double *decoff1,
 	       Double *raoff2, Double *decoff2, 

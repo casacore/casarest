@@ -23,12 +23,12 @@
 //#                        Charlottesville, VA 22903-2475 USA
 //#
 
-#include <casa/aips.h>
-#include <casa/Quanta/QLogical.h>
+#include <casacore/casa/aips.h>
+#include <casacore/casa/Quanta/QLogical.h>
 #include <components/ComponentModels/Angular2DGaussian.h>
-#include <casa/Containers/Record.h>
+#include <casacore/casa/Containers/Record.h>
 
-#include <casa/namespace.h>
+#include <casacore/casa/namespace.h>
 
 
 int main() {
