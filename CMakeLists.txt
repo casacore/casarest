@@ -39,8 +39,8 @@ endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 2.8)
 
 # project version
 set( ${PROJECT_NAME}_MAJOR_VERSION 1 )
-set( ${PROJECT_NAME}_MINOR_VERSION 4 )
-set( ${PROJECT_NAME}_PATCH_LEVEL 1 )
+set( ${PROJECT_NAME}_MINOR_VERSION 5 )
+set( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 if (UseCasaNamespace)
     add_definitions (-DUseCasaNamespace)
