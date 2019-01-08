@@ -3,6 +3,8 @@ RUN docker-apt-install \
     build-essential \
     cmake \
     casacore-dev \
+    casacore-data \
+    casacore-tools \
     libhdf5-dev \
     libboost-dev \
     wcslib-dev \
@@ -19,4 +21,3 @@ RUN cmake .. \
       -DBUILD_TESTING=ON
 RUN make -j4 
 RUN make install
-

@@ -3,6 +3,8 @@ RUN docker-apt-install \
     clang \
     cmake \
     casacore-dev \
+    casacore-tools \
+    casacore-data \
     libhdf5-dev \
     libboost-dev \
     wcslib-dev \
