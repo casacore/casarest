@@ -44,7 +44,7 @@ ComponentModels/TabularSpectrum.cc
 ComponentModels/ComponentType2.cc
 )
 
-install(TARGETS casa_components DESTINATION ${LIBRARY_INSTALL_DIR})
+install(TARGETS casa_components DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENT components)
 target_link_libraries(casa_components ${OTHER_LIBRARIES} ${LIB_EXTRA_COMPONENTS})
 set(COMPONENTS_LIBRARIES casa_components ${OTHER_LIBRARIES} ${LIB_EXTRA_COMPONENTS})
 

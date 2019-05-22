@@ -162,7 +162,7 @@ set(synthesis_PROGRAMS
 
 
 add_library(casa_synthesis ${synthesis_LIB_SRCS})
-install(TARGETS casa_synthesis DESTINATION ${LIBRARY_INSTALL_DIR})
+install(TARGETS casa_synthesis DESTINATION ${LIBRARY_INSTALL_DIR} synthesis)
 target_link_libraries(casa_synthesis casa_components casa_calibration casa_msvis ${OTHER_LIBRARIES} ${LIB_EXTRA_SYNTHESIS})
 set(SYNTHESIS_LIBRARIES casa_synthesis casa_components casa_calibration casa_msvis ${OTHER_LIBRARIES} ${LIB_EXTRA_SYNTHESIS})
 

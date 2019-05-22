@@ -30,7 +30,7 @@ set(msvis_LIB_SRCS
 
 
 add_library(casa_msvis ${msvis_LIB_SRCS})
-install(TARGETS casa_msvis DESTINATION ${LIBRARY_INSTALL_DIR})
+install(TARGETS casa_msvis DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENTS msvis)
 target_link_libraries(casa_msvis ${OTHER_LIBRARIES})
 set(MSVIS_LIBRARIES casa_msvis ${OTHER_LIBRARIES})
 
