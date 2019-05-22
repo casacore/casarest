@@ -67,14 +67,14 @@ set(calibration_LIB_SRCS
 
 
 add_library(casa_calibration ${calibration_LIB_SRCS})
-install(TARGETS casa_calibration DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENTS calibration)
+install(TARGETS casa_calibration DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENT calibration)
 target_link_libraries(casa_calibration casa_msvis ${OTHER_LIBRARIES})
 set(CALIBRATION_LIBRARIES casa_calibration casa_msvis ${OTHER_LIBRARIES})
 
 
 install (FILES
 CalTables.h
-DESTINATION include/casarest/calibration
+DESTINATION include/casarest/calibration COMPONENT calibration
 )
 
 install (FILES
@@ -154,5 +154,5 @@ CalTables/CalMainColumns2.tcc
 CalTables/CalSet.tcc
 CalTables/ROCalMainColumns2.tcc
 CalTables/SolvableCalSetMCol.tcc
-DESTINATION include/casarest/calibration/CalTables
+DESTINATION include/casarest/calibration/CalTables COMPONENT calibration
 )

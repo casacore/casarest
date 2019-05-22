@@ -76,7 +76,7 @@ ComponentModels/FluxStdsQS2.h
 ComponentModels/FluxStdSrcs.h
 ComponentModels/Flux.h
 ComponentModels/Flux.tcc
-DESTINATION include/casarest/components/ComponentModels
+DESTINATION include/casarest/components/ComponentModels COMPONENT components
 )
 
 install (FILES
@@ -98,13 +98,13 @@ SpectralComponents/SpectralFit.h
 SpectralComponents/SpectralFit2.tcc
 SpectralComponents/SpectralList.h
 SpectralComponents/SpectralList2.tcc
-DESTINATION include/casarest/components/SpectralComponents
+DESTINATION include/casarest/components/SpectralComponents COMPONENT components
 )
 
 install (FILES
 ComponentModels.h
 SpectralComponents.h
-DESTINATION include/casarest/components
+DESTINATION include/casarest/components COMPONENT components
 )
 
 if (BUILD_TESTING)
