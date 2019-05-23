@@ -162,14 +162,14 @@ set(synthesis_PROGRAMS
 
 
 add_library(casa_synthesis ${synthesis_LIB_SRCS})
-install(TARGETS casa_synthesis DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENT synthesis)
+install(TARGETS casa_synthesis DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENT casa_synthesis)
 target_link_libraries(casa_synthesis casa_components casa_calibration casa_msvis ${OTHER_LIBRARIES} ${LIB_EXTRA_SYNTHESIS})
 set(SYNTHESIS_LIBRARIES casa_synthesis casa_components casa_calibration casa_msvis ${OTHER_LIBRARIES} ${LIB_EXTRA_SYNTHESIS})
 
 foreach(prog ${synthesis_PROGRAMS})
     add_executable(${prog} apps/${prog}.cc)
     target_link_libraries(${prog} ${SYNTHESIS_LIBRARIES})
-    install(TARGETS ${prog} DESTINATION bin COMPONENT synthesis)
+    install(TARGETS ${prog} DESTINATION bin COMPONENT casa_synthesis)
 endforeach(prog ${synthesis_PROGRAMS})
 
 
@@ -178,7 +178,7 @@ DataSampling.h
 MeasurementComponents.h
 MeasurementEquations.h
 Parallel.h
-DESTINATION include/casarest/synthesis COMPONENT synthesis
+DESTINATION include/casarest/synthesis COMPONENT casa_synthesis
 )
 
 install (FILES
@@ -187,12 +187,12 @@ DataSampling/ImageDataSampling.h
 DataSampling/PixonProcessor.h
 DataSampling/SDDataSampling.h
 DataSampling/SynDataSampling.h
-DESTINATION include/casarest/synthesis/DataSampling COMPONENT synthesis
+DESTINATION include/casarest/synthesis/DataSampling COMPONENT casa_synthesis
 )
 
 install (FILES
 IDL/IDL.h
-DESTINATION include/casarest/synthesis/IDL COMPONENT synthesis
+DESTINATION include/casarest/synthesis/IDL COMPONENT casa_synthesis
 )
 
 install (FILES
@@ -317,7 +317,7 @@ MeasurementComponents/nPBWProjectFT.h
 MeasurementComponents/rGridFT.h
 MeasurementComponents/ImageSkyModel.tcc
 MeasurementComponents/AWProjectFT.FORTRANSTUFF.INC
-DESTINATION include/casarest/synthesis/MeasurementComponents COMPONENT synthesis
+DESTINATION include/casarest/synthesis/MeasurementComponents COMPONENT casa_synthesis
 )
 
 install (FILES
@@ -366,7 +366,7 @@ MeasurementEquations/MaskedArrayModel.tcc
 MeasurementEquations/MaskedHogbomCleanModel.tcc
 MeasurementEquations/ResidualEquation.tcc
 MeasurementEquations/StokesUtil.tcc
-DESTINATION include/casarest/synthesis/MeasurementEquations COMPONENT synthesis
+DESTINATION include/casarest/synthesis/MeasurementEquations COMPONENT casa_synthesis
 )
 
 install (FILES
@@ -375,13 +375,13 @@ Parallel/Applicator.h
 Parallel/MPIError.h
 Parallel/PTransport.h
 Parallel/PabloIO.h
-DESTINATION include/casarest/synthesis/Parallel COMPONENT synthesis
+DESTINATION include/casarest/synthesis/Parallel COMPONENT casa_synthesis
 )
 
 install (FILES
 Utilities/FixVis.h
 Utilities/ThreadCoordinator.h
-DESTINATION include/casarest/synthesis/Utilities COMPONENT synthesis
+DESTINATION include/casarest/synthesis/Utilities COMPONENT casa_synthesis
 )
 
 
@@ -389,6 +389,6 @@ install (FILES
 Images/ImageFFT.h
 Images/ImageMetaData.h
 Images/ImagePolarimetry.h
-DESTINATION include/casarest/synthesis/Images COMPONENT synthesis
+DESTINATION include/casarest/synthesis/Images COMPONENT casa_synthesis
 )
 

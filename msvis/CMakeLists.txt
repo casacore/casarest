@@ -30,14 +30,14 @@ set(msvis_LIB_SRCS
 
 
 add_library(casa_msvis ${msvis_LIB_SRCS})
-install(TARGETS casa_msvis DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENT msvis)
+install(TARGETS casa_msvis DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENT casa_msvis)
 target_link_libraries(casa_msvis ${OTHER_LIBRARIES})
 set(MSVIS_LIBRARIES casa_msvis ${OTHER_LIBRARIES})
 
 
 install (FILES
 MSVis.h
-DESTINATION include/casarest/msvis COMPONENT msvis
+DESTINATION include/casarest/msvis COMPONENT casa_msvis
 )
 
 install (FILES
@@ -75,5 +75,5 @@ MSVis/MSMoments.tcc
 MSVis/SubMS.tcc
 MSVis/VisBuffer.tcc
 MSVis/VisibilityIterator.tcc
-DESTINATION include/casarest/msvis/MSVis COMPONENT msvis
+DESTINATION include/casarest/msvis/MSVis COMPONENT casa_msvis
 )

@@ -65,6 +65,17 @@ make
 make install
 ```
 
+There are 4 components in the casarest package and you may not need all them. The four targets are: casa_components, casa_msvis, casa_calibration and casa_synthesis. You can make them individuallay by:
+```
+mkdir build
+cd build
+cmake ..
+make <choice of target>
+cmake -DCOMPONENT=<choice of target>  -P cmake_install.cmake 
+```
+Which will build and install only your choice of target.
+
+
 ## Ubuntu 14.04 packages
 
 If you run Ubuntu 14.04 you can use precompiled binary packages
