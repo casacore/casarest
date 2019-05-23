@@ -91,7 +91,6 @@ GJonesSpline::GJonesSpline (VisSet& vs) :
   cacheTimeValid_p(0),
   calBuffer_p(NULL),
   rawPhaseRemoval_p(False),
-  timeValueMap_p(0),
   solTimeStamp_p(0.0)
 {
 // Construct from a visibility set
@@ -277,7 +276,7 @@ void GJonesSpline::selfGatherAndSolve (VisSet& vs, VisEquation& ve)
   // Initialize time-series accumulation buffers for the
   // corrected and corrupted visibility data and associated
   // weights. 
-  SimpleOrderedMap<String,Int> timeValueMap(0);
+  std::map<String,Int> timeValueMap;
   Vector<Double> timeValues;
   PtrBlock<Matrix<Complex>* > visTimeSeries;
   PtrBlock<Matrix<Double>* > weightTimeSeries;
@@ -394,12 +393,12 @@ void GJonesSpline::selfGatherAndSolve (VisSet& vs, VisEquation& ve)
 	  String timeKey = mvt.string(MVTime::TIME, 7);
 	  Int timeIndex = 0;
 	  // Check the time stamp index to this precision
-	  if (timeValueMap.isDefined(timeKey)) {
-	    timeIndex = timeValueMap(timeKey);
+	  if (timeValueMap.find(timeKey) != timeValueMap.end()) {
+	    timeIndex = timeValueMap.at(timeKey);
 	  } else {
 	    // Create a new time series entry
 	    timeIndex = nTimeSeries++;
-	    timeValueMap.define(timeKey, timeIndex);
+	    timeValueMap.insert(std::make_pair(timeKey, timeIndex));
 	    timeValues.resize(nTimeSeries, True);
 	    timeValues(timeIndex) = svb.time()(row);
 	    Complex czero(0,0);
@@ -424,7 +423,7 @@ void GJonesSpline::selfGatherAndSolve (VisSet& vs, VisEquation& ve)
   // Create amplitude, phase and weight arrays per time-slot
   // and interferometer index in the form required by the
   // GILDAS solver, splinant.
-  Int nTimes = timeValueMap.ndefined();
+  Int nTimes = timeValueMap.size();
 
   os << LogIO::NORMAL 
      << "Number of timestamps in data = " << nTimes
@@ -1393,13 +1392,13 @@ void GJonesSpline::fillRawPhaseBuff(){
 	  //	  cout << "FILL Bef timekey "<< timeKey << " ntimeseries " << nTimeSeries << endl;
 	  Int timeIndex = 0;
 	  // Check the time stamp index to this precision
-	  if (timeValueMap_p.isDefined(timeKey)) {
-	    timeIndex = timeValueMap_p(timeKey);
+	  if (timeValueMap_p.find(timeKey) != timeValueMap_p.end()) {
+	    timeIndex = timeValueMap_p.at(timeKey);
 	  } else {
 	    // Create a new time series entry
 	    timeIndex = nTimeSeries++;
 	    //	    cout << "FILL timekey "<< timeKey << " index " << timeIndex << endl;
-	    timeValueMap_p.define(timeKey, timeIndex);
+	    timeValueMap_p.insert(std::make_pair(timeKey, timeIndex));
 	    timeValues.resize(nTimeSeries, True);
 	    timeValues(timeIndex) = vb.time()(row);
 	    rawVisTimeSeries.resize(nTimeSeries, True);
@@ -1420,7 +1419,7 @@ void GJonesSpline::fillRawPhaseBuff(){
     };
   }; // for (chunk...) iteration
 
-  Int nTimes = timeValueMap_p.ndefined();
+  Int nTimes = timeValueMap_p.size();
   rawPhase_p.resize(nTimes, nBasl);
   for (Int k=0; k< nTimes; ++k){
     for(Int j=0; j< nBasl; ++j){
@@ -1453,7 +1452,7 @@ Double GJonesSpline::getRawPhase(Int ant1, Int ant2, Double time){
 
   MVTime mvt(time / C::day);
   String timeKey = mvt.string(MVTime::TIME, 7);
-  Int timeIndex=timeValueMap_p(timeKey);
+  Int timeIndex=timeValueMap_p.at(timeKey);
   // if (ant1==0 && ant2==1) 
   //   cout << "phase 1 2 " << rawPhase_p(timeIndex, baselineIndex)*180.0/C::pi << " Time " << timeKey << endl;
   //   cout << " Timekey " << timeKey << "Timeindex " << timeIndex << endl;

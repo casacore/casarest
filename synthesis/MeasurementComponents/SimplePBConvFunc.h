@@ -134,7 +134,7 @@ namespace casacore{
     private:
       Bool checkPBOfField(const VisBuffer& vb);
       void addPBToFlux(const VisBuffer& vb);
-      SimpleOrderedMap <String, Int> convFunctionMap_p;
+      std::map<String, Int> convFunctionMap_p;
       Int actualConvIndex_p;
       PBMathInterface::PBClass pbClass_p;
 

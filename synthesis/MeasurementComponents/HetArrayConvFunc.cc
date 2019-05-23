@@ -33,7 +33,6 @@
 #include <casacore/casa/Arrays/Slice.h>
 #include <casacore/casa/Arrays/Matrix.h>
 #include <casacore/casa/Arrays/Cube.h>
-#include <casacore/casa/Containers/SimOrdMap.h>
 #include <casacore/scimath/Mathematics/MathFunc.h>
 #include <casacore/scimath/Mathematics/ConvolveGridder.h>
 #include <casacore/casa/Utilities/Assert.h>
@@ -72,14 +71,14 @@
 #include <synthesis/MeasurementComponents/HetArrayConvFunc.h>
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
-  HetArrayConvFunc::HetArrayConvFunc() : convFunctionMap_p(0), nDefined_p(0), antDiam2IndexMap_p(-1),msId_p(-1), actualConvIndex_p(-1)
+  HetArrayConvFunc::HetArrayConvFunc() : convFunctionMap_p(0), nDefined_p(0), msId_p(-1), actualConvIndex_p(-1)
   {
     
     init(PBMathInterface::AIRY);
   }
 
   HetArrayConvFunc::HetArrayConvFunc(const PBMathInterface::PBClass typeToUse):
-    convFunctionMap_p(0), nDefined_p(0), antDiam2IndexMap_p(-1),msId_p(-1), actualConvIndex_p(-1) 
+    convFunctionMap_p(0), nDefined_p(0), msId_p(-1), actualConvIndex_p(-1) 
   {
     
     init(typeToUse);
@@ -106,15 +105,15 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
       //cerr << "K: Number of rows " << ac.nrow() << endl;
       antIndexToDiamIndex_p.resize(ac.nrow());
       antIndexToDiamIndex_p.set(-1);
-      Int diamIndex=antDiam2IndexMap_p.ndefined();
+      Int diamIndex=antDiam2IndexMap_p.size();
       Vector<Double> dishDiam=ac.dishDiameter().getColumn();
       for (uInt k=0; k < dishDiam.nelements(); ++k){
-	if((diamIndex !=0) && antDiam2IndexMap_p.isDefined(dishDiam(k))){
-	  antIndexToDiamIndex_p(k)=antDiam2IndexMap_p(dishDiam(k));
+	if((diamIndex !=0) && (antDiam2IndexMap_p.find(dishDiam(k)) != antDiam2IndexMap_p.end())){
+	  antIndexToDiamIndex_p(k)=antDiam2IndexMap_p.at(dishDiam(k));
 	}
 	else{
 	  if(dishDiam[k] > 0.0){ //there may be stations with no dish on
-	    antDiam2IndexMap_p.define(dishDiam(k), diamIndex);
+	    antDiam2IndexMap_p.insert(std::make_pair(dishDiam(k), diamIndex));
 	    antIndexToDiamIndex_p(k)=diamIndex;
 	    antMath_p.resize(diamIndex+1);
 	    if(pbClass_p== PBMathInterface::AIRY){

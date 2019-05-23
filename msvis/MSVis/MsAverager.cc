@@ -1151,9 +1151,7 @@ void MsAverager::putAveBuffer(Double bufTime, Int bufField, Int bufScan,
       }
    }
 
-   ListIter<VisBuffer*> list(aveList);
-   list.toEnd();
-   list.addRight(pAveBuff); 
+   aveList.push_back(pAveBuff); 
 
    return;
 }
@@ -1278,12 +1276,10 @@ void MsAverager::getXY(Vector<Double>& x, casacore::Vector<Double>& y,
      return;
   }
 
-  ListIter<VisBuffer*> list(aveList);
-  list.pos(0);
-  VisBuffer* pAveBuff = list.getRight();
+  VisBuffer* pAveBuff = aveList.front();
   IPosition ip = pAveBuff->visCube().shape();
 
-  Int nBuff = list.len(); // nAveTime
+  Int nBuff = aveList.size(); // nAveTime
   Int nRow = ip(2);
 #if LOG2
   Int nChan = ip(1); // nAveChan
@@ -1300,9 +1296,7 @@ void MsAverager::getXY(Vector<Double>& x, casacore::Vector<Double>& y,
   f.resize(len);
 
   int i = 0;
-  list.toStart();
-  while (!list.atEnd()) {
-     VisBuffer* pb = list.getRight();
+  for (VisBuffer* pb : aveList) {
      if (pb != 0) {
         for (int row = 0; row < nRow; row++) {
            for (Int chn = 0; chn < nAveChan; chn++) {
@@ -1315,7 +1309,6 @@ void MsAverager::getXY(Vector<Double>& x, casacore::Vector<Double>& y,
            //showVisRow(aveV, 0);
         }
      }
-     list++;
   }
 
 }

@@ -143,7 +143,7 @@ Bool PClarkCleanImageSkyModel::solve(SkyEquation& se) {
   ClarkCleanAlgorithm clarkClean;
 
   // Track the assignment of channel to process rank
-  OrderedMap<Int, Int> chanNo(0);
+  std::map<Int, Int> chanNo;
   Bool allDone, assigned;
   Int rank;
 
@@ -168,7 +168,7 @@ Bool PClarkCleanImageSkyModel::solve(SkyEquation& se) {
       // Get the resulting plane and insert in the correct place
       Array<Float> af;
       applicator.get(af);
-      image(0).putSlice(af, IPosition(4, xbeg, ybeg, 0, chanNo(rank)));
+      image(0).putSlice(af, IPosition(4, xbeg, ybeg, 0, chanNo.at(rank)));
       // Assign the next available process
       assigned = applicator.nextAvailProcess(clarkClean, rank);
     };
@@ -190,7 +190,7 @@ Bool PClarkCleanImageSkyModel::solve(SkyEquation& se) {
     applicator.put(nchan);
 
     // Record the assignment of channel to process rank
-    chanNo.define(rank, ichan);
+    chanNo.insert(std::make_pair(rank, ichan));
 
     // Execute the algorithm
     applicator.apply(clarkClean);
@@ -202,7 +202,7 @@ Bool PClarkCleanImageSkyModel::solve(SkyEquation& se) {
     // Get the resulting plane and insert in the correct place
     Array<Float> af;
     applicator.get(af);
-    image(0).putSlice(af, IPosition(4, xbeg, ybeg, 0, chanNo(rank)));
+    image(0).putSlice(af, IPosition(4, xbeg, ybeg, 0, chanNo.at(rank)));
     // Wait for the next process to complete
     rank = applicator.nextProcessDone(clarkClean, allDone);
   };

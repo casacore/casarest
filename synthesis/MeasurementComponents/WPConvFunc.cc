@@ -72,7 +72,6 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 
  WPConvFunc::WPConvFunc(): PixelatedConvFunc<Complex>(),
-				 convFunctionMap_p(-1), 
 				 actualConvIndex_p(-1), convSize_p(0), convSupport_p(0) {
    //
   }
@@ -414,19 +413,19 @@ Bool WPConvFunc::checkCenterPix(const ImageInterface<Complex>& image){
   oos << ny_p << "_"<< fabs(incr(1));
   String imageKey(oos);
 
-  if(convFunctionMap_p.ndefined() == 0){
-    convFunctionMap_p.define(imageKey, 0);    
+  if(convFunctionMap_p.empty()){
+    convFunctionMap_p.insert(std::make_pair(imageKey, 0));    
     actualConvIndex_p=0;
     return False;
   }
    
-  if(!convFunctionMap_p.isDefined(imageKey)){
-    actualConvIndex_p=convFunctionMap_p.ndefined();
-    convFunctionMap_p.define(imageKey,actualConvIndex_p);
+  if(convFunctionMap_p.find(imageKey) == convFunctionMap_p.end()){
+    actualConvIndex_p=convFunctionMap_p.size();
+    convFunctionMap_p.insert(std::make_pair(imageKey,actualConvIndex_p));
     return False;
   }
   else{
-    actualConvIndex_p=convFunctionMap_p(imageKey);
+    actualConvIndex_p=convFunctionMap_p.at(imageKey);
     convFunc_p.resize(); // break any reference
     convFunc_p.reference(*convFunctions_p[actualConvIndex_p]);
     convSupport_p.resize();

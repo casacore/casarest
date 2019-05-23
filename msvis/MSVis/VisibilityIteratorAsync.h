@@ -345,7 +345,7 @@ private:
     PrefetchColumns prefetchColumns_p;
     Int subChunkNumber_p;
     VisBufferAsync * visBufferAsync_p;
-    Stack<VisBufferAsyncWrapper *> vbaWrapperStack_p;
+    std::stack<VisBufferAsyncWrapper *> vbaWrapperStack_p;
 
     void dumpPrefetchColumns () const;
 

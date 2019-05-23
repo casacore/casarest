@@ -39,7 +39,7 @@ endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 2.8)
 
 # project version
 set( ${PROJECT_NAME}_MAJOR_VERSION 1 )
-set( ${PROJECT_NAME}_MINOR_VERSION 5 )
+set( ${PROJECT_NAME}_MINOR_VERSION 6 )
 set( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 if (UseCasaNamespace)
@@ -54,7 +54,7 @@ include (CTest)
 
 # Determine which external packages to use.
 # dependencies
-find_package(CasaCore REQUIRED)
+find_package(CasaCore 3.1 REQUIRED)
 find_package(CFITSIO 3.030 REQUIRED) # Should pad to three decimal digits
 find_package(WCSLIB 4.7 REQUIRED)    # needed for CASA
 find_package(BLAS REQUIRED)

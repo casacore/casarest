@@ -32,7 +32,7 @@
 #include <synthesis/MeasurementComponents/SolvableVisCal.h>
 #include <synthesis/MeasurementComponents/StandardVisCal.h>
 #include <calibration/CalTables/GJonesMBuf.h>
-#include <casacore/casa/Containers/SimOrdMap.h>
+#include <map>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -144,7 +144,7 @@ public:
   // Parameters for raw phase removal from another spw
   VisSet* rawvs_p;
   Bool rawPhaseRemoval_p;
-  SimpleOrderedMap<String, Int> timeValueMap_p;
+  std::map<String, Int> timeValueMap_p;
   Matrix<Double> rawPhase_p;
 
   // Solution timestamp

@@ -99,7 +99,7 @@ void PWFCleanImageSkyModel::makeApproxPSFs(SkyEquation& se){
   MakeApproxPSFAlgorithm makepsf ;
   Int rank;
   Bool allDone, assigned; 
-  OrderedMap <Int, Int> psfNo(0);
+  std::map<Int, Int> psfNo;
   Int gotten=0;
 
   try{
@@ -109,12 +109,12 @@ void PWFCleanImageSkyModel::makeApproxPSFs(SkyEquation& se){
       while(!assigned){
 	rank= applicator.nextProcessDone(makepsf, allDone);
 	// Receive PSF and fit to PSF info
-       	applicator.get(beam(psfNo(rank)));
+       	applicator.get(beam(psfNo.at(rank)));
 	Array<Float> psfArray;
 	applicator.get(psfArray);
-	PSF(psfNo(rank)).putSlice(psfArray, IPosition(4, 0, 0, 0, 0));	 
+	PSF(psfNo.at(rank)).putSlice(psfArray, IPosition(4, 0, 0, 0, 0));	 
 	++gotten;
-	if((*beam_p[psfNo(rank)])(0) == Float(-1.0)){
+	if((*beam_p[psfNo.at(rank)])(0) == Float(-1.0)){
 	  os << "Model " << thismodel << "PSF formation failed "
 	     <<LogIO::POST ;
 	}
@@ -136,7 +136,7 @@ void PWFCleanImageSkyModel::makeApproxPSFs(SkyEquation& se){
       Record image_container;
       cImage(thismodel).toRecord(errorString, image_container);
       applicator.put(image_container);
-      psfNo.define(rank, thismodel);
+      psfNo.insert(std::make_pair(rank, thismodel));
    
       //Serial transport execution
       applicator.apply(makepsf);
@@ -146,12 +146,12 @@ void PWFCleanImageSkyModel::makeApproxPSFs(SkyEquation& se){
     rank= applicator.nextProcessDone(makepsf,allDone);
  
     while (!allDone) {
-      applicator.get(beam(psfNo(rank)));
+      applicator.get(beam(psfNo.at(rank)));
       Array<Float> psfArray;
       applicator.get(psfArray);
-      PSF(psfNo(rank)).putSlice(psfArray, IPosition(4, 0, 0, 0, 0));   
-      if((*beam_p[psfNo(rank)])(0)== Float(-1.0)){
-	os << "Model "<< psfNo(rank) <<"Beam forming failed "<< LogIO::POST ;
+      PSF(psfNo.at(rank)).putSlice(psfArray, IPosition(4, 0, 0, 0, 0));   
+      if((*beam_p[psfNo.at(rank)])(0)== Float(-1.0)){
+	os << "Model "<< psfNo.at(rank) <<"Beam forming failed "<< LogIO::POST ;
       }
       rank=applicator.nextProcessDone(makepsf,allDone);
     }

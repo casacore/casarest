@@ -32,8 +32,6 @@
 #include <casacore/casa/Arrays/Matrix.h>
 #include <casacore/casa/Arrays/Cube.h>
 #include <casacore/casa/Arrays/Slicer.h>
-#include <casacore/casa/Containers/Stack.h>
-#include <casacore/casa/Containers/OrderedMap.h>
 #include <casacore/ms/MeasurementSets/MeasurementSet.h>
 #include <casacore/measures/Measures/Stokes.h>
 #include <casacore/measures/Measures/MeasConvert.h>

@@ -121,7 +121,7 @@ template<class T> class Vector;
 
     private:
 
-     SimpleOrderedMap <String, Int> multiFieldMap_p;
+     std::map<String, Int> multiFieldMap_p;
      Block<Matrix<Float> > gwt_p;
      String wgtType_p;
      Float uscale_p, vscale_p;

@@ -427,14 +427,11 @@ Bool SubMS::getCorrMaps(MSSelection& mssel, const MeasurementSet& ms,
     
   if(areSelecting){
     // Get the corr indices as an ordered map
-    OrderedMap<Int, Vector<Vector<Int> > > corrmap(mssel.getCorrMap(&ms));
+    std::map<Int, Vector<Vector<Int> > > corrmap(mssel.getCorrMap(&ms));
 
     // Iterate over the ordered map to fill the vector maps
-    ConstMapIter<Int, Vector<Vector<Int> > > mi(corrmap);
-    for(mi.toStart(); !mi.atEnd(); ++mi){
-      Int pol = mi.getKey();
-
-      outToIn[pol] = mi.getVal()[0];
+    for(const auto& cm : corrmap) {
+      outToIn[cm.first] = cm.second[0];
     }
   }
   else{	// Make outToIn an identity map.
@@ -5498,8 +5495,8 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
       ScalarColumn<Int> PolIdCol = DDCols.polarizationId();
       vector<uInt> affDDIds;  
       vector<Bool> DDRowsToDelete(numDataDescs, False);
-      SimpleOrderedMap <Int, Int> tempDDIndex(-1); // store relation between old and new DD Ids
-      SimpleOrderedMap <Int, Int> DDtoSPWIndex(-1); // store relation between old DD Ids and old SPW Ids 
+      std::map<Int, Int> tempDDIndex; // store relation between old and new DD Ids
+      std::map<Int, Int> DDtoSPWIndex; // store relation between old DD Ids and old SPW Ids 
       //  (only for affected SPW IDs)
       // loop over DD table rows
       for(uInt i=0; i<numDataDescs; i++){
@@ -5512,7 +5509,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	    // memorize affected DD IDs in affDDIds
 	    affDDIds.push_back(i);
 	    // store relation between old DD Id and old SPW ID for later use in the modification of the MAIN table
-	    DDtoSPWIndex.define(i, spwsToCombine[j]); // note: this relation can be many-to-one  
+	    DDtoSPWIndex.insert(std::make_pair(i, spwsToCombine[j])); // note: this relation can be many-to-one  
 	  }     
 	}
       }
@@ -5539,7 +5536,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	      // mark for deletion
 	      DDRowsToDelete[j] = True;
 	      // fill map for DDrenumbering
-	      tempDDIndex.define(j, i);
+	      tempDDIndex.insert(std::make_pair(j, i));
 	    }
 	  }    
 	} // end if affected 
@@ -5552,7 +5549,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	  removed++;
 	}
 	else{ // this row is not deleted but changes its number by <removed> due to removal of others
-	  tempDDIndex.define(i, i-removed);
+	  tempDDIndex.insert(std::make_pair(i, i-removed));
 	}
       }
 
@@ -5702,7 +5699,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
       Int firstAffRow = 0;
       for(uInt mRow=0; mRow<nMainTabRows; mRow++){
 	uInt sortedMRow = sortedI(mRow);
-	if(DDtoSPWIndex.isDefined(DDIdCol(sortedMRow))){
+	if(DDtoSPWIndex.find(DDIdCol(sortedMRow)) != DDtoSPWIndex.end()){
 	  firstAffRow = sortedMRow;
 	  break;
 	}
@@ -5812,7 +5809,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	Int theDataDescId = DDIdCol(mainTabRow);
 	
 	// row affected by the spw combination? (uses the old DD numbering)
-	if(DDtoSPWIndex.isDefined(theDataDescId)){
+	if(DDtoSPWIndex.find(theDataDescId) != DDtoSPWIndex.end()){
 	  // find matching affected rows with same time stamp, antennas and field
 	  Int theAntenna1 = antenna1Col(mainTabRow);
 	  Int theAntenna2 = antenna2Col(mainTabRow);
@@ -5823,9 +5820,9 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	  vector<Int> matchingRows;
 	  matchingRows.push_back(mainTabRow);
 	  vector<Int> matchingRowSPWIds;
-	  matchingRowSPWIds.push_back(DDtoSPWIndex(theDataDescId));
-	  SimpleOrderedMap <Int, Int> SPWtoRowIndex(-1);
-	  SPWtoRowIndex.define(matchingRowSPWIds[0], mainTabRow);
+	  matchingRowSPWIds.push_back(DDtoSPWIndex.at(theDataDescId));
+          std::map<Int, Int> SPWtoRowIndex;
+	  SPWtoRowIndex.insert(std::make_pair(matchingRowSPWIds[0], mainTabRow));
 
 	  //	  cout << "theRow = " << mainTabRow << ", time = " << theTime << " DDID " << theDataDescId << endl;
 	  
@@ -5838,7 +5835,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 		matchingRows.size() < nSpwsToCombine // there should be one matching row per SPW
 		){
 
-	    if(!DDtoSPWIndex.isDefined(DDIdCol(nextRow)) ||
+	    if(DDtoSPWIndex.find(DDIdCol(nextRow)) == DDtoSPWIndex.end() ||
 	       antenna1Col(nextRow) != theAntenna1 ||
 	       antenna2Col(nextRow) != theAntenna2 ||
 	       fieldCol(nextRow) != theField ){ // not a matching row
@@ -5866,8 +5863,8 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	      return False;
 	    }
 	    // found a matching row
-	    Int theSPWId = DDtoSPWIndex(DDIdCol(nextRow));
-	    if(SPWtoRowIndex.isDefined(theSPWId)){ // there should be a one-to-one relation: SPW <-> matching row
+	    Int theSPWId = DDtoSPWIndex.at(DDIdCol(nextRow));
+	    if(SPWtoRowIndex.find(theSPWId) != SPWtoRowIndex.end()){ // there should be a one-to-one relation: SPW <-> matching row
 	      os << LogIO::SEVERE << "Error: for time " << MVTime(theTime/C::day).string(MVTime::DMY,7) << ", baseline (" << theAntenna1 << ","
 		 << theAntenna2 << "), field "<< theField << " found more than one row for SPW "
 		 << theSPWId << LogIO::POST;
@@ -5876,7 +5873,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	    else{ // this SPW not yet covered, memorize SPWId, row number, and relation
 	      matchingRowSPWIds.push_back(theSPWId);
 	      matchingRows.push_back(nextRow);
-	      SPWtoRowIndex.define(theSPWId, nextRow);
+	      SPWtoRowIndex.insert(std::make_pair(theSPWId, nextRow));
 	      // cout << "matching nextRow = " << nextRow << ", time = " << timeCol(nextRow) << " DDID " << DDIdCol(nextRow) << endl;
 	    }
 	    nextRowI++;
@@ -5938,8 +5935,8 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 
 	  for(uInt i=0; i<nSpwsToCombine; i++){
 	    Int theRowSPWId = spwsToCombine[i];
-	    if(SPWtoRowIndex.isDefined(theRowSPWId)){ // there actually is a matching row for this SPW
-	      Int theRow = SPWtoRowIndex(theRowSPWId);
+	    if(SPWtoRowIndex.find(theRowSPWId) != SPWtoRowIndex.end()){ // there actually is a matching row for this SPW
+	      Int theRow = SPWtoRowIndex.at(theRowSPWId);
 	      if(CORRECTED_DATAColIsOK){
 		newCorrectedDataI[theRowSPWId].reference(oldCORRECTED_DATACol(theRow));
 	      }
@@ -5994,7 +5991,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	    Vector<Double> numNominal(nCorrelations, 0.);
 	    Vector<Double> modNorm(nCorrelations, 0.); // normalization for the averaging of the contributions from the SPWs
 	    for(Int j=0; j<averageN[i]; j++){
-	      if(SPWtoRowIndex.isDefined(averageWhichSPW[i][j])){
+	      if(SPWtoRowIndex.find(averageWhichSPW[i][j]) != SPWtoRowIndex.end()){
 		for(uInt k=0; k<nCorrelations; k++){
 		  if(!newFlagI[ averageWhichSPW[i][j] ]( k, averageWhichChan[i][j] )){
 		    haveCoverage = True;
@@ -6026,7 +6023,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 	      for(Int j=0; j<averageN[i]; j++){
 		// new channel value i 
 		//   = SUM{j=0 to averageN[i]}( channelValue(SPW = averageWhichSPW[i][j], CHANNEL = averageWhichChan[i][j]) * averageChanFrac[i][j])
-		if(SPWtoRowIndex.isDefined(averageWhichSPW[i][j])){
+		if(SPWtoRowIndex.find(averageWhichSPW[i][j]) != SPWtoRowIndex.end()){
 
 		  Double weight = 0.;
 
@@ -6039,7 +6036,7 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 
 		      if(CORRECTED_DATAColIsOK){
 			newCorrectedData(k,i) += newCorrectedDataI[ averageWhichSPW[i][j] ]( k, averageWhichChan[i][j] ) * weight;
-// 			cout << "row " << SPWtoRowIndex(averageWhichSPW[i][j]) << "averageWhichSPW[i][j] " 
+// 			cout << "row " << SPWtoRowIndex.at(averageWhichSPW[i][j]) << "averageWhichSPW[i][j] " 
 // 			     << averageWhichSPW[i][j] << "  averageWhichChan[i][j] " << averageWhichChan[i][j]
 // 			     << " i, j, k " << i << ", " << j << ", " << k << " averageChanFrac[i][j] " << averageChanFrac[i][j] 
 // 			     << " modNorm(k) " << modNorm(k) << " newCorrectedDataI[ averageWhichSPW[i][j] ]( k, averageWhichChan[i][j] ) "
@@ -6127,9 +6124,9 @@ Bool SubMS::fillAllTables(const Vector<MS::PredefinedColumns>& datacols)
 
 	  mainCols.flagRow().put(newMainTabRow, newFlagRow);
 	  
-	  if(tempDDIndex.isDefined(theDataDescId)){
+	  if(tempDDIndex.find(theDataDescId) != tempDDIndex.end()){
 	    // do DD ID renumbering (due to shrunk DD table and spw combination )
-	    mainCols.dataDescId().put(newMainTabRow, tempDDIndex(theDataDescId)); 
+	    mainCols.dataDescId().put(newMainTabRow, tempDDIndex.at(theDataDescId)); 
 	  }
 	  else{
 	    mainCols.dataDescId().put(newMainTabRow,  DDIdCol(mainTabRow)); 

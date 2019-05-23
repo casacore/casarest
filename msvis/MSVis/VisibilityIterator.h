@@ -32,7 +32,6 @@
 #include <casacore/casa/Arrays/Matrix.h>
 #include <casacore/casa/Arrays/Cube.h>
 #include <casacore/casa/Arrays/Slicer.h>
-#include <casacore/casa/Containers/Stack.h>
 #include <casacore/ms/MeasurementSets/MeasurementSet.h>
 #include <casacore/measures/Measures/Stokes.h>
 #include <casacore/measures/Measures/MeasConvert.h>
@@ -44,6 +43,7 @@
 #include <casacore/casa/BasicSL/String.h>
 #include <casacore/scimath/Mathematics/SquareMatrix.h>
 #include <casacore/scimath/Mathematics/RigidVector.h>
+#include <stack>
 
 #if defined(casacore)
 #include <casacore/ms/MSOper/MSDerivedValues.h>
@@ -745,7 +745,7 @@ protected:
   Block<Vector<Int> > blockSpw_p;
   Int msCounter_p;
   // Stack of VisBuffer objects
-  Stack<VisBuffer *> vbStack_p;
+  std::stack<VisBuffer *> vbStack_p;
   vector<const MeasurementSet *> measurementSets_p; // [use]
 
   //cache for access functions

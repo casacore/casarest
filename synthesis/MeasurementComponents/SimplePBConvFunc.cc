@@ -76,7 +76,6 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
   SimplePBConvFunc::SimplePBConvFunc(): PixelatedConvFunc<Complex>(),nchan_p(-1),
 					npol_p(-1), pointToPix_p(), directionIndex_p(-1), thePix_p(0),
 					filledFluxScale_p(False),doneMainConv_p(False),
-					convFunctionMap_p(-1), 
 					actualConvIndex_p(-1), convSize_p(0), 
 					convSupport_p(0) {
     //
@@ -87,7 +86,7 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
   SimplePBConvFunc::SimplePBConvFunc(const PBMathInterface::PBClass typeToUse): 
     PixelatedConvFunc<Complex>(),nchan_p(-1),npol_p(-1),pointToPix_p(),
     directionIndex_p(-1), thePix_p(0), filledFluxScale_p(False),doneMainConv_p(False), 
-    convFunctionMap_p(-1), actualConvIndex_p(-1), convSize_p(0), convSupport_p(0) {
+    actualConvIndex_p(-1), convSize_p(0), convSupport_p(0) {
     //
     pbClass_p=typeToUse;
 
@@ -616,14 +615,14 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
   Bool SimplePBConvFunc::checkPBOfField(const VisBuffer& vb){
     Int fieldid=vb.fieldId();
     Int msid=vb.msId();
-    if(convFunctionMap_p.ndefined() > 0){
+    if(convFunctionMap_p.size() > 0){
       if ((fluxScale_p.shape()[3] != nchan_p) || (fluxScale_p.shape()[2] != npol_p)){
 	convFunctionMap_p.clear();
       }
     }
     String mapid=String::toString(msid)+String("_")+String::toString(fieldid);
-    if(convFunctionMap_p.ndefined() == 0){
-      convFunctionMap_p.define(mapid, 0);    
+    if(convFunctionMap_p.empty()){
+      convFunctionMap_p.insert(std::make_pair(mapid, 0));    
       actualConvIndex_p=0;
       fluxScale_p=TempImage<Float>(IPosition(4,nx_p,ny_p,npol_p,nchan_p), csys_p);
       filledFluxScale_p=False;
@@ -631,13 +630,13 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
       return False;
     }
     
-    if(!convFunctionMap_p.isDefined(mapid)){
-      actualConvIndex_p=convFunctionMap_p.ndefined();
-      convFunctionMap_p.define(mapid, actualConvIndex_p);
+    if(convFunctionMap_p.find(mapid) == convFunctionMap_p.end()){
+      actualConvIndex_p=convFunctionMap_p.size();
+      convFunctionMap_p.insert(std::make_pair(mapid, actualConvIndex_p));
       return False;
     }
     else{
-      actualConvIndex_p=convFunctionMap_p(mapid);
+      actualConvIndex_p=convFunctionMap_p.at(mapid);
       convFunc_p.resize(); // break any reference
       weightConvFunc_p.resize(); 
       //Here we will need to use the right xyPlane for different PA range.
