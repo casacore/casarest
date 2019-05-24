@@ -38,10 +38,10 @@ ROCalHistoryColumns::ROCalHistoryColumns (const CalTable& calTable)
 // Input:
 //    calTable         const CalTable&                Calibration table
 // Output to private data:
-//    calParms_p       ROScalarColumn<String>&        Solver parameters
-//    calTables_p      ROScalarColumn<String>&        Associated cal. tables
-//    calSelect_p      ROScalarColumn<String>&        Cal. selection
-//    calNotes_p       ROScalarColumn<String>&        Cal. notes
+//    calParms_p       ScalarColumn<String>&        Solver parameters
+//    calTables_p      ScalarColumn<String>&        Associated cal. tables
+//    calSelect_p      ScalarColumn<String>&        Cal. selection
+//    calNotes_p       ScalarColumn<String>&        Cal. notes
 //
   // Attach all the column accessors (including required and
   // optional columns)
@@ -54,14 +54,14 @@ ROCalHistoryColumns::ROCalHistoryColumns (const CalTable& calTable)
 //----------------------------------------------------------------------------
 
 void ROCalHistoryColumns::attach (const CalTable& calTable, 
-				  ROTableColumn& tabCol, 
+				  TableColumn& tabCol, 
 				  MSCalEnums::colDef colEnum, 
 				  const Bool& optional)
 {
 // Attach a column accessor to the calibration table
 // Input:
 //    calTable         const CalTable&      Calibration table
-//    tabCol           ROTableColumn&       Table column accessor
+//    tabCol           TableColumn&       Table column accessor
 //    colEnum          MSCalEnums::colDef   Column enum
 //    optional         const Bool&          True if optional column
 // Output to private data:
@@ -103,14 +103,14 @@ CalHistoryColumns::CalHistoryColumns (CalTable& calTable)
 //----------------------------------------------------------------------------
 
 void CalHistoryColumns::attach (CalTable& calTable, 
-				ROTableColumn& tabCol, 
+				TableColumn& tabCol, 
 				MSCalEnums::colDef colEnum, 
 				const Bool& optional)
 {
 // Attach a column accessor to the calibration table
 // Input:
 //    calTable         CalTable&            Calibration table
-//    tabCol           ROTableColumn&       Table column accessor
+//    tabCol           TableColumn&       Table column accessor
 //    colEnum          MSCalEnums::colDef   Column enum
 //    optional         const Bool&          True if optional column
 // Output to private data:

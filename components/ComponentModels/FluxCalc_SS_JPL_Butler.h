@@ -40,7 +40,7 @@
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MFrequency;
-//class ROScalarColumn<Double>;  There doesn't seem to be a way to forward
+//class ScalarColumn<Double>;  There doesn't seem to be a way to forward
 //declare a template.
 
 // <summary> 
@@ -230,7 +230,7 @@ class FluxCalc_SS_JPL_Butler
   // Find the row in mjd closest to time_p, and the rows just before and after
   // it, taking boundaries into account.
   Bool get_row_numbers(uInt& rowbef, uInt& rowclosest, uInt& rowaft,
-		       const ROScalarColumn<Double>& mjd);
+		       const ScalarColumn<Double>& mjd);
 
   // Put a quadratic, linear, or nearest neighbor interpolation of colname into
   // val.  Returns whether or not it did it.

@@ -79,14 +79,14 @@ class ROSolvableVisJonesMCol : public ROTimeVarVisJonesMCol
   virtual ~ROSolvableVisJonesMCol() {};
 
   // Read-only column accessors
-  const ROScalarColumn<Bool>& totalSolnOk() const {return totalSolnOk_p;};
-  const ROScalarColumn<Float>& totalFit() const {return totalFit_p;};
-  const ROScalarColumn<Float>& totalFitWgt() const {return totalFitWgt_p;};
-  const ROArrayColumn<Bool>& solnOk() const {return solnOk_p;};
-  const ROArrayColumn<Float>& fit() const {return fit_p;};
-  const ROArrayColumn<Float>& fitWgt() const {return fitWgt_p;};
-  const ROArrayColumn<Bool>& flag() const {return flag_p;};
-  const ROArrayColumn<Float>& snr() const {return snr_p;};
+  const ScalarColumn<Bool>& totalSolnOk() const {return totalSolnOk_p;};
+  const ScalarColumn<Float>& totalFit() const {return totalFit_p;};
+  const ScalarColumn<Float>& totalFitWgt() const {return totalFitWgt_p;};
+  const ArrayColumn<Bool>& solnOk() const {return solnOk_p;};
+  const ArrayColumn<Float>& fit() const {return fit_p;};
+  const ArrayColumn<Float>& fitWgt() const {return fitWgt_p;};
+  const ArrayColumn<Bool>& flag() const {return flag_p;};
+  const ArrayColumn<Float>& snr() const {return snr_p;};
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -99,14 +99,14 @@ class ROSolvableVisJonesMCol : public ROTimeVarVisJonesMCol
   ROSolvableVisJonesMCol& operator= (const ROSolvableVisJonesMCol&);
 
   // Private column accessors
-  ROScalarColumn<Bool> totalSolnOk_p;
-  ROScalarColumn<Float> totalFit_p;
-  ROScalarColumn<Float> totalFitWgt_p;
-  ROArrayColumn<Bool> solnOk_p;
-  ROArrayColumn<Float> fit_p;
-  ROArrayColumn<Float> fitWgt_p;
-  ROArrayColumn<Bool> flag_p;
-  ROArrayColumn<Float> snr_p;
+  ScalarColumn<Bool> totalSolnOk_p;
+  ScalarColumn<Float> totalFit_p;
+  ScalarColumn<Float> totalFitWgt_p;
+  ArrayColumn<Bool> solnOk_p;
+  ArrayColumn<Float> fit_p;
+  ArrayColumn<Float> fitWgt_p;
+  ArrayColumn<Bool> flag_p;
+  ArrayColumn<Float> snr_p;
 };
 
 // <summary> 

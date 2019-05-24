@@ -140,7 +140,7 @@ void EGainCurve::setApply(const Record& applypar) {
       {
         Table nomgaintab = freqgaintab(freqgaintab.col("ANTENNA")=="0");
         if (nomgaintab.nrow() > 0) {
-          ROArrayColumn<Float> gain(nomgaintab,"GAIN");
+          ArrayColumn<Float> gain(nomgaintab,"GAIN");
           nomgain=gain(0);
         } else {
           // nominal gain is unity
@@ -160,7 +160,7 @@ void EGainCurve::setApply(const Record& applypar) {
 	// Select antenna by name
         Table antgaintab = freqgaintab(freqgaintab.col("ANTENNA")==antnames_(iant));
         if (antgaintab.nrow() > 0) {
-          ROArrayColumn<Float> gain(antgaintab,"GAIN");
+          ArrayColumn<Float> gain(antgaintab,"GAIN");
 	  piter.array().nonDegenerate().reform(gain(0).shape())=gain(0);
         } else {
 	  piter.array().nonDegenerate().reform(nomgain.shape())=nomgain;

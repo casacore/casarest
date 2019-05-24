@@ -92,8 +92,8 @@ protected:
                      const Block<Int> & channelWidth,
                      const Block<Int> & channelIncrement,
                      const Block<Int> & channelGroupNumber,
-                     const ROArrayColumn <Double> * chanFreqs,
-                     const ROScalarColumn<Int> * obsMFreqTypes,
+                     const ArrayColumn <Double> * chanFreqs,
+                     const ScalarColumn<Int> * obsMFreqTypes,
                      const MPosition & observatoryPositon,
                      const MDirection & phaseCenter,
                      Bool velocitySelection);
@@ -118,7 +118,7 @@ protected:
 
 private:
 
-    const ROArrayColumn <Double> * chanFreqs_p;  // [use]
+    const ArrayColumn <Double> * chanFreqs_p;  // [use]
     Block<Int>                     channelGroupNumber_p;
     Block<Int>                     channelIncrement_p;
     Block<Int>                     channelStart_p;
@@ -132,7 +132,7 @@ private:
     Int                            msID_p;
     Int                            nAntennas_p;
     Int                            nCoh_p;
-    const ROScalarColumn<Int> *    obsMFreqTypes_p; // [use]
+    const ScalarColumn<Int> *    obsMFreqTypes_p; // [use]
     MPosition                      observatoryPosition_p;
     Vector<Float>                  receptor0Angle_p;
     Vector<Double>                 selFreq_p;

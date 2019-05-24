@@ -45,7 +45,7 @@ class ROEPointMCol : public ROSolvableVisJonesMCol
 
   // Read-only column accessors
 
-  const ROArrayColumn<Float>& pointingOffset() const {return pointingOffset_p;}
+  const ArrayColumn<Float>& pointingOffset() const {return pointingOffset_p;}
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -58,7 +58,7 @@ class ROEPointMCol : public ROSolvableVisJonesMCol
   ROEPointMCol& operator= (const ROEPointMCol&);
 
   // Private column accessors
-  ROArrayColumn<Float> pointingOffset_p;
+  ArrayColumn<Float> pointingOffset_p;
 };
 
 // <summary> 

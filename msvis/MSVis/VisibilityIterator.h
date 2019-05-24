@@ -587,7 +587,7 @@ public:
   virtual Int numberPol();
   virtual Int numberDDId();
 
-  ROArrayColumn <Double> & getChannelFrequency () const;
+  ArrayColumn <Double> & getChannelFrequency () const;
   Block<Int> getChannelGroupNumber () const;
   Block<Int> getChannelIncrement () const;
   Block<Int> getChannelStart () const;
@@ -610,8 +610,8 @@ public:
                             const Block<Int> & chanWidth,
                             const Block<Int> & chanInc,
                             const Block<Int> & numChanGroup,
-                            const ROArrayColumn <Double> & chanFreqs,
-                            const ROScalarColumn<Int> & obsMFreqTypes,
+                            const ArrayColumn <Double> & chanFreqs,
+                            const ScalarColumn<Int> & obsMFreqTypes,
                             const MEpoch & ep,
                             const MPosition & obsPos,
                             const MDirection & dir);
@@ -633,8 +633,8 @@ protected:
                            Block<Int> & channelWidth,
                            Block<Int> & channelIncrement,
                            Block<Int> & channelGroupNumber,
-                           const ROArrayColumn <Double> * & chanFreqs,
-                           const ROScalarColumn<Int> * & obsMFreqTypes,
+                           const ArrayColumn <Double> * & chanFreqs,
+                           const ScalarColumn<Int> * & obsMFreqTypes,
                            MPosition & observatoryPositon,
                            MDirection & phaseCenter,
                            Bool & velocitySelecton) const;
@@ -695,24 +695,24 @@ protected:
   void setAsyncEnabled (Bool enable);
 
   template<class T>
-    void getColScalar(const ROScalarColumn<T> &column, Vector<T> &array, Bool resize) const;
+    void getColScalar(const ScalarColumn<T> &column, Vector<T> &array, Bool resize) const;
 
   template<class T>
-    void getColArray(const ROArrayColumn<T> &column, Array<T> &array, Bool resize) const;
+    void getColArray(const ArrayColumn<T> &column, Array<T> &array, Bool resize) const;
 
   // column access functions, can be overridden in derived classes
-  virtual void getCol(const ROScalarColumn<Bool> &column, Vector<Bool> &array, Bool resize = False) const;
-  virtual void getCol(const ROScalarColumn<Int> &column, Vector<Int> &array, Bool resize = False) const;
-  virtual void getCol(const ROScalarColumn<Double> &column, Vector<Double> &array, Bool resize = False) const;
+  virtual void getCol(const ScalarColumn<Bool> &column, Vector<Bool> &array, Bool resize = False) const;
+  virtual void getCol(const ScalarColumn<Int> &column, Vector<Int> &array, Bool resize = False) const;
+  virtual void getCol(const ScalarColumn<Double> &column, Vector<Double> &array, Bool resize = False) const;
 
-  virtual void getCol(const ROArrayColumn<Bool> &column, Array<Bool> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Float> &column, Array<Float> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Double> &column, Array<Double> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Complex> &column, Array<Complex> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Bool> &column, Array<Bool> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Float> &column, Array<Float> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Double> &column, Array<Double> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Complex> &column, Array<Complex> &array, Bool resize = False) const;
 
-  virtual void getCol(const ROArrayColumn<Bool> &column, const Slicer &slicer, Array<Bool> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Float> &column, const Slicer &slicer, Array<Float> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Complex> &column, const Slicer &slicer, Array<Complex> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Bool> &column, const Slicer &slicer, Array<Bool> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Float> &column, const Slicer &slicer, Array<Float> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Complex> &column, const Slicer &slicer, Array<Complex> &array, Bool resize = False) const;
 
   //  virtual void getCol(const String &colName, Array<Double> &array,
   //                      Array<Double> &all, Bool resize = False) const;
@@ -794,27 +794,27 @@ protected:
 
   mutable Vector<uInt> rowIds_p;
 
-  ROScalarColumn<Int> colAntenna1, colAntenna2;
-  ROScalarColumn<Int> colFeed1, colFeed2;
-  ROScalarColumn<Double> colTime;
-  ROScalarColumn<Double> colTimeCentroid;
-  ROScalarColumn<Double> colTimeInterval;
-  ROScalarColumn<Double> colExposure;
-  ROArrayColumn<Float> colWeight;
-  ROArrayColumn<Float> colWeightSpectrum;
-  ROArrayColumn<Complex> colVis;
-  ROArrayColumn<Float> colFloatVis;
-  ROArrayColumn<Complex> colModelVis;
-  ROArrayColumn<Complex> colCorrVis;
-  ROArrayColumn<Float> colSigma;
-  ROArrayColumn<Bool> colFlag;
-  ROArrayColumn<Bool> colFlagCategory;
-  ROScalarColumn<Bool> colFlagRow;
-  ROScalarColumn<Int> colObservation;
-  ROScalarColumn<Int> colProcessor;
-  ROScalarColumn<Int> colScan;
-  ROScalarColumn<Int> colState;
-  ROArrayColumn<Double> colUVW;
+  ScalarColumn<Int> colAntenna1, colAntenna2;
+  ScalarColumn<Int> colFeed1, colFeed2;
+  ScalarColumn<Double> colTime;
+  ScalarColumn<Double> colTimeCentroid;
+  ScalarColumn<Double> colTimeInterval;
+  ScalarColumn<Double> colExposure;
+  ArrayColumn<Float> colWeight;
+  ArrayColumn<Float> colWeightSpectrum;
+  ArrayColumn<Complex> colVis;
+  ArrayColumn<Float> colFloatVis;
+  ArrayColumn<Complex> colModelVis;
+  ArrayColumn<Complex> colCorrVis;
+  ArrayColumn<Float> colSigma;
+  ArrayColumn<Bool> colFlag;
+  ArrayColumn<Bool> colFlagCategory;
+  ScalarColumn<Bool> colFlagRow;
+  ScalarColumn<Int> colObservation;
+  ScalarColumn<Int> colProcessor;
+  ScalarColumn<Int> colScan;
+  ScalarColumn<Int> colState;
+  ArrayColumn<Double> colUVW;
 
   //object to calculate imaging weight
   VisImagingWeight imwgt_p;

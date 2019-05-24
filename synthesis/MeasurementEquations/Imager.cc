@@ -1456,7 +1456,7 @@ Bool Imager::setdata(const String& mode, const Vector<Int>& nchan,
     dataspectralwindowids_p.resize();
     const ROMSSpWindowColumns spwc(ms_p->spectralWindow());
     uInt nspw = spwc.nrow();
-    const ROScalarColumn<Int> spwNchans(spwc.numChan());
+    const ScalarColumn<Int> spwNchans(spwc.numChan());
     Vector<Int> nchanvec = spwNchans.getColumn();
     Int maxnchan = 0;
     for (uInt i=0;i<nchanvec.nelements();i++) {
@@ -2267,7 +2267,7 @@ Bool Imager::feather(const String& image, const String& highRes,
 	} else {
 	  // get the PB from the vpTable
 	  Table vpTable( vpTableStr_p );
-	  ROScalarColumn<TableRecord> recCol(vpTable, (String)"pbdescription");
+	  ScalarColumn<TableRecord> recCol(vpTable, (String)"pbdescription");
 	  myPBp = new PBMath(recCol(0));
 	}
 	AlwaysAssert((myPBp != 0), AipsError);
@@ -4110,10 +4110,10 @@ Bool Imager::clean(const String& algorithm,
       sink.postLocally(msg);
       
       ROMSHistoryColumns msHis(ms_p->history());
-      const ROScalarColumn<Double> &time_col = msHis.time();
-      const ROScalarColumn<String> &origin_col = msHis.origin();
-      const ROArrayColumn<String> &cli_col = msHis.cliCommand();
-      const ROScalarColumn<String> &message_col = msHis.message();
+      const ScalarColumn<Double> &time_col = msHis.time();
+      const ScalarColumn<String> &origin_col = msHis.origin();
+      const ArrayColumn<String> &cli_col = msHis.cliCommand();
+      const ScalarColumn<String> &message_col = msHis.message();
       if (msHis.nrow()>0) {
 	ostringstream oos;
 	uInt nmessages = time_col.nrow();

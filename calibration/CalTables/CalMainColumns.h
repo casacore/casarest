@@ -91,46 +91,46 @@ class ROCalMainColumns
   virtual ~ROCalMainColumns() {};
 
   // Read-only column accessors
-  const ROScalarColumn<Double>& time() const {return time_p;};
-  const ROScalarMeasColumn<MEpoch>& timeMeas() const {return timeMeas_p;};
-  const ROScalarColumn<Double>& timeEP() const {return timeEP_p;};
-  const ROScalarQuantColumn<Double>& timeEPQuant() const 
+  const ScalarColumn<Double>& time() const {return time_p;};
+  const ScalarMeasColumn<MEpoch>& timeMeas() const {return timeMeas_p;};
+  const ScalarColumn<Double>& timeEP() const {return timeEP_p;};
+  const ScalarQuantColumn<Double>& timeEPQuant() const 
     {return timeEPQuant_p;};
-  const ROScalarColumn<Double>& interval() const {return interval_p;};
-  const ROScalarQuantColumn<Double>& intervalQuant() const
+  const ScalarColumn<Double>& interval() const {return interval_p;};
+  const ScalarQuantColumn<Double>& intervalQuant() const
     {return intervalQuant_p;};
-  const ROScalarColumn<Int>& antenna1() const {return antenna1_p;};
-  const ROScalarColumn<Int>& feed1() const {return feed1_p;};
-  const ROScalarColumn<Int>& fieldId() const {return fieldId_p;};
-  const ROScalarColumn<Int>& arrayId() const {return arrayId_p;};
-  const ROScalarColumn<Int>& obsId() const {return obsId_p;};
-  const ROScalarColumn<Int>& scanNo() const {return scanNo_p;};
-  const ROScalarColumn<Int>& processorId() const {return processorId_p;};
-  const ROScalarColumn<Int>& stateId() const {return stateId_p;};
-  const ROScalarColumn<Int>& phaseId() const {return phaseId_p;};
-  const ROScalarColumn<Int>& pulsarBin() const {return pulsarBin_p;};
-  const ROScalarColumn<Int>& pulsarGateId() const {return pulsarGateId_p;};
-  const ROScalarColumn<Int>& freqGrp() const {return freqGrp_p;};
-  const ROScalarColumn<String>& freqGrpName() const {return freqGrpName_p;};
-  const ROScalarColumn<String>& fieldName() const {return fieldName_p;};
-  const ROScalarColumn<String>& fieldCode() const {return fieldCode_p;};
-  const ROScalarColumn<String>& sourceName() const {return sourceName_p;};
-  const ROScalarColumn<String>& sourceCode() const {return sourceCode_p;};
-  const ROScalarColumn<Int>& calGrp() const {return calGrp_p;};
-  const ROArrayColumn<Complex>& gain() const {return gain_p;};
-  const ROArrayColumn<Int>& refAnt() const {return refAnt_p;};
-  const ROArrayColumn<Int>& refFeed() const {return refFeed_p;};
-  const ROArrayColumn<Int>& refReceptor() const {return refReceptor_p;};
-  const ROArrayColumn<Double>& refFreq() const {return refFreq_p;};
-  const ROArrayMeasColumn<MFrequency>& refFreqMeas() const 
+  const ScalarColumn<Int>& antenna1() const {return antenna1_p;};
+  const ScalarColumn<Int>& feed1() const {return feed1_p;};
+  const ScalarColumn<Int>& fieldId() const {return fieldId_p;};
+  const ScalarColumn<Int>& arrayId() const {return arrayId_p;};
+  const ScalarColumn<Int>& obsId() const {return obsId_p;};
+  const ScalarColumn<Int>& scanNo() const {return scanNo_p;};
+  const ScalarColumn<Int>& processorId() const {return processorId_p;};
+  const ScalarColumn<Int>& stateId() const {return stateId_p;};
+  const ScalarColumn<Int>& phaseId() const {return phaseId_p;};
+  const ScalarColumn<Int>& pulsarBin() const {return pulsarBin_p;};
+  const ScalarColumn<Int>& pulsarGateId() const {return pulsarGateId_p;};
+  const ScalarColumn<Int>& freqGrp() const {return freqGrp_p;};
+  const ScalarColumn<String>& freqGrpName() const {return freqGrpName_p;};
+  const ScalarColumn<String>& fieldName() const {return fieldName_p;};
+  const ScalarColumn<String>& fieldCode() const {return fieldCode_p;};
+  const ScalarColumn<String>& sourceName() const {return sourceName_p;};
+  const ScalarColumn<String>& sourceCode() const {return sourceCode_p;};
+  const ScalarColumn<Int>& calGrp() const {return calGrp_p;};
+  const ArrayColumn<Complex>& gain() const {return gain_p;};
+  const ArrayColumn<Int>& refAnt() const {return refAnt_p;};
+  const ArrayColumn<Int>& refFeed() const {return refFeed_p;};
+  const ArrayColumn<Int>& refReceptor() const {return refReceptor_p;};
+  const ArrayColumn<Double>& refFreq() const {return refFreq_p;};
+  const ArrayMeasColumn<MFrequency>& refFreqMeas() const 
     {return refFreqMeas_p;};
-  const ROScalarColumn<Int>& measFreqRef() const {return measFreqRef_p;};
-  const ROArrayColumn<Double>& refDir() const {return refDir_p;};
-  const ROArrayMeasColumn<MDirection>& refDirMeas() const 
+  const ScalarColumn<Int>& measFreqRef() const {return measFreqRef_p;};
+  const ArrayColumn<Double>& refDir() const {return refDir_p;};
+  const ArrayMeasColumn<MDirection>& refDirMeas() const 
     {return refDirMeas_p;};
-  const ROScalarColumn<Int>& measDirRef() const {return measDirRef_p;};
-  const ROScalarColumn<Int>& calDescId() const {return calDescId_p;};
-  const ROScalarColumn<Int>& calHistoryId() const {return calHistoryId_p;};
+  const ScalarColumn<Int>& measDirRef() const {return measDirRef_p;};
+  const ScalarColumn<Int>& calDescId() const {return calDescId_p;};
+  const ScalarColumn<Int>& calHistoryId() const {return calHistoryId_p;};
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -143,20 +143,20 @@ class ROCalMainColumns
     {return calTable.calMainAsTable();}
 
   // Attach a table column accessor
-  void attach (const CalTable& calTable, ROTableColumn& tabCol, 
+  void attach (const CalTable& calTable, TableColumn& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
   void attach (const CalTable& calTable, 
-	       ROArrayMeasColumn<MEpoch>& tabCol, 
+	       ArrayMeasColumn<MEpoch>& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
   void attach (const CalTable& calTable, 
-	       ROArrayMeasColumn<MFrequency>& tabCol, 
+	       ArrayMeasColumn<MFrequency>& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
   void attach (const CalTable& calTable, 
-	       ROArrayMeasColumn<MDirection>& tabCol, 
+	       ArrayMeasColumn<MDirection>& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
-  void attach (const CalTable& calTable, ROScalarMeasColumn<MEpoch>& tabCol, 
+  void attach (const CalTable& calTable, ScalarMeasColumn<MEpoch>& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
-  void attach (const CalTable& calTable, ROScalarQuantColumn<Double>& tabCol, 
+  void attach (const CalTable& calTable, ScalarQuantColumn<Double>& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
 
  private:
@@ -165,42 +165,42 @@ class ROCalMainColumns
   ROCalMainColumns& operator= (const ROCalMainColumns&);
 
   // Private column accessors
-  ROScalarColumn<Double> time_p;
-  ROScalarMeasColumn<MEpoch> timeMeas_p;
-  ROScalarColumn<Double> timeEP_p;
-  ROScalarQuantColumn<Double> timeEPQuant_p;
-  ROScalarColumn<Double> interval_p;
-  ROScalarQuantColumn<Double> intervalQuant_p;
-  ROScalarColumn<Int> antenna1_p;
-  ROScalarColumn<Int> feed1_p;
-  ROScalarColumn<Int> fieldId_p;
-  ROScalarColumn<Int> arrayId_p;
-  ROScalarColumn<Int> obsId_p;
-  ROScalarColumn<Int> scanNo_p;
-  ROScalarColumn<Int> processorId_p;
-  ROScalarColumn<Int> stateId_p;
-  ROScalarColumn<Int> phaseId_p;
-  ROScalarColumn<Int> pulsarBin_p;
-  ROScalarColumn<Int> pulsarGateId_p;
-  ROScalarColumn<Int> freqGrp_p;
-  ROScalarColumn<String> freqGrpName_p;
-  ROScalarColumn<String> fieldName_p;
-  ROScalarColumn<String> fieldCode_p;
-  ROScalarColumn<String> sourceName_p;
-  ROScalarColumn<String> sourceCode_p;
-  ROScalarColumn<Int> calGrp_p;
-  ROArrayColumn<Complex> gain_p;
-  ROArrayColumn<Int> refAnt_p;
-  ROArrayColumn<Int> refFeed_p;
-  ROArrayColumn<Int> refReceptor_p;
-  ROArrayColumn<Double> refFreq_p;
-  ROArrayMeasColumn<MFrequency> refFreqMeas_p;
-  ROScalarColumn<Int> measFreqRef_p;
-  ROArrayColumn<Double> refDir_p;
-  ROArrayMeasColumn<MDirection> refDirMeas_p;
-  ROScalarColumn<Int> measDirRef_p;
-  ROScalarColumn<Int> calDescId_p;
-  ROScalarColumn<Int> calHistoryId_p;
+  ScalarColumn<Double> time_p;
+  ScalarMeasColumn<MEpoch> timeMeas_p;
+  ScalarColumn<Double> timeEP_p;
+  ScalarQuantColumn<Double> timeEPQuant_p;
+  ScalarColumn<Double> interval_p;
+  ScalarQuantColumn<Double> intervalQuant_p;
+  ScalarColumn<Int> antenna1_p;
+  ScalarColumn<Int> feed1_p;
+  ScalarColumn<Int> fieldId_p;
+  ScalarColumn<Int> arrayId_p;
+  ScalarColumn<Int> obsId_p;
+  ScalarColumn<Int> scanNo_p;
+  ScalarColumn<Int> processorId_p;
+  ScalarColumn<Int> stateId_p;
+  ScalarColumn<Int> phaseId_p;
+  ScalarColumn<Int> pulsarBin_p;
+  ScalarColumn<Int> pulsarGateId_p;
+  ScalarColumn<Int> freqGrp_p;
+  ScalarColumn<String> freqGrpName_p;
+  ScalarColumn<String> fieldName_p;
+  ScalarColumn<String> fieldCode_p;
+  ScalarColumn<String> sourceName_p;
+  ScalarColumn<String> sourceCode_p;
+  ScalarColumn<Int> calGrp_p;
+  ArrayColumn<Complex> gain_p;
+  ArrayColumn<Int> refAnt_p;
+  ArrayColumn<Int> refFeed_p;
+  ArrayColumn<Int> refReceptor_p;
+  ArrayColumn<Double> refFreq_p;
+  ArrayMeasColumn<MFrequency> refFreqMeas_p;
+  ScalarColumn<Int> measFreqRef_p;
+  ArrayColumn<Double> refDir_p;
+  ArrayMeasColumn<MDirection> refDirMeas_p;
+  ScalarColumn<Int> measDirRef_p;
+  ScalarColumn<Int> calDescId_p;
+  ScalarColumn<Int> calHistoryId_p;
 };
 
 // <summary> 

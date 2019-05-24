@@ -419,7 +419,7 @@ Int CalTable2::maxAntenna()
 // Output:
 //    maxAntenna          Int         Max. antenna no. found
 //
-  ROScalarColumn <Int> antCol (*itsMainTable, MSC::fieldName (MSC::ANTENNA1));
+  ScalarColumn <Int> antCol (*itsMainTable, MSC::fieldName (MSC::ANTENNA1));
   Vector <Int> antVal;
   antCol.getColumn (antVal);
   uInt i;
@@ -441,8 +441,8 @@ Int CalTable2::numberTimeSlots (const Double& fracError)
 // Output:
 //    numberTimeSlots  Int             No. of unique time stamps found
 //    
-  ROScalarColumn <Double> timeCol (*itsMainTable, MSC::fieldName (MSC::TIME));
-  ROScalarColumn <Double> intervalCol (*itsMainTable, 
+  ScalarColumn <Double> timeCol (*itsMainTable, MSC::fieldName (MSC::TIME));
+  ScalarColumn <Double> intervalCol (*itsMainTable, 
 				     MSC::fieldName (MSC::INTERVAL));
   Vector <Double> timeVal;
   Vector <Double> intervalVal;

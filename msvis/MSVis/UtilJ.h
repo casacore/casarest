@@ -31,8 +31,6 @@
 #define Assert(c) { throwIf (! (c), "Assertion failed: " #c, __FILE__, __LINE__); }
 #endif
 
-#define AssertAlways(c) { throwIf (! (c), "Assertion failed: " #c, __FILE__, __LINE__); }
-
 #if defined (NDEBUG)
 #    define Throw(m) \
     { AipsError anAipsError ((m), __FILE__, __LINE__);\
@@ -42,9 +40,6 @@
 #    define Throw(m) throw AipsError ((m), __FILE__, __LINE__)
 #endif
 
-#define ThrowIf(c,m) casacore::utilj::throwIf ((c), (m), __FILE__, __LINE__)
-
-#define ThrowIfError(c,m) casacore::utilj::throwIfError ((c), (m), __FILE__, __LINE__)
 
 namespace casacore {
 

@@ -869,8 +869,8 @@ VLAT::fillLsrInfo (VlaDatum * datum)
     Block<Int> channelWidth;
     Block<Int> channelIncrement;
     Block<Int> channelGroupNumber;
-    const ROArrayColumn <Double> * chanFreqs;
-    const ROScalarColumn<Int> * obsMFreqTypes;
+    const ArrayColumn <Double> * chanFreqs;
+    const ScalarColumn<Int> * obsMFreqTypes;
     MPosition observatoryPositon;
     MDirection phaseCenter;
     Bool velocitySelection;

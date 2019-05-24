@@ -1308,10 +1308,10 @@ RFA::IterMode RFASelector::iterTime (uInt it)
 
           const MSSysCal syscal(chunk.measSet().sysCal());
 
-          ROScalarColumn<uInt> sc_antenna_id(syscal, "ANTENNA_ID");
-          ROScalarColumn<uInt> sc_spwid     (syscal, "SPECTRAL_WINDOW_ID");
-          ROScalarColumn<Double> sc_time   (syscal, "TIME");
-          ROArrayColumn<Float> sc_tsys     (syscal, "TSYS");
+          ScalarColumn<uInt> sc_antenna_id(syscal, "ANTENNA_ID");
+          ScalarColumn<uInt> sc_spwid     (syscal, "SPECTRAL_WINDOW_ID");
+          ScalarColumn<Double> sc_time   (syscal, "TIME");
+          ArrayColumn<Float> sc_tsys     (syscal, "TSYS");
                     
           unsigned spwid = chunk.visBuf().spectralWindow();
           

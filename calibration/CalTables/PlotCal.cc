@@ -1042,11 +1042,11 @@ Int PlotCal::multiTables(const Table& tablein,
     tablesout(itab) = titer.table();
     tablesoutnames(itab)=tablesout(itab).tableName();
 
-    cdlist(itab) = ROScalarColumn<Int>(tablesout(itab),"CAL_DESC_ID")(0);
+    cdlist(itab) = ScalarColumn<Int>(tablesout(itab),"CAL_DESC_ID")(0);
     if (cdlist(itab)<0) cdlist(itab)=0;
 
     fldlist_p(itab).resize();
-    fldlist_p(itab) = ROScalarColumn<Int>(tablesout(itab),"FIELD_ID").getColumn();
+    fldlist_p(itab) = ScalarColumn<Int>(tablesout(itab),"FIELD_ID").getColumn();
 
     //    cout << "fldlist_p(itab) = " << fldlist_p(itab) << endl;
 
@@ -1133,7 +1133,7 @@ Int PlotCal::multiTables(const Table& tablein,
       nCalDesc_p=cdtab.nrow();
       if (nCalDesc_p>0) {
 
-	ROArrayColumn<Int> spwcol(cdtab,"SPECTRAL_WINDOW_ID");
+	ArrayColumn<Int> spwcol(cdtab,"SPECTRAL_WINDOW_ID");
 	tabSpws_p.resize();
 	tabSpws_p = spwcol.getColumn();
 	
@@ -1146,7 +1146,7 @@ Int PlotCal::multiTables(const Table& tablein,
 	MSstartChan_p.resize(nCalDesc_p);
 	MSstartChan_p=0;
 	if (calType_p=="B" || calType_p=="MF") {
-	  ROArrayColumn<Int> stchancol(cdtab,"CHAN_RANGE");
+	  ArrayColumn<Int> stchancol(cdtab,"CHAN_RANGE");
 	  Array<Int> stchan=stchancol.getColumn();
 	  for (Int i=0;i<nCalDesc_p;++i) {
 	    MSstartChan_p(i)=stchan(IPosition(4,0,0,0,i));
@@ -1154,7 +1154,7 @@ Int PlotCal::multiTables(const Table& tablein,
 	  }
 	}
 
-	ROScalarColumn<String> msNameCol(cdtab,"MS_NAME");
+	ScalarColumn<String> msNameCol(cdtab,"MS_NAME");
 	msName_p = msNameCol(0);
 
 	// Add cal table relative path to the ms name
@@ -1194,11 +1194,11 @@ Int PlotCal::multiTables(const Table& tablein,
     tabB = Table (aNewTab, Table::Memory, nrows);
     
     
-    ROArrayColumn<Complex>  origGain(tabSel_p,"GAIN");
-    ROArrayColumn<Bool> solnOk(tabSel_p, "SOLUTION_OK") ;
-    ROScalarColumn<Int> origBaseline(tabSel_p, "ANTENNA1");
-    ROScalarColumn<Int> origCalDesc(tabSel_p, "CAL_DESC_ID");
-    ROScalarColumn<Double> origTime(tabSel_p, "TIME");
+    ArrayColumn<Complex>  origGain(tabSel_p,"GAIN");
+    ArrayColumn<Bool> solnOk(tabSel_p, "SOLUTION_OK") ;
+    ScalarColumn<Int> origBaseline(tabSel_p, "ANTENNA1");
+    ScalarColumn<Int> origCalDesc(tabSel_p, "CAL_DESC_ID");
+    ScalarColumn<Double> origTime(tabSel_p, "TIME");
     Cube<Complex> ydata=origGain.getColumn();
     Vector<Int> baselines=origBaseline.getColumn();
     //Let's determine nAnt now
@@ -1529,7 +1529,7 @@ Int PlotCal::multiTables(const Table& tablein,
       throw(AipsError("MS is not available to get frequencies for freq axis. Please plot channels instead."));
 
     MeasurementSet ms(msName_p);
-    ROArrayColumn<Double> chanfreqcol(ROMSSpWindowColumns(ms.spectralWindow()).chanFreq());
+    ArrayColumn<Double> chanfreqcol(ROMSSpWindowColumns(ms.spectralWindow()).chanFreq());
 
     startFreq_p.resize(nCalDesc_p);
     stepFreq_p.resize(nCalDesc_p);
@@ -1565,10 +1565,10 @@ Int PlotCal::multiTables(const Table& tablein,
 
     //    cout << "Evalutating BPOLY solutions...." << endl;
 
-    //    ROScalarColumn<Int> origAnt1(tabSel_p, "ANTENNA1");
-    ROScalarColumn<Int> origFld(tabSel_p, "FIELD_ID");
-    ROScalarColumn<Int> origCalDesc(tabSel_p, "CAL_DESC_ID");
-    ROScalarColumn<Double> origTime(tabSel_p, "TIME");
+    //    ScalarColumn<Int> origAnt1(tabSel_p, "ANTENNA1");
+    ScalarColumn<Int> origFld(tabSel_p, "FIELD_ID");
+    ScalarColumn<Int> origCalDesc(tabSel_p, "CAL_DESC_ID");
+    ScalarColumn<Double> origTime(tabSel_p, "TIME");
 
     // The following is cribbed from MeasurementComponents/BPoly.cc
     //-------------------------------------------------------------

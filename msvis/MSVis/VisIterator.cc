@@ -639,52 +639,52 @@ Int ROVisIterator::numberCorr(Int pol) const {
 
 }
 
-void ROVisIterator::getCol(const ROScalarColumn<Bool> &column, Vector<Bool> &array, Bool resize) const
+void ROVisIterator::getCol(const ScalarColumn<Bool> &column, Vector<Bool> &array, Bool resize) const
 {
     column.getColumn(array, resize);
 }
 
-void ROVisIterator::getCol(const ROScalarColumn<Int> &column, Vector<Int> &array, Bool resize) const
+void ROVisIterator::getCol(const ScalarColumn<Int> &column, Vector<Int> &array, Bool resize) const
 {
     column.getColumn(array, resize);
 }
 
-void ROVisIterator::getCol(const ROScalarColumn<Double> &column, Vector<Double> &array, Bool resize) const
+void ROVisIterator::getCol(const ScalarColumn<Double> &column, Vector<Double> &array, Bool resize) const
 {
     column.getColumn(array, resize);
 }
 
-void ROVisIterator::getCol(const ROArrayColumn<Bool> &column, Array<Bool> &array, Bool resize) const
+void ROVisIterator::getCol(const ArrayColumn<Bool> &column, Array<Bool> &array, Bool resize) const
 {
     column.getColumn(array, resize);
 }
 
-void ROVisIterator::getCol(const ROArrayColumn<Float> &column, Array<Float> &array, Bool resize) const
+void ROVisIterator::getCol(const ArrayColumn<Float> &column, Array<Float> &array, Bool resize) const
 {
     column.getColumn(array, resize);
 }
 
-void ROVisIterator::getCol(const ROArrayColumn<Double> &column, Array<Double> &array, Bool resize) const
+void ROVisIterator::getCol(const ArrayColumn<Double> &column, Array<Double> &array, Bool resize) const
 {
     column.getColumn(array, resize);
 }
 
-void ROVisIterator::getCol(const ROArrayColumn<Complex> &column, Array<Complex> &array, Bool resize) const
+void ROVisIterator::getCol(const ArrayColumn<Complex> &column, Array<Complex> &array, Bool resize) const
 {
     column.getColumn(array, resize);
 }
 
-void ROVisIterator::getCol(const ROArrayColumn<Bool> &column, const Slicer &slicer, Array<Bool> &array, Bool resize) const
+void ROVisIterator::getCol(const ArrayColumn<Bool> &column, const Slicer &slicer, Array<Bool> &array, Bool resize) const
 {
     column.getColumn(slicer, array, resize);
 }
 
-void ROVisIterator::getCol(const ROArrayColumn<Float> &column, const Slicer &slicer, Array<Float> &array, Bool resize) const
+void ROVisIterator::getCol(const ArrayColumn<Float> &column, const Slicer &slicer, Array<Float> &array, Bool resize) const
 {
     column.getColumn(slicer, array, resize);
 }
 
-void ROVisIterator::getCol(const ROArrayColumn<Complex> &column, const Slicer &slicer, Array<Complex> &array, Bool resize) const
+void ROVisIterator::getCol(const ArrayColumn<Complex> &column, const Slicer &slicer, Array<Complex> &array, Bool resize) const
 {
     column.getColumn(slicer, array, resize);
 }

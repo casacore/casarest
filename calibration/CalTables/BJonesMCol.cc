@@ -65,16 +65,16 @@ ROBJonesPolyMCol::ROBJonesPolyMCol (const BJonesPolyTable& bjpTable) :
 //    bjpTable          const BJonesPolyTable&    BJonesPoly calibration table
 // Output to private data:
 //    ROBJonesMCol      ROBJonesMCol              Read-only BJones cal main col
-//    polyType_p        ROScalarCol<String>       Polynomial type
-//    polyMode_p        ROScalarCol<String>       Polynomial mode (e.g. A&P)
-//    scaleFactor_p     ROScalarCol<Complex>      Polynomial scale factor
-//    validDomain_p     ROArrayCol<Double>        Valid domain [x_0, x_1]
-//    nPolyAmp_p        ROScalarCol<Int>          Polynomial degree (amplitude)
-//    nPolyPhase_p      ROScalarCol<Int>          Polynomial degree (phase)
-//    polyCoeffAmp_p    ROArrayCol<Double>        Polynomial coeff. (amplitude)
-//    polyCoeffPhase_p  ROArrayCol<Double>        Polynomial coeff. (phase)
-//    phaseUnits_p      ROScalarCol<String>       Phase units 
-//    sideBandRef_p     ROScalarCol<Complex>      Sideband reference
+//    polyType_p        ScalarCol<String>       Polynomial type
+//    polyMode_p        ScalarCol<String>       Polynomial mode (e.g. A&P)
+//    scaleFactor_p     ScalarCol<Complex>      Polynomial scale factor
+//    validDomain_p     ArrayCol<Double>        Valid domain [x_0, x_1]
+//    nPolyAmp_p        ScalarCol<Int>          Polynomial degree (amplitude)
+//    nPolyPhase_p      ScalarCol<Int>          Polynomial degree (phase)
+//    polyCoeffAmp_p    ArrayCol<Double>        Polynomial coeff. (amplitude)
+//    polyCoeffPhase_p  ArrayCol<Double>        Polynomial coeff. (phase)
+//    phaseUnits_p      ScalarCol<String>       Phase units 
+//    sideBandRef_p     ScalarCol<Complex>      Sideband reference
 //
   // Attach all column accessors for additional BJonesPoly columns
   // (some are optional, depending on polynomial mode)

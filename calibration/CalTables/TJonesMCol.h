@@ -81,15 +81,15 @@ class ROTJonesPolyMCol : public ROTJonesMCol
   virtual ~ROTJonesPolyMCol() {};
 
   // Read-only column accessors
-  const ROScalarColumn<String>& polyType() const {return polyType_p;};
-  const ROScalarColumn<String>& polyMode() const {return polyMode_p;};
-  const ROScalarColumn<Complex>& scaleFactor() const {return scaleFactor_p;};
-  const ROScalarColumn<Int>& nPolyAmp() const {return nPolyAmp_p;};
-  const ROScalarColumn<Int>& nPolyPhase() const {return nPolyPhase_p;};
-  const ROArrayColumn<Double>& polyCoeffAmp() const {return polyCoeffAmp_p;};
-  const ROArrayColumn<Double>& polyCoeffPhase() const 
+  const ScalarColumn<String>& polyType() const {return polyType_p;};
+  const ScalarColumn<String>& polyMode() const {return polyMode_p;};
+  const ScalarColumn<Complex>& scaleFactor() const {return scaleFactor_p;};
+  const ScalarColumn<Int>& nPolyAmp() const {return nPolyAmp_p;};
+  const ScalarColumn<Int>& nPolyPhase() const {return nPolyPhase_p;};
+  const ArrayColumn<Double>& polyCoeffAmp() const {return polyCoeffAmp_p;};
+  const ArrayColumn<Double>& polyCoeffPhase() const 
     {return polyCoeffPhase_p;};
-  const ROScalarColumn<String>& phaseUnits() const {return phaseUnits_p;};
+  const ScalarColumn<String>& phaseUnits() const {return phaseUnits_p;};
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -102,14 +102,14 @@ class ROTJonesPolyMCol : public ROTJonesMCol
   ROTJonesPolyMCol& operator= (const ROTJonesPolyMCol&);
 
   // Private column accessors
-  ROScalarColumn<String> polyType_p;
-  ROScalarColumn<String> polyMode_p;
-  ROScalarColumn<Complex> scaleFactor_p;
-  ROScalarColumn<Int> nPolyAmp_p;
-  ROScalarColumn<Int> nPolyPhase_p;
-  ROArrayColumn<Double> polyCoeffAmp_p;
-  ROArrayColumn<Double> polyCoeffPhase_p;
-  ROScalarColumn<String> phaseUnits_p;
+  ScalarColumn<String> polyType_p;
+  ScalarColumn<String> polyMode_p;
+  ScalarColumn<Complex> scaleFactor_p;
+  ScalarColumn<Int> nPolyAmp_p;
+  ScalarColumn<Int> nPolyPhase_p;
+  ArrayColumn<Double> polyCoeffAmp_p;
+  ArrayColumn<Double> polyCoeffPhase_p;
+  ScalarColumn<String> phaseUnits_p;
 };
 
 // <summary> 
@@ -235,11 +235,11 @@ class ROTJonesSplineMCol : public ROTJonesPolyMCol
   virtual ~ROTJonesSplineMCol() {};
 
   // Read-only column accessors
-  const ROScalarColumn<Int>& nKnotsAmp() const {return nKnotsAmp_p;};
-  const ROScalarColumn<Int>& nKnotsPhase() const {return nKnotsPhase_p;};
-  const ROArrayColumn<Double>& splineKnotsAmp() const 
+  const ScalarColumn<Int>& nKnotsAmp() const {return nKnotsAmp_p;};
+  const ScalarColumn<Int>& nKnotsPhase() const {return nKnotsPhase_p;};
+  const ArrayColumn<Double>& splineKnotsAmp() const 
     {return splineKnotsAmp_p;};
-  const ROArrayColumn<Double>& splineKnotsPhase() const
+  const ArrayColumn<Double>& splineKnotsPhase() const
     {return splineKnotsPhase_p;};
 
  protected:
@@ -253,10 +253,10 @@ class ROTJonesSplineMCol : public ROTJonesPolyMCol
   ROTJonesSplineMCol& operator= (const ROTJonesSplineMCol&);
 
   // Private column accessors
-  ROScalarColumn<Int> nKnotsAmp_p;
-  ROScalarColumn<Int> nKnotsPhase_p;
-  ROArrayColumn<Double> splineKnotsAmp_p;
-  ROArrayColumn<Double> splineKnotsPhase_p;
+  ScalarColumn<Int> nKnotsAmp_p;
+  ScalarColumn<Int> nKnotsPhase_p;
+  ArrayColumn<Double> splineKnotsAmp_p;
+  ArrayColumn<Double> splineKnotsPhase_p;
 };
 
 // <summary> 

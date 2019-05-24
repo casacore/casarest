@@ -351,7 +351,7 @@ void EVLAGainTsys::setSpecify(const Record& specify) {
   while (!sysPowIter.pastEnd()) {
     Table itab(sysPowIter.table());
 
-    ROScalarColumn<Int> spwCol(itab,"SPECTRAL_WINDOW_ID");
+    ScalarColumn<Int> spwCol(itab,"SPECTRAL_WINDOW_ID");
 
     Int ispw=spwCol(0);
     nSlot(ispw)++;
@@ -398,12 +398,12 @@ void EVLAGainTsys::specify(const Record& specify) {
 
     Table itab(sysPowIter.table());
 
-    ROScalarColumn<Int> spwCol(itab,"SPECTRAL_WINDOW_ID");
-    ROScalarColumn<Double> timeCol(itab,"TIME");
-    ROScalarColumn<Double> intervalCol(itab,"INTERVAL");
-    ROScalarColumn<Int> antCol(itab,"ANTENNA_ID");
-    ROArrayColumn<Float> swsumCol(itab,"SWITCHED_SUM");
-    ROArrayColumn<Float> swdiffCol(itab,"SWITCHED_DIFF");
+    ScalarColumn<Int> spwCol(itab,"SPECTRAL_WINDOW_ID");
+    ScalarColumn<Double> timeCol(itab,"TIME");
+    ScalarColumn<Double> intervalCol(itab,"INTERVAL");
+    ScalarColumn<Int> antCol(itab,"ANTENNA_ID");
+    ArrayColumn<Float> swsumCol(itab,"SWITCHED_SUM");
+    ArrayColumn<Float> swdiffCol(itab,"SWITCHED_DIFF");
 
     Int ispw=spwCol(0);
     Double timestamp=timeCol(0);
@@ -551,13 +551,13 @@ void EVLAGainTsys::fillTcals() {
 
     Table itab(calDevIter.table());
 
-    ROScalarColumn<Int> spwCol(itab,"SPECTRAL_WINDOW_ID");
-    ROScalarColumn<Double> timeCol(itab,"TIME");
-    ROScalarColumn<Double> intervalCol(itab,"INTERVAL");
-    ROScalarColumn<Int> antCol(itab,"ANTENNA_ID");
-    ROScalarColumn<Int> numLoadCol(itab,"NUM_CAL_LOAD");
+    ScalarColumn<Int> spwCol(itab,"SPECTRAL_WINDOW_ID");
+    ScalarColumn<Double> timeCol(itab,"TIME");
+    ScalarColumn<Double> intervalCol(itab,"INTERVAL");
+    ScalarColumn<Int> antCol(itab,"ANTENNA_ID");
+    ScalarColumn<Int> numLoadCol(itab,"NUM_CAL_LOAD");
 
-    ROArrayColumn<Float> noiseCalCol(itab,"NOISE_CAL");
+    ArrayColumn<Float> noiseCalCol(itab,"NOISE_CAL");
 
     Int ispw=spwCol(0);
     Int iant=antCol(0);

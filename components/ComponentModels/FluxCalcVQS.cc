@@ -166,9 +166,9 @@ void FluxCalcVQS::readQSCoeffsTable(const Path& fileName)
   const ColumnDescSet& cds=Table_p.tableDesc().columnDescSet();
   if (!cds.isDefined(srcCoeffColName)) 
     throw(AipsError(srcName+" does not appears to be in "+fullName));
-  const ROScalarColumn<Double> epochCol(Table_p, "Epoch");
-  const ROArrayColumn<Float> CoeffCol(Table_p, srcCoeffColName);
-  const ROArrayColumn<Float> CoeffErrorCol(Table_p, srcCoeffErrorColName);
+  const ScalarColumn<Double> epochCol(Table_p, "Epoch");
+  const ArrayColumn<Float> CoeffCol(Table_p, srcCoeffColName);
+  const ArrayColumn<Float> CoeffErrorCol(Table_p, srcCoeffErrorColName);
   Vector<Double> tempEpochs;
   epochCol.getColumn(tempEpochs,True);
   CoeffCol.getColumn(coeffsmat_p,True);

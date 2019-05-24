@@ -248,7 +248,7 @@ namespace casacore {
 
     // obtain central frequencies of spws.
     const MSSpectralWindow spwin( ms.spectralWindow() );
-    ROScalarColumn<Double> sfreqs(spwin, "REF_FREQUENCY");
+    ScalarColumn<Double> sfreqs(spwin, "REF_FREQUENCY");
     spwfreqs.resize();
     spwfreqs = sfreqs.getColumn();
     spwfreqs *= 1e+6;
@@ -257,7 +257,7 @@ namespace casacore {
     const MSAntenna msant( ms.antenna() );
     nant = msant.nrow();
     nifr = nant*(nant+1)/2; // cheap & dirty
-    ROScalarColumn<String> names(msant,"NAME");
+    ScalarColumn<String> names(msant,"NAME");
     antnames.resize();
     antnames = names.getColumn();
     antnames.apply(stringUpper);
@@ -482,7 +482,7 @@ namespace casacore {
 	    mssel_p = new MeasurementSet(mssel_p2);
         }
 	if (dbg)cout << "assigned new MS to mssel_p" << endl;
-	ROScalarColumn<String> fname( mssel_p->field(),"NAME" );
+	ScalarColumn<String> fname( mssel_p->field(),"NAME" );
 	if (dbg)cout << "fields : " << fname.getColumn() << endl;
 	
 	//mssel_p->rename("selectedms",Table::New);

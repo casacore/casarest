@@ -205,14 +205,14 @@ MeasurementSet* MSAnalysis::moments( const Vector<Int> &whichmoments,
       MeasurementSet tmpMS( iter.table() ) ;
 
       // if NUM_CHAN is 1, skip
-      ROArrayColumn<Float> floatDataCol( tmpMS, "FLOAT_DATA" ) ;
+      ArrayColumn<Float> floatDataCol( tmpMS, "FLOAT_DATA" ) ;
       if ( (floatDataCol.shape( 0 ))[1] == 1 ) {
         *itsLog << "NUM_CHAN is 1. Nothing to do." << LogIO::POST ;
         continue ;
       }
 
       // if all FLAG_ROW is True, skip
-      ROScalarColumn<Bool> rowFlagCol( tmpMS, "FLAG_ROW" ) ;
+      ScalarColumn<Bool> rowFlagCol( tmpMS, "FLAG_ROW" ) ;
       if ( allEQ( rowFlagCol.getColumn(), True ) ) {
         *itsLog << "All rows are flagged. Skip." << LogIO::POST ;
         continue ;
