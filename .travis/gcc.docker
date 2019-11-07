@@ -1,23 +1,53 @@
-FROM kernsuite/base:dev
+FROM kernsuite/base:5
 RUN docker-apt-install \
     build-essential \
     cmake \
-    casacore-dev \
-    casacore-data \
-    casacore-tools \
     libhdf5-dev \
-    libboost-dev \
+    libboost-all-dev \
     wcslib-dev \
     libcfitsio-dev \
     libboost-system-dev \
     libboost-thread-dev \
     libblas-dev \
     liblapack-dev \
-    gfortran
+    libncurses5-dev \
+    libsofa1-dev \
+    bison \
+    libbison-dev \
+    flex \
+    libreadline6-dev \
+    gfortran \
+    python-dev \
+    python-numpy \
+    wget
+
+#####################################################################
+## BUILD CASACORE FROM SOURCE
+#####################################################################
+RUN mkdir /src
+WORKDIR /src
+RUN wget https://github.com/casacore/casacore/archive/v3.1.1.tar.gz
+RUN tar xvf v3.1.1.tar.gz
+RUN mkdir casacore-3.1.1/build
+WORKDIR /src/casacore-3.1.1/build
+RUN cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPRECATED=ON ../
+RUN make -j 4
+RUN make install
+RUN ldconfig
+#RUN pip install -U --user --force-reinstall --install-option="--prefix=/usr"  pip setuptools wheel
+
+#####################################################################
+## Get CASACORE ephem data
+#####################################################################
+RUN mkdir -p /usr/share/casacore/data/
+WORKDIR /usr/share/casacore/data/
+RUN docker-apt-install rsync
+RUN rsync -avz rsync://casa-rsync.nrao.edu/casa-data .
+
 ADD . /code
 RUN mkdir /code/build
 WORKDIR /code/build
 RUN cmake .. \
-      -DBUILD_TESTING=ON
-RUN make -j4 
+      -DBUILD_TESTING=OFF
+RUN make
 RUN make install
