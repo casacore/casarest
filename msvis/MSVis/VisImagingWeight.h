@@ -28,6 +28,7 @@
 
 #ifndef VISIMAGINGWEIGHT_H
 #define VISIMAGINGWEIGHT_H
+#include <casacore/casa/Containers/SimOrdMap.h>
 #include <casacore/casa/aips.h>
 #include <casacore/casa/BasicSL/Complex.h>
 #include <casacore/casa/Quanta/Quantum.h>

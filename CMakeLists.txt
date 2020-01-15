@@ -55,6 +55,7 @@ include (CTest)
 # Determine which external packages to use.
 # dependencies
 find_package(CasaCore 3.1 REQUIRED)
+add_definitions(-DAIPS_USE_DEPRECATED) # until such time that we can fully port this package
 find_package(CFITSIO 3.030 REQUIRED) # Should pad to three decimal digits
 find_package(WCSLIB 4.7 REQUIRED)    # needed for CASA
 find_package(BLAS REQUIRED)
