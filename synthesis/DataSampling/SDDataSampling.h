@@ -38,7 +38,7 @@
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
-class ROMSPointingColumns;
+class MSPointingColumns;
 
 // <summary> Provides sampling of single dish data for esimation algorithms
 // </summary>
@@ -94,7 +94,7 @@ private:
 
   Int nRows_p;
 
-  Int getIndex(const ROMSPointingColumns& mspc, const Double& time);
+  Int getIndex(const MSPointingColumns& mspc, const Double& time);
 
   void ok();
 

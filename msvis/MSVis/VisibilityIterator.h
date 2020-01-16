@@ -562,8 +562,8 @@ public:
   // is thrown.
   virtual void detachVisBuffer(VisBuffer& vb);
 
-  // Access the current ROMSColumns object in MSIter
-  virtual const ROMSColumns& msColumns() const
+  // Access the current MSColumns object in MSIter
+  virtual const MSColumns& msColumns() const
     { return msIter_p.msColumns();}
 
   // get back the selected spectral windows and spectral channels for

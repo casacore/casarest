@@ -26,10 +26,10 @@ RUN docker-apt-install \
 #####################################################################
 RUN mkdir /src
 WORKDIR /src
-RUN wget https://github.com/casacore/casacore/archive/v3.1.1.tar.gz
-RUN tar xvf v3.1.1.tar.gz
-RUN mkdir casacore-3.1.1/build
-WORKDIR /src/casacore-3.1.1/build
+RUN wget https://github.com/casacore/casacore/archive/v3.2.1.tar.gz
+RUN tar xvf v3.2.1.tar.gz
+RUN mkdir casacore-3.2.1/build
+WORKDIR /src/casacore-3.2.1/build
 RUN cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPRECATED=ON ../
 RUN make -j 4
 RUN make install
@@ -48,6 +48,6 @@ ADD . /code
 RUN mkdir /code/build
 WORKDIR /code/build
 RUN cmake .. \
-      -DBUILD_TESTING=OFF
+      -DBUILD_TESTING=ON
 RUN make
 RUN make install

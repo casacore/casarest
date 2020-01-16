@@ -43,7 +43,7 @@ public:
     virtual Vector<Double> & lsrFrequency ();
     virtual const Vector<Double> & lsrFrequency () const;
     virtual void lsrFrequency(const Int& spw, Vector<Double>& freq, Bool& convert) const;
-    virtual const ROMSColumns& msColumns() const;
+    virtual const MSColumns& msColumns() const;
     Int msId () const;
     Bool newMS() const;
     Int numberAnt () const;
@@ -118,7 +118,7 @@ protected:
 
 private:
 
-    const ArrayColumn <Double> * chanFreqs_p;  // [use]
+    const ArrayColumn <Double> *   chanFreqs_p;  // [use]
     Block<Int>                     channelGroupNumber_p;
     Block<Int>                     channelIncrement_p;
     Block<Int>                     channelStart_p;
@@ -127,12 +127,12 @@ private:
     Bool                           isFilling_p;
     MEpoch                         mEpoch_p;
     const MeasurementSet *         measurementSet_p;  // [use]
-    mutable ROMSColumns *          msColumns_p; // [own]
+    mutable MSColumns *            msColumns_p; // [own]
     MSDerivedValues *              msd_p; // [own]
     Int                            msID_p;
     Int                            nAntennas_p;
     Int                            nCoh_p;
-    const ScalarColumn<Int> *    obsMFreqTypes_p; // [use]
+    const ScalarColumn<Int> *      obsMFreqTypes_p; // [use]
     MPosition                      observatoryPosition_p;
     Vector<Float>                  receptor0Angle_p;
     Vector<Double>                 selFreq_p;
