@@ -44,7 +44,7 @@ ComponentModels/TabularSpectrum.cc
 ComponentModels/ComponentType2.cc
 )
 
-install(TARGETS casa_components DESTINATION ${LIBRARY_INSTALL_DIR})
+install(TARGETS casa_components DESTINATION ${LIBRARY_INSTALL_DIR} COMPONENT casa_components)
 target_link_libraries(casa_components ${OTHER_LIBRARIES} ${LIB_EXTRA_COMPONENTS})
 set(COMPONENTS_LIBRARIES casa_components ${OTHER_LIBRARIES} ${LIB_EXTRA_COMPONENTS})
 
@@ -76,7 +76,7 @@ ComponentModels/FluxStdsQS2.h
 ComponentModels/FluxStdSrcs.h
 ComponentModels/Flux.h
 ComponentModels/Flux.tcc
-DESTINATION include/casarest/components/ComponentModels
+DESTINATION include/casarest/components/ComponentModels COMPONENT casa_components
 )
 
 install (FILES
@@ -98,13 +98,13 @@ SpectralComponents/SpectralFit.h
 SpectralComponents/SpectralFit2.tcc
 SpectralComponents/SpectralList.h
 SpectralComponents/SpectralList2.tcc
-DESTINATION include/casarest/components/SpectralComponents
+DESTINATION include/casarest/components/SpectralComponents COMPONENT casa_components
 )
 
 install (FILES
 ComponentModels.h
 SpectralComponents.h
-DESTINATION include/casarest/components
+DESTINATION include/casarest/components COMPONENT casa_components
 )
 
 if (BUILD_TESTING)
