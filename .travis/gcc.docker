@@ -30,7 +30,11 @@ RUN wget https://github.com/casacore/casacore/archive/v3.2.1.tar.gz
 RUN tar xvf v3.2.1.tar.gz
 RUN mkdir casacore-3.2.1/build
 WORKDIR /src/casacore-3.2.1/build
-RUN cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPRECATED=ON ../
+RUN cmake \
+      -DCMAKE_INSTALL_PREFIX=/usr \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_DEPRECATED=ON \
+      -DBUILD_TESTING=ON ../
 RUN make -j 4
 RUN make install
 RUN ldconfig
