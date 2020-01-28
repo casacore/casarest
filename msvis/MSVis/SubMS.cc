@@ -791,24 +791,6 @@ Bool SubMS::getCorrMaps(MSSelection& mssel, const MeasurementSet& ms,
       //Detaching the selected part
       ms_p=MeasurementSet();
       
-      //
-      // If all columns are in the new MS, set the CHANNEL_SELECTION
-      // keyword for the MODEL_DATA column.  This is apparently used
-      // in at least imager to decide if MODEL_DATA and CORRECTED_DATA
-      // columns should be initialized or not.
-      //
-      if (isAllColumns(colNamesTok))
-        {
-          MSSpWindowColumns msSpW(msOut_p.spectralWindow());
-          Int nSpw=msOut_p.spectralWindow().nrow();
-          if(nSpw==0) nSpw=1;
-          Matrix<Int> selection(2,nSpw);
-          selection.row(0)=0; //start
-          selection.row(1)=msSpW.numChan().getColumn();
-          ArrayColumn<Complex> mcd(msOut_p,MS::columnName(MS::MODEL_DATA));
-          mcd.rwKeywordSet().define("CHANNEL_SELECTION",selection);
-        }
-
       delete outpointer;
       return True;
     }

@@ -88,17 +88,6 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
     }
 
     Bool init=True;
-    if (ms.tableDesc().isColumn("MODEL_DATA")) {
-      TableColumn col(ms,"MODEL_DATA");
-      if (col.keywordSet().isDefined("CHANNEL_SELECTION")) {
-	Matrix<Int> storedSelection;
-	col.keywordSet().get("CHANNEL_SELECTION",storedSelection);
-	if (selection_p.shape()==storedSelection.shape() && 
-	    allEQ(selection_p,storedSelection)) {
-	  init=False;
-	} 
-      }
-    }
     
     // Add scratch columns
     if (init) {
