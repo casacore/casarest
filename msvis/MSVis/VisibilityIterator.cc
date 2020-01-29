@@ -550,7 +550,7 @@ void ROVisibilityIterator::setState()
 	numChanGroup_p[spw] == 0) {
       // no selection set yet, set default = all
       // for a reference MS this will normally be set appropriately in VisSet
-      selectChannel(1,msIter_p.startChan(),nChan_p);
+      selectChannel(1,0,nChan_p);
     }
     channelGroupSize_p=chanWidth_p[spw];
     curNumChanGroup_p=numChanGroup_p[spw];
@@ -580,7 +580,6 @@ void ROVisibilityIterator::updateSlicer()
   //Fixed what i think was a confusion between chanWidth and chanInc
   // 2007/11/12
   Int start=chanStart_p[spw]+curChanGroup_p*chanWidth_p[spw];
-  start-=msIter_p.startChan();
   AlwaysAssert(start>=0 && start+channelGroupSize_p<=nChan_p,AipsError);
   //  slicer_p=Slicer(Slice(),Slice(start,channelGroupSize_p));
   // above is slow, use IPositions instead.
@@ -1098,7 +1097,7 @@ ROVisibilityIterator::frequency(Vector<Double>& freq) const
             Int spw = msIter_p.spectralWindowId();
             This->frequency_p.resize(channelGroupSize_p);
             const Vector<Double>& chanFreq=msIter_p.frequency();
-            Int start=chanStart_p[spw]-msIter_p.startChan();
+            Int start=chanStart_p[spw];
             Int inc=chanInc_p[spw] <= 0 ? 1 : chanInc_p[spw];
             for (Int i=0; i<channelGroupSize_p; i++) {
                 This->frequency_p(i)=chanFreq(start+curChanGroup_p*chanWidth_p[spw]+i*inc);
@@ -2271,7 +2270,7 @@ ROVisibilityIterator::lsrFrequency (const Int& spw,
     chanFreq = chanFreqs (spw);
 
     //chanFreq=msIter_p.msColumns().spectralWindow().chanFreq()(spw);
-    //      Int start=chanStart_p[spw]-msIter_p.startChan();
+    //      Int start=chanStart_p[spw];
     //Assuming that the spectral windows selected is not a reference ms from
     //visset ...as this will have a start chan offseted may be.
 
