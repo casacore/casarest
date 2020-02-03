@@ -7,5 +7,3 @@ compiler:
   - gcc
 before_script:
   - docker build . -f .travis/${CC}.docker -t casarest/${CC}
-script:
-  - docker run casarest/${CC} make test
