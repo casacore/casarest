@@ -1,6 +1,7 @@
 FROM kernsuite/base:5
 RUN docker-apt-install \
     build-essential \
+    clang \
     cmake \
     libhdf5-dev \
     libboost-all-dev \
