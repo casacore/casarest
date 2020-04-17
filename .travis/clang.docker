@@ -43,7 +43,7 @@ RUN mkdir casacore-3.3.0/build
 WORKDIR /src/casacore-3.3.0/build
 RUN cmake \
     -DUSE_FFTW3=ON \
-    -DBUILD_TESTING=ON \
+    -DBUILD_TESTING=OFF \
     -DUSE_OPENMP=OFF \
     -DUSE_HDF5=ON \
     -DBUILD_PYTHON=ON \
