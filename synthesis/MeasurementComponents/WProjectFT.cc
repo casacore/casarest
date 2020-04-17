@@ -49,7 +49,6 @@
 #include <casacore/images/Images/ImageInterface.h>
 #include <casacore/images/Images/PagedImage.h>
 #include <casacore/casa/Containers/Block.h>
-#include <casacore/casa/Containers/SimOrdMap.h>
 #include <casacore/casa/Containers/Record.h>
 #include <casacore/casa/Arrays/ArrayLogical.h>
 #include <casacore/casa/Arrays/ArrayMath.h>

@@ -87,22 +87,22 @@ class ROCalDescColumns2
   virtual ~ROCalDescColumns2() {};
 
   // Read-only column accessors
-  const ROScalarColumn<Int>& numSpw() const {return numSpw_p;};
-  const ROArrayColumn<Int>& numChan() const {return numChan_p;};
-  const ROScalarColumn<Int>& numReceptors() const {return numReceptors_p;};
-  const ROScalarColumn<Int>& nJones() const {return nJones_p;};
-  const ROArrayColumn<Int>& spwId() const {return spwId_p;};
-  const ROArrayColumn<Double>& chanFreq() const {return chanFreq_p;};
-  const ROArrayMeasColumn<MFrequency>& chanFreqMeas() const 
+  const ScalarColumn<Int>& numSpw() const {return numSpw_p;};
+  const ArrayColumn<Int>& numChan() const {return numChan_p;};
+  const ScalarColumn<Int>& numReceptors() const {return numReceptors_p;};
+  const ScalarColumn<Int>& nJones() const {return nJones_p;};
+  const ArrayColumn<Int>& spwId() const {return spwId_p;};
+  const ArrayColumn<Double>& chanFreq() const {return chanFreq_p;};
+  const ArrayMeasColumn<MFrequency>& chanFreqMeas() const 
     {return chanFreqMeas_p;};
-  const ROScalarColumn<Int>& measFreqRef() const {return measFreqRef_p;};
-  const ROArrayColumn<Double>& chanWidth() const {return chanWidth_p;}
-  const ROArrayQuantColumn<Double>& chanWidthQuant() const {
+  const ScalarColumn<Int>& measFreqRef() const {return measFreqRef_p;};
+  const ArrayColumn<Double>& chanWidth() const {return chanWidth_p;}
+  const ArrayQuantColumn<Double>& chanWidthQuant() const {
     return chanWidthQuant_p;}
-  const ROArrayColumn<Int>& chanRange() const {return chanRange_p;}
-  const ROArrayColumn<String>& polznType() const {return polznType_p;}
-  const ROScalarColumn<String>& jonesType() const {return jonesType_p;};
-  const ROScalarColumn<String>& msName() const {return msName_p;};
+  const ArrayColumn<Int>& chanRange() const {return chanRange_p;}
+  const ArrayColumn<String>& polznType() const {return polznType_p;}
+  const ScalarColumn<String>& jonesType() const {return jonesType_p;};
+  const ScalarColumn<String>& msName() const {return msName_p;};
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -115,11 +115,11 @@ class ROCalDescColumns2
     {return calTable.calDescAsTable();}
 
   // Attach a table column accessor
-  void attach (const CalTable2& calTable, ROTableColumn& tabCol, 
+  void attach (const CalTable2& calTable, TableColumn& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
-  void attach (const CalTable2& calTable, ROTableMeasColumn& tabCol, 
+  void attach (const CalTable2& calTable, TableMeasColumn& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
-  void attach (const CalTable2& calTable, ROArrayQuantColumn<Double>& tabCol, 
+  void attach (const CalTable2& calTable, ArrayQuantColumn<Double>& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
 
  private:
@@ -128,20 +128,20 @@ class ROCalDescColumns2
   ROCalDescColumns2& operator= (const ROCalDescColumns2&);
 
   // Private column accessors
-  ROScalarColumn<Int> numSpw_p;
-  ROArrayColumn<Int> numChan_p;
-  ROScalarColumn<Int> numReceptors_p;
-  ROScalarColumn<Int> nJones_p;
-  ROArrayColumn<Int> spwId_p;
-  ROArrayColumn<Double> chanFreq_p;
-  ROArrayMeasColumn<MFrequency> chanFreqMeas_p;
-  ROScalarColumn<Int> measFreqRef_p;
-  ROArrayColumn<Double> chanWidth_p;
-  ROArrayQuantColumn<Double> chanWidthQuant_p;
-  ROArrayColumn<Int> chanRange_p;
-  ROArrayColumn<String> polznType_p;
-  ROScalarColumn<String> jonesType_p;
-  ROScalarColumn<String> msName_p;
+  ScalarColumn<Int> numSpw_p;
+  ArrayColumn<Int> numChan_p;
+  ScalarColumn<Int> numReceptors_p;
+  ScalarColumn<Int> nJones_p;
+  ArrayColumn<Int> spwId_p;
+  ArrayColumn<Double> chanFreq_p;
+  ArrayMeasColumn<MFrequency> chanFreqMeas_p;
+  ScalarColumn<Int> measFreqRef_p;
+  ArrayColumn<Double> chanWidth_p;
+  ArrayQuantColumn<Double> chanWidthQuant_p;
+  ArrayColumn<Int> chanRange_p;
+  ArrayColumn<String> polznType_p;
+  ScalarColumn<String> jonesType_p;
+  ScalarColumn<String> msName_p;
 };
 
 // <summary> 
@@ -213,11 +213,11 @@ class CalDescColumns2
   Table& calDescAsTable(CalTable2& calTable) {return calTable.calDescAsTable();}
 
   // Attach a table column accessor
-  void attach (CalTable2& calTable, ROTableColumn& tabCol, 
+  void attach (CalTable2& calTable, TableColumn& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
-  void attach (CalTable2& calTable, ROTableMeasColumn& tabCol, 
+  void attach (CalTable2& calTable, TableMeasColumn& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
-  void attach (CalTable2& calTable, ROArrayQuantColumn<Double>& tabCol, 
+  void attach (CalTable2& calTable, ArrayQuantColumn<Double>& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
 
  private:

@@ -626,7 +626,7 @@ VisBufferAsync::lsrFrequency(const Int& spw, Vector<Double>& freq, Bool& convert
                                        phaseCenter_p);
 }
 
-const ROMSColumns &
+const MSColumns &
 VisBufferAsync::msColumns() const
 {
     if (isFilling_p){
@@ -640,7 +640,7 @@ VisBufferAsync::msColumns() const
         Assert (measurementSet_p != NULL);
 
         if (msColumns_p == NULL){
-            msColumns_p = new ROMSColumns (* measurementSet_p);
+            msColumns_p = new MSColumns (* measurementSet_p);
         }
 
         return * msColumns_p;
@@ -747,8 +747,8 @@ VisBufferAsync::setLsrInfo (const Block<Int> & channelStart,
                             const Block<Int> & channelWidth,
                             const Block<Int> & channelIncrement,
                             const Block<Int> & channelGroupNumber,
-                            const ROArrayColumn <Double> * chanFreqs,
-                            const ROScalarColumn<Int> * obsMFreqTypes,
+                            const ArrayColumn <Double> * chanFreqs,
+                            const ScalarColumn<Int> * obsMFreqTypes,
                             const MPosition & observatoryPosition,
                             const MDirection & phaseCenter,
                             Bool velocitySelection)

@@ -91,7 +91,7 @@ namespace casacore{
       Bool checkCenterPix(const ImageInterface<Complex>& image);
       Block <CountedPtr<Cube<Complex> > > convFunctions_p;
       Block <CountedPtr<Vector<Int> > > convSupportBlock_p;
-      SimpleOrderedMap <String, Int> convFunctionMap_p;
+      std::map<String, Int> convFunctionMap_p;
       Vector<Int> convSizes_p;
 
       Int actualConvIndex_p;

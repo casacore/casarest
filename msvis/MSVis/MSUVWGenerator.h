@@ -178,7 +178,7 @@ private:
   // need to update satellite positions.
   // antPositions_p and antOffset_p are references and must therefore be
   // initialized in the initialization list.
-  const ROScalarMeasColumn<MPosition>& antPositions_p;
+  const ScalarMeasColumn<MPosition>& antPositions_p;
 
   // The offsets between the phase reference point (see feed_offsets below for
   // clarification) of each antenna and the closest point which is fixed
@@ -194,7 +194,7 @@ private:
   // belief that it is only needed for heterogeneous arrays, since the
   // receivers of homogeneous arrays move in concert.  That is not true when
   // there are independent pointing errors.
-  const ROScalarMeasColumn<MPosition>& antOffset_p;
+  const ScalarMeasColumn<MPosition>& antOffset_p;
 
   // The position of the first antenna.
   MPosition refpos_p;
@@ -206,7 +206,7 @@ private:
   // in the same frame as ant_offsets.  Therefore the feed position is
   //  ant_positions_p(ant) + [rotation matrix](pointing) (ant_offsets_p[ant] +
   //							feed_offsets_p[ant])
-  const ROScalarMeasColumn<MPosition>& feedOffset_p;
+  const ScalarMeasColumn<MPosition>& feedOffset_p;
 
   MBaseline::Types refposref_p;  
 
@@ -239,7 +239,7 @@ private:
 
   // the 3 fundamental attributes of the state machine
   Double                timeCentroid_p;
-  ROArrayColumn<Double> phaseDir_p; 
+  ArrayColumn<Double> phaseDir_p; 
   //Int                   subarrayId_p;
 
   // The number of wavelengths by which a feed may move relative to the

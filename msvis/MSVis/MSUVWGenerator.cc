@@ -43,7 +43,7 @@ void MSUVWGenerator::fill_bl_an(Vector<MVBaseline>& bl_an_p)
   Double max_baseline = -1.0;
   Double bl_len;
  
-  const ROScalarColumn<Double>& antDiams = antColumns_p.dishDiameter();
+  const ScalarColumn<Double>& antDiams = antColumns_p.dishDiameter();
   Double smallestDiam = antDiams(0);
   Double secondSmallestDiam = antDiams(0);
   
@@ -149,12 +149,12 @@ Bool MSUVWGenerator::make_uvws(const Vector<Int> flds)
 {
   ArrayColumn<Double>&      UVWcol   = msc_p.uvw();  
   const ScalarMeasColumn<MEpoch>& timeCentMeas = msc_p.timeCentroidMeas();
-  const ROScalarColumn<Int> fieldID(msc_p.fieldId());
-  const ROScalarColumn<Int> ant1(msc_p.antenna1());
-  const ROScalarColumn<Int> ant2(msc_p.antenna2());
-  const ROScalarColumn<Int> feed1(msc_p.feed1());
-  const ROScalarColumn<Int> feed2(msc_p.feed2());
-  const ROScalarColumn<Int> obsID(msc_p.observationId());
+  const ScalarColumn<Int> fieldID(msc_p.fieldId());
+  const ScalarColumn<Int> ant1(msc_p.antenna1());
+  const ScalarColumn<Int> ant2(msc_p.antenna2());
+  const ScalarColumn<Int> feed1(msc_p.feed1());
+  const ScalarColumn<Int> feed2(msc_p.feed2());
+  const ScalarColumn<Int> obsID(msc_p.observationId());
 
   // Use a time ordered index to minimize the number of calls to uvw_an.
   // TODO: use field as a secondary sort key.

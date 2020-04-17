@@ -362,7 +362,7 @@ Bool FluxCalc_SS_JPL_Butler::readEphem()
   }
 
   // Find the row numbers with the right MJDs.
-  ROScalarColumn<Double> mjd(tab, "MJD");
+  ScalarColumn<Double> mjd(tab, "MJD");
   uInt rowbef;
   uInt rowclosest;
   uInt rowaft;
@@ -428,7 +428,7 @@ Bool FluxCalc_SS_JPL_Butler::get_interpolated_value(Double& val,
     Double myf = f;
     Double d2y = 0.0;
 
-    ROScalarColumn<Double> col(tab, colname);
+    ScalarColumn<Double> col(tab, colname);
     Double col_m1 = col(rowbef);
     Double col_0  = col(rowclosest);
     Double col_p1 = col(rowaft);
@@ -462,7 +462,7 @@ Bool FluxCalc_SS_JPL_Butler::get_interpolated_value(Double& val,
 
 Bool FluxCalc_SS_JPL_Butler::get_row_numbers(uInt& rowbef, uInt& rowclosest,
 					     uInt& rowaft,
-					     const ROScalarColumn<Double>& mjd)
+					     const ScalarColumn<Double>& mjd)
 {
   // MeasComet requires a constant time increment, but since
   // FluxCalc_SS_JPL_Butler is expected to only need to use the time once, it's

@@ -126,7 +126,7 @@ FluxStdSrcs::Source FluxStdSrcs::srcNameToEnum(const String& srcName, const MDir
 	 << LogIO::POST;
       Table tmpsubtab = tableCommand(taql);
       if(tmpsubtab.nrow()) {
-	  ROScalarColumn<String> srcNameCol(tmpsubtab,"Name");
+	  ScalarColumn<String> srcNameCol(tmpsubtab,"Name");
 	  String srcNameInTable = srcNameCol.getColumnCells(RefRows(0,0))[0];
 	  //cerr<<"srcNameInTable="<<srcNameInTable<<endl;
 	  for (std::map<FSS::Source, Vector<String> >::const_iterator it2 = names_p.begin(); 

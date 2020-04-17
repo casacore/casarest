@@ -41,14 +41,14 @@ ROTJonesPolyMCol::ROTJonesPolyMCol (const TJonesPolyTable& gjpTable) :
 // Output to private data:
 //    ROTJonesMCol            ROTJonesMCol          Read-only TJones cal 
 //                                                  main columns
-//    polyType_p              ROScalarCol<String>   Polynomial type 
-//    polyMode_p              ROScalarCol<String>   Polynomial mode (e.g. A&P)
-//    scaleFactor_p           ROScalarCol<Complex>  Polynomial scale factor
-//    nPolyAmp_p              ROScalarCol<Int>      Polynomial degree (amp)
-//    nPolyPhase_p            ROScalarCol<Int>      Polynomial degree (phase)
-//    polyCoeffAmp_p          ROArrayCol<Double>    Polynomial coeff. (amp)
-//    polyCoeffPhase_p        ROArrayCol<Double>    Polynomial coeff. (phase)
-//    phaseUnits_p            ROScalarCol<String>   Phase units.
+//    polyType_p              ScalarCol<String>   Polynomial type 
+//    polyMode_p              ScalarCol<String>   Polynomial mode (e.g. A&P)
+//    scaleFactor_p           ScalarCol<Complex>  Polynomial scale factor
+//    nPolyAmp_p              ScalarCol<Int>      Polynomial degree (amp)
+//    nPolyPhase_p            ScalarCol<Int>      Polynomial degree (phase)
+//    polyCoeffAmp_p          ArrayCol<Double>    Polynomial coeff. (amp)
+//    polyCoeffPhase_p        ArrayCol<Double>    Polynomial coeff. (phase)
+//    phaseUnits_p            ScalarCol<String>   Phase units.
 //
   // Attach all column accessors for additional TJonesPoly columns
   // (some are optional, depending on polynomial mode)
@@ -105,10 +105,10 @@ ROTJonesSplineMCol::ROTJonesSplineMCol (const TJonesSplineTable& gjsTable) :
 // Output to private data:
 //    ROTJonesPolyMCol        ROTJonesMCol          Read-only TJonesPoly cal 
 //                                                  main columns
-//    nKnotsAmp_p             ROScalarCol<Int>      No. spline knots in amp.
-//    nKnotsPhase_p           ROScalarCol<Int>      No. spline knots in phase
-//    splineKnotsAmp_p        ROScalarCol<Double>   Spline knot positions (amp)
-//    splineKnotsPhase_p      ROScalarCol<Double>   Spline knot posn. (phase)
+//    nKnotsAmp_p             ScalarCol<Int>      No. spline knots in amp.
+//    nKnotsPhase_p           ScalarCol<Int>      No. spline knots in phase
+//    splineKnotsAmp_p        ScalarCol<Double>   Spline knot positions (amp)
+//    splineKnotsPhase_p      ScalarCol<Double>   Spline knot posn. (phase)
 //
   // Attach all column accessors for additional TJonesSpline columns
   // (all are optional, dependent on polynomial mode)

@@ -42,8 +42,6 @@
 #include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <casacore/ms/MeasurementSets/MeasurementSet.h>
 
-#include <casacore/casa/Containers/List.h>
-
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisSet.h>
@@ -51,7 +49,7 @@
 #include <msvis/MSVis/SelectAverageSpw.h>
 
 //#include <tableplot/TablePlot/SLog.h>
-
+#include <list>
 
 ///////////////////////////////////////////////////////////////////////////////
 //# Start of documentation.    
@@ -183,7 +181,7 @@ private:
    
    //averaged, store as VBs 
    VisBuffer* pAveBuff;
-   List<VisBuffer*> aveList;
+   std::list<VisBuffer*> aveList;
 
    //averaging inputs, ideally, calculate only needed column
    String column;

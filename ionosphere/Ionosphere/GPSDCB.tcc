@@ -56,7 +56,7 @@ const String CMJD("MJD"),
 
 static Bool loadColumn( const Table &tab,const String &name,Cube<Float> &cube,uInt zplane )
 {
-  ROArrayColumn<Float> col(tab,name);
+  ArrayColumn<Float> col(tab,name);
   Array<Float> data( cube.xyPlane(zplane) );
   col.getColumn(data);
   return True;
@@ -116,7 +116,7 @@ GPSDCB::GPSDCB( const char *tablename ) :
   dcbrms.resize(nsvn,nrec,2);
 
 // load MJDs  
-  ROScalarColumn<Int> mjdcol(tab,CMJD);
+  ScalarColumn<Int> mjdcol(tab,CMJD);
   mjdcol.getColumn(mjds,True);
   convertArray(fmjd,mjds);
   
@@ -126,7 +126,7 @@ GPSDCB::GPSDCB( const char *tablename ) :
   loadColumn(tab,CP1C1,dcb,P1_C1);
   loadColumn(tab,CP1C1RMS,dcbrms,P1_C1);
 // load station IDs from table
-  ROArrayColumn<Float> stcol(tab,CSTA_P1P2),strmscol(tab,CSTA_P1P2RMS);
+  ArrayColumn<Float> stcol(tab,CSTA_P1P2),strmscol(tab,CSTA_P1P2RMS);
   stcol.keywordSet().get(KIGS_ID,stids);
   nsta = stids.nelements();
   if( nsta )

@@ -97,7 +97,7 @@ namespace casacore{
       //SimpleOrderedMap <String, Int> convFunctionMap_p;
       Vector<Int64> convFunctionMap_p;
       Int64 nDefined_p;
-      SimpleOrderedMap <Double, Int> antDiam2IndexMap_p;
+      std::map <Double, Int> antDiam2IndexMap_p;
       Vector<Int> antIndexToDiamIndex_p;
       Block<CountedPtr<PBMathInterface> > antMath_p;
       Int msId_p;

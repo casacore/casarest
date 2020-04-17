@@ -518,10 +518,10 @@ void ROVisibilityIterator::setState()
   curTableNumRow_p = msIter_p.table().nrow();
   // get the times for this (major) iteration, so we can do (minor) 
   // iteration by constant time (needed for VisBuffer averaging).
-  ROScalarColumn<Double> lcolTime(msIter_p.table(),MS::columnName(MS::TIME));
+  ScalarColumn<Double> lcolTime(msIter_p.table(),MS::columnName(MS::TIME));
   time_p.resize(curTableNumRow_p); 
   lcolTime.getColumn(time_p);
-  ROScalarColumn<Double> lcolTimeInterval(msIter_p.table(),
+  ScalarColumn<Double> lcolTimeInterval(msIter_p.table(),
 					  MS::columnName(MS::INTERVAL));
   timeInterval_p.resize(curTableNumRow_p); 
   lcolTimeInterval.getColumn(timeInterval_p);
@@ -719,8 +719,8 @@ void ROVisibilityIterator::setTileCache(){
   {   
     const MeasurementSet& thems=msIter_p.ms();
     const ColumnDescSet& cds=thems.tableDesc().columnDescSet();
-    ROArrayColumn<Complex> colVis;
-    ROArrayColumn<Float> colwgt;
+    ArrayColumn<Complex> colVis;
+    ArrayColumn<Float> colwgt;
     Vector<String> columns(3);
     columns(0)=MS::columnName(MS::DATA);
     columns(1)=MS::columnName(MS::CORRECTED_DATA);
@@ -2239,10 +2239,10 @@ ROVisibilityIterator::lsrFrequency(const Int& spw, Vector<Double>& freq,
 
     //chanFreq=msIter_p.msColumns().spectralWindow().chanFreq()(spw);
 
-    const ROArrayColumn <Double> & chanFreqs = msIter_p.msColumns().spectralWindow().chanFreq();
-    const ROScalarColumn<Int> & obsMFreqTypes= msIter_p.msColumns().spectralWindow().measFreqRef();
+    const ArrayColumn <Double> & chanFreqs = msIter_p.msColumns().spectralWindow().chanFreq();
+    const ScalarColumn<Int> & obsMFreqTypes= msIter_p.msColumns().spectralWindow().measFreqRef();
     MEpoch ep;
-    ROScalarMeasColumn<MEpoch>(msIter_p.table(), MS::columnName(MS::TIME)).get(curStartRow_p, ep); // Setting epoch to iteration's first one
+    ScalarMeasColumn<MEpoch>(msIter_p.table(), MS::columnName(MS::TIME)).get(curStartRow_p, ep); // Setting epoch to iteration's first one
     MPosition obsPos = msIter_p.telescopePosition();
     MDirection dir = msIter_p.phaseCenter();
 
@@ -2259,8 +2259,8 @@ ROVisibilityIterator::lsrFrequency (const Int& spw,
                                     const Block<Int> & chanWidth,
                                     const Block<Int> & chanInc,
                                     const Block<Int> & numChanGroup,
-                                    const ROArrayColumn <Double> & chanFreqs,
-                                    const ROScalarColumn<Int> & obsMFreqTypes,
+                                    const ArrayColumn <Double> & chanFreqs,
+                                    const ScalarColumn<Int> & obsMFreqTypes,
                                     const MEpoch & ep,
                                     const MPosition & obsPos,
                                     const MDirection & dir)
@@ -2304,8 +2304,8 @@ ROVisibilityIterator::getLsrInfo (Block<Int> & channelStart,
                                   Block<Int> & channelWidth,
                                   Block<Int> & channelIncrement,
                                   Block<Int> & channelGroupNumber,
-                                  const ROArrayColumn <Double> * & chanFreqs,
-                                  const ROScalarColumn<Int> * & obsMFreqTypes,
+                                  const ArrayColumn <Double> * & chanFreqs,
+                                  const ScalarColumn<Int> * & obsMFreqTypes,
                                   MPosition & observatoryPositon,
                                   MDirection & phaseCenter,
                                   Bool & velocitySelection) const
@@ -2379,65 +2379,65 @@ Int ROVisibilityIterator::numberCoh(){
 }
 
 template<class T>
-void ROVisibilityIterator::getColScalar(const ROScalarColumn<T> &column, Vector<T> &array, Bool resize) const
+void ROVisibilityIterator::getColScalar(const ScalarColumn<T> &column, Vector<T> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, array, resize);
     return;
 }
 
-void ROVisibilityIterator::getCol(const ROScalarColumn<Bool> &column, Vector<Bool> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ScalarColumn<Bool> &column, Vector<Bool> &array, Bool resize) const
 {
     getColScalar<Bool>(column, array, resize);
 }
 
-void ROVisibilityIterator::getCol(const ROScalarColumn<Int> &column, Vector<Int> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ScalarColumn<Int> &column, Vector<Int> &array, Bool resize) const
 {
     getColScalar<Int>(column, array, resize);
 }
 
-void ROVisibilityIterator::getCol(const ROScalarColumn<Double> &column, Vector<Double> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ScalarColumn<Double> &column, Vector<Double> &array, Bool resize) const
 {
     getColScalar<Double>(column, array, resize);
 }
 
-void ROVisibilityIterator::getCol(const ROArrayColumn<Bool> &column, Array<Bool> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ArrayColumn<Bool> &column, Array<Bool> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, array, resize);
 }
 
-void ROVisibilityIterator::getCol(const ROArrayColumn<Float> &column, Array<Float> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ArrayColumn<Float> &column, Array<Float> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, array, resize);
 }
 
 template<class T>
-void ROVisibilityIterator::getColArray(const ROArrayColumn<T> &column, Array<T> &array, Bool resize) const
+void ROVisibilityIterator::getColArray(const ArrayColumn<T> &column, Array<T> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, array, resize);
     return;
 }
 
-void ROVisibilityIterator::getCol(const ROArrayColumn<Double> &column, Array<Double> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ArrayColumn<Double> &column, Array<Double> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, array, resize);
 }
 
-void ROVisibilityIterator::getCol(const ROArrayColumn<Complex> &column, Array<Complex> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ArrayColumn<Complex> &column, Array<Complex> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, array, resize);
 }
 
-void ROVisibilityIterator::getCol(const ROArrayColumn<Bool> &column, const Slicer &slicer, Array<Bool> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ArrayColumn<Bool> &column, const Slicer &slicer, Array<Bool> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, slicer, array, resize);
 }
 
-void ROVisibilityIterator::getCol(const ROArrayColumn<Float> &column, const Slicer &slicer, Array<Float> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ArrayColumn<Float> &column, const Slicer &slicer, Array<Float> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, slicer, array, resize);
 }
 
-void ROVisibilityIterator::getCol(const ROArrayColumn<Complex> &column, const Slicer &slicer, Array<Complex> &array, Bool resize) const
+void ROVisibilityIterator::getCol(const ArrayColumn<Complex> &column, const Slicer &slicer, Array<Complex> &array, Bool resize) const
 {
     column.getColumnCells(selRows_p, slicer, array, resize);
 }

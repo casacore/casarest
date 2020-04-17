@@ -151,7 +151,7 @@ void FixVis::setPhaseDirs(const Vector<MDirection>& phaseDirs,
   }
 }
 
-// const ROArrayMeasColumn<MDirection>& FixVis::getPhaseDirs() const
+// const ArrayMeasColumn<MDirection>& FixVis::getPhaseDirs() const
 // {
 //   ROMSFieldColumns msField(msc_p->field());
 
@@ -682,7 +682,7 @@ CoordinateSystem FixVis::getCoords(uInt numInSel)
   deltas(1) =  1.0e-5; //  mcelly_p.get("rad").getValue();
   
   MFrequency::Types obsFreqRef = MFrequency::DEFAULT;
-  ROScalarColumn<Int> measFreqRef(ms_p.spectralWindow(),
+  ScalarColumn<Int> measFreqRef(ms_p.spectralWindow(),
 				  MSSpectralWindow::columnName(MSSpectralWindow::MEAS_FREQ_REF));
   //using the first frame of reference; TO DO should do the right thing 
   //for different frames selected. 

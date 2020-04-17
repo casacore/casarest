@@ -640,8 +640,8 @@ public:
     // Remove scratch cols data from vb
     virtual void removeScratchCols();
 
-    // Access the current ROMSColumns object via VisIter
-    virtual const ROMSColumns & msColumns() const {
+    // Access the current MSColumns object via VisIter
+    virtual const MSColumns & msColumns() const {
         return visIter_p->msColumns();
     }
 

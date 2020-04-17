@@ -85,7 +85,7 @@ class MSSelection; // #include <casacore/ms/MSSel/MSSelection.h>
   };
   typedef std::map<const uInt, uivector, uIntCmp> ui2vmap;
 
-template<class T> class ROArrayColumn;
+template<class T> class ArrayColumn;
   Bool isAllColumns(const Vector<MS::PredefinedColumns>& colNames);
 
 class SubMS
@@ -440,14 +440,14 @@ class SubMS
   Bool fillAccessoryMainCols();
 
   // *** Private member functions ***
-  Bool getDataColumn(ROArrayColumn<Complex>& data,
+  Bool getDataColumn(ArrayColumn<Complex>& data,
                      const MS::PredefinedColumns colName);
-  Bool getDataColumn(ROArrayColumn<Float>& data,
+  Bool getDataColumn(ArrayColumn<Float>& data,
                      const MS::PredefinedColumns colName);
-  Bool putDataColumn(MSColumns& msc, ROArrayColumn<Complex>& data,
+  Bool putDataColumn(MSColumns& msc, ArrayColumn<Complex>& data,
                      const MS::PredefinedColumns datacol,
                      const Bool writeToDataCol=False);
-  Bool putDataColumn(MSColumns& msc, ROArrayColumn<Float>& data,
+  Bool putDataColumn(MSColumns& msc, ArrayColumn<Float>& data,
                      const MS::PredefinedColumns datacol,
                      const Bool writeToDataCol=False);
 
@@ -473,7 +473,7 @@ class SubMS
 
   // Picks a reference to DATA, MODEL_DATA, CORRECTED_DATA, or LAG_DATA out
   // of ms_p.  FLOAT_DATA is not included because it is not natively complex. 
-  const ROArrayColumn<Complex>& right_column(const ROMSColumns *ms_p,
+  const ArrayColumn<Complex>& right_column(const ROMSColumns *ms_p,
                                              const MS::PredefinedColumns datacol);
 
   // The writable version of the above.
@@ -507,9 +507,9 @@ class SubMS
   void relabelSources();
 
   void relabelIDs();
-  void remapColumn(const ROScalarColumn<Int>& incol, ScalarColumn<Int>& outcol);
+  void remapColumn(const ScalarColumn<Int>& incol, ScalarColumn<Int>& outcol);
   static void make_map(const Vector<Int>& mscol, Vector<Int>& mapper);
-  static void make_map(const ROScalarColumn<Int>& mscol,
+  static void make_map(const ScalarColumn<Int>& mscol,
 		       std::map<Int, Int>& mapper);
   uInt remapped(const Int ov, const Vector<Int>& mapper, uInt i);
 

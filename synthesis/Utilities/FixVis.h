@@ -149,7 +149,7 @@ private:
 
   CoordinateSystem getCoords(uInt numInSel);
 
-  //const ROArrayMeasColumn<MDirection>& getPhaseDirs() const;
+  //const ArrayMeasColumn<MDirection>& getPhaseDirs() const;
   //ArrayMeasColumn<MDirection>& getPhaseDirs();
 
   // Makes sure msc_p is ready, and returns false if it fails.

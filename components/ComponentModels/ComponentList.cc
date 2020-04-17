@@ -1055,24 +1055,24 @@ void ComponentList::readTable(const Path& fileName, const Bool readOnly) {
 		       Table::Update);
     }
   }
-  const ROArrayColumn<DComplex> fluxValCol(itsTable, fluxName);
-  const ROScalarColumn<String> fluxUnitCol(itsTable, fluxUnitName);
-  const ROScalarColumn<String> fluxPolCol(itsTable, fluxPolName);
-  const ROScalarColumn<String> shapeCol(itsTable, shapeName);
-  const MDirection::ROScalarColumn dirCol(itsTable, refDirName);
-  const ROArrayColumn<Double> shapeParmCol(itsTable, shapeParName);
-  const ROScalarColumn<String> specShapeCol(itsTable, spectrumName);
-  const MFrequency::ROScalarColumn freqCol(itsTable, refFreqName);
-  const ROArrayColumn<Double> spectralParmCol(itsTable,spectParName); 
-  const ROScalarColumn<String> labelCol(itsTable, labelName);
+  const ArrayColumn<DComplex> fluxValCol(itsTable, fluxName);
+  const ScalarColumn<String> fluxUnitCol(itsTable, fluxUnitName);
+  const ScalarColumn<String> fluxPolCol(itsTable, fluxPolName);
+  const ScalarColumn<String> shapeCol(itsTable, shapeName);
+  const MDirection::ScalarColumn dirCol(itsTable, refDirName);
+  const ArrayColumn<Double> shapeParmCol(itsTable, shapeParName);
+  const ScalarColumn<String> specShapeCol(itsTable, spectrumName);
+  const MFrequency::ScalarColumn freqCol(itsTable, refFreqName);
+  const ArrayColumn<Double> spectralParmCol(itsTable,spectParName); 
+  const ScalarColumn<String> labelCol(itsTable, labelName);
 
-  ROArrayColumn<DComplex> fluxErrCol;
-  ROArrayQuantColumn<Double> dirErrCol;
-  ROArrayColumn<Double> shapeErrCol;
-  ROScalarQuantColumn<Double> freqErrCol;
-  ROArrayColumn<Double> spectralErrCol;
-  ROScalarColumn<TableRecord> specRecord;
-  ROArrayColumn<Double> optParmCol;
+  ArrayColumn<DComplex> fluxErrCol;
+  ArrayQuantColumn<Double> dirErrCol;
+  ArrayColumn<Double> shapeErrCol;
+  ScalarQuantColumn<Double> freqErrCol;
+  ArrayColumn<Double> spectralErrCol;
+  ScalarColumn<TableRecord> specRecord;
+  ArrayColumn<Double> optParmCol;
   {// Old componentlist tables may not have the error columns
     const ColumnDescSet& cds=itsTable.tableDesc().columnDescSet();
     if (cds.isDefined(fluxErrName)) {

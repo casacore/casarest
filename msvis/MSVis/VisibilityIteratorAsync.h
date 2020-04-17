@@ -250,7 +250,7 @@ public:
     Vector<Double>& lsrFrequency(Vector<Double>& ) const { NotImplementedROVIA; }
     void lsrFrequency(const Int& , Vector<Double>& , Bool& ) { NotImplementedROVIA; }
     const MeasurementSet& ms() const  { NotImplementedROVIA; }
-    const ROMSColumns& msColumns() const { NotImplementedROVIA; }
+    const MSColumns& msColumns() const { NotImplementedROVIA; }
     Int msId() const  { NotImplementedROVIA; }
     Int nCorr() const { NotImplementedROVIA; }
     Int nRow() const { NotImplementedROVIA; }
@@ -345,7 +345,7 @@ private:
     PrefetchColumns prefetchColumns_p;
     Int subChunkNumber_p;
     VisBufferAsync * visBufferAsync_p;
-    Stack<VisBufferAsyncWrapper *> vbaWrapperStack_p;
+    std::stack<VisBufferAsyncWrapper *> vbaWrapperStack_p;
 
     void dumpPrefetchColumns () const;
 

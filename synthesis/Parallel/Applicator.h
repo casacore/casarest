@@ -34,9 +34,9 @@
 #include <casacore/casa/aips.h>
 #include <casacore/casa/Arrays/Vector.h>
 #include <casacore/lattices/Lattices/Lattice.h>
-#include <casacore/casa/Containers/OrderedMap.h>
 #include <casacore/casa/Containers/Record.h>
 #include <synthesis/Parallel/PTransport.h>
+#include <map>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -162,8 +162,8 @@ class Applicator {
   PTransport *comm;
 
   // Map of known algorithm names and id.'s
-  OrderedMap<String, Int> algorithmIds;
-  OrderedMap<Int, Algorithm*> knownAlgorithms;
+  std::map<String, Int> algorithmIds;
+  std::map<Int, Algorithm*> knownAlgorithms;
 
   // ID for the last Algorithm defined.
   Int LastID;

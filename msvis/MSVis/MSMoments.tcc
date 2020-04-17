@@ -162,7 +162,7 @@ Bool MSMoments<T>::setNewMS(MeasurementSet& ms)
   }
 
   // At least, DATA_DESC_ID must be unique 
-  ROScalarColumn<Int> ddIdCol( ms, "DATA_DESC_ID" ) ;
+  ScalarColumn<Int> ddIdCol( ms, "DATA_DESC_ID" ) ;
   Vector<Int> ddIds = ddIdCol.getColumn() ;
   if ( !allEQ( ddIds, ddIds[0] ) ) {
     os_p << LogIO::SEVERE
@@ -187,11 +187,11 @@ Bool MSMoments<T>::setNewMS(MeasurementSet& ms)
   // spectral window ID
   ddIdCol.attach( *ms_p, "DATA_DESC_ID" ) ;
   dataDescId_ = ddIdCol( 0 ) ;
-  ROScalarColumn<Int> dSpwIdCol( ms_p->dataDescription(), "SPECTRAL_WINDOW_ID" ) ;
+  ScalarColumn<Int> dSpwIdCol( ms_p->dataDescription(), "SPECTRAL_WINDOW_ID" ) ;
   spwId_ = dSpwIdCol( dataDescId_ ) ;
 
   // Check if number of channel is not 1
-  ROScalarColumn<Int> *numChanCol = new ROScalarColumn<Int>( ms_p->spectralWindow(), "NUM_CHAN" ) ;
+  ScalarColumn<Int> *numChanCol = new ROScalarColumn<Int>( ms_p->spectralWindow(), "NUM_CHAN" ) ;
   if ( (*numChanCol)(spwId_) == 1 ) {
     os_p << "NUM_CHAN is 1. Nothing to do." << LogIO::POST ;
     delete numChanCol ;
@@ -392,7 +392,7 @@ Bool MSMoments<T>::createMoments(PtrBlock< MeasurementSet* >& outPt,
   Bool giveMessage = True ;
 
   // Prepare output files
-  ROArrayColumn<Float> floatDataCol( *ms_p, "FLOAT_DATA" ) ;
+  ArrayColumn<Float> floatDataCol( *ms_p, "FLOAT_DATA" ) ;
   ColumnDesc desc = floatDataCol.columnDesc() ;
   TableRecord rec = desc.rwKeywordSet() ;
   String inUnit ;
@@ -453,7 +453,7 @@ Bool MSMoments<T>::createMoments(PtrBlock< MeasurementSet* >& outPt,
     ArrayColumn<Double> *chanWidthCol = new ArrayColumn<Double>( *tab, "CHAN_WIDTH" ) ;
     ArrayColumn<Double> *effBWCol = new ArrayColumn<Double>( *tab, "EFFECTIVE_BW" ) ;
     ArrayColumn<Double> *resCol = new ArrayColumn<Double>( *tab, "RESOLUTION" ) ;
-    ROScalarColumn<Double> *totBWCol = new ROScalarColumn<Double>( *tab, "TOTAL_BANDWIDTH" ) ;
+    ScalarColumn<Double> *totBWCol = new ROScalarColumn<Double>( *tab, "TOTAL_BANDWIDTH" ) ;
     ScalarColumn<Int> *numChanCol = new ScalarColumn<Int>( *tab, "NUM_CHAN" ) ;
     for ( uInt j = 0 ; j < tab->nrow() ; j++ ) {
       // test if row is empty
@@ -506,7 +506,7 @@ Bool MSMoments<T>::createMoments(PtrBlock< MeasurementSet* >& outPt,
     tab = new Table( outFileName, Table::Update ) ;
     // replace FLOAT_DATA column
     tab->removeColumn( "FLOAT_DATA" ) ;
-    ROArrayColumn<Float> floatDataCol( *ms_p, "FLOAT_DATA" ) ;
+    ArrayColumn<Float> floatDataCol( *ms_p, "FLOAT_DATA" ) ;
     ColumnDesc colDesc( floatDataCol.columnDesc() ) ;
     IPosition updateShape = floatDataCol.shape( 0 ) ;
     updateShape( 1 ) = 1 ;
@@ -562,9 +562,9 @@ Bool MSMoments<T>::createMoments(PtrBlock< MeasurementSet* >& outPt,
     floatDataCol.attach( *ms_p, "FLOAT_DATA" ) ;
   }
   ArrayLattice<T> arrLatIn( floatDataCol.getColumn().nonDegenerate( IPosition( 2, 0, 1 ) ) ) ;
-  ROArrayColumn<Bool> flagCol( *ms_p, "FLAG" ) ;
+  ArrayColumn<Bool> flagCol( *ms_p, "FLAG" ) ;
   Array<Bool> flagArr = flagCol.getColumn() ;
-  ROScalarColumn<Bool> flagRowCol( *ms_p, "FLAG_ROW" ) ;
+  ScalarColumn<Bool> flagRowCol( *ms_p, "FLAG_ROW" ) ;
   for ( uInt irow = 0 ; irow < flagRowCol.nrow() ; irow++ ) {
     if ( flagRowCol( irow ) ) {
       flagArr[irow].set( False ) ;
@@ -716,8 +716,8 @@ CoordinateSystem MSMoments<T>::coordinates()
     // Set StokesCoordinate
     //
     // create and set Stokes coordinate
-    ROArrayColumn<Int> corrTypeCol( ms_p->polarization(), "CORR_TYPE" ) ;
-    ROScalarColumn<Int> polIdCol( ms_p->dataDescription(), "POLARIZATION_ID" ) ;
+    ArrayColumn<Int> corrTypeCol( ms_p->polarization(), "CORR_TYPE" ) ;
+    ScalarColumn<Int> polIdCol( ms_p->dataDescription(), "POLARIZATION_ID" ) ;
     Int polId = polIdCol( dataDescId_ ) ;
     Vector<Int> polType = corrTypeCol( polId ) ;
     StokesCoordinate polSys = StokesCoordinate( polType ) ;
@@ -727,16 +727,16 @@ CoordinateSystem MSMoments<T>::coordinates()
     // Set SpectralCoordinate
     //
     // get CHAN_FREQ and MEAS_FREQ_REF from SPECTRAL_WINDOW table
-    ROArrayColumn<Double> chanFreqCol( ms_p->spectralWindow(), "CHAN_FREQ" ) ; 
-    ROScalarColumn<Int> measFreqRefCol( ms_p->spectralWindow(), "MEAS_FREQ_REF" ) ;
+    ArrayColumn<Double> chanFreqCol( ms_p->spectralWindow(), "CHAN_FREQ" ) ; 
+    ScalarColumn<Int> measFreqRefCol( ms_p->spectralWindow(), "MEAS_FREQ_REF" ) ;
     Vector<Double> chanFreq ;
     Int measFreqRef ;
     chanFreqCol.get( spwId_, chanFreq, True ) ;
     measFreqRefCol.get( spwId_, measFreqRef ) ;
     
     // get REST_FREQUENCY from SOURCE table
-    ROScalarColumn<Int> spwIdCol( ms_p->source(), "SPECTRAL_WINDOW_ID" ) ;
-    ROArrayColumn<Double> restFreqCol( ms_p->source(), "REST_FREQUENCY" ) ;
+    ScalarColumn<Int> spwIdCol( ms_p->source(), "SPECTRAL_WINDOW_ID" ) ;
+    ArrayColumn<Double> restFreqCol( ms_p->source(), "REST_FREQUENCY" ) ;
     Vector<Int> spwIds = spwIdCol.getColumn() ;
     Double restFreq ;
     Bool noCorrRow = True ;
@@ -759,7 +759,7 @@ CoordinateSystem MSMoments<T>::coordinates()
           os_p << LogIO::WARN
                << "No rest frequency is given in SOURCE table" << endl 
                << "Rest frequency set to REF_FREQUENCY" << LogIO::POST ;
-          ROScalarColumn<Double> refFreqCol( ms_p->spectralWindow(), "REF_FREQUENCY" ) ;
+          ScalarColumn<Double> refFreqCol( ms_p->spectralWindow(), "REF_FREQUENCY" ) ;
           restFreq = refFreqCol( spwId_ ) ;
         }
         else {
@@ -773,7 +773,7 @@ CoordinateSystem MSMoments<T>::coordinates()
       os_p << LogIO::WARN
            << "No corresponding row in SOURCE table for spwid " << spwId_ << endl 
            << "Rest frequency set to REF_FREQUENCY" << LogIO::POST ;
-      ROScalarColumn<Double> refFreqCol( ms_p->spectralWindow(), "REF_FREQUENCY" ) ;
+      ScalarColumn<Double> refFreqCol( ms_p->spectralWindow(), "REF_FREQUENCY" ) ;
       restFreq = refFreqCol( spwId_ ) ;
     }
     
@@ -785,7 +785,7 @@ CoordinateSystem MSMoments<T>::coordinates()
     //
     // Set time coordinate as TabularCoordinate
     //
-//     ROScalarColumn<Double> timeCentCol( *ms_p, "TIME_CENTROID" ) ;
+//     ScalarColumn<Double> timeCentCol( *ms_p, "TIME_CENTROID" ) ;
 //     Vector<Double> timeCentroid = timeCentCol.getColumn() ;
 //     Vector<Double> tPixel( timeCentroid.nelements() ) ;
 //     indgen( tPixel ) ;
@@ -812,7 +812,7 @@ template<class T>
 IPosition MSMoments<T>::getShape()
 {
 //   // TODO: implement method to get shape of MS
-  ROArrayColumn<Float> dataCol( *ms_p, "FLOAT_DATA" ) ;
+  ArrayColumn<Float> dataCol( *ms_p, "FLOAT_DATA" ) ;
   uInt nrow = dataCol.nrow() ;
   IPosition cellShape = dataCol.shape( 0 ) ;
   IPosition colShape( 1, nrow ) ;

@@ -43,8 +43,6 @@
 #include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <casacore/ms/MeasurementSets/MeasurementSet.h>
 
-#include <casacore/casa/Containers/List.h>
-
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisibilityIterator.h>
 #include <msvis/MSVis/VisSet.h>

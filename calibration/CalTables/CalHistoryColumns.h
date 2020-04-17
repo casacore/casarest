@@ -82,10 +82,10 @@ class ROCalHistoryColumns
   virtual ~ROCalHistoryColumns() {};
 
   // Read-only column accessors
-  const ROScalarColumn<String>& calParms() const {return calParms_p;};
-  const ROScalarColumn<String>& calTables() const {return calTables_p;};
-  const ROScalarColumn<String>& calSelect() const {return calSelect_p;};
-  const ROScalarColumn<String>& calNotes() const {return calNotes_p;};
+  const ScalarColumn<String>& calParms() const {return calParms_p;};
+  const ScalarColumn<String>& calTables() const {return calTables_p;};
+  const ScalarColumn<String>& calSelect() const {return calSelect_p;};
+  const ScalarColumn<String>& calNotes() const {return calNotes_p;};
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -98,7 +98,7 @@ class ROCalHistoryColumns
     {return calTable.calHistoryAsTable();}
 
   // Attach a table column accessor
-  void attach (const CalTable& calTable, ROTableColumn& tabCol, 
+  void attach (const CalTable& calTable, TableColumn& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
 
  private:
@@ -107,10 +107,10 @@ class ROCalHistoryColumns
   ROCalHistoryColumns& operator= (const ROCalHistoryColumns&);
 
   // Private column accessors
-  ROScalarColumn<String> calParms_p;
-  ROScalarColumn<String> calTables_p;
-  ROScalarColumn<String> calSelect_p;
-  ROScalarColumn<String> calNotes_p;
+  ScalarColumn<String> calParms_p;
+  ScalarColumn<String> calTables_p;
+  ScalarColumn<String> calSelect_p;
+  ScalarColumn<String> calNotes_p;
 };
 
 // <summary> 
@@ -173,7 +173,7 @@ class CalHistoryColumns
     {return calTable.calHistoryAsTable();}
 
   // Attach a table column accessor
-  void attach (CalTable& calTable, ROTableColumn& tabCol, 
+  void attach (CalTable& calTable, TableColumn& tabCol, 
 	       MSCalEnums::colDef colEnum, const Bool& optional = False);
 
  private:

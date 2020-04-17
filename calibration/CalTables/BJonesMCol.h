@@ -191,17 +191,17 @@ class ROBJonesPolyMCol : public ROBJonesMCol
   virtual ~ROBJonesPolyMCol() {};
 
   // Read-only column accessors
-  const ROScalarColumn<String>& polyType() const {return polyType_p;};
-  const ROScalarColumn<String>& polyMode() const {return polyMode_p;};
-  const ROScalarColumn<Complex>& scaleFactor() const {return scaleFactor_p;};
-  const ROArrayColumn<Double>& validDomain() const {return validDomain_p;};
-  const ROScalarColumn<Int>& nPolyAmp() const {return nPolyAmp_p;};
-  const ROScalarColumn<Int>& nPolyPhase() const {return nPolyPhase_p;};
-  const ROArrayColumn<Double>& polyCoeffAmp() const {return polyCoeffAmp_p;};
-  const ROArrayColumn<Double>& polyCoeffPhase() const 
+  const ScalarColumn<String>& polyType() const {return polyType_p;};
+  const ScalarColumn<String>& polyMode() const {return polyMode_p;};
+  const ScalarColumn<Complex>& scaleFactor() const {return scaleFactor_p;};
+  const ArrayColumn<Double>& validDomain() const {return validDomain_p;};
+  const ScalarColumn<Int>& nPolyAmp() const {return nPolyAmp_p;};
+  const ScalarColumn<Int>& nPolyPhase() const {return nPolyPhase_p;};
+  const ArrayColumn<Double>& polyCoeffAmp() const {return polyCoeffAmp_p;};
+  const ArrayColumn<Double>& polyCoeffPhase() const 
     {return polyCoeffPhase_p;};
-  const ROScalarColumn<String>& phaseUnits() const {return phaseUnits_p;};
-  const ROScalarColumn<Complex>& sideBandRef() const {return sideBandRef_p;};
+  const ScalarColumn<String>& phaseUnits() const {return phaseUnits_p;};
+  const ScalarColumn<Complex>& sideBandRef() const {return sideBandRef_p;};
 
  protected:
   // Prohibit public use of the null constructor, which
@@ -214,16 +214,16 @@ class ROBJonesPolyMCol : public ROBJonesMCol
   ROBJonesPolyMCol& operator= (const ROBJonesPolyMCol&);
 
   // Private column accessors
-  ROScalarColumn<String> polyType_p;
-  ROScalarColumn<String> polyMode_p;
-  ROScalarColumn<Complex> scaleFactor_p;
-  ROArrayColumn<Double> validDomain_p;
-  ROScalarColumn<Int> nPolyAmp_p;
-  ROScalarColumn<Int> nPolyPhase_p;
-  ROArrayColumn<Double> polyCoeffAmp_p;
-  ROArrayColumn<Double> polyCoeffPhase_p;
-  ROScalarColumn<String> phaseUnits_p;
-  ROScalarColumn<Complex> sideBandRef_p;
+  ScalarColumn<String> polyType_p;
+  ScalarColumn<String> polyMode_p;
+  ScalarColumn<Complex> scaleFactor_p;
+  ArrayColumn<Double> validDomain_p;
+  ScalarColumn<Int> nPolyAmp_p;
+  ScalarColumn<Int> nPolyPhase_p;
+  ArrayColumn<Double> polyCoeffAmp_p;
+  ArrayColumn<Double> polyCoeffPhase_p;
+  ScalarColumn<String> phaseUnits_p;
+  ScalarColumn<Complex> sideBandRef_p;
 };
 
 // <summary> 

@@ -30,11 +30,11 @@
 #define MSVIS_MSCALENUMS_H
 
 #include <casacore/casa/aips.h>
-#include <casacore/casa/Containers/SimOrdMap.h>
 #include <casacore/casa/Containers/Block.h>
 #include <casacore/casa/Arrays/Vector.h>
 #include <casacore/casa/BasicSL/String.h>
 #include <casacore/casa/Utilities/DataType.h>
+#include <map>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -275,9 +275,9 @@ class MSCalEnums
   
   // Static ordered maps containing field descriptions
   // Enum => Field Name
-  static SimpleOrderedMap <Int, String> theirFieldMap;
+  static std::map <Int, String> theirFieldMap;
   // Enum => Basic data type
-  static SimpleOrderedMap <Int, DataType> theirTypeMap;
+  static std::map <Int, DataType> theirTypeMap;
 };
 
 

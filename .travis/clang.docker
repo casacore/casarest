@@ -19,23 +19,10 @@ RUN docker-apt-install \
     libreadline6-dev \
     gfortran \
     python-dev \
+    python3-dev \
     python-numpy \
+    python3-numpy \
     wget
-
-#####################################################################
-## BUILD CASACORE FROM SOURCE
-#####################################################################
-RUN mkdir /src
-WORKDIR /src
-RUN wget https://github.com/casacore/casacore/archive/v3.1.1.tar.gz
-RUN tar xvf v3.1.1.tar.gz
-RUN mkdir casacore-3.1.1/build
-WORKDIR /src/casacore-3.1.1/build
-RUN cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_DEPRECATED=ON ../
-RUN make -j 4
-RUN make install
-RUN ldconfig
-#RUN pip install -U --user --force-reinstall --install-option="--prefix=/usr"  pip setuptools wheel
 
 #####################################################################
 ## Get CASACORE ephem data
@@ -45,6 +32,33 @@ WORKDIR /usr/share/casacore/data/
 RUN docker-apt-install rsync
 RUN rsync -avz rsync://casa-rsync.nrao.edu/casa-data .
 
+#####################################################################
+## BUILD CASACORE FROM SOURCE
+#####################################################################
+RUN mkdir /src
+WORKDIR /src
+RUN wget https://github.com/casacore/casacore/archive/v3.2.1.tar.gz
+RUN tar xvf v3.2.1.tar.gz
+RUN mkdir casacore-3.2.1/build
+WORKDIR /src/casacore-3.2.1/build
+RUN cmake \
+    -DUSE_FFTW3=ON \
+    -DBUILD_TESTING=ON \
+    -DUSE_OPENMP=OFF \
+    -DUSE_HDF5=ON \
+    -DBUILD_PYTHON=ON \
+    -DBUILD_PYTHON3=ON \
+    -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} ../ \
+    -DBUILD_DEPRECATED=ON \
+    -DDATA_DIR=/usr/share/casacore/data
+RUN make -j 4
+RUN make install
+RUN ldconfig
+
+#####################################################################
+## BUILD CASAREST
+#####################################################################
+
 ADD . /code
 RUN mkdir /code/build
 WORKDIR /code/build
@@ -52,6 +66,6 @@ RUN cmake .. \
       -DBUILD_TESTING=ON \
       -DCMAKE_C_COMPILER=/usr/bin/clang \
       -DCMAKE_CXX_COMPILER=/usr/bin/clang++
-RUN make -j4 
+RUN make -j 4
+RUN make test
 RUN make install
-

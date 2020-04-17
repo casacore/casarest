@@ -36,11 +36,11 @@
 
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
-  VisImagingWeight::VisImagingWeight() : multiFieldMap_p(-1), wgtType_p("none"), doFilter_p(False) {
+  VisImagingWeight::VisImagingWeight() : wgtType_p("none"), doFilter_p(False) {
 
     }
 
-  VisImagingWeight::VisImagingWeight(const String& type) : multiFieldMap_p(-1),doFilter_p(False) {
+  VisImagingWeight::VisImagingWeight(const String& type) : doFilter_p(False) {
 
         wgtType_p=type;
         wgtType_p.downcase();
@@ -55,7 +55,7 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
     VisImagingWeight::VisImagingWeight(ROVisibilityIterator& vi, const String& rmode, const Quantity& noise,
                                        const Double robust, const Int nx, const Int ny,
                                        const Quantity& cellx, const Quantity& celly,
-                                       const Int uBox, const Int vBox, const Bool multiField) : multiFieldMap_p(-1), doFilter_p(False) {
+                                       const Int uBox, const Int vBox, const Bool multiField) : doFilter_p(False) {
   
         LogIO os(LogOrigin("VisSetUtil", "VisImagingWeight()", WHERE));
   
@@ -79,7 +79,7 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 	vi.originChunks();
 	vi.origin();
 	String mapid=String::toString(vi.msId())+String("_")+String::toString(vi.fieldId());
-	multiFieldMap_p.define(mapid, 0);
+	multiFieldMap_p.insert(std::make_pair(mapid, 0));
         gwt_p[0].resize(nx, ny);
         gwt_p[0].set(0.0);
 	
@@ -89,15 +89,15 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 	      if(vi.newFieldId()){
 		 mapid=String::toString(vi.msId())+String("_")+String::toString(vi.fieldId());
 		if(multiField){
-		  if(!multiFieldMap_p.isDefined(mapid)){
+		  if(multiFieldMap_p.find(mapid) == multiFieldMap_p.end()){
 		    fields+=1;
 		    gwt_p.resize(fields+1);
 		    gwt_p[fields].resize(nx,ny);
 		    gwt_p[fields].set(0.0);
 		  }
 		}
-		if(!multiFieldMap_p.isDefined(mapid))
-		  multiFieldMap_p.define(mapid, fields);		  
+		if(multiFieldMap_p.find(mapid) == multiFieldMap_p.end())
+		  multiFieldMap_p.insert(std::make_pair(mapid, fields));
 	      }
 	    }
 	}
@@ -111,7 +111,7 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
             for (vi.origin();vi.more();vi++) {
 	      if(vi.newFieldId())
 		mapid=String::toString(vi.msId())+String("_")+String::toString(vi.fieldId());
-	      fid=multiFieldMap_p(mapid);
+	      fid=multiFieldMap_p.at(mapid);
               Int nRow=vb.nRow();
               Int nChan=vb.nChannel();
               for (Int row=0; row<nRow; row++) {
@@ -280,10 +280,10 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
       // cout << "min max gwt " << min(gwt_p) << "    " << max(gwt_p) << endl; 
       String mapid=String::toString(msId)+String("_")+String::toString(fieldId);
       
-      if(!multiFieldMap_p.isDefined(mapid))
+      if(multiFieldMap_p.find(mapid) == multiFieldMap_p.end())
 	throw(AipsError("Imaging weight calculation is requested for a data that was not selected"));
       
-      Int fid=multiFieldMap_p(mapid);
+      Int fid=multiFieldMap_p.at(mapid);
       Int ndrop=0;
       Double sumwt=0.0;
       Int nRow=imWeight.shape()(1);

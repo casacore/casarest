@@ -156,8 +156,8 @@ namespace casacore{
 	lastPA = pa;
 	
 	// const ROMSSpWindowColumns& spwCol = vb.msColumns().spectralWindow();
-	// ROArrayColumn<Double> chanfreq = spwCol.chanFreq();
-	// ROScalarColumn<Double> reffreq = spwCol.refFrequency();
+	// ArrayColumn<Double> chanfreq = spwCol.chanFreq();
+	// ScalarColumn<Double> reffreq = spwCol.refFrequency();
 
 	// //	Freq = sum(chanFreq)/chanFreq.nelements();
 	// Freq = max(chanfreq.getColumn());
@@ -309,8 +309,8 @@ namespace casacore{
     Vector<Double> chanFreq = vb.frequency();
 
     const ROMSSpWindowColumns& spwCol = vb.msColumns().spectralWindow();
-    ROArrayColumn<Double> chanfreq = spwCol.chanFreq();
-    ROScalarColumn<Double> reffreq = spwCol.refFrequency();
+    ArrayColumn<Double> chanfreq = spwCol.chanFreq();
+    ScalarColumn<Double> reffreq = spwCol.refFrequency();
     //    Freq = sum(chanFreq)/chanFreq.nelements();
 
     Freq = max(chanfreq.getColumn());

@@ -32,8 +32,6 @@
 #include <casacore/casa/Arrays/Matrix.h>
 #include <casacore/casa/Arrays/Cube.h>
 #include <casacore/casa/Arrays/Slicer.h>
-#include <casacore/casa/Containers/Stack.h>
-#include <casacore/casa/Containers/OrderedMap.h>
 #include <casacore/ms/MeasurementSets/MeasurementSet.h>
 #include <casacore/measures/Measures/Stokes.h>
 #include <casacore/measures/Measures/MeasConvert.h>
@@ -219,7 +217,7 @@ protected:
   // The ROVisibilityIterator version of this function sets the tile cache to 1
   // because of a feature in sliced data access that grows memory dramatically in
   // some cases.  However, ROVisibilityIterator, because it uses
-  // ROArrayColumn::getColumn(Vector<Vector<Slice> >&), is (1/28/2011) incredibly
+  // ArrayColumn::getColumn(Vector<Vector<Slice> >&), is (1/28/2011) incredibly
   // slow if the tile cache does not span all the selected channels, and it will
   // read orders of magnitude more data than it needs to.  This sets the tile
   // cache to the minimum number of tiles required to span the selected channels.
@@ -232,18 +230,18 @@ protected:
 			     Cube<Complex>& data) const;
 
   // Column access functions
-  virtual void getCol(const ROScalarColumn<Bool> &column, Vector<Bool> &array, Bool resize = False) const;
-  virtual void getCol(const ROScalarColumn<Int> &column, Vector<Int> &array, Bool resize = False) const;
-  virtual void getCol(const ROScalarColumn<Double> &column, Vector<Double> &array, Bool resize = False) const;
+  virtual void getCol(const ScalarColumn<Bool> &column, Vector<Bool> &array, Bool resize = False) const;
+  virtual void getCol(const ScalarColumn<Int> &column, Vector<Int> &array, Bool resize = False) const;
+  virtual void getCol(const ScalarColumn<Double> &column, Vector<Double> &array, Bool resize = False) const;
 
-  virtual void getCol(const ROArrayColumn<Bool> &column, Array<Bool> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Float> &column, Array<Float> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Double> &column, Array<Double> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Complex> &column, Array<Complex> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Bool> &column, Array<Bool> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Float> &column, Array<Float> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Double> &column, Array<Double> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Complex> &column, Array<Complex> &array, Bool resize = False) const;
 
-  virtual void getCol(const ROArrayColumn<Bool> &column, const Slicer &slicer, Array<Bool> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Float> &column, const Slicer &slicer, Array<Float> &array, Bool resize = False) const;
-  virtual void getCol(const ROArrayColumn<Complex> &column, const Slicer &slicer, Array<Complex> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Bool> &column, const Slicer &slicer, Array<Bool> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Float> &column, const Slicer &slicer, Array<Float> &array, Bool resize = False) const;
+  virtual void getCol(const ArrayColumn<Complex> &column, const Slicer &slicer, Array<Complex> &array, Bool resize = False) const;
 
   Table selTable_p;
 

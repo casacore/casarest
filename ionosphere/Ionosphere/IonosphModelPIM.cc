@@ -362,8 +362,8 @@ void IonosphModelPIM::readApF107( Vector<Double> &sf107,Vector<Double> &sap,Int 
   if( row1<27 || row2>=(Int)tab.nrow()-1 )
     os<<"No Kp/Ap/F107 data available for given range of dates"<<LogIO::EXCEPTION;
 // attach to required columns
-  ROScalarColumn<Int>   mjd_col(tab,"MJD"),fqual_col(tab,"FQUAL");
-  ROScalarColumn<Float> f107_col(tab,"F107");
+  ScalarColumn<Int>   mjd_col(tab,"MJD"),fqual_col(tab,"FQUAL");
+  ScalarColumn<Float> f107_col(tab,"F107");
 // check that data for all days in range is available  
   RefRows r(row1-27,row2+1);
   Vector<Int> mjd( mjd_col.getColumnCells(r) );
@@ -385,7 +385,7 @@ void IonosphModelPIM::readApF107( Vector<Double> &sf107,Vector<Double> &sap,Int 
     sf107(i) = sum( f107( Slice(i,27) ) )/27.0;
   os<<"Loaded F10.7; range: "<<min(sf107)<<" to "<<max(sf107)<<endl;
 // now, compute 24-hour running Ap average
-  ROArrayColumn<Int>    ap3_col(tab,"Ap_3hr");
+  ArrayColumn<Int>    ap3_col(tab,"Ap_3hr");
   r = RefRows(row1-2,row2+1);
   Array<Int> ap3_ar( ap3_col.getColumnCells(r) );
   // reform into vector 
@@ -470,8 +470,8 @@ Bool IonosphModelPIM::readIMF( Float &by,Float &bysig,Float &bz,Float &bzsig,
     }
   }
 // get the data for this date from the table
-  ROScalarColumn<Int>   mjd_col(tab,"MJD");
-  ROScalarColumn<Float>  by_col(tab,"By"),bysig_col(tab,"sBy"),
+  ScalarColumn<Int>   mjd_col(tab,"MJD");
+  ScalarColumn<Float>  by_col(tab,"By"),bysig_col(tab,"sBy"),
                         bz_col(tab,"Bz"),bzsig_col(tab,"sBz");
 // if MJD in row is non-0, then data is available. Load it and return.
   if( mjd_col(irec) ) 

@@ -1226,7 +1226,7 @@ CubeSkyEquation::getFreqRange(ROVisibilityIterator& vi,
     // mapping between image (in LSRK) and MS channels will be time
     // variable.
     VisBufferAutoPtr vb (vi);
-    ROScalarMeasColumn<MFrequency> freqFrame=vb->msColumns().spectralWindow().refFrequencyMeas();
+    ScalarMeasColumn<MFrequency> freqFrame=vb->msColumns().spectralWindow().refFrequencyMeas();
     uInt nrows=vb->msColumns().spectralWindow().nrow();
     String firstString = freqFrame(0).getRefString();
     Bool allFramesSame=True;

@@ -1873,8 +1873,8 @@ Double BJonesPoly::meanFrequency (const Vector<Int>& spwid)
 
   const ROMSColumns& mscol(vs_p->iter().msColumns());
   const ROMSSpWindowColumns& spwcol(mscol.spectralWindow());
-  const ROArrayColumn<Double>& frequencies(spwcol.chanFreq());
-  const ROScalarColumn<Double>& totalbw(spwcol.totalBandwidth());
+  const ArrayColumn<Double>& frequencies(spwcol.chanFreq());
+  const ScalarColumn<Double>& totalbw(spwcol.totalBandwidth());
 
   Int numspw=spwid.shape().asVector()(0);
 

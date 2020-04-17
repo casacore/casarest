@@ -992,7 +992,7 @@ VisBufferAsyncWrapper::modelVisibility () const
   return wrappedVba_p->modelVisibility ();
 }
 
-const ROMSColumns &
+const MSColumns &
 VisBufferAsyncWrapper::msColumns () const
 {
   CheckWrap ();
