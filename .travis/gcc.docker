@@ -36,10 +36,10 @@ RUN rsync -avz rsync://casa-rsync.nrao.edu/casa-data .
 #####################################################################
 RUN mkdir /src
 WORKDIR /src
-RUN wget https://github.com/casacore/casacore/archive/v3.2.1.tar.gz
-RUN tar xvf v3.2.1.tar.gz
-RUN mkdir casacore-3.2.1/build
-WORKDIR /src/casacore-3.2.1/build
+RUN wget https://github.com/casacore/casacore/archive/v3.3.0.tar.gz
+RUN tar xvf v3.3.0.tar.gz
+RUN mkdir casacore-3.3.0/build
+WORKDIR /src/casacore-3.3.0/build
 RUN cmake \
     -DUSE_FFTW3=ON \
     -DBUILD_TESTING=ON \
@@ -48,7 +48,6 @@ RUN cmake \
     -DBUILD_PYTHON=ON \
     -DBUILD_PYTHON3=ON \
     -DCMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH} ../ \
-    -DBUILD_DEPRECATED=ON \
     -DDATA_DIR=/usr/share/casacore/data
 RUN make -j 4
 RUN make install
