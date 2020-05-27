@@ -200,7 +200,7 @@ public:
   // Return the row ids as from the original root table. This is useful 
   // to find correspondance between a given row in this iteration to the 
   // original ms row
-  virtual Vector<uInt>& rowIds(Vector<uInt>& rowids) const; 
+  virtual Vector<rownr_t>& rowIds(Vector<rownr_t>& rowids) const; 
 
   // Need to override this and not use getColArray
   virtual Vector<RigidVector<Double,3> >& uvw(Vector<RigidVector<Double,3> >& uvwvec) const;

@@ -906,8 +906,8 @@ void ComponentList::writeTable() {
     if (nRows < nelem) {
       itsTable.addRow(nelem - nRows);
     } else if (nRows > nelem) {
-      Vector<uInt> rows(nRows - nelem);
-      indgen(rows, nelem);
+      Vector<rownr_t> rows(nRows - nelem);
+      indgen(rows, rownr_t(nelem));
       itsTable.removeRow(rows);
     }
   }
