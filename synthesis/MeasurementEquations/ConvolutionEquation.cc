@@ -28,6 +28,7 @@
 #include <synthesis/MeasurementEquations/ConvolutionEquation.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/BasicMath/Functors.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 

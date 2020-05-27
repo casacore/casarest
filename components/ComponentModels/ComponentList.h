@@ -31,6 +31,7 @@
 
 
 #include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <components/ComponentModels/SkyComponent.h>
 #include <casacore/measures/Measures/MDirection.h>
 #include <casacore/measures/Measures/MFrequency.h>
@@ -45,7 +46,6 @@ class MVDirection;
 class MVFrequency;
 class MVAngle;
 class Unit;
-template <class T> class Vector;
 template <class Ms> class MeasRef;
 
 // <summary> A class for manipulating groups of components </summary>

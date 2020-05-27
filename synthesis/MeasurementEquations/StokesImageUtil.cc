@@ -47,7 +47,7 @@
 #include <casacore/lattices/Lattices/LatticeStepper.h>
 #include <casacore/scimath/Fitting/NonLinearFitLM.h>
 #include <casacore/scimath/Functionals/Gaussian2D.h>
-#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/IO/ArrayIO.h>
 
 #include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <casacore/ms/MeasurementSets/MSDopplerUtil.h>

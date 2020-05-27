@@ -30,6 +30,7 @@
 #define COMPONENTS_SKYCOMPREP_H
 
 #include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/Flux.h>
 #include <components/ComponentModels/SkyCompBase.h>
@@ -54,8 +55,6 @@ class TwoSidedShape;
 class Unit;
 class GaussianBeam;
 template <class Ms> class MeasRef;
-template <class T> class Cube;
-template <class T> class Vector;
 template <class T> class Quantum;
 
 

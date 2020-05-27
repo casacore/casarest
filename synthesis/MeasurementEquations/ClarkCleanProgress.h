@@ -33,13 +33,13 @@
 #include <casacore/casa/Quanta/Quantum.h>
 #include <casacore/lattices/Lattices/Lattice.h>
 #include <casacore/lattices/Lattices/TempLattice.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <casacore/casa/Arrays/IPosition.h>
 #include <casacore/casa/Arrays/Vector.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
-template <class T> class Vector;
 class PGPlotter;
 
 // <summary>

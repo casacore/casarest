@@ -775,8 +775,8 @@ void FluxCalc_SS_JPL_Butler::compute_venus(Vector<Flux<Double> >& values,
   // Just let it extrapolate if necessary; the temperature_p given in the
   // ephemeris (735K) is so high that I think it's for the surface.
   InterpolateArray1D<Float, Double>::interpolate(temps, ghzfreqs,
-						 Vector<Float>(measfreqblk),
-						 Vector<Double>(meastbblk),
+						 Vector<Float>(measfreqblk.begin(), measfreqblk.end()),
+						 Vector<Double>(meastbblk.begin(), meastbblk.end()),
 						 InterpolateArray1D<Float, Double>::cubic);
 
   if(minfreq < 0.303)

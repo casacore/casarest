@@ -806,12 +806,12 @@ void ImagePolarimetry::rotationMeasure(ImageInterface<Float>*& rmOutPtr,
    }
 //
    Array<Bool> tmpMaskRM(IPosition(shapeRM.nelements(), 1), True);
-   Array<Float> tmpValueRM(IPosition(shapeRM.nelements(), 1), 0.0);
+   Array<Float> tmpValueRM(IPosition(shapeRM.nelements(), 1), 0.0f);
    Array<Bool> tmpMaskPA(IPosition(shapePA.nelements(), 1), True);
-   Array<Float> tmpValuePA(IPosition(shapePA.nelements(), 1), 0.0);
-   Array<Float> tmpValueNTurns(IPosition(shapeNTurns.nelements(), 1), 0.0);
+   Array<Float> tmpValuePA(IPosition(shapePA.nelements(), 1), 0.0f);
+   Array<Float> tmpValueNTurns(IPosition(shapeNTurns.nelements(), 1), 0.0f);
    Array<Bool> tmpMaskNTurns(IPosition(shapeNTurns.nelements(), 1), True);
-   Array<Float> tmpValueChiSq(IPosition(shapeChiSq.nelements(), 1), 0.0);
+   Array<Float> tmpValueChiSq(IPosition(shapeChiSq.nelements(), 1), 0.0f);
    Array<Bool> tmpMaskChiSq(IPosition(shapeChiSq.nelements(), 1), True);
 
 // Iterate

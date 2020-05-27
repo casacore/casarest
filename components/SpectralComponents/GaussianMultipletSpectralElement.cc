@@ -26,10 +26,10 @@
 
 #include <components/SpectralComponents/GaussianMultipletSpectralElement.h>
 
-#include <casacore/casa/Arrays/ArrayIO.h>
 #include <casacore/casa/Arrays/ArrayLogical.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Containers/Record.h>
+#include <casacore/casa/IO/ArrayIO.h>
 #include <components/SpectralComponents/GaussianSpectralElement.h>
 
 #include <casacore/casa/iostream.h>

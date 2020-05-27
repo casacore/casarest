@@ -29,6 +29,7 @@
 #define COMPONENTS_SPECTRALINDEX_H
 
 #include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SpectralModel.h>
 
@@ -37,7 +38,6 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 class MFrequency;
 class RecordInterface;
 class String;
-template <class T> class Vector;
 
 // <summary>Models the spectral variation with a spectral index</summary>
 

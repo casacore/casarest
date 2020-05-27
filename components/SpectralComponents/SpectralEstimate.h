@@ -30,6 +30,7 @@
 #define COMPONENTS_SPECTRALESTIMATE_H
 
 #include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <components/SpectralComponents/SpectralElement.h>
 #include <components/SpectralComponents/SpectralList.h>
 
@@ -37,7 +38,6 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 class GaussianSpectralElement;
-template <class T> class Vector;
 
 // <summary>
 // Get an initial estimate for spectral lines
