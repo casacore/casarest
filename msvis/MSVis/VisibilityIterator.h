@@ -50,6 +50,7 @@
 #else
 #include <casacore/ms/MSOper/MSDerivedValues.h>
 #endif
+#include <msvis/MSVis/RowNr.h>
 #include <msvis/MSVis/StokesVector.h>
 #include <msvis/MSVis/VisImagingWeight.h>
 #include <casacore/ms/MeasurementSets/MSIter.h>
