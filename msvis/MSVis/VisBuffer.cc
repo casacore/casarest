@@ -1401,7 +1401,7 @@ Bool VisBuffer::timeRange(MEpoch & rTime, MVEpoch & rTimeEP,
 };
 
 
-Vector<uInt>& VisBuffer::rowIds()
+Vector<rownr_t>& VisBuffer::rowIds()
 {
   if (!rowIdsOK_p) {
 

@@ -551,9 +551,9 @@ public:
 
     // Return the row Ids from the original ms. If the ms used is a subset of
     // another ms then rowIds() return the row ids of the original ms.
-    virtual Vector<uInt>& rowIds();
+    virtual Vector<rownr_t>& rowIds();
 
-    virtual const Vector<uInt>& rowIds() const {
+    virtual const Vector<rownr_t>& rowIds() const {
         return This->rowIds();
     };
 
@@ -881,7 +881,7 @@ private:
     MDirection phaseCenter_p;
     Int polFrame_p;
     Vector<Int> processorId_p;
-    Vector<uInt> rowIds_p;
+    Vector<rownr_t> rowIds_p;
     Vector<Int> scan_p;
     Vector<Float> sigma_p;
     Matrix<Float> sigmaMat_p;

@@ -49,6 +49,7 @@ target_link_libraries(casa_components ${OTHER_LIBRARIES} ${LIB_EXTRA_COMPONENTS}
 set(COMPONENTS_LIBRARIES casa_components ${OTHER_LIBRARIES} ${LIB_EXTRA_COMPONENTS})
 
 install (FILES
+RowNr.h
 ComponentModels/ConstantSpectrum.h
 ComponentModels/TabularSpectrum.h
 ComponentModels/ComponentList.h
