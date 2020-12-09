@@ -30,6 +30,7 @@
 #define COMPONENTS_SKYCOMPONENT_H
 
 #include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <casacore/casa/Utilities/CountedPtr.h>
 #include <casacore/coordinates/Coordinates/CoordinateSystem.h>
 #include <components/ComponentModels/ComponentType.h>
@@ -52,8 +53,6 @@ class Unit;
 class GaussianBeam;
 template<class Ms> class MeasRef;
 template<class T> class Flux;
-template<class T> class Cube;
-template<class T> class Vector;
 template<class T> class Quantum;
 
 // <summary>A component of a model of the sky </summary>

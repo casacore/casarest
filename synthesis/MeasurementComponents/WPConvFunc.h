@@ -54,7 +54,6 @@ namespace casacore{
   // this class and related ones provide and cache  such functions for re-use 
   //</synopsis>
   template<class T> class ImageInterface;
-  template<class T> class Matrix;
   class VisBuffer;
 
   class WPConvFunc : public PixelatedConvFunc<Complex>

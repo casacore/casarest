@@ -33,6 +33,7 @@
 #include <synthesis/MeasurementComponents/PBMathInterface.h>
 #include <casacore/casa/Containers/Block.h>
 #include <casacore/casa/Utilities/CountedPtr.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore{
 
@@ -55,7 +56,6 @@ namespace casacore{
   //</synopsis>
   //Forward declarations
   template<class T> class ImageInterface;
-  template<class T> class Matrix;
   class VisBuffer;
   class SkyJones;
   class CoordinateSystem;

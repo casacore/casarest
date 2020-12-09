@@ -30,6 +30,7 @@
 #define COMPONENTS_DISKSHAPE_H
 
 #include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <casacore/casa/BasicSL/Complex.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/TwoSidedShape.h>
@@ -39,8 +40,6 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 class MDirection;
 class MVAngle;
 template <class Qtype> class Quantum;
-template <class T> class Matrix;
-template <class T> class Vector;
 
 // <summary>A disk model for the spatial distribution of emission</summary>
 

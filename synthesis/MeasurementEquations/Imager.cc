@@ -469,7 +469,7 @@ Imager::~Imager()
     if(mess.contains("does not exist") && mess.contains("TempLattice")){
       String rootpath="/"+String(mess.after("/")).before("TempLattice");
       String pid=String(mess.after("TempLattice")).before("_");
-      DirectoryIterator dir(rootpath, Regex::fromPattern("TempLattice"+pid+"*"));
+      DirectoryIterator dir(rootpath, Regex(Regex::fromPattern("TempLattice"+pid+"*")));
       while(!dir.pastEnd()){
 	  Directory ledir(rootpath+"/"+dir.name());
 	  ledir.removeRecursive();

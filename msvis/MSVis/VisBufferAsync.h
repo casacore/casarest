@@ -50,8 +50,8 @@ public:
     Int numberCoh () const;
     virtual Vector<Float> parang(Double time) const;
     virtual Float parang0(Double time) const;
-    virtual Vector<uInt>& rowIds(){throw(AipsError("rowIds() not implemented for VBA."));}
-    virtual const Vector<uInt>& rowIds() const {throw(AipsError("rowIds() const not implemented for VBA."));}
+    virtual Vector<rownr_t>& rowIds(){throw(AipsError("rowIds() not implemented for VBA."));}
+    virtual const Vector<rownr_t>& rowIds() const {throw(AipsError("rowIds() const not implemented for VBA."));}
     virtual void setCorrectedVisCube(Complex c);
     virtual void setCorrectedVisCube (const Cube<Complex> & vis);
     virtual void setModelVisCube(Complex c);
@@ -104,7 +104,7 @@ protected:
     void setNAntennas (Int);
     void setNCoh (Int);
     void setReceptor0Angle (const Vector<Float> & receptor0Angle);
-    void setRowIds (const Vector<uInt> & rowIds);
+    void setRowIds (const Vector<rownr_t> & rowIds);
     void setSelectedNVisibilityChannels (const Vector<Int> & nVisibilityChannels);
     void setSelectedSpectralWindows (const Vector<Int> & spectralWindows);
     void setTopoFreqs (const Vector<Double> & lsrFreq, const Vector<Double> & selFreq_p);

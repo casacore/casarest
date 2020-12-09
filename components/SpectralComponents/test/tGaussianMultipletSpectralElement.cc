@@ -35,7 +35,7 @@
 #include <components/SpectralComponents/SpectralElementFactory.h>
 
 #include <casacore/casa/Utilities/Assert.h>
-#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/IO/ArrayIO.h>
 
 #include <casacore/casa/Arrays/Vector.h>
 

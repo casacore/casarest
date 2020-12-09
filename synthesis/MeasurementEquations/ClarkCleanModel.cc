@@ -40,6 +40,7 @@
 #include <casacore/casa/Utilities/Assert.h>
 #include <casacore/casa/iostream.h> 
 #include <casacore/casa/System/Choice.h>
+#include <casacore/casa/BasicMath/Math.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -885,7 +886,7 @@ Float ClarkCleanModel::getPsfPatch(Array<Float>& psfPatch,
   // maximum size use it.
   IPosition psfPatchSize;
   if (thePsfPatchSize.nelements() != 0) {
-    psfPatchSize = min(maxSize.asVector(),
+    psfPatchSize = casacore::min(maxSize.asVector(),
 		       thePsfPatchSize.asVector());
   }
   else {

@@ -417,7 +417,7 @@ void MsAverager::setAverager(
             Int field = vb.fieldId();
             Int arry = vb.arrayId();
 
-            Vector<uInt> rowNumber = vb.rowIds();
+            Vector<rownr_t> rowNumber = vb.rowIds();
             //cout << "rowIds=" << rowNumber << endl;
             for (int row = 0; row < nRow; row++) {
 

@@ -33,6 +33,7 @@
 #include <synthesis/MeasurementComponents/ATerm.h>
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <casacore/coordinates/Coordinates/CoordinateSystem.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 //
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
@@ -47,7 +48,6 @@
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
   template<class T> class ImageInterface;
-  template<class T> class Matrix;
   class VisBuffer;
   class AzElAperture : public ATerm
   {

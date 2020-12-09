@@ -31,13 +31,13 @@
 
 //# Includes
 #include <casacore/casa/aips.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <components/SpectralComponents/SpectralList.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
 class SpectralElement;
-template <class T> class Vector;
 
 // <summary>
 // Least Squares fitting of spectral elements to spectrum

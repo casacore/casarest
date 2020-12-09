@@ -69,7 +69,7 @@ PCFSpectralElement::PCFSpectralElement(
 PCFSpectralElement::PCFSpectralElement(
 	SpectralElement::Types type, Double amp,
 	Double center, Double width
-) : SpectralElement(type, vector<Double>(3)) {
+) : SpectralElement(type, std::vector<Double>(3)) {
 	_initFunction();
 	setAmpl(amp);
 	setCenter(center);

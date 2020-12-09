@@ -30,12 +30,12 @@
 
 #include <casacore/casa/aips.h>
 #include <casacore/images/Images/ImageInterface.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class CoordinateSystem;
 class IPosition;
-template<class T> class Vector;
 
 // <summary>
 // FFT an image

@@ -31,12 +31,11 @@
 #include <casacore/casa/aips.h>
 #include <casacore/casa/BasicSL/Complex.h>
 #include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 //#forward
 class ROVisibilityIterator;
-template<class T> class Matrix;
-template<class T> class Vector;
 
 // <summary>
 // Object to hold type of imaging weight scheme to be used on the fly and to provide
