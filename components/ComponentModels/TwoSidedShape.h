@@ -35,6 +35,7 @@
 #include <casacore/casa/BasicSL/Complex.h>
 #include <casacore/casa/Quanta/Unit.h>
 #include <casacore/casa/Quanta/Quantum.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -43,7 +44,6 @@ class MDirection;
 class MVAngle;
 class RecordInterface;
 class String;
-template <class T> class Vector;
 
 // <summary>Base class for component shapes with two sides</summary>
 

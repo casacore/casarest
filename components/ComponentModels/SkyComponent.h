@@ -35,6 +35,8 @@
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SkyCompBase.h>
 #include <casacore/measures/Measures/Stokes.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
+
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -52,8 +54,6 @@ class Unit;
 class GaussianBeam;
 template<class Ms> class MeasRef;
 template<class T> class Flux;
-template<class T> class Cube;
-template<class T> class Vector;
 template<class T> class Quantum;
 
 // <summary>A component of a model of the sky </summary>

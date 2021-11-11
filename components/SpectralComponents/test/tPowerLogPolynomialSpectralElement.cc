@@ -26,13 +26,14 @@
 
 #include <casacore/casa/aips.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/BasicMath/Math.h>
 #include <casacore/casa/Containers/Record.h>
 #include <casacore/casa/Utilities/PtrHolder.h>
 #include <components/SpectralComponents/PowerLogPolynomialSpectralElement.h>
 #include <components/SpectralComponents/SpectralElementFactory.h>
 
 #include <casacore/casa/Utilities/Assert.h>
-#include <casacore/casa/Arrays/ArrayIO.h>
+#include <casacore/casa/IO/ArrayIO.h>
 
 #include <casacore/casa/Arrays/Vector.h>
 

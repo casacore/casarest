@@ -33,6 +33,7 @@
 #include <components/ComponentModels/ComponentType.h>
 #include <casacore/casa/Utilities/RecordTransformable.h>
 #include <casacore/casa/BasicSL/Complexfwd.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -47,9 +48,6 @@ class ComponentShape;
 class SpectralModel;
 class Unit;
 template <class T> class Flux;
-template <class T> class Vector;
-template <class T> class Matrix;
-template <class T> class Cube;
 template <class Ms> class MeasRef;
 
 // <summary>Base class for model components of the sky brightness</summary>

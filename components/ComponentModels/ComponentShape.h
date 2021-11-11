@@ -34,6 +34,8 @@
 #include <casacore/casa/Quanta/Quantum.h>
 #include <casacore/casa/Utilities/RecordTransformable.h>
 #include <components/ComponentModels/ComponentType.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
+
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -41,9 +43,7 @@ class DirectionCoordinate;
 class MVAngle;
 class RecordInterface;
 class String;
-template <class T> class Matrix;
 template <class T> class MeasRef;
-template <class T> class Vector;
 
 // <summary>Base class for component shapes</summary>
 

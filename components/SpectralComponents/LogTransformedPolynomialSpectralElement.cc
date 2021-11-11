@@ -28,6 +28,7 @@
 #include <components/SpectralComponents/LogTransformedPolynomialSpectralElement.h>
 
 #include <casacore/casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
 
 #define _ORIGIN  String("LogTransformedPolynomialSpectralElement::") + __FUNCTION__ + ":" + String::toString(__LINE__) + ": "
 

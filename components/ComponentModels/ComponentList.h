@@ -36,6 +36,7 @@
 #include <casacore/measures/Measures/MFrequency.h>
 #include <casacore/casa/Containers/Block.h>
 #include <casacore/tables/Tables/Table.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -45,7 +46,6 @@ class MVDirection;
 class MVFrequency;
 class MVAngle;
 class Unit;
-template <class T> class Vector;
 template <class Ms> class MeasRef;
 
 // <summary> A class for manipulating groups of components </summary>

@@ -33,6 +33,8 @@
 #include <components/SpectralComponents/PowerLogPolynomialSpectralElement.h>
 
 #include <casacore/casa/iostream.h>
+#include <casacore/casa/Exceptions/Error.h>
+#include <casacore/casa/BasicMath/Math.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
