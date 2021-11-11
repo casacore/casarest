@@ -26,6 +26,7 @@
 
 #include <casacore/casa/aips.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
+#include <casacore/casa/BasicMath/Math.h>
 #include <casacore/casa/Containers/Record.h>
 #include <casacore/casa/Utilities/PtrHolder.h>
 #include <components/SpectralComponents/LogTransformedPolynomialSpectralElement.h>

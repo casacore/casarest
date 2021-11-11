@@ -36,6 +36,8 @@
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SkyCompBase.h>
 #include <casacore/measures/Measures/Stokes.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
+
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 

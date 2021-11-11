@@ -37,6 +37,7 @@
 #include <casacore/measures/Measures/MFrequency.h>
 #include <casacore/casa/Containers/Block.h>
 #include <casacore/tables/Tables/Table.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 

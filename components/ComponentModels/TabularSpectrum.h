@@ -33,6 +33,8 @@
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/SpectralModel.h>
 #include <components/ComponentModels/Flux.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
+
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class MFrequency;
