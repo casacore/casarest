@@ -28,6 +28,7 @@
 #ifndef SYNTHESIS_CFDEFS_H
 #define SYNTHESIS_CFDEFS_H
 #include <casacore/casa/Arrays/Array.h>
+#include <casacore/casa/BasicSL/Complex.h>
 #include <casacore/casa/aips.h>
 #include <casacore/casa/BasicSL/Complex.h>
 

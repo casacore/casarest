@@ -35,6 +35,7 @@
 #include <casacore/casa/Arrays/ArrayError.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Arrays/VectorIter.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
 #include <casacore/casa/Logging/LogOrigin.h>
 #include <casacore/casa/Exceptions/Error.h>
 #include <casacore/casa/Utilities/Assert.h>
