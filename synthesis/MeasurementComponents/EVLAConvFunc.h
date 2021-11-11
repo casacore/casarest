@@ -40,18 +40,14 @@
 #include <casacore/coordinates/Coordinates/DirectionCoordinate.h>
 #include <casacore/coordinates/Coordinates/SpectralCoordinate.h>
 #include <casacore/coordinates/Coordinates/StokesCoordinate.h>
-#if defined(casacore)
 #include <casacore/lattices/LatticeMath/LatticeFFT.h>
-#else
-#include <casacore/lattices/LatticeMath/LatticeFFT.h>
-#endif
 #include <casacore/casa/Logging/LogIO.h>
 #include <casacore/casa/Logging/LogSink.h>
 #include <casacore/casa/Logging/LogOrigin.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
   template<class T> class ImageInterface;
-  template<class T> class Matrix;
   class VisBuffer;
   class EVLAConvFunc : public ConvolutionFunction
   //: public PixelatedConvFunc<Complex>

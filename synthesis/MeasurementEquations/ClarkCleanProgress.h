@@ -35,11 +35,12 @@
 #include <casacore/lattices/Lattices/TempLattice.h>
 #include <casacore/casa/Arrays/IPosition.h>
 #include <casacore/casa/Arrays/Vector.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
+
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 //# Forward Declarations
-template <class T> class Vector;
 class PGPlotter;
 
 // <summary>

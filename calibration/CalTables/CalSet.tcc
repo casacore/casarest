@@ -223,17 +223,17 @@ template<class T> void CalSet<T>::inflate() {
       fieldId_[ispw]      = new Vector<Int>(ntime,-1);
 
       IPosition parshape(4,nPar_,nChan_(ispw),nElem_,ntime);
-      par_[ispw]     = new Array<T>(parshape,1.0);
+      par_[ispw]     = new Array<T>(parshape,static_cast<T>(1.0));
       parOK_[ispw]   = new Array<Bool>(parshape,False);
-      parErr_[ispw]  = new Array<Float>(parshape,0.0);
-      parSNR_[ispw]  = new Array<Float>(parshape,0.0);
+      parErr_[ispw]  = new Array<Float>(parshape,0.0f);
+      parSNR_[ispw]  = new Array<Float>(parshape,0.0f);
 
       //      iSolutionOK_[ispw]  = new Matrix<Bool>(nElem_,ntime,False);
-      iFit_[ispw]         = new Matrix<Float>(nElem_,ntime,0.0);
-      iFitwt_[ispw]       = new Matrix<Float>(nElem_,ntime,0.0);
+      iFit_[ispw]         = new Matrix<Float>(nElem_,ntime,0.0f);
+      iFitwt_[ispw]       = new Matrix<Float>(nElem_,ntime,0.0f);
       solutionOK_[ispw]   = new Vector<Bool>(ntime,False);
-      fit_[ispw]          = new Vector<Float>(ntime,0.0);
-      fitwt_[ispw]        = new Vector<Float>(ntime,0.0);
+      fit_[ispw]          = new Vector<Float>(ntime,0.0f);
+      fitwt_[ispw]        = new Vector<Float>(ntime,0.0f);
     }
   }
 
@@ -635,7 +635,7 @@ template<class T> void CalSet<T>::store (const String& file,
 	Vector <Int> spwId(1,iSpw);
 	Matrix <Double> chanFreq(ip, dzero); 
 	Matrix <Double> chanWidth(ip, dzero);
-	Array <String> polznType(ip, "");
+	Array <String> polznType(ip, String(""));
 	Cube <Int> chanRange(IPosition(3,2,1,maxNumChan), 0);
 	Vector <Int> numChan(1,nChan_(iSpw));
 	for (Int ichan=0; ichan<nChan_(iSpw); ichan++) {

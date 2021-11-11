@@ -34,6 +34,7 @@
 #include <synthesis/MeasurementComponents/PixelatedConvFunc.h>
 #include <casacore/casa/Containers/Block.h>
 #include <casacore/casa/Utilities/CountedPtr.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore{
 
@@ -54,7 +55,6 @@ namespace casacore{
   // this class and related ones provide and cache  such functions for re-use 
   //</synopsis>
   template<class T> class ImageInterface;
-  template<class T> class Matrix;
   class VisBuffer;
 
   class WPConvFunc : public PixelatedConvFunc<Complex>

@@ -35,6 +35,7 @@
 #include <casacore/casa/Arrays/ArrayError.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Arrays/VectorIter.h>
+#include <casacore/casa/Arrays/ArrayLogical.h>
 #include <casacore/casa/Logging/LogOrigin.h>
 #include <casacore/casa/Exceptions/Error.h>
 #include <casacore/casa/Utilities/Assert.h>
@@ -885,7 +886,7 @@ Float ClarkCleanModel::getPsfPatch(Array<Float>& psfPatch,
   // maximum size use it.
   IPosition psfPatchSize;
   if (thePsfPatchSize.nelements() != 0) {
-    psfPatchSize = min(maxSize.asVector(),
+    psfPatchSize = casacore::min(maxSize.asVector(),
 		       thePsfPatchSize.asVector());
   }
   else {

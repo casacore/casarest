@@ -36,16 +36,11 @@
 #include <casacore/casa/Arrays/IPosition.h>
 #include <casacore/casa/Arrays/Vector.h>
 #include <casacore/casa/Containers/Block.h>
-#if defined(casacore)
 #include <casacore/lattices/LatticeMath/LatticeCleaner.h>
-#else
-#include <casacore/lattices/LatticeMath/LatticeCleaner.h>
-#endif
+#include <casacore/casa/Arrays/ArrayFwd.h>
+
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
-
-//# Forward Declarations
-template <class T> class Matrix;
 
 // <summary>A copy of LatticeCleaner but just using 2-D matrices</summary>
 // <synopsis> It is a mimic of the LatticeCleaner class but avoid a lot of 
