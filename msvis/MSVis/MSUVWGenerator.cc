@@ -8,6 +8,8 @@
 #include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
 #include <casacore/measures/Measures/MCBaseline.h>
+#include <casacore/casa/BasicMath/Math.h>
+#include <casacore/casa/Utilities/GenSort.h>
 
 namespace casacore {
 

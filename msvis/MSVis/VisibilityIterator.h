@@ -471,7 +471,7 @@ public:
   // Return the row ids as from the original root table. This is useful 
   // to find correspondance between a given row in this iteration to the 
   // original ms row
-  virtual Vector<uInt>& rowIds(Vector<uInt>& rowids) const; 
+  virtual Vector<rownr_t>& rowIds(Vector<rownr_t>& rowids) const; 
 
   // Return the numbers of rows in the current chunk
   virtual Int nRowChunk() const;
@@ -601,7 +601,7 @@ public:
   MPosition getObservatoryPosition () const;
   MDirection getPhaseCenter () const;
   Vector<Float> getReceptor0Angle ();
-  Vector<uInt> getRowIds () const;
+  Vector<rownr_t> getRowIds () const;
 
   static void lsrFrequency (const Int& spw,
                             Vector<Double>& freq,
@@ -792,7 +792,7 @@ protected:
   Vector<Double> lsrFreq_p;
   String vInterpolation_p;
 
-  mutable Vector<uInt> rowIds_p;
+  mutable Vector<rownr_t> rowIds_p;
 
   ScalarColumn<Int> colAntenna1, colAntenna2;
   ScalarColumn<Int> colFeed1, colFeed2;

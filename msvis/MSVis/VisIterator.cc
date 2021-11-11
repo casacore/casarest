@@ -177,8 +177,8 @@ void ROVisIterator::setSelTable()
     // Vector<Vector<Slice> > and a RefRows parameter to get-/putColumn.
     // Such put/get functions must be first implemented.
 
-    Vector<uInt> rows(curNumRow_p);
-    indgen(rows,uInt(curStartRow_p));
+    Vector<rownr_t> rows(curNumRow_p);
+    indgen(rows,static_cast<rownr_t>(curStartRow_p));
     selTable_p=msIter_p.table()(rows);
     attachColumns(attachTable());
 }
@@ -875,7 +875,7 @@ void VisIterator::putDataColumn(DataColumn whichOne,
   };
 };  
 
-Vector<uInt>& ROVisIterator::rowIds(Vector<uInt>& rowids) const
+Vector<rownr_t>& ROVisIterator::rowIds(Vector<rownr_t>& rowids) const
 {
   rowids.resize(curNumRow_p);
   rowids=selTable_p.rowNumbers();
@@ -904,9 +904,9 @@ void ROVisIterator::setTileCache()
   const ColumnDescSet& cds=thems.tableDesc().columnDescSet();
 
   // Get the first row number for this DDID.
-  Vector<uInt> rownums;
+  Vector<rownr_t> rownums;
   rowIds(rownums);
-  uInt startrow = rownums[0];
+  rownr_t startrow = rownums[0];
   
   Vector<String> columns(8);
   // complex

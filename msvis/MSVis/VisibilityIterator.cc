@@ -852,7 +852,7 @@ void ROVisibilityIterator::update_rowIds() const
   if (rowIds_p.nelements() == 0) {
       rowIds_p = selRows_p.convert();
       
-      Vector<uInt> msIter_rowIds(msIter_p.table().rowNumbers(msIter_p.ms()));
+      Vector<rownr_t> msIter_rowIds(msIter_p.table().rowNumbers(msIter_p.ms()));
 
       for (uInt i = 0; i < rowIds_p.nelements(); i++) {
           rowIds_p(i) = msIter_rowIds(rowIds_p(i));
@@ -911,7 +911,7 @@ ROVisibilityIterator::getReceptor0Angle ()
 	return receptor0Angle;
 }
 
-Vector<uInt>
+Vector<rownr_t>
 ROVisibilityIterator::getRowIds () const
 {
 	update_rowIds();
@@ -920,7 +920,7 @@ ROVisibilityIterator::getRowIds () const
 }
 
 
-Vector<uInt>& ROVisibilityIterator::rowIds(Vector<uInt>& rowids) const
+Vector<rownr_t>& ROVisibilityIterator::rowIds(Vector<rownr_t>& rowids) const
 {
   /* Calculate the row numbers in the original MS only when needed,
      i.e. when this function is called */
