@@ -68,7 +68,7 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
     virtual void setPolMap(const Vector<Int>& polMap) {wTerm_p->setPolMap(polMap);};
 
     virtual Bool findSupport(Array<Complex>& func, Float& threshold,Int& origin, Int& R);
-
+    /*
     //
     // Pedgree baggage (NoOps).  
     //
@@ -80,6 +80,7 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 			     const ImageInterface<Complex>& image,
 			     ImageInterface<Complex>& theavgPB,
 			     Bool reset=True) {};
+    */
   protected:
     void setSupport(Array<Complex>& convFunc, CFStore& cfs);
 
