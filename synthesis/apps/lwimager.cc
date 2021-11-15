@@ -32,6 +32,7 @@
 #include <casacore/images/Images/HDF5Image.h>
 #include <casacore/images/Images/ImageFITSConverter.h>
 #include <casacore/casa/Inputs.h>
+#include <casacore/casa/Arrays/Vector.h>
 #include <casacore/casa/Arrays/ArrayUtil.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Utilities/Regex.h>
