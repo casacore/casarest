@@ -32,6 +32,7 @@
 #include <casacore/images/Images/HDF5Image.h>
 #include <casacore/images/Images/ImageFITSConverter.h>
 #include <casacore/casa/Inputs.h>
+#include <casacore/casa/Arrays/Vector.h>
 #include <casacore/casa/Arrays/ArrayUtil.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Utilities/Regex.h>
@@ -154,6 +155,14 @@ void makeEmpty (Imager& imager, const String& imgName, Int fieldid)
   String name(imgName);
   imager.makeEmptyImage(coords, name, fieldid);
   imager.unlock();
+}
+
+// casacore-3.4 doesn't have vector constructor from block anymore. Unfortunately, Input interface returns
+// Block<some_type>. This template encapsulates conversion to minimise contamination of the code.
+template<typename T>
+Vector<T> block2vector(const Block<T> &in) 
+{
+  return Vector<T>(in.begin(), in.end());
 }
 
 int main (Int argc, char** argv)
@@ -342,19 +351,19 @@ int main (Int argc, char** argv)
     Bool preferVelocity = inputs.getBool("prefervelocity");
     Long cachesize   = inputs.getInt("cachesize");
     Int fieldid      = inputs.getInt("field");
-    Vector<Int> spwid(inputs.getIntArray("spwid"));
+    Vector<Int> spwid(block2vector(inputs.getIntArray("spwid")));
     Int npix         = inputs.getInt("npix");
     Int nfacet       = inputs.getInt("nfacets");
-    Vector<Int> nchan(inputs.getIntArray("nchan"));
-    Vector<Int> chanstart(inputs.getIntArray("chanstart"));
-    Vector<Int> chanstep(inputs.getIntArray("chanstep"));
+    Vector<Int> nchan(block2vector(inputs.getIntArray("nchan")));
+    Vector<Int> chanstart(block2vector(inputs.getIntArray("chanstart")));
+    Vector<Int> chanstep(block2vector(inputs.getIntArray("chanstep")));
     Int img_nchan    = inputs.getInt("img_nchan");
     Int img_start    = inputs.getInt("img_chanstart");
     Int img_step     = inputs.getInt("img_chanstep");
     Int wplanes      = inputs.getInt("wprojplanes");
     Int niter        = inputs.getInt("niter");
     Int nscales      = inputs.getInt("nscales");
-    Vector<Double> userScaleSizes(inputs.getDoubleArray("uservector"));
+    Vector<Double> userScaleSizes(block2vector(inputs.getDoubleArray("uservector")));
     Double padding   = inputs.getDouble("padding");
     Double gain      = inputs.getDouble("gain");
     Double maskValue = inputs.getDouble("maskvalue");
