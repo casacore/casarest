@@ -478,11 +478,13 @@ Imager::~Imager()
       }
 
     }
+    /*
+    // exception in destructor will cause termination
     else{
       throw(AipsError(x));
 
     }
-
+    */
   }
 
 
