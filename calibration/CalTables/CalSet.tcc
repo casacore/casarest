@@ -635,7 +635,7 @@ template<class T> void CalSet<T>::store (const String& file,
 	Vector <Int> spwId(1,iSpw);
 	Matrix <Double> chanFreq(ip, dzero); 
 	Matrix <Double> chanWidth(ip, dzero);
-	Array <String> polznType(ip, "");
+	Array <String> polznType(ip, String());
 	Cube <Int> chanRange(IPosition(3,2,1,maxNumChan), 0);
 	Vector <Int> numChan(1,nChan_(iSpw));
 	for (Int ichan=0; ichan<nChan_(iSpw); ichan++) {
