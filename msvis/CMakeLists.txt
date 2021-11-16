@@ -41,7 +41,7 @@ DESTINATION include/casarest/msvis COMPONENT casa_msvis
 )
 
 install (FILES
-RowNr.h
+MSVis/RowNr.h
 MSVis/AsynchronousTools.h
 MSVis/CalVisBuffer.h
 MSVis/MSAnalysis.h
