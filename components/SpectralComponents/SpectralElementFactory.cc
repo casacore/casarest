@@ -196,7 +196,7 @@ SpectralElement* SpectralElementFactory::fromRecord(
 		}
 		Record gaussians = in.asRecord("gaussians");
 		uInt i = 0;
-		vector<GaussianSpectralElement> comps(0);
+		std::vector<GaussianSpectralElement> comps(0);
 		while(True) {
 			String id = "*" + String::toString(i);
 			if (gaussians.isDefined(id)) {

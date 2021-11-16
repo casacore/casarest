@@ -37,10 +37,10 @@
 #include <casacore/casa/Logging/LogIO.h>
 #include <casacore/casa/Logging/LogSink.h>
 #include <casacore/casa/Logging/LogOrigin.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
   template<class T> class ImageInterface;
-  template<class T> class Matrix;
   class VisBuffer;
   //
   //-------------------------------------------------------------------------------------------

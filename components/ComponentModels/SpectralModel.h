@@ -30,6 +30,7 @@
 
 #include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentType.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <casacore/casa/Utilities/RecordTransformable.h>
 #include <casacore/measures/Measures/MFrequency.h>
 #include <casacore/casa/Quanta/Unit.h>
@@ -39,7 +40,6 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 class RecordInterface;
 class String;
-template <class T> class Vector;
 
 // <summary>Base class for spectral models</summary>
 

@@ -8,6 +8,7 @@
 #include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <casacore/ms/MeasurementSets/MSAntennaColumns.h>
 #include <casacore/measures/Measures/MCBaseline.h>
+#include <casacore/casa/Utilities/GenSort.h>
 
 namespace casacore {
 
@@ -55,7 +56,7 @@ void MSUVWGenerator::fill_bl_an(Vector<MVBaseline>& bl_an_p)
     // MVBaseline has functions to return the length, but Manhattan distances
     // are good enough for this, and faster than a sqrt.
     Vector<Double> bluvw(bl_an_p[an].getValue());
-    bl_len = fabs(bluvw[0]) + fabs(bluvw[1]) + fabs(bluvw[2]);
+    bl_len = std::fabs(bluvw[0]) + std::fabs(bluvw[1]) + std::fabs(bluvw[2]);
 
     if(bl_len > max_baseline)
       max_baseline = bl_len;

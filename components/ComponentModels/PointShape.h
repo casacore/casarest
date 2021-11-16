@@ -33,6 +33,7 @@
 #include <components/ComponentModels/ComponentShape.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <casacore/casa/BasicSL/Complex.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -40,7 +41,6 @@ class MVAngle;
 class MDirection;
 class RecordInterface;
 class String;
-template <class T> class Vector;
 
 // <summary>A shape where emission comes from only one direction</summary>
 

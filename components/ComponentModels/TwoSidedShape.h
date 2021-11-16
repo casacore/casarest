@@ -32,6 +32,7 @@
 #include <casacore/casa/aips.h>
 #include <components/ComponentModels/ComponentShape.h>
 #include <components/ComponentModels/ComponentType.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <casacore/casa/BasicSL/Complex.h>
 #include <casacore/casa/Quanta/Unit.h>
 #include <casacore/casa/Quanta/Quantum.h>
@@ -43,7 +44,6 @@ class MDirection;
 class MVAngle;
 class RecordInterface;
 class String;
-template <class T> class Vector;
 
 // <summary>Base class for component shapes with two sides</summary>
 

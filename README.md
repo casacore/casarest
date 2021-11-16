@@ -10,7 +10,7 @@ libraries. It consists of the libraries:
  * simulators
  * ionosphere
 
-The prorgram lwimager (part of synthesis) is the main deliverable.
+The program lwimager (part of synthesis) is the main deliverable.
 
 
 # Installation

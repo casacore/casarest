@@ -28,6 +28,7 @@
 #include <components/ComponentModels/ComponentList.h>
 #include <components/ComponentModels/ComponentType.h>
 #include <components/ComponentModels/Flux.h>
+#include <components/RowNr.h>
 #include <casacore/tables/Tables/ScalarColumn.h>
 #include <casacore/tables/Tables/ScaColDesc.h>
 #include <casacore/tables/Tables/ScaRecordColDesc.h>
@@ -906,8 +907,8 @@ void ComponentList::writeTable() {
     if (nRows < nelem) {
       itsTable.addRow(nelem - nRows);
     } else if (nRows > nelem) {
-      Vector<uInt> rows(nRows - nelem);
-      indgen(rows, nelem);
+      Vector<rownr_t> rows(nRows - nelem);
+      indgen(rows, rownr_t(nelem));
       itsTable.removeRow(rows);
     }
   }

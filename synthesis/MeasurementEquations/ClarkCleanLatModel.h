@@ -33,14 +33,13 @@
 #include <synthesis/MeasurementEquations/LinearModel.h>
 #include <synthesis/MeasurementEquations/LinearEquation.h>
 #include <casacore/lattices/Lattices/Lattice.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 #include <casacore/casa/Arrays/IPosition.h>
 #include <synthesis/MeasurementEquations/Iterate.h>
 #include <casacore/casa/Logging/LogIO.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
-template <class T> class Matrix;
-template <class T> class Vector;
 class ClarkCleanProgress;
 class LatConvEquation;
 class CCList;

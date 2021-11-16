@@ -32,6 +32,7 @@
 //# Includes
 #include <casacore/casa/aips.h>
 #include <casacore/casa/Containers/Block.h>
+#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -39,7 +40,6 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
 class SpectralElement;
 class RecordInterface;
 class String;
-template <class T> class Vector;
 
 // <summary>
 // A set of SpectralElements
