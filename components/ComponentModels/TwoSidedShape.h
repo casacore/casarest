@@ -36,7 +36,6 @@
 #include <casacore/casa/BasicSL/Complex.h>
 #include <casacore/casa/Quanta/Unit.h>
 #include <casacore/casa/Quanta/Quantum.h>
-#include <casacore/casa/Arrays/ArrayFwd.h>
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 

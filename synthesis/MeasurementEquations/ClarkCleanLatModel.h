@@ -37,8 +37,6 @@
 #include <casacore/casa/Arrays/IPosition.h>
 #include <synthesis/MeasurementEquations/Iterate.h>
 #include <casacore/casa/Logging/LogIO.h>
-#include <casacore/casa/Arrays/ArrayFwd.h>
-
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 

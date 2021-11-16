@@ -34,7 +34,6 @@
 #include <synthesis/MeasurementComponents/Utils.h>
 #include <casacore/coordinates/Coordinates/CoordinateSystem.h>
 #include <casacore/casa/Arrays/ArrayFwd.h>
-
 //
 //---------------------------------------------------------------------
 //---------------------------------------------------------------------
