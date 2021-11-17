@@ -474,17 +474,12 @@ Imager::~Imager()
 	  Directory ledir(rootpath+"/"+dir.name());
 	  ledir.removeRecursive();
 	  dir++;
-	  
       }
-
     }
-    /*
-    // exception in destructor will cause termination
     else{
-      throw(AipsError(x));
-
+      // Can't throw exception (in destructor), so just output to cmdline
+      std::cout << "Error in Imager destructor: " << x.what() << '\n';
     }
-    */
   }
 
 

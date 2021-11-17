@@ -97,7 +97,7 @@ Bool ConvolutionEquation::evaluate(Array<Float> & result,
       IPosition newtrc(thePsf.ndim(), 0);
       IPosition newblc(thePsf.ndim(), 0);
       for(uInt i = 0; i < thePsf.ndim(); i++){
-	newblc(i) = -std::min(blc(i), ssize_t(0));
+	newblc(i) = -std::min(blc(i), ssize_t{0});
 	newSize(i) = std::max(trc(i)+1, psfSize(i)) + newblc(i);
 	newtrc(i) = newblc(i) + psfSize(i) - 1;
       }

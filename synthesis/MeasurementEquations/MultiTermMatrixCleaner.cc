@@ -387,7 +387,7 @@ Int MultiTermMatrixCleaner::IND4(Int taylor1, Int taylor2, Int scale1, Int scale
  /* Check if scale sizes are appropriate to the image size 
      If some scales are too big, ignore them.
      Reset nscales_p BEFORE all arrays are allocated */
-Int MultiTermMatrixCleaner::verifyScaleSizes()
+void MultiTermMatrixCleaner::verifyScaleSizes()
 {
   LogIO os(LogOrigin("MultiTermMatrixCleaner", "verifyScaleSizes()", WHERE));
   Vector<Int> scaleflags(nscales_p); scaleflags=0;
@@ -1017,7 +1017,7 @@ Int MultiTermMatrixCleaner::chooseComponent(Int ntaylor, Int scale, Int criterio
 /* Update the RHS vector - Called from 'updateModelandRHS'.
 Note : This function is called within the 'scale' omp/pragma loop. Needs to be thread-safe for scales.
  */
-Int MultiTermMatrixCleaner::updateRHS(Int ntaylor, Int scale, Float loopgain, Vector<Float> coeffs, IPosition blc, IPosition trc, IPosition blcPsf, IPosition trcPsf)
+void MultiTermMatrixCleaner::updateRHS(Int ntaylor, Int scale, Float loopgain, Vector<Float> coeffs, IPosition blc, IPosition trc, IPosition blcPsf, IPosition trcPsf)
 {
     for(Int taylor1=0;taylor1<ntaylor;taylor1++)
     {
@@ -1230,7 +1230,7 @@ Int MultiTermMatrixCleaner::checkConvergence(Int criterion, Float &fluxlimit, Fl
 
 
 /* Save a matrix to disk */
-Int MultiTermMatrixCleaner::writeMatrixToDisk(String imagename, Matrix<Float>& themat)
+void MultiTermMatrixCleaner::writeMatrixToDisk(String imagename, Matrix<Float>& themat)
 {
   TabularCoordinate tab1(0, 1.0, 0, String("deg"), String("axis1"));
   TabularCoordinate tab2(0, 1.0, 0, String("deg"), String("axis2"));

@@ -176,7 +176,7 @@ private:
   FFTServer<Float,Complex> fftcomplex;
 
   // Initial setup functions  
-  Int verifyScaleSizes();
+  void verifyScaleSizes();
   Int allocateMemory();
   Int setupScaleFunctions();
   Int computeHessianPeak();
@@ -190,11 +190,11 @@ private:
   Int solveMatrixEqn(Int ntaylor,Int scale);
   Int chooseComponent(Int ntaylor,Int scale, Int criterion);
   Int updateModelAndRHS(Float loopgain);
-  Int updateRHS(Int ntaylor, Int scale, Float loopgain,Vector<Float> coeffs, IPosition blc, IPosition trc, IPosition blcPsf, IPosition trcPsf);
+  void updateRHS(Int ntaylor, Int scale, Float loopgain,Vector<Float> coeffs, IPosition blc, IPosition trc, IPosition blcPsf, IPosition trcPsf);
   Int checkConvergence(Int updatetype, Float &fluxlimit, Float &loopgain); 
 
   // Helper functions
-  Int writeMatrixToDisk(String imagename, Matrix<Float> &themat);
+  void writeMatrixToDisk(String imagename, Matrix<Float> &themat);
   Int IND2(Int taylor,Int scale);
   Int IND4(Int taylor1, Int taylor2, Int scale1, Int scale2);
   
