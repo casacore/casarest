@@ -37,11 +37,7 @@
 #include <casacore/casa/Arrays/Vector.h>
 #include <casacore/casa/Arrays/ArrayFwd.h>
 #include <casacore/casa/Containers/Block.h>
-#if defined(casacore)
 #include <casacore/lattices/LatticeMath/LatticeCleaner.h>
-#else
-#include <casacore/lattices/LatticeMath/LatticeCleaner.h>
-#endif
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 

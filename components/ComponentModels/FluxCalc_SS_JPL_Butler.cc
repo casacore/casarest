@@ -263,7 +263,7 @@ Bool FluxCalc_SS_JPL_Butler::readEphem()
        << "\n\tin " << edir
        << LogIO::POST;
   
-    Directory hordir(edir);
+    const Directory hordir(edir);
     DirectoryIterator dirIter(hordir, Regex(tabpat));
     uInt firstTimeStart = name_p.length() + 1;  // The + 1 is for the _.
     Regex timeUnitPat("[ydhms]");

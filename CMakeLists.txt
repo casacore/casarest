@@ -86,7 +86,7 @@ add_definitions(-DCASA_STANDALONE)
 
 # -------- library building ----------------------------
 INCLUDE_DIRECTORIES(${CASACORE_INCLUDE_DIR} 
-    ${CASACORE_INCLUDE_DIR}/casacore
+    ${CASACORE_INCLUDE_DIR}
     ${CFITSIO_INCLUDE_DIR}
     ${WCSLIB_INCLUDE_DIR}
     ${HDF5_INCLUDE_DIRS}
