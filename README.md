@@ -32,14 +32,12 @@ To compile casarest you need to meet the following requirements:
 
 * cmake
 * g++
-* casacore (3.0 or later)
+* casacore (3.4 or later)
 * boost
 * wcslib
 * cfitsio
 * fortran 
 * hdf5 (optional)
-
-If you are still at casacore 2.0 then use casarest 1.4.2.
 
 
 On Debian / Ubuntu you can install these with:
@@ -76,19 +74,11 @@ cmake -DCOMPONENT=<choice of target>  -P cmake_install.cmake
 Which will build and install only your choice of target.
 
 
-## Ubuntu 14.04 packages
+## KERN packages
 
-If you run Ubuntu 14.04 you can use precompiled binary packages
+If you run Ubuntuyou can use precompiled binary packages
 
-https://launchpad.net/~radio-astro/+archive/ubuntu/main
-
-installation commands:
-```
-sudo apt-get install software-properties-common
-sudo add-apt-repository ppa:radio-astro/main
-sudo apt-get update
-sudo apt-get install casarest
-```
+https://kernsuite.info/
 
 
 # Problems & bugs
@@ -96,7 +86,3 @@ sudo apt-get install casarest
 If you have any issues compiling or using casacore, please open an issue on
 the issue tracker on github.
 
-
-# travis
-
-[![Build Status](https://travis-ci.org/casacore/casarest.svg?branch=master)](https://travis-ci.org/casacore/casarest)

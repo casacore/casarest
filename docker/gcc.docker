@@ -1,0 +1,29 @@
+FROM kernsuite/base:7
+
+RUN docker-apt-install \
+    build-essential \
+    cmake \
+    casacore-dev \
+    libhdf5-dev \
+    libboost-all-dev \
+    wcslib-dev \
+    libcfitsio-dev \
+    libboost-system-dev \
+    libboost-thread-dev \
+    libblas-dev \
+    liblapack-dev \
+    libncurses5-dev \
+    libmysofa-dev \
+    bison \
+    libbison-dev \
+    flex \
+    libreadline6-dev \
+    gfortran
+
+ADD . /code
+RUN mkdir /code/build
+WORKDIR /code/build
+RUN cmake .. -DBUILD_TESTING=ON
+RUN make -j 4
+RUN make test
+RUN make install
