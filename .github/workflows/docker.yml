@@ -27,6 +27,6 @@ jobs:
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
-        file: docker/${{ matrix.compiler }}.docker
         with:
           push: false
+          file: docker/${{ matrix.compiler }}.docker
