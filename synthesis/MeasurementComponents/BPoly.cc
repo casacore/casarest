@@ -41,11 +41,9 @@
 #include <casacore/casa/System/PGPlotter.h>
 #include <calibration/CalTables/BJonesMBuf.h>
 #include <calibration/CalTables/BJonesMCol.h>
-#if defined(casacore)
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableUtil.h>
 #include <casacore/ms/MSSel/MSSpWindowIndex.h>
-#else
-#include <casacore/ms/MSSel/MSSpWindowIndex.h>
-#endif
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
@@ -146,8 +144,8 @@ void BJonesPoly::setSolve(const Record& solvepar)
   // Delete calTableName() if it exists and we are not appending
   //  TBD: move to SVC?
   if (!append()) {
-    if (Table::canDeleteTable(calTableName())) {
-      Table::deleteTable(calTableName());
+    if (TableUtil::canDeleteTable(calTableName())) {
+      TableUtil::deleteTable(calTableName());
     }
     //    else 
     //      throw(AipsError(calTableName()+" exists and can't delete! (plotting or browsing it?)"));

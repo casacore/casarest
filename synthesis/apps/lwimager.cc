@@ -27,6 +27,8 @@
 
 //# Includes
 #include <casacore/casa/aips.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableUtil.h>
 #include <synthesis/MeasurementEquations/Imager.h>
 #include <casacore/images/Images/PagedImage.h>
 #include <casacore/images/Images/HDF5Image.h>
@@ -600,7 +602,7 @@ int main (Int argc, char** argv)
           himg.setImageInfo (pimg.imageInfo());
           himg.setMiscInfo  (pimg.miscInfo());
           // Delete PagedImage if HDF5 is used.
-          Table::deleteTable (imgName);
+          TableUtil::deleteTable (imgName);
         }
 
       } else {

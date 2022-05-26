@@ -26,6 +26,7 @@
 //# $Id: Calibrater.cc,v 19.37 2006/03/16 01:28:09 gmoellen Exp $
 
 #include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableUtil.h>
 #include <casacore/tables/Tables/TableRecord.h>
 #include <casacore/tables/Tables/TableDesc.h>
 #include <casacore/tables/Tables/TableLock.h>
@@ -1287,7 +1288,7 @@ Bool Calibrater::solve() {
       //   then it better be deletable
       if (!svc_p->append() &&
 	  Table::isReadable(svc_p->calTableName()) &&
-	  !Table::canDeleteTable(svc_p->calTableName()) ) {
+	  !TableUtil::canDeleteTable(svc_p->calTableName()) ) {
 	//cout << "Table CAN'T be deleted!!!!!" << endl;
 	
 	throw(AipsError("Specified caltable ("+svc_p->calTableName()+") exists and\n cannot be replaced because it appears to be open somewhere."));
@@ -1994,11 +1995,11 @@ void Calibrater::fluxscale(const String& infile,
   try {
     // If infile is Calibration table
     if (Table::isReadable(infile) && 
-	Table::tableInfo(infile).type()=="Calibration") {
+	TableUtil::tableInfo(infile).type()=="Calibration") {
 
       // get calibration type
       String caltype;
-      caltype = Table::tableInfo(infile).subType();
+      caltype = TableUtil::tableInfo(infile).subType();
       logSink() << "Table " << infile 
 		<< " is of type: "<< caltype 
 		<< LogIO::POST;

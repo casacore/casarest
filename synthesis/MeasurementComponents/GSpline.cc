@@ -39,6 +39,8 @@
 #include <casacore/casa/math.h>
 #include <casacore/casa/fstream.h>
 
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableUtil.h>
 #include <casacore/casa/System/PGPlotter.h>
 #include <casacore/ms/MeasurementSets/MSColumns.h>
 #include <msvis/MSVis/VisBuffAccumulator.h>
@@ -1051,8 +1053,8 @@ void GJonesSpline::updateCalTable (const Vector<Int>& fieldIdKeys,
   calBuffer_p->timeMeas().set(MEpoch(MVEpoch(solTimeStamp_p/86400.0)));
 
   // Delete the output calibration table if it already exists
-  if (calTableName()!="" && Table::canDeleteTable(calTableName())) {
-    Table::deleteTable(calTableName());
+  if (calTableName()!="" && TableUtil::canDeleteTable(calTableName())) {
+    TableUtil::deleteTable(calTableName());
   };
 
   os << LogIO::NORMAL

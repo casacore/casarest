@@ -51,18 +51,15 @@
 #include <casacore/lattices/Lattices/ArrayLattice.h>
 #include <casacore/lattices/Lattices/SubLattice.h>
 #include <casacore/lattices/Lattices/LatticeCache.h>
-#if defined(casacore)
 #include <casacore/lattices/LRegions/LCBox.h>
 #include <casacore/lattices/LEL/LatticeExpr.h>
 #include <casacore/lattices/LatticeMath/LatticeFFT.h>
-#else
-#include <casacore/lattices/LRegions/LCBox.h>
-#include <casacore/lattices/LEL/LatticeExpr.h>
-#include <casacore/lattices/LatticeMath/LatticeFFT.h>
-#endif
 #include <casacore/scimath/Mathematics/ConvolveGridder.h>
 #include <msvis/MSVis/VisBuffer.h>
 #include <msvis/MSVis/VisibilityIterator.h>
+#include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableUtil.h>
+
 
 
 #include <synthesis/MeasurementComponents/WPConvFunc.h>
@@ -261,7 +258,7 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
     if(writeResults) {
       ostringstream name;
       name << "Screen" << iw+1;
-      if(Table::canDeleteTable(name)) Table::deleteTable(name);
+      if(TableUtil::canDeleteTable(name)) TableUtil::deleteTable(name);
       PagedImage<Float> thisScreen(pbShape, coords, name);
       LatticeExpr<Float> le(real(twoDPB));
       thisScreen.copyData(le);
@@ -283,7 +280,7 @@ namespace casacore { //# NAMESPACE CASACORE - BEGIN
       delete ftdc; ftdc=0;
       ostringstream name;
       name << "FTScreen" << iw+1;
-      if(Table::canDeleteTable(name)) Table::deleteTable(name);
+      if(TableUtil::canDeleteTable(name)) TableUtil::deleteTable(name);
       PagedImage<Float> thisScreen(pbShape, ftCoords, name);
       LatticeExpr<Float> le(real(twoDPB));
       thisScreen.copyData(le);
