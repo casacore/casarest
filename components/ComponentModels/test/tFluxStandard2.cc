@@ -44,6 +44,7 @@
 #include <casacore/casa/OS/Path.h>		// Needed by ComponentList
 #include <casacore/casa/iostream.h>
 #include <casacore/tables/Tables/Table.h>
+#include <casacore/tables/Tables/TableUtil.h>
 
 #include <casacore/casa/namespace.h>
 int main(int argc, char* argv[])
@@ -245,10 +246,10 @@ int main(int argc, char* argv[])
 	  	       AipsError);
 	  cout << "\tPassed flux density test." << endl;
 	  if(tempCLs[spwInd] != ""){
-	    if(Table::canDeleteTable(tempCLs[spwInd]))
-	      Table::deleteTable(tempCLs[spwInd]);
+	    if(TableUtil::canDeleteTable(tempCLs[spwInd]))
+	      TableUtil::deleteTable(tempCLs[spwInd]);
 	    else
-	      cout << "Table::canDeleteTable(" << tempCLs[spwInd]
+	      cout << "TableUtil::canDeleteTable(" << tempCLs[spwInd]
 		   << ") returned False" << endl;
 	  }	    
 	}
@@ -298,8 +299,8 @@ int main(int argc, char* argv[])
         }
       }
       if(tempCLs[0] != ""){
-        if(Table::canDeleteTable(tempCLs[0]))
-          Table::deleteTable(tempCLs[0]);
+        if(TableUtil::canDeleteTable(tempCLs[0]))
+          TableUtil::deleteTable(tempCLs[0]);
         else
           cout << "Table::canDeleteTable(" << tempCLs[0]
                << ") returned False" << endl;
