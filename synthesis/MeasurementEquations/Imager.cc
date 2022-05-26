@@ -47,7 +47,6 @@
 #include <casacore/casa/OS/HostInfo.h>
 #include <casacore/tables/Tables/RefRows.h>
 #include <casacore/tables/Tables/Table.h>
-#include <casacore/tables/Tables/TableUtil.h>
 #include <casacore/tables/Tables/SetupNewTab.h>
 #include <casacore/tables/TaQL/TableParse.h>
 #include <casacore/tables/Tables/TableRecord.h>
@@ -2517,8 +2516,8 @@ Bool Imager::feather(const String& image, const String& highRes,
     }
   
     if(noStokes){
-      TableUtil::deleteTable(outHighRes);
-      TableUtil::deleteTable(outLowRes);
+      Table::deleteTable(outHighRes);
+      Table::deleteTable(outLowRes);
     }
     return True;
   } catch (AipsError x) {
@@ -4792,7 +4791,7 @@ Bool Imager::setjy(const Vector<Int>& /*fieldid*/,
 	};
 	  
 	// Delete the temporary component list and image tables
-	TableUtil::deleteTable(tempCL);
+	Table::deleteTable(tempCL);
 
       }
     }
@@ -4802,7 +4801,7 @@ Bool Imager::setjy(const Vector<Int>& /*fieldid*/,
 
   } catch (AipsError x) {
     this->unlock();
-    if(TableUtil::canDeleteTable(tempCL)) TableUtil::deleteTable(tempCL);
+    if(Table::canDeleteTable(tempCL)) Table::deleteTable(tempCL);
     os << LogIO::SEVERE << "Exception: " << x.getMesg() << LogIO::POST;
     return False;
   } 
@@ -5272,15 +5271,15 @@ Bool Imager::setjy(const Vector<Int>& /*fieldid*/,
 	
         if (tmodimage) delete tmodimage;
         tmodimage=NULL;
-        //	if (TableUtil::canDeleteTable("temp.setjy.image")) TableUtil::deleteTable("temp.setjy.image");
+        //	if (Table::canDeleteTable("temp.setjy.image")) Table::deleteTable("temp.setjy.image");
       }
 
       // Delete the temporary component lists.  Do it after ft() has been run
       // for all the spws because some spws with the same center frequency may
       // be sharing component lists.
       for(uInt selspw = 0; selspw < nspws; ++selspw)
-	if(tempCLs[selspw] != "" && TableUtil::canDeleteTable(tempCLs[selspw]))
-	  TableUtil::deleteTable(tempCLs[selspw]);
+	if(tempCLs[selspw] != "" && Table::canDeleteTable(tempCLs[selspw]))
+	  Table::deleteTable(tempCLs[selspw]);
     }
     this->writeHistory(os);
     this->unlock();
@@ -5290,7 +5289,7 @@ Bool Imager::setjy(const Vector<Int>& /*fieldid*/,
     this->unlock();
     for(Int i = tempCLs.nelements(); i--;){
       if(tempCLs[i] != "")
-        TableUtil::deleteTable(tempCLs[i]);
+        Table::deleteTable(tempCLs[i]);
     }
     if (tmodimage) delete tmodimage; tmodimage=NULL;
     os << LogIO::SEVERE << "Exception: " << x.getMesg() << LogIO::POST;

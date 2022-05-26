@@ -30,8 +30,6 @@
 
 #include <msvis/MSVis/VisBuffer.h>
 
-#include <casacore/tables/Tables/Table.h>
-#include <casacore/tables/Tables/TableUtil.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Arrays/ArrayIter.h>
 #include <casacore/scimath/Mathematics/MatrixMathLA.h>
@@ -5653,7 +5651,7 @@ String calTableType(const String& tablename) {
 
   // Table exists...
   
-  TableInfo ti(TableUtil::tableInfo(tablename));
+  TableInfo ti(Table::tableInfo(tablename));
   
   // ...Check if Calibration table....
   if (ti.type()!="Calibration") {
