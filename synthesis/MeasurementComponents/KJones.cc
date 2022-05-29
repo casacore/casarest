@@ -979,7 +979,7 @@ void KAntPosJones::calcAllJones() {
   mb.set(mvb,mbearthref); 
 
   // A converter that takes the MBaseline from earth to sky frame
-  MBaseline::Ref mbskyref(MBaseline::fromDirType(MDirection::castType(phasedir.myType())));
+  MBaseline::Ref mbskyref(MBaseline::fromDirType(MDirection::castType(phasedir.getRef().getType())));
   MBaseline::Convert mbcverter(mb,mbskyref);
 
 
