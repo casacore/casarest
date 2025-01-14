@@ -442,8 +442,7 @@ void ProfileFit1D<T>::copy(const ProfileFit1D& other)
 template <class T> 
 void ProfileFit1D<T>::checkType() const
 {
-   T* p=0;
-   AlwaysAssert(whatType(p)==TpDouble,AipsError);
+   AlwaysAssert(whatType<T>()==TpDouble,AipsError);
 }
 
 } //#End casa namespace

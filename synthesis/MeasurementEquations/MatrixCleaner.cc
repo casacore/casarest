@@ -140,7 +140,7 @@ MatrixCleaner::MatrixCleaner(const Matrix<Float> & psf,
   // So, we pass it in
   itsMemoryMB=Double(HostInfo::memoryTotal()/1024)/16.0;
 
-  itsDirty = new Matrix<Float>(dirty.shape());
+  itsDirty.reset(new Matrix<Float>(dirty.shape()));
   itsDirty->assign(dirty);
   setPsf(psf);
   itsScales.resize(0);
@@ -155,7 +155,7 @@ MatrixCleaner::MatrixCleaner(const Matrix<Float> & psf,
 
 
 void MatrixCleaner::setPsf(const Matrix<Float>& psf){
-  itsXfr=new Matrix<Complex>();
+  itsXfr.reset(new Matrix<Complex>());
   AlwaysAssert(validatePsf(psf), AipsError);
   psfShape_p.resize(0, False);
   psfShape_p=psf.shape();
@@ -201,13 +201,13 @@ MatrixCleaner & MatrixCleaner::operator=(const MatrixCleaner & other) {
 MatrixCleaner::~MatrixCleaner()
 {
   destroyScales();
-  if(!itsMask.null()) itsMask=0;
+  itsMask.reset();
 }
 
 
 void MatrixCleaner::makeDirtyScales(){
 
-  if(!itsScalesValid || itsNscales < 1 || itsDirty.null() || (itsNscales != Int(itsScaleXfrs.nelements())) )
+  if(!itsScalesValid || itsNscales < 1 || !itsDirty || (itsNscales != Int(itsScaleXfrs.nelements())) )
     return;
 
   if( (psfShape_p) != (itsDirty->shape()))
@@ -257,7 +257,7 @@ void MatrixCleaner::setMask(Matrix<Float> & mask, const Float& maskThreshold)
 
   //cerr << "Mask Shape " << mask.shape() << endl;
   // This is not needed after the first steps
-  itsMask = new Matrix<Float>(mask.shape());
+  itsMask.reset(new Matrix<Float>(mask.shape()));
   itsMask->assign(mask);
   if(max(*itsMask) < itsMaskThreshold)
     noClean_p=True;
@@ -371,7 +371,7 @@ Int MatrixCleaner::clean(Matrix<Float>& model,
   IPosition blcDirty(model.shape().nelements(), 0);
   IPosition trcDirty(model.shape()-1);
 
-  if(!itsMask.null()){
+  if(itsMask){
     os << "Cleaning using given mask" << LogIO::POST;
     if (itsMaskThreshold<0) {
         os << LogIO::NORMAL
@@ -443,7 +443,7 @@ Int MatrixCleaner::clean(Matrix<Float>& model,
   LCBox centerBox(blcDirty, trcDirty, model.shape());
 
   Block<Matrix<Float> > scaleMaskSubs;
-  if (!itsMask.null())  {
+  if (itsMask)  {
     scaleMaskSubs.resize(itsNscales);
     for (Int is=0; is < itsNscales; is++) {
       scaleMaskSubs[is] = ((itsScaleMasks[is]))(blcDirty, trcDirty);
@@ -479,7 +479,7 @@ Int MatrixCleaner::clean(Matrix<Float>& model,
 	posMaximum[scale]=IPosition(model.shape().nelements(), 0);
 	
 	
-	if (!itsMask.null()) {
+	if (itsMask) {
 	  findMaxAbsMask(dirtySub, (scaleMaskSubs[scale]),
 				maxima(scale), posMaximum[scale]);
 	} else {
@@ -745,7 +745,7 @@ Bool MatrixCleaner::setscales(const Int nscales, const Float scaleInc)
 
 void MatrixCleaner::setDirty(const Matrix<Float>& dirty){
 
-  itsDirty=new Matrix<Float>(dirty.shape());
+  itsDirty.reset(new Matrix<Float>(dirty.shape()));
   itsDirty->assign(dirty);
   
   
@@ -772,7 +772,7 @@ void MatrixCleaner::makePsfScales(){
   LogIO os(LogOrigin("MatrixCleaner", "mkePsfScales()", WHERE));
   if(itsNscales < 1)
     throw(AipsError("Scales have to be set"));
-  if(itsXfr.null())
+  if(!itsXfr)
     throw(AipsError("Psf is not defined"));
   destroyScales();
   itsScales.resize(itsNscales, True);
@@ -851,7 +851,7 @@ Bool MatrixCleaner::setscales(const Vector<Float>& scaleSizes)
     itsPsfConvScales[scale].resize();
   }
 
-  AlwaysAssert(!itsDirty.null(), AipsError);
+  AlwaysAssert(static_cast<bool>(itsDirty), AipsError);
 
   FFTServer<Float,Complex> fft(itsDirty->shape());
 
@@ -925,7 +925,7 @@ Bool MatrixCleaner::setscales(const Vector<Float>& scaleSizes)
 
   itsScalesValid=True;
 
-  if (!itsMask.null()) {
+  if (itsMask) {
     makeScaleMasks();
   }
 
@@ -1093,8 +1093,7 @@ Bool MatrixCleaner::destroyMasks()
 void MatrixCleaner::unsetMask()
 {
   destroyMasks();
-  if(!itsMask.null())
-    itsMask=0;
+  itsMask.reset();
   noClean_p=False;
 }
 
@@ -1119,7 +1118,7 @@ Bool MatrixCleaner::makeScaleMasks()
 
   destroyMasks();
 
-  if(itsMask.null() || noClean_p)
+  if(!itsMask || noClean_p)
     return False;
 
   AlwaysAssert((itsMask->shape() == psfShape_p), AipsError);

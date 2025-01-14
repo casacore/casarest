@@ -39,6 +39,8 @@
 #include <casacore/casa/Containers/Block.h>
 #include <casacore/lattices/LatticeMath/LatticeCleaner.h>
 
+#include <memory>
+
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 // <summary>A copy of LatticeCleaner but just using 2-D matrices</summary>
@@ -273,7 +275,7 @@ protected:
   Float itsGain;
   Int itsMaxNiter;      // maximum possible number of iterations
   Quantum<Double> itsThreshold;
-  CountedPtr<Matrix<Float> > itsMask;
+  std::shared_ptr<Matrix<Float> > itsMask;
   IPosition itsPositionPeakPsf;
   Float itsSmallScaleBias;
   Block<Matrix<Float> > itsScaleMasks;
@@ -290,8 +292,8 @@ private:
   //# because all information must be supplied in the input arguments
 
 
-  CountedPtr<Matrix<Float> > itsDirty;
-  CountedPtr<Matrix<Complex> >itsXfr;
+  std::shared_ptr<Matrix<Float> > itsDirty;
+  std::shared_ptr<Matrix<Complex> >itsXfr;
 
   Vector<Float> itsScaleSizes;
 

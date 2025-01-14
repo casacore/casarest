@@ -245,7 +245,7 @@ void MSContinuumSubtractor::subtract()
   }
   //os <<"Selection string: "<<select.str()<<LogIO::POST;
   //os <<" nrow="<<ms_p->nrow()<<LogIO::POST;
-  MeasurementSet selectedMS(tableCommand(select,*ms_p));
+  MeasurementSet selectedMS(tableCommand(select,*ms_p).table());
   MSSelector msSel(selectedMS);
   //os <<" nrow="<<msSel.nrow()<<LogIO::POST;
   MSColumns msc(selectedMS);
