@@ -28,7 +28,6 @@
 #ifndef SIMULATORS_SIMARRAY_H
 #define SIMULATORS_SIMARRAY_H
 
-#include <casacore/casa/Utilities/PtrHolder.h>
 #include <casacore/casa/Arrays/Vector.h>
 #include <casacore/casa/Arrays/Matrix.h>
 #include <casacore/measures/Measures/MPosition.h>

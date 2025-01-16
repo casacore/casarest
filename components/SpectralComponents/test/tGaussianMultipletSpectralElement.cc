@@ -27,7 +27,6 @@
 #include <casacore/casa/aips.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Containers/Record.h>
-#include <casacore/casa/Utilities/PtrHolder.h>
 #include <components/SpectralComponents/PolynomialSpectralElement.h>
 
 #include <components/SpectralComponents/GaussianSpectralElement.h>
@@ -44,6 +43,7 @@
 #include <casacore/casa/namespace.h>
 
 #include <vector>
+#include <memory>
 
 int main() {
 
@@ -213,10 +213,11 @@ int main() {
 		doublet.toRecord(myRec);
 		cout << "myrec " << myRec << endl;
         cout << __FILE__ << " " << __LINE__ << endl;
-		PtrHolder<SpectralElement> ptr(SpectralElementFactory::fromRecord(myRec));
+		std::unique_ptr<SpectralElement> ptr(SpectralElementFactory::fromRecord(myRec));
+                AlwaysAssert(static_cast<bool>(ptr), AipsError);
         cout << __FILE__ << " " << __LINE__ << endl;
-		GaussianMultipletSpectralElement out = *dynamic_cast<GaussianMultipletSpectralElement*>(
-			ptr.ptr()
+		GaussianMultipletSpectralElement& out = dynamic_cast<GaussianMultipletSpectralElement&>(
+			*ptr
 		);
         cout << __FILE__ << " " << __LINE__ << endl;
 		cout << "out " << out << endl;

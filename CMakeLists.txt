@@ -1,6 +1,6 @@
 project(casarest)
 enable_language(CXX Fortran)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.3.0)
 include(CheckCXXCompilerFlag)
 #list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -21,25 +21,9 @@ if(HDF5_ROOT_DIR)
   set(ENV{HDF5_ROOT} ${HDF5_ROOT_DIR})
 endif(HDF5_ROOT_DIR)
 
-# Detect if the compiler supports C++11 if we want to use it.
-check_cxx_compiler_flag(-std=c++11 HAS_CXX11)
-if (HAS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else()
-    message(FATAL_ERROR "Casacore build requires a c++11 compatible compiler")
-endif (HAS_CXX11)
-
-# libsynthesis has a mix of C++ and Fortran which is not handled well by
-# versions before 2.8.
-if(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 2.8)
-  if(NOT LIB_EXTRA_SYNTHESIS)
-    set(LIB_EXTRA_SYNTHESIS gfortran)
-  endif(NOT LIB_EXTRA_SYNTHESIS)
-endif(${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} LESS 2.8)
-
 # project version
 set( ${PROJECT_NAME}_MAJOR_VERSION 1 )
-set( ${PROJECT_NAME}_MINOR_VERSION 8 )
+set( ${PROJECT_NAME}_MINOR_VERSION 9 )
 set( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 if (UseCasaNamespace)
