@@ -1,4 +1,4 @@
-FROM kernsuite/base:7
+FROM ubuntu:25.04
 RUN docker-apt-install \
     build-essential \
     clang \
