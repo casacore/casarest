@@ -200,8 +200,8 @@ Bool MultiTermMatrixCleaner::setmodel(int order, Matrix<Float> & model)
 
 Bool MultiTermMatrixCleaner::setmask(Matrix<Float> & mask)
 {
-  if(itsMask.null()) 
-       itsMask = new Matrix<Float>(mask);  // it's a counted ptr
+  if(!itsMask) 
+       itsMask.reset(new Matrix<Float>(mask));  // it's a counted ptr
   else
     {
       AlwaysAssert(itsMask->shape()==mask.shape(), AipsError);
@@ -533,7 +533,7 @@ Int MultiTermMatrixCleaner::allocateMemory()
 /* At the end, force a scale-dependent border */
 Int MultiTermMatrixCleaner::setupUserMask()
 {
-    if(itsMask.null())
+    if(!itsMask)
     {
            /* Make a mask the full size, for all scales */
            for(Int scale=0;scale<nscales_p;scale++)

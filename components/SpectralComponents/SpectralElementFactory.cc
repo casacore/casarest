@@ -28,7 +28,6 @@
 //# Includes
 
 #include <casacore/casa/Containers/Record.h>
-#include <casacore/casa/Utilities/PtrHolder.h>
 #include <components/SpectralComponents/CompiledSpectralElement.h>
 #include <components/SpectralComponents/GaussianSpectralElement.h>
 #include <components/SpectralComponents/GaussianMultipletSpectralElement.h>
@@ -38,12 +37,14 @@
 #include <components/SpectralComponents/PowerLogPolynomialSpectralElement.h>
 #include <components/SpectralComponents/SpectralElementFactory.h>
 
+#include <memory>
+
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 
 SpectralElement* SpectralElementFactory::fromRecord(
 	const RecordInterface &in
 ) {
-	PtrHolder<SpectralElement> specEl;
+	std::unique_ptr<SpectralElement> specEl;
 	String origin = "SpectralElementFactory::fromRecord: ";
 	if (
 		! in.isDefined("type")
@@ -141,7 +142,7 @@ SpectralElement* SpectralElementFactory::fromRecord(
 		}
 		param(2) = GaussianSpectralElement::sigmaFromFWHM (param(2));
 		errs(2) = GaussianSpectralElement::sigmaFromFWHM (errs(2));
-		specEl.set(new GaussianSpectralElement(param(0), param(1), param(2)));
+		specEl.reset(new GaussianSpectralElement(param(0), param(1), param(2)));
 		specEl->setError(errs);
 		break;
 	case SpectralElement::LORENTZIAN:
@@ -155,9 +156,9 @@ SpectralElement* SpectralElementFactory::fromRecord(
 				"The width of a Lorentzian element must be positive"
 			);
 		}
-		specEl.set(new LorentzianSpectralElement(param(0), param(1), param(2)));
-		specEl->setError(errs);
-		break;
+                specEl.reset(new LorentzianSpectralElement(param(0), param(1), param(2)));
+                specEl->setError(errs);
+                break;
 	case SpectralElement::POLYNOMIAL:
 		if (param.nelements() == 0) {
 			throw AipsError(
@@ -165,7 +166,7 @@ SpectralElement* SpectralElementFactory::fromRecord(
 				"of at least zero"
 			);
 		}
-		specEl.set(new PolynomialSpectralElement(param.nelements() - 1));
+		specEl.reset(new PolynomialSpectralElement(param.nelements() - 1));
 		specEl->set(param);
 		specEl->setError(errs);
 		break;
@@ -176,7 +177,7 @@ SpectralElement* SpectralElementFactory::fromRecord(
 		) {
 			String function;
 			in.get(RecordFieldId("compiled"), function);
-			specEl.set(new CompiledSpectralElement(function, param));
+			specEl.reset(new CompiledSpectralElement(function, param));
 			specEl->setError(errs);
 		}
 		else {
@@ -200,10 +201,11 @@ SpectralElement* SpectralElementFactory::fromRecord(
 		while(True) {
 			String id = "*" + String::toString(i);
 			if (gaussians.isDefined(id)) {
-				PtrHolder<SpectralElement> gauss(fromRecord(gaussians.asRecord(id)));
+                            // MV: I found this code rather untidy w.r.t. pointer management, but leave it as is for now
+				std::unique_ptr<SpectralElement> gauss(fromRecord(gaussians.asRecord(id)));
 				comps.push_back(
 					*dynamic_cast<GaussianSpectralElement*>(
-						gauss.ptr()
+						gauss.get()
 					)
 				);
 				i++;
@@ -214,20 +216,20 @@ SpectralElement* SpectralElementFactory::fromRecord(
 		}
 		Matrix<Double> fixedMatrix = in.asArrayDouble("fixedMatrix");
 		fixedMatrix.reform(IPosition(2, comps.size()-1, 3));
-		specEl.set(new GaussianMultipletSpectralElement(comps, fixedMatrix));
+		specEl.reset(new GaussianMultipletSpectralElement(comps, fixedMatrix));
 	}
 	break;
 
     case SpectralElement::POWERLOGPOLY: {
-		specEl.set(new PowerLogPolynomialSpectralElement(param));
+		specEl.reset(new PowerLogPolynomialSpectralElement(param));
 		specEl->set(param);
 		specEl->setError(errs);
 	}
 	break;
 
     case SpectralElement::LOGTRANSPOLY: {
-    		specEl.set(new LogTransformedPolynomialSpectralElement(param));
-    		specEl->set(param);
+                specEl.reset(new LogTransformedPolynomialSpectralElement(param));
+                specEl->set(param);
     		specEl->setError(errs);
     	}
     	break;
@@ -243,9 +245,8 @@ SpectralElement* SpectralElementFactory::fromRecord(
 		specEl->fix(in.asArrayBool("fixed"));
 	}
     // ready to return, fish out the pointer and return it without deleting it
-    SpectralElement *sp = specEl.ptr();
-    specEl.clear(False);
-	return sp;
+    SpectralElement *sp = specEl.release();
+    return sp;
 }
 
 

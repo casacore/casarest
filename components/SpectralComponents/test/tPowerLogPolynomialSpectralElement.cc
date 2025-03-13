@@ -27,7 +27,6 @@
 #include <casacore/casa/aips.h>
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/Containers/Record.h>
-#include <casacore/casa/Utilities/PtrHolder.h>
 #include <components/SpectralComponents/PowerLogPolynomialSpectralElement.h>
 #include <components/SpectralComponents/SpectralElementFactory.h>
 
@@ -41,6 +40,7 @@
 
 #include <casacore/casa/namespace.h>
 
+#include <memory>
 
 int main() {
 	{
@@ -58,8 +58,8 @@ int main() {
 			cout << "Test to/from record" << endl;
 			Record rec;
 			plp.toRecord(rec);
-			PtrHolder<SpectralElement> el(SpectralElementFactory::fromRecord(rec));
-			plp = *dynamic_cast<PowerLogPolynomialSpectralElement *>(el.ptr());
+			std::unique_ptr<SpectralElement> el(SpectralElementFactory::fromRecord(rec));
+			plp = *dynamic_cast<PowerLogPolynomialSpectralElement *>(el.get());
 			AlwaysAssert(allTrue(plp.get() == p), AipsError);
 		}
 		catch (const AipsError& x) {
