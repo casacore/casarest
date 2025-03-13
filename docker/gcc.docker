@@ -43,7 +43,10 @@ RUN tar -xvf v3.6.1.tar.gz
 WORKDIR /usr/local/share/casacore/casacore-3.6.1
 RUN mkdir build
 WORKDIR build
-RUN cmake ..
+RUN cmake .. \
+      -DUSE_OPENMP=OFF \
+      -DUSE_HDF5=ON \
+      -DDATA_DIR=/usr/local/share/casacore/data 
 RUN make -j4
 RUN make install
 

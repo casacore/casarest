@@ -4,6 +4,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y \
     gcc \
     g++ \
+    clang \
     cmake \
     flex \
     bison \
@@ -44,6 +45,9 @@ WORKDIR /usr/local/share/casacore/casacore-3.6.1
 RUN mkdir build
 WORKDIR build
 RUN cmake .. \
+      -DUSE_OPENMP=OFF \
+      -DUSE_HDF5=ON \
+      -DDATA_DIR=/usr/local/share/casacore/data \
       -DCMAKE_C_COMPILER=/usr/bin/clang \
       -DCMAKE_CXX_COMPILER=/usr/bin/clang++
 RUN make -j4
