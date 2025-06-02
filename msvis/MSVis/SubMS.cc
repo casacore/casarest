@@ -51,8 +51,6 @@
 #include <casacore/casa/Logging/LogIO.h>
 #include <casacore/casa/OS/File.h>
 #include <casacore/casa/OS/HostInfo.h>
-#include <casacore/casa/OS/Memory.h>              // Can be commented out along with
-//                                         // Memory:: calls.
 
 //#ifdef COPYTIMER
 #include <casacore/casa/OS/Timer.h>
@@ -6813,11 +6811,6 @@ Bool SubMS::fillAverMainTable(const Vector<MS::PredefinedColumns>& colNames)
 {    
   LogIO os(LogOrigin("SubMS", "fillAverMainTable()"));
     
-  os << LogIO::DEBUG1 // helpdesk ticket in from Oleg Smirnov (ODU-232630)
-     << "Before fillAntIndexer(): "
-     << Memory::allocatedMemoryInBytes() / (1024.0 * 1024.0) << " MB"
-     << LogIO::POST;
-
   // fill time and timecentroid and antennas
   if(fillAntIndexer(mscIn_p, antIndexer_p) < 1)
     return False;
@@ -7817,10 +7810,6 @@ Bool SubMS::doChannelMods(const Vector<MS::PredefinedColumns>& datacols)
   //ROTiledStManAccessor tacc(mssel_p, cdesc.dataManagerGroup());
   //tacc.showCacheStatistics(cerr);  // A 99.x% hit rate is good.  0% is bad.
 
-  os << LogIO::DEBUG1 // helpdesk ticket in from Oleg Smirnov (ODU-232630)
-     << "Post binning memory: " << Memory::allocatedMemoryInBytes() / (1024.0 * 1024.0) << " MB"
-     << LogIO::POST;
-
   return True;
 }
 
@@ -8029,11 +8018,6 @@ Bool SubMS::doTimeAver(const Vector<MS::PredefinedColumns>& dataColNames)
   if(stateRemapper_p.size() < 1)
     make_map(mscIn_p->stateId(), stateRemapper_p);
 
-  os << LogIO::DEBUG1 // helpdesk ticket from Oleg Smirnov (ODU-232630)
-     << "Before msOut_p.addRow(): "
-     << Memory::allocatedMemoryInBytes() / (1024.0 * 1024.0) << " MB"
-     << LogIO::POST;
-
   Vector<MS::PredefinedColumns> cmplxColLabels;
   const Bool doFloat = sepFloat(dataColNames, cmplxColLabels);
   const uInt nCmplx = cmplxColLabels.nelements();
@@ -8237,10 +8221,6 @@ Bool SubMS::doTimeAver(const Vector<MS::PredefinedColumns>& dataColNames)
   //ROTiledStManAccessor tacc(mssel_p, cdesc.dataManagerGroup());
   //tacc.showCacheStatistics(cerr);  // A 99.x% hit rate is good.  0% is bad.
 
-  os << LogIO::DEBUG1 // helpdesk ticket in from Oleg Smirnov (ODU-232630)
-     << "Post binning memory: " << Memory::allocatedMemoryInBytes() / (1024.0 * 1024.0) << " MB"
-     << LogIO::POST;
-
   if(rowsdone < 1){
     os << LogIO::WARN
        << "No rows were written.  Is all the selected input flagged?"
@@ -8264,11 +8244,6 @@ Bool SubMS::doTimeAverVisIterator(const Vector<MS::PredefinedColumns>& dataColNa
 
   if(stateRemapper_p.size() < 1)
     make_map(mscIn_p->stateId(), stateRemapper_p);
-
-  os << LogIO::DEBUG1 // helpdesk ticket from Oleg Smirnov (ODU-232630)
-     << "Before msOut_p.addRow(): "
-     << Memory::allocatedMemoryInBytes() / (1024.0 * 1024.0) << " MB"
-     << LogIO::POST;
 
   Vector<MS::PredefinedColumns> cmplxColLabels;
   const Bool doFloat = sepFloat(dataColNames, cmplxColLabels);
@@ -8462,10 +8437,6 @@ Bool SubMS::doTimeAverVisIterator(const Vector<MS::PredefinedColumns>& dataColNa
     meter.update(inrowsdone);
   }   // End of for(vi.originChunks(); vi.moreChunks(); vi.nextChunk())
   os << LogIO::NORMAL << "Data binned." << LogIO::POST;
-
-  os << LogIO::DEBUG1 // helpdesk ticket in from Oleg Smirnov (ODU-232630)
-     << "Post binning memory: " << Memory::allocatedMemoryInBytes() / (1024.0 * 1024.0) << " MB"
-     << LogIO::POST;
 
   if(rowsdone < 1){
     os << LogIO::WARN
