@@ -1654,9 +1654,9 @@ namespace casacore {
             
 		  sprintf(subtitle,"pass %d (data)",npass+1);
 
-                  std::auto_ptr<ProgressMeter> progmeter(NULL);
+                  std::unique_ptr<ProgressMeter> progmeter;
                   if (chunk.num(TIME) > progmeter_limit) {
-                      progmeter = std::auto_ptr<ProgressMeter>(new ProgressMeter(1.0,static_cast<Double>(chunk.num(TIME)+0.001),title+subtitle,"","","",True,pm_update_freq));
+                      progmeter.reset(new ProgressMeter(1.0,static_cast<Double>(chunk.num(TIME)+0.001),title+subtitle,"","","",True,pm_update_freq));
                   }
 
 		  // start pass for all active agents
@@ -1670,7 +1670,7 @@ namespace casacore {
 		  // iterate over visbuffers
 		  for( vi.origin(); vi.more() && nactive; vi++,itime++ ) {
 
-                    if (progmeter.get() != NULL) {
+                    if (progmeter) {
                         progmeter->update(itime);
                     }
 		    chunk.newTime();
@@ -1755,9 +1755,9 @@ namespace casacore {
 		  sprintf(subtitle,"pass %d (dry)",npass+1);
                   //cout << "-----------subtitle=" << subtitle << endl;
 
-                  std::auto_ptr<ProgressMeter> progmeter(NULL);
+                  std::unique_ptr<ProgressMeter> progmeter;
                   if (chunk.num(TIME) > progmeter_limit) {
-                      progmeter = std::auto_ptr<ProgressMeter>(new ProgressMeter (1.0,static_cast<Double>(chunk.num(TIME)+0.001),title+subtitle,"","","",True,pm_update_freq));
+                      progmeter.reset(new ProgressMeter (1.0,static_cast<Double>(chunk.num(TIME)+0.001),title+subtitle,"","","",True,pm_update_freq));
                   }
 		  // start pass for all active agents
 		  for( uInt ival = 0; ival<acc.size(); ival++ ) 
@@ -1765,7 +1765,7 @@ namespace casacore {
 		      acc[ival]->startDry(new_field_spw);
 		  for( uInt itime=0; itime<chunk.num(TIME) && ndry; itime++ )
 		    {
-                      if (progmeter.get() != NULL) {
+                      if (progmeter) {
                           progmeter->update(itime);
                       }
 		      // now, call individual VisBuffer iterators
@@ -1799,16 +1799,16 @@ namespace casacore {
 	      sprintf(subtitle,"pass (flag)");
               //cout << "-----------subtitle=" << subtitle << endl;
               
-              std::auto_ptr<ProgressMeter> progmeter(NULL);
+              std::unique_ptr<ProgressMeter> progmeter;
               if (chunk.num(TIME) > progmeter_limit) {
-                  progmeter = std::auto_ptr<ProgressMeter>(new ProgressMeter(1.0,static_cast<Double>(chunk.num(TIME)+0.001),title+"storing flags","","","",True,pm_update_freq));
+                  progmeter.reset(new ProgressMeter(1.0,static_cast<Double>(chunk.num(TIME)+0.001),title+"storing flags","","","",True,pm_update_freq));
               }
 	      for (uInt i = 0; i<acc.size(); i++)
 		if (active_init(i))
 		  acc[i]->startFlag(new_field_spw);
 	      uInt itime=0;
 	      for( vi.origin(); vi.more(); vi++,itime++ ) {
-                  if (progmeter.get() != NULL) {
+                  if (progmeter) {
                       progmeter->update(itime);
                   }
                   

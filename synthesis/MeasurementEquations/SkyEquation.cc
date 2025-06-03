@@ -79,7 +79,6 @@
 #include <casacore/casa/System/ProgressMeter.h>
 
 #include <memory>
-using std::auto_ptr;
 
 namespace casacore { //# NAMESPACE CASACORE - BEGIN
 

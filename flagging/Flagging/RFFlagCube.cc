@@ -1,3 +1,5 @@
+// MV: Is this file unused? I tried to remove usage of auto_ptr throughout the code but in the process noticed that this file is not compiled
+// It is included in the CMakefile at least. Leave it as is for now.
 
 //# RFFlagCube.cc: this defines RFFlagCube
 //# Copyright (C) 2000,2001,2002
@@ -432,12 +434,12 @@ void RFFlagCube::getMSFlags(uInt it)
       in_flags_flushed = false;
   }
   
-  auto_ptr<FlagVector> fl_row(NULL);
+  std::unique_ptr<FlagVector> fl_row;
   FlagVector *flr = NULL;
 
   //  FlagVector fl_row;//(flagrow.column(pos_get_flag));
   if (!kiss) {
-      fl_row = auto_ptr<FlagVector>(new FlagVector(flagrow.column(pos_get_flag)));
+      fl_row.reset(new FlagVector(flagrow.column(pos_get_flag)));
       flr = fl_row.get();
   }
 
