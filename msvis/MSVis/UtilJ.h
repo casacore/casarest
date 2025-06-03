@@ -92,7 +92,7 @@ template <typename F, typename S>
 const F & first (const std::pair<F,S> & pair) { return pair.first;}
 
 template <typename F, typename S>
-class FirstFunctor : public std::unary_function<std::pair<F,S>, F>{
+class FirstFunctor : public std::function<F(std::pair<F,S>)>{
 public:
     F & operator() (std::pair<F,S> & p) { return p.first; }
     const F & operator() (const std::pair<F,S> & p) { return p.first; }
@@ -196,7 +196,7 @@ template <typename F, typename S>
 const F & second (const std::pair<F,S> & pair) { return pair.second;}
 
 template <typename F, typename S>
-class SecondFunctor : public std::unary_function<std::pair<F,S>, F>{
+class SecondFunctor : public std::function<S(std::pair<F,S>)>{
 public:
     S & operator() (std::pair<F,S> & p) { return p.second; }
 };
@@ -428,7 +428,7 @@ private:
 
 /*
 
-Example of using composer and unary.  The composed functors have to be derived from std::unary_function
+Example of using composer and unary.  
 
   int f(int x) { return x*x;}
   int g(int x) { return 2 * x;}
@@ -457,7 +457,7 @@ Example of using composer and unary.  The composed functors have to be derived f
 */
 
 template <typename F, typename G>
-class ComposedFunctor : public std::unary_function <typename G::argument_type, typename F::result_type> {
+class ComposedFunctor : public std::function <typename F::result_type (typename G::argument_type)> {
 
 public:
 
@@ -479,7 +479,7 @@ compose (F f, G g)
 }
 
 template <typename D, typename R>
-class UnaryFunctor : public std::unary_function<D,R> {
+class UnaryFunctor : public std::function<R(D)> {
 public:
     typedef R (* F) (D);
 

@@ -1,9 +1,14 @@
 project(casarest)
 enable_language(CXX Fortran)
-cmake_minimum_required(VERSION 3.3.0)
+cmake_minimum_required(VERSION 3.14.0)
 include(CheckCXXCompilerFlag)
 #list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
+# Require a C++17 compatible compiler
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 
 # rpath setup for libraries
 
@@ -24,7 +29,7 @@ endif(HDF5_ROOT_DIR)
 # project version
 set( ${PROJECT_NAME}_MAJOR_VERSION 1 )
 set( ${PROJECT_NAME}_MINOR_VERSION 9 )
-set( ${PROJECT_NAME}_PATCH_LEVEL 0 )
+set( ${PROJECT_NAME}_PATCH_LEVEL 1 )
 
 if (UseCasaNamespace)
     add_definitions (-DUseCasaNamespace)

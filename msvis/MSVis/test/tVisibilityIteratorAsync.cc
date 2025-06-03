@@ -36,7 +36,6 @@
 #include <casacore/casa/Arrays/ArrayMath.h>
 #include <casacore/casa/BasicSL/Constants.h>
 #include <memory>
-using std::auto_ptr;
 
 #include <casacore/tables/DataMan/ForwardCol.h>
 
@@ -72,7 +71,7 @@ main(int argc, char **argv)
                     ROVisibilityIteratorAsync::prefetchColumns(VIA::Ant1, VIA::Ant2, VIA::Freq, VIA::Time,
 							       VIA::ObservedCube, VIA::Sigma, VIA::Flag, VIA::Uvw,
                                                              -1);
-            auto_ptr<ROVisibilityIterator> syniter (ROVisibilityIteratorAsync::create (synms,prefetchColumns, bi));
+            std::unique_ptr<ROVisibilityIterator> syniter (ROVisibilityIteratorAsync::create (synms,prefetchColumns, bi));
             VisBufferAutoPtr vb (syniter.get());
 
             // set iterator to start of data
@@ -136,7 +135,7 @@ main(int argc, char **argv)
 
             cout << " Now try to iterate in time-intervals of 10s"<<endl;
 
-            auto_ptr <ROVisibilityIterator>
+            std::unique_ptr <ROVisibilityIterator>
             syniter2 (ROVisibilityIteratorAsync::create (synms,prefetchColumns, bi,10.));
 
             VisBufferAutoPtr vb2 (* syniter2);
@@ -163,7 +162,7 @@ main(int argc, char **argv)
             ROVisibilityIteratorAsync::PrefetchColumns prefetchColumns =
                     ROVisibilityIteratorAsync::prefetchColumns(VIA::Time, -1);
 
-            auto_ptr <ROVisibilityIterator>
+            std::unique_ptr <ROVisibilityIterator>
             syniter3 (ROVisibilityIteratorAsync::create(synms,prefetchColumns, bi,10.));
 
             syniter3->setInterval(1000.);
