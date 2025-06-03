@@ -29,7 +29,7 @@ endif(HDF5_ROOT_DIR)
 # project version
 set( ${PROJECT_NAME}_MAJOR_VERSION 1 )
 set( ${PROJECT_NAME}_MINOR_VERSION 9 )
-set( ${PROJECT_NAME}_PATCH_LEVEL 0 )
+set( ${PROJECT_NAME}_PATCH_LEVEL 1 )
 
 if (UseCasaNamespace)
     add_definitions (-DUseCasaNamespace)
