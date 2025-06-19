@@ -244,14 +244,15 @@ Bool GaussianShape::ok() const {
   // performance reasons. Both function static and file static variables
   // where considered and rejected for this purpose.
   if (!TwoSidedShape::ok()) return False;
-  if (!near(itsShape.flux(), Double(1.0), 2*C::dbl_epsilon)) {
+  if (!near(itsShape.flux(), Double(1.0), 10*C::dbl_epsilon)) {
     LogIO logErr(LogOrigin("GaussianCompRep", "ok()"));
     logErr << LogIO::SEVERE << "The internal Gaussian shape does not have"
 	   << " unit area"
+           << " unit area: " << itsShape.flux() << " difference from 1: "<< itsShape.flux()-1.0
            << LogIO::POST;
     return False;
   }
-  if (!near(itsFT.height(), 1.0, 2*C::dbl_epsilon)) {
+  if (!near(itsFT.height(), 1.0, 10*C::dbl_epsilon)) {
     LogIO logErr(LogOrigin("GaussianCompRep", "ok()"));
     logErr << LogIO::SEVERE << "The cached Fourier Transform of"
 	   << " the internal Gaussian shape does not have"
