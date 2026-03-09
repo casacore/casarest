@@ -9,6 +9,14 @@ set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Is casacore built with ADIOS 2 support ? default is NO
+option(HAVE_ADIOS2 "casacore is built with ADIOS2 support" OFF)
+if (HAVE_ADIOS2)
+    message(STATUS "Casacore is built with ADIOS2 support")
+    add_definitions(-DCASACORE_HAS_ADIOS2 -DHAVE_MPI)
+else()
+    message(STATUUS "Casacore is NOT built with ADIOS2 support")
+endif()
 
 # rpath setup for libraries
 

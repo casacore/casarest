@@ -158,6 +158,7 @@ set(synthesis_LIB_SRCS
 
 set(synthesis_PROGRAMS
     lwimager
+    tAdiosImage
 )
 
 
@@ -389,6 +390,8 @@ install (FILES
 Images/ImageFFT.h
 Images/ImageMetaData.h
 Images/ImagePolarimetry.h
+Images/ADIOSImage.h
+Images/ADIOSImage.tcc
 DESTINATION include/casarest/synthesis/Images COMPONENT casa_synthesis
 )
 
