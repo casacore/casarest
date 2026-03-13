@@ -110,7 +110,7 @@ public:
     static casacore::String className()
     { return "ADIOSImage"; }
 
-    /// @brief Create a table that contains a array column to be managed by Adios2StMan
+    /// @brief Create a table that contains an array of columns to be managed by Adios2StMan
     /// @param[in] shape shape of the array/data
     /// @param[in] rowNumber number of rows
     /// @param[in] filename name of the file
@@ -124,8 +124,11 @@ public:
     casacore::Bool setImageInfo(const casacore::ImageInfo& info) override;
     casacore::Bool setCoordinateInfo (const casacore::CoordinateSystem& coords);
     casacore::IPosition shape() const;
+    ///@brief get a slice of the image cube
     casacore::Bool doGetSlice (casacore::Array<T>& buffer, const casacore::Slicer& theSlice);
+    ///@brief get a slice of the mask.
     casacore::Bool doGetMaskSlice (casacore::Array<bool>& buffer, const casacore::Slicer& theSlice);
+    ///@brief put a slice of data into the image cube
     void doPutSlice (const casacore::Array<T>& sourceBuffer, const casacore::IPosition& where, 
                      const casacore::IPosition& stride);
     void doPutMaskSlice(const casacore::Array<bool> &mask, const casacore::IPosition& where,
@@ -141,6 +144,7 @@ public:
     ///@brief reopen the table column
     void reopenColumn();
 
+    // masking operation on the whole image cube is not supported
     bool isMasked() const override { return false; }
     bool hasPixelMask() const override { return false; }
     virtual const Lattice<casacore::Bool>& pixelMask() const override;
@@ -161,7 +165,6 @@ private:
     void restoreUnits (const casacore::TableRecord& rec);
     void restoreMiscInfo (const casacore::TableRecord& rec);
 
-private:
     void reopenRW();
 
     ///@brief tolerance used for compression

@@ -47,7 +47,7 @@ ADIOSImage<T>::ADIOSImage (
   float tolerance,
   casacore::String configname, 
   casacore::uInt rowNumber)
-: casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)),
+: /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance), itsConfig(configname), itsRow(rowNumber),
   itsIOComms(MPI_COMM_SELF)
 {
@@ -67,11 +67,11 @@ ADIOSImage<T>::ADIOSImage (
   float tolerance,
   casacore::String configname, 
   casacore::uInt rowNumber)
-: casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)),
+: /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance),itsConfig(configname),itsRow(rowNumber),
   itsIOComms(comms)
 {
-#ifdef CASACORE_HAS_ADIOS2
+#if defined CASACORE_HAS_ADIOS2
   this->setup(shape,rowNumber,filename,coordinateInfo);
 #else
   throw casacore::AipsError("Casacore is not built with ADIOS2 support");
@@ -84,7 +84,7 @@ ADIOSImage<T>::ADIOSImage (
   float tolerance,
   casacore::String configname, 
   casacore::uInt rowNumber)
-: casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)),
+: /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance), itsConfig(configname),itsRow(rowNumber),
   itsIOComms(MPI_COMM_SELF) 
 {
@@ -102,7 +102,7 @@ ADIOSImage<T>::ADIOSImage (
   float tolerance,
   casacore::String configname, 
   casacore::uInt rowNumber)
-: casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)),
+: /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance), itsConfig(configname),itsRow(rowNumber),
   itsIOComms(comms)
 {
@@ -169,7 +169,7 @@ void ADIOSImage<T>::makeNewTable(const casacore::TiledShape& shape, casacore::uI
                 adios2StMan.reset(new casacore::Adios2StMan(itsIOComms,engineType,
                                                         engineParams,transportParams,v));
 #else
-#warning "Warning !CASACORE is not built with ADIOS2 support. But use with MPI"
+#warning "Warning ! CASACORE is not built with ADIOS2 support. But use with MPI"
 #endif
             } else {
                 adios2StMan.reset(new casacore::Adios2StMan(engineType, engineParams,transportParams,v));

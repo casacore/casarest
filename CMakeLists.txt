@@ -13,9 +13,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(HAVE_ADIOS2 "casacore is built with ADIOS2 support" OFF)
 if (HAVE_ADIOS2)
     message(STATUS "Casacore is built with ADIOS2 support")
-    add_definitions(-DCASACORE_HAS_ADIOS2 -DHAVE_MPI)
+    add_definitions(-DCASACORE_HAS_ADIOS2)
 else()
     message(STATUUS "Casacore is NOT built with ADIOS2 support")
+endif()
+
+option(HAVE_MPI "casacore is built with MPI support" OFF)
+if (HAVE_MPI)
+    message(STATUS "Casacore is built with MPI support")
+    add_definitions(-DHAVE_MPI)
+else()
+    message(STATUUS "Casacore is NOT built with MPI support")
 endif()
 
 # rpath setup for libraries
