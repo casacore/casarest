@@ -156,6 +156,10 @@ set(synthesis_LIB_SRCS
  fortran/wprojgrid.f
 )
 
+if (HAVE_ADIOS2)
+    set(ADIOS_IMAGE_HEADER Images/ADIOSImage.h Images/ADIOSImage.tcc)
+endif (HAVE_ADIOS2)
+
 set(synthesis_PROGRAMS
     lwimager
     tAdiosImage
@@ -390,8 +394,7 @@ install (FILES
 Images/ImageFFT.h
 Images/ImageMetaData.h
 Images/ImagePolarimetry.h
-Images/ADIOSImage.h
-Images/ADIOSImage.tcc
+${ADIOS_IMAGE_HEADER}
 DESTINATION include/casarest/synthesis/Images COMPONENT casa_synthesis
 )
 

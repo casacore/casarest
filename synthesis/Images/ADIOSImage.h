@@ -1,7 +1,7 @@
 #ifndef IMAGES_ADIOSIMAGE_H
 #define IMAGES_ADIOSIMAGE_H
 
-//#ifdef CASACORE_HAS_ADIOS2
+#ifdef CASACORE_HAS_ADIOS2
 
 //# Includes
 #include <casacore/casa/aips.h>
@@ -188,8 +188,8 @@ private:
 // ADIOSImage<T>::blah(...)
 #include <synthesis/Images//ADIOSImage.tcc>
 }
-//#else
-//#error "Using ADIOSImage requires building casacore with ADIOS2 support. It also requires building casarest with -DHAVE_ADIOS2=YES"
-//#endif // CASACORE_HAS_ADIOS2
+#else
+#warning "Using ADIOSImage requires building casacore with ADIOS2 support. It also requires building casarest with -DHAVE_ADIOS2=YES"
+#endif // CASACORE_HAS_ADIOS2
 
 #endif // IMAGES_ADIOSIMAGE_H

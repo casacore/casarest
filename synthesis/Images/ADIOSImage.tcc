@@ -51,11 +51,7 @@ ADIOSImage<T>::ADIOSImage (
   itsTolerance(tolerance), itsConfig(configname), itsRow(rowNumber),
   itsIOComms(MPI_COMM_SELF)
 {
-#ifdef CASACORE_HAS_ADIOS2
   this->setup(shape,rowNumber,filename, coordinateInfo);
-#else
-  throw casacore::AipsError("Casacore is not built with ADIOS2 support");
-#endif
 }
 
 template <class T> 
@@ -71,11 +67,7 @@ ADIOSImage<T>::ADIOSImage (
   itsTolerance(tolerance),itsConfig(configname),itsRow(rowNumber),
   itsIOComms(comms)
 {
-#if defined CASACORE_HAS_ADIOS2
   this->setup(shape,rowNumber,filename,coordinateInfo);
-#else
-  throw casacore::AipsError("Casacore is not built with ADIOS2 support");
-#endif
 }
 
 template <class T>
@@ -88,11 +80,7 @@ ADIOSImage<T>::ADIOSImage (
   itsTolerance(tolerance), itsConfig(configname),itsRow(rowNumber),
   itsIOComms(MPI_COMM_SELF) 
 {
-#ifdef CASACORE_HAS_ADIOS2
   this->setup(filename);
-#else
-  throw casacore::AipsError("Casacore is not built with ADIOS2 support");
-#endif
 }
 
 template <class T>
@@ -106,11 +94,7 @@ ADIOSImage<T>::ADIOSImage (
   itsTolerance(tolerance), itsConfig(configname),itsRow(rowNumber),
   itsIOComms(comms)
 {
-#ifdef CASACORE_HAS_ADIOS2
   this->setup(filename);
-#else
-  throw casacore::AipsError("casacore and/or casarest are not built with ADIOS2 support");
-#endif
 }
 
 template <class T> 
@@ -165,12 +149,8 @@ void ADIOSImage<T>::makeNewTable(const casacore::TiledShape& shape, casacore::uI
             v.push_back(m);
             v.push_back(m2);
             if ( itsIOComms != MPI_COMM_SELF ) {
-#ifdef CASACORE_HAS_ADIOS2
                 adios2StMan.reset(new casacore::Adios2StMan(itsIOComms,engineType,
                                                         engineParams,transportParams,v));
-#else
-#warning "Warning ! CASACORE is not built with ADIOS2 support. But use with MPI"
-#endif
             } else {
                 adios2StMan.reset(new casacore::Adios2StMan(engineType, engineParams,transportParams,v));
             }
@@ -182,12 +162,8 @@ void ADIOSImage<T>::makeNewTable(const casacore::TiledShape& shape, casacore::uI
             v.push_back(m);
             v.push_back(m2);
             if ( itsIOComms != MPI_COMM_SELF ) {
-#ifdef CASACORE_HAS_ADIOS2
                 adios2StMan.reset(new casacore::Adios2StMan(itsIOComms,engineType,
                                                         engineParams,transportParams,v));
-#else
-#warning "Warning !CASACORE is not built with ADIOS2 support. But use with MPI"
-#endif
             } else {
                 adios2StMan.reset(new casacore::Adios2StMan(engineType, engineParams,
                                                             transportParams,v));
@@ -200,11 +176,7 @@ void ADIOSImage<T>::makeNewTable(const casacore::TiledShape& shape, casacore::uI
     // invoke itsConfiguration based call 
     casacore::Adios2StMan::from_config_t from_config {};
     if ( itsIOComms != MPI_COMM_SELF ) {
-#ifdef CASACORE_HAS_ADIOS2
         adios2StMan.reset(new casacore::Adios2StMan(itsIOComms,itsConfig, from_config));
-#else
-#warning "!Warning! CASACORE is not built with ADIOS2 support. But use with MPI"
-#endif
     } else {
         adios2StMan.reset(new casacore::Adios2StMan(itsConfig, from_config));
     }
