@@ -57,9 +57,9 @@ public:
     ADIOSImage(const casacore::TiledShape& mapShape,
                const casacore::CoordinateSystem& coordinateInfo,
                const casacore::String& nameOfNewFile,
-               float tolerance = 0.0,
-               casacore::String configname = "", 
-               casacore::uInt rowNumber = 0);
+               const float tolerance = 0.0,
+               const casacore::String configname = "", 
+               const casacore::rownr_t rowNumber = 0);
 
     /// @brief create adios image accessor
     /// @param[in] comms MPI communicator
@@ -73,9 +73,9 @@ public:
                const casacore::TiledShape& mapShape,
                const casacore::CoordinateSystem& coordinateInfo,
                const casacore::String& nameOfNewFile,
-               float tolerance = 0.0,
-               casacore::String configname = "",
-               casacore::uInt rowNumber = 0);
+               const float tolerance = 0.0,
+               const casacore::String& configname = "",
+               const casacore::rownr_t rowNumber = 0);
 
     /// @brief create adios image accessor
     /// @param[in] filename name of the file to be created
@@ -84,9 +84,9 @@ public:
     /// @param[in] spec mask value
     /// @param[in] rowNumber number of rows
     explicit ADIOSImage(const casacore::String &filename,
-                        float tolerance = 0.0,
-                        casacore::String configname = "",
-                        casacore::uInt rowNumber = 0);
+                        const float tolerance = 0.0,
+                        const casacore::String& configname = "",
+                        const casacore::rownr_t rowNumber = 0);
 
     /// @brief create adios image accessor
     /// @param[in] comms MPI communicator
@@ -97,9 +97,9 @@ public:
     /// @param[in] rowNumber number of rows
     ADIOSImage(MPI_Comm comms,
                const casacore::String &filename,
-               float tolerance = 0.0,
-               casacore::String configname = "",
-               casacore::uInt rowNumber = 0);
+               const float tolerance = 0.0,
+               const casacore::String& configname = "",
+               const casacore::rownr_t rowNumber = 0);
 
     /// @brief copy constructor
     /// @param[in] other an instance to copy from
@@ -114,7 +114,7 @@ public:
     /// @param[in] shape shape of the array/data
     /// @param[in] rowNumber number of rows
     /// @param[in] filename name of the file
-    void makeNewTable (const casacore::TiledShape& shape, casacore::uInt rowNumber, casacore::String filename);
+    void makeNewTable (const casacore::TiledShape& shape, const casacore::rownr_t rowNumber, const casacore::String& filename);
 
     ///@brief override base abstract methods
     casacore::ImageInterface<T>* cloneII() const override;
@@ -173,7 +173,7 @@ private:
     casacore::ArrayColumn<bool> itsMaskColumn;
     casacore::Table itsTable;
     
-    const casacore::uInt itsRow;
+    const casacore::rownr_t itsRow;
     casacore::String itsConfig;
     // @brief MPI communicator the default MPI_COMM_SELF is assigned in the constructor (unless proper communicator is provided)
     MPI_Comm itsIOComms;

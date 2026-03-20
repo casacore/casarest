@@ -44,9 +44,9 @@ ADIOSImage<T>::ADIOSImage (
   const casacore::TiledShape& shape, 
   const casacore::CoordinateSystem& coordinateInfo, 
   const casacore::String& filename, 
-  float tolerance,
-  casacore::String configname, 
-  casacore::uInt rowNumber)
+  const float tolerance,
+  const casacore::String configname, 
+  const casacore::rownr_t rowNumber)
 : /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance), itsConfig(configname), itsRow(rowNumber),
   itsIOComms(MPI_COMM_SELF)
@@ -60,9 +60,9 @@ ADIOSImage<T>::ADIOSImage (
   const casacore::TiledShape& shape, 
   const casacore::CoordinateSystem& coordinateInfo, 
   const casacore::String& filename, 
-  float tolerance,
-  casacore::String configname, 
-  casacore::uInt rowNumber)
+  const float tolerance,
+  const casacore::String configname, 
+  const casacore::rownr_t rowNumber)
 : /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance),itsConfig(configname),itsRow(rowNumber),
   itsIOComms(comms)
@@ -73,9 +73,9 @@ ADIOSImage<T>::ADIOSImage (
 template <class T>
 ADIOSImage<T>::ADIOSImage (
   const casacore::String& filename,
-  float tolerance,
-  casacore::String configname, 
-  casacore::uInt rowNumber)
+  const float tolerance,
+  const casacore::String& configname, 
+  const casacore::rownr_t rowNumber)
 : /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance), itsConfig(configname),itsRow(rowNumber),
   itsIOComms(MPI_COMM_SELF) 
@@ -107,7 +107,7 @@ ADIOSImage<T>::ADIOSImage (const ADIOSImage<T>& other)
 }
 
 template <class T>
-void ADIOSImage<T>::makeNewTable(const casacore::TiledShape& shape, casacore::uInt rowNumber, casacore::String filename)
+void ADIOSImage<T>::makeNewTable(const casacore::TiledShape& shape, casacore::rownr_t rowNumber, const casacore::String& filename)
 {
   const casacore::IPosition latShape = shape.shape();
 
@@ -284,8 +284,7 @@ void ADIOSImage<T>::restoreAll (const casacore::TableRecord& rec)
   // Restore the coordinate system from the record
   // MV: I am not sure whether we're supposed to take the ownership of the returned raw pointer, but the original code 
   // written with raw pointers did the equivalent thing
-  //std::unique_ptr<casacore::CoordinateSystem> restoredCoords(casacore::CoordinateSystem::restore(rec, "coords"));
-  casacore::CoordinateSystem* restoredCoords(casacore::CoordinateSystem::restore(rec, "coords"));
+  std::unique_ptr<casacore::CoordinateSystem> restoredCoords(casacore::CoordinateSystem::restore(rec, "coords"));
   AlwaysAssert(restoredCoords, casacore::AipsError);
   this->setCoordsMember(*restoredCoords);
   // Restore the image info.
