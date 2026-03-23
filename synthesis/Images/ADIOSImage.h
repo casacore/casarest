@@ -58,7 +58,7 @@ public:
                const casacore::CoordinateSystem& coordinateInfo,
                const casacore::String& nameOfNewFile,
                const float tolerance = 0.0,
-               const casacore::String configname = "", 
+               const casacore::String& configname = "", 
                const casacore::rownr_t rowNumber = 0);
 
     /// @brief create adios image accessor

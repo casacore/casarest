@@ -45,7 +45,7 @@ ADIOSImage<T>::ADIOSImage (
   const casacore::CoordinateSystem& coordinateInfo, 
   const casacore::String& filename, 
   const float tolerance,
-  const casacore::String configname, 
+  const casacore::String& configname, 
   const casacore::rownr_t rowNumber)
 : /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance), itsConfig(configname), itsRow(rowNumber),
@@ -61,7 +61,7 @@ ADIOSImage<T>::ADIOSImage (
   const casacore::CoordinateSystem& coordinateInfo, 
   const casacore::String& filename, 
   const float tolerance,
-  const casacore::String configname, 
+  const casacore::String& configname, 
   const casacore::rownr_t rowNumber)
 : /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance),itsConfig(configname),itsRow(rowNumber),
