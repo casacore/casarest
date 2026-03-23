@@ -187,7 +187,7 @@ void ADIOSImage<T>::makeNewTable(const casacore::TiledShape& shape, casacore::ro
   itsTable = casacore::Table(itsIOComms, newtab);
   itsDataColumn = casacore::ArrayColumn<T>(itsTable,"map");
   itsMaskColumn = casacore::ArrayColumn<bool>(itsTable,"mask");
-  const casacore::uInt rows = itsTable.nrow();
+  const casacore::rownr_t rows = itsTable.nrow();
   if ((rowNumber + 1) > rows) {
     itsTable.addRow(rowNumber - rows + 1);
     for (casacore::rownr_t row = rows; row <= rowNumber - rows; row++){
@@ -545,7 +545,7 @@ int ADIOSImage<T>::rank() const
 
 template <class T>
 void ADIOSImage<T>::setup(const casacore::TiledShape& shape, 
-                          casacore::uInt rowNumber, 
+                          const casacore::rownr_t rowNumber, 
                           const casacore::String& filename,
                           const casacore::CoordinateSystem& coordinateInfo)
 {

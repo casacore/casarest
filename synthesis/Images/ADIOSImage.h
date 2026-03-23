@@ -178,7 +178,7 @@ private:
     // @brief MPI communicator the default MPI_COMM_SELF is assigned in the constructor (unless proper communicator is provided)
     MPI_Comm itsIOComms;
     int rank() const; 
-    void setup(const casacore::TiledShape& shape, casacore::uInt rowNumber, 
+    void setup(const casacore::TiledShape& shape, const casacore::rownr_t rowNumber, 
                const casacore::String& filename, const casacore::CoordinateSystem& coordinateInfo);
     void setup(const casacore::String& filename);
 };
