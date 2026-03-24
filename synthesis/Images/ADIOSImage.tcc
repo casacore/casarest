@@ -87,9 +87,9 @@ template <class T>
 ADIOSImage<T>::ADIOSImage (
   MPI_Comm comms,
   const casacore::String& filename,
-  float tolerance,
-  casacore::String configname, 
-  casacore::uInt rowNumber)
+  const float tolerance,
+  const casacore::String& configname, 
+  const casacore::rownr_t rowNumber)
 : /* casacore::ImageInterface<T>(casacore::RegionHandlerTable(getTable, this)), */
   itsTolerance(tolerance), itsConfig(configname),itsRow(rowNumber),
   itsIOComms(comms)
@@ -464,8 +464,8 @@ void ADIOSImage<T>::doPutMaskSlice(const casacore::Array<bool> &mask, const casa
 template<class T>
 const casacore::LatticeRegion* ADIOSImage<T>::getRegionPtr() const
 {
-  return nullptr;
   throw (AipsError ("ADIOSImage::getRegionPtr - not implemented"));
+  return nullptr;
 }
 
 template <class T> 
