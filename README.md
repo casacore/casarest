@@ -73,6 +73,8 @@ cmake -DCOMPONENT=<choice of target>  -P cmake_install.cmake
 ```
 Which will build and install only your choice of target.
 
+To install and use ADIOSImage class, pass HAVE_ADIOS2 (and HAVE_MPI optional but in most cases, it is needed) when configuring cmake.
+For example, cmake .. -DHAVE_ADIOS2=YES -DHAVE_MPI=YES 
 
 ## KERN packages
 
