@@ -285,7 +285,8 @@ void ADIOSImage<T>::restoreAll (const casacore::TableRecord& rec)
   // MV: I am not sure whether we're supposed to take the ownership of the returned raw pointer, but the original code 
   // written with raw pointers did the equivalent thing
   std::unique_ptr<casacore::CoordinateSystem> restoredCoords(casacore::CoordinateSystem::restore(rec, "coords"));
-  AlwaysAssert(restoredCoords, casacore::AipsError);
+  const bool notNull = static_cast<bool>(restoredCoords);
+  AlwaysAssert(notNull, casacore::AipsError);
   this->setCoordsMember(*restoredCoords);
   // Restore the image info.
   restoreImageInfo (rec);
