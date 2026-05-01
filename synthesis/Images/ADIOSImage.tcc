@@ -499,7 +499,7 @@ void ADIOSImage<T>::reopenRW()
   if (!itsTable.isWritable()) {
     itsTable.reopenRW();
     itsDataColumn = casacore::ArrayColumn<T>(itsTable, "map");
-    itsMaskColumn = casacore::ArrayColumn<T>(itsTable, "mask");
+    itsMaskColumn = casacore::ArrayColumn<bool>(itsTable, "mask");
   }
 }
 
@@ -507,7 +507,7 @@ template<class T>
 void ADIOSImage<T>::reopenColumn()
 {
   itsDataColumn = casacore::ArrayColumn<T>(itsTable, "map");
-  itsMaskColumn = casacore::ArrayColumn<T>(itsTable, "mask");
+  itsMaskColumn = casacore::ArrayColumn<bool>(itsTable, "mask");
 }
 
 template<class T>
